@@ -1,5 +1,8 @@
 # 01 — Project Charter
 
+> Cập nhật M0-B2 ngày 14/11/2026: stack/kiến trúc/UI đã được chủ dự án phê duyệt theo [ADR-0001 ACCEPTED](decisions/0001-technology-options.md). Phần M0-A/M0-B1 bên dưới là lịch sử; dữ liệu thực, quyền sử dụng và KPI cuối vẫn BLOCKED. Xem [trạng thái hiện tại](PROJECT_STATUS.md) và [acceptance foundation](15-m0-b2-acceptance.md).
+
+
 Ngày 14/11/2026. Chủ phạm vi: sinh viên/chủ dự án; giảng viên nghiệm thu học thuật chưa được xác định trong task. Charter diễn giải đề bài; các giải pháp đều PROPOSED.
 
 ## Vấn đề và giá trị

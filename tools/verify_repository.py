@@ -16,6 +16,12 @@ errors = []
 links = 0
 patterns = [r'gh[pousr]_[A-Za-z0-9]{30,}', r'github_pat_[A-Za-z0-9_]{40,}', r'AKIA[0-9A-Z]{16}', r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----']
 for path in files:
+    if path.name == '.env' or (path.name.startswith('.env.') and path.name != '.env.example'):
+        errors.append(f'Environment secrets must stay ignored: {path.relative_to(ROOT)}')
+        continue
+    if any(part in {'node_modules', '.venv', 'dist', '.pytest_cache', '.ruff_cache'} for part in path.relative_to(ROOT).parts):
+        errors.append(f'Generated dependency/build/cache file: {path.relative_to(ROOT)}')
+        continue
     if '.iwsdk' in path.relative_to(ROOT).parts or path.name == 'command-credential.json':
         errors.append(f'SDK runtime credentials/metadata must stay ignored: {path.relative_to(ROOT)}')
         continue

@@ -1,5 +1,8 @@
 # 09 — Architecture options
 
+> Lịch sử M0-A/M0-B1 được giữ nguyên bên dưới. Cập nhật 14/11/2026: chủ dự án đã duyệt stack/kiến trúc/UI trong M0-B2; xem [ADR-0001 ACCEPTED](decisions/0001-technology-options.md) và [kiến trúc chính thức](12-official-system-architecture.md). Các phát biểu “chưa chọn/PROPOSED” về framework bên dưới mô tả thời điểm nghiên cứu, không phải trạng thái hiện tại. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/KPI cuối/VR acceptance vẫn chưa duyệt.
+
+
 > Ghi chú lịch sử: nội dung M0-A dưới đây là snapshot trước PoC. M0-B1 nay có adapter/bridge PoC đã chạy; xem [comparison](11-renderer-poc-comparison.md). Kiến trúc/framework/UI sản phẩm vẫn PROPOSED.
 
 **TẤT CẢ KIẾN TRÚC TRONG TÀI LIỆU LÀ PROPOSED.** Chưa có quyết định stack, schema, hosting hay frontend/backend chính thức. Ngày 14/11/2026.

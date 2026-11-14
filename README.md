@@ -1,3 +1,13 @@
+# DATN AIRC WebXR — ứng dụng nền tảng M0-B2
+
+M0-A và M0-B1 đã DONE/merge. M0-B2 nền tảng chính thức theo [ADR đã duyệt](docs/decisions/0001-technology-options.md); M1 NOT STARTED. **Chưa có dữ liệu khảo sát thực AIRC/phòng507; mọi cảnh hiện tại SYNTHETIC/DEMO, chưa đạt KPI sản phẩm.**
+
+Bắt đầu: [web](apps/web/README.md), [FastAPI](apps/api/README.md), [PostgreSQL local](infra/README.md), [kiến trúc](docs/12-official-system-architecture.md), [model PROPOSED](docs/13-data-model.md), [contracts](docs/14-api-contracts.md), [nghiệm thu](docs/15-m0-b2-acceptance.md), [trạng thái hiện tại](docs/PROJECT_STATUS.md).
+
+## README lịch sử M0-A/M0-B1
+
+Nội dung bên dưới giữ bối cảnh nghiên cứu trước khi duyệt stack, không thay trạng thái M0-B2 ở trên.
+
 # DATN AIRC WebXR
 
 **Xây dựng bản sao số không gian AIRC trên nền tảng WebXR hỗ trợ tham quan tương tác và lưu vết trải nghiệm.**

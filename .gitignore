@@ -19,3 +19,7 @@ artifacts/private/
 
 # IWSDK local runtime/editor metadata may include development credentials
 **/.iwsdk/
+
+.pytest_cache/
+.ruff_cache/
+*.egg-info/

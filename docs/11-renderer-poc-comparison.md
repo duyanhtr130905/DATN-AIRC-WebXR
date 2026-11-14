@@ -1,5 +1,8 @@
 # 11 — So sánh renderer PoC M0-B1
 
+> Lịch sử M0-A/M0-B1 được giữ nguyên bên dưới. Cập nhật 14/11/2026: chủ dự án đã duyệt stack/kiến trúc/UI trong M0-B2; xem [ADR-0001 ACCEPTED](decisions/0001-technology-options.md) và [kiến trúc chính thức](12-official-system-architecture.md). Các phát biểu “chưa chọn/PROPOSED” về framework bên dưới mô tả thời điểm nghiên cứu, không phải trạng thái hiện tại. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/KPI cuối/VR acceptance vẫn chưa duyệt.
+
+
 Ngày 14/11/2026. **PROPOSED — chưa chọn framework hoặc UI chính thức.** M0-A/PR #6 đã merge vào main `1a736d558f6b721921cd5f38de069d63a733721e`; task M0-B1 cho phép thực nghiệm A/B, không phải bắt đầu M1.
 
 ## Dataset và phương pháp công bằng
