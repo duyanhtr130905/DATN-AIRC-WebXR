@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import platform
 import socket
 import statistics
 import threading
@@ -367,6 +368,8 @@ def test_real_tcp_websocket_snapshot_delta_reconnect_backlog_and_metrics(live_se
     replica = {"sequence": 0, "state": None}
     with connect(uri, origin="http://localhost:5173", open_timeout=5, close_timeout=2) as ws:
         first = receive_type(ws, "snapshot")
+        measured_subscribers = len(application.state.broker.subscribers)
+        assert measured_subscribers == 1
         assert first["states"][0]["value"] == {"status": "available"}
         for index in range(20):
             start = time.monotonic_ns()
@@ -459,21 +462,29 @@ def test_real_tcp_websocket_snapshot_delta_reconnect_backlog_and_metrics(live_se
             select(func.count()).select_from(Outbox).where(Outbox.published_at.is_(None))
         )
         retries = session.scalar(select(func.sum(Outbox.attempts))) - 23
+        postgres_version = session.scalar(text("SHOW server_version"))
         assert counts(database) == [1, 23, 23]
     deadline = time.monotonic() + 3
     while application.state.broker.subscribers and time.monotonic() < deadline:
         time.sleep(0.02)
     assert not application.state.broker.subscribers
     report = {
-        "samples": 20,
-        "environment": "single Uvicorn process, same-host loopback, "
-        "actual PostgreSQL18 CI; synthetic only",
+        "samples": len(measurements),
+        "environment": {
+            "os": platform.system(),
+            "release": platform.release(),
+            "python": platform.python_version(),
+            "postgres": postgres_version,
+            "uvicorn": uvicorn.__version__,
+            "api_processes": 1,
+            "transport": "same-host loopback TCP",
+        },
         "clock": "monotonic_ns for transaction, commit-return, notification and client receive; "
         "DB timestamps are mutation/publish markers, not exact WAL commit",
         "measurements": measurements,
         "backlog": backlog,
         "retry_count": retries,
-        "subscriber_count_during_stream": 1,
+        "subscriber_count_during_stream": measured_subscribers,
         "subscriber_count_after_disconnect": len(application.state.broker.subscribers),
         "not_a_kpi": "No source-to-render or real device/FPS measurement",
     }
