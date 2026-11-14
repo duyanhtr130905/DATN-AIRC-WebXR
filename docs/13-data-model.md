@@ -34,3 +34,7 @@ Outbox là bảng bổ sung **đề xuất cho M1**, không triển khai M0-B2: 
 Chủ dự án/giảng viên duyệt schema v1 sau survey: chuẩn object types/trạng thái, ID import, tọa độ/đơn vị, quyền dữ liệu và privacy/retention. Sau đó pin Alembic, review revision SQL PostgreSQL, chạy upgrade database test trống → constraints/index/unique/rollback strategy test → CI. Không auto-generate rồi chạy thẳng vào DB người dùng. Không DROP/RESET/seed real AIRC; backup/restore trước bất kỳ migration có dữ liệu. Migration M0-B2: **NOT RUN**, vì chưa tạo revision, không bị đánh đồng với connection test PASS.
 
 Tham khảo14/11/2026: [PostgreSQL constraints](https://www.postgresql.org/docs/18/ddl-constraints.html), [date/time](https://www.postgresql.org/docs/18/datatype-datetime.html), [Alembic](https://alembic.sqlalchemy.org/en/latest/tutorial.html). Các quyết định schema còn PROPOSED dù stack đã ACCEPTED.
+
+### Cursor đề xuất, chưa migration
+
+Để snapshot/delta có ordering kiểm chứng được, phương án ở docs14 thêm bảng dự kiến `room_state_cursors(room_id PK/FK rooms,last_sequence bigint >=0)` và `outbox.room_sequence`, UNIQUE(room_id,room_sequence). Writers khóa counter trong transaction, không dùng serial/timestamp như commit order. Chi tiết và concurrency tests cần duyệt ở M1, không bổ sung bảng thật trong foundation.

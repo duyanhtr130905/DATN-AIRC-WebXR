@@ -1,0 +1,160 @@
+{
+  "verified_at": "2026-11-14T08:27:33.062345+00:00",
+  "tested_code_commit": "4c6ad13bb138924f9be13a11bb936893fc6935cc",
+  "runs": [
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "4c6ad13bb138924f9be13a11bb936893fc6935cc",
+      "jobs": [
+        {
+          "name": "Web typecheck, build, unit and browser",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626704/job/132389099907"
+        },
+        {
+          "name": "API unit, real PostgreSQL and lifecycle",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626704/job/132389100016"
+        }
+      ],
+      "status": "completed",
+      "updatedAt": "2026-11-14T08:24:47Z",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626704"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "4c6ad13bb138924f9be13a11bb936893fc6935cc",
+      "jobs": [
+        {
+          "name": "Syntax, unit tests and repository checks",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626677/job/132389099545"
+        },
+        {
+          "name": "Browser smoke and viewport evidence",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626677/job/132389099795"
+        }
+      ],
+      "status": "completed",
+      "updatedAt": "2026-11-14T08:24:02Z",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626677"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "4c6ad13bb138924f9be13a11bb936893fc6935cc",
+      "jobs": [
+        {
+          "name": "Build and domain tests (poc-a-r3f-xr)",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626655/job/132389099618"
+        },
+        {
+          "name": "Build and domain tests (poc-b-iwsdk)",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626655/job/132389099806"
+        },
+        {
+          "name": "Real WebGL browser A/B and IWER",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626655/job/132389229274"
+        }
+      ],
+      "status": "completed",
+      "updatedAt": "2026-11-14T08:26:03Z",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626655"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "headSha": "4c6ad13bb138924f9be13a11bb936893fc6935cc",
+      "jobs": [
+        {
+          "name": "API unit, real PostgreSQL and lifecycle",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575569714/job/132388925306"
+        },
+        {
+          "name": "Web typecheck, build, unit and browser",
+          "conclusion": "success",
+          "status": "completed",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575569714/job/132388925542"
+        }
+      ],
+      "status": "completed",
+      "updatedAt": "2026-11-14T08:24:06Z",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575569714"
+    }
+  ],
+  "pr_browser_artifacts": [
+    {
+      "id": 14105824153,
+      "name": "m0-b2-browser-pull_request",
+      "size_in_bytes": 268027,
+      "expired": false
+    }
+  ],
+  "browser_report_from_push_run_43575569714": {
+    "executedAt": "2026-11-14T08:23:44.035Z",
+    "os": "linux 7.0.0-1017-azure",
+    "browser": "157.0.8103.50",
+    "renderer": "native Chrome WebGL2, software ANGLE",
+    "xr": "NOT RUN: no XR session or physical device",
+    "scenarios": [
+      {
+        "scenario": "Desktop: renderer + real FastAPI health, DB not configured",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "Actual mouse ray pick + keyboard selection + reset",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "390px viewport emulation: touch + focus + no overflow",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "WebGL2 unsupported: injected unavailable getContext, DOM still usable",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "Readiness network failure preserves live backend status",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "Backend unavailable: network failure is visible (browser routing mock)",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      }
+    ],
+    "status": "PASS"
+  },
+  "api_log_results": {
+    "unit": "14 passed, 1 PostgreSQL deselected, 1 deprecation warning",
+    "postgres_integration": "1 passed, 14 unit deselected, 1 deprecation warning",
+    "database": "Actual postgres:18.7 GitHub service; SELECT 1, PostgreSQL server type, readiness 200, connection return and dispose",
+    "migration": "NOT RUN: no schema revision exists"
+  }
+}

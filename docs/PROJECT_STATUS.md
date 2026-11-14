@@ -6,7 +6,7 @@ Cập nhật 14/11/2026, Codex. Root `D:\Code\DATN`, repo duyanhtr130905/DATN-AI
 |---|---|---|
 | M0-A | DONE | PR6 merge 1a736d558f6b721921cd5f38de069d63a733721e |
 | M0-B1 | DONE | PR7 merge 3ebd2ec780db80caacd5871ecda911236598f9be; docs11 và hai PoC giữ nguyên |
-| M0-B2 | IN REVIEW khi bàn giao PR | apps/web, apps/api, infra, docs12–15 và app-validation CI |
+| M0-B2 | IN REVIEW | apps/web, apps/api, infra, docs12–15 và app-validation CI |
 | M1 | NOT STARTED | Chưa nghiệp vụ trạng thái/session/reports/realtime |
 
 Chủ dự án phê duyệt qua ChatGPT ngày 14/11/2026: R3F/XR, FastAPI/PostgreSQL, REST/WebSocket, Modular Monolith, Scene + Information Panel chính và Guided Tour phụ. [ADR-0001 ACCEPTED](decisions/0001-technology-options.md). Giữ Meta IWSDK làm PoC đối chứng. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/KPI ba phòng/VR acceptance vẫn chưa duyệt.
@@ -24,3 +24,5 @@ Theo người dùng, thầy chỉ đạo “Cứ làm 1 phòng 507 trước”. 
 1. ChatGPT review PR M0-B2 và bằng chứng CI/browser, xử lý quyết định còn mở.
 2. Khảo sát phòng 507, xác minh inventory/nguồn/quyền và phạm vi ≥3 phòng chính thức.
 3. Chỉ sau phê duyệt M1: chốt schema/migration, catalog API + adapter có provenance; state/history/outbox và instrumentation latency. Không tự bắt đầu M1.
+
+PR bàn giao [#8](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/8). Ba PR workflows PASS trên source commit4c6ad13, gồm PostgreSQL18.7 integration thật; latest HEAD checks được xác minh trước bàn giao. [Bản ghi CI](evidence/m0-b2-ci.json). PostgreSQL local vẫn BLOCKED; schema migration NOT RUN.

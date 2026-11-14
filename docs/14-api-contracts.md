@@ -5,11 +5,11 @@
 ## Hiện có — status
 
 GET /api/health →200 `{status:"alive",service:"airc-api",timestamp: RFC3339 UTC}`. Liveness chỉ process.
-GET /api/ready →200 `{status:"ready",database:"ready",timestamp}` sau SELECT1 thật;503 `{status:"not_ready",database:"not_configured"|"unavailable",timestamp}`. Không trả raw credentials/exception. LỗiHTTP404/validation422/internal500 dùng `{error:{code,message}}`; hiện code HTTP_ERROR/VALIDATION_ERROR/INTERNAL_ERROR và message an toàn, chưa request_id. Readiness503 là status resource, không error envelope. OpenAPI định nghĩa typed status responses.
+GET /api/ready →200 `{status:"ready",database:"ready",timestamp}` sau SELECT1 thật;503 `{status:"not_ready",database:"not_configured"|"unavailable",timestamp}`. Không trả raw credentials/exception. Lỗi HTTP 404 / validation 422 / internal 500 dùng `{error:{code,message}}`; hiện code HTTP_ERROR/VALIDATION_ERROR/INTERNAL_ERROR và message an toàn, chưa request_id. Readiness 503 là status resource, không error envelope. OpenAPI định nghĩa typed status responses.
 
 ## Envelope và resources tương lai — PROPOSED
 
-Base /api/v1; bắt buộc UUID stable IDs, schema_version=1, source_kind(synthetic|unknown|real_verified), timestamps RFC3339 UTC cótimezone, version>=1 cho state. Không dùng room507 làm khóa. response object `{data,meta:{schema_version,request_id}}`; lists data array và meta.next_cursor nullable, limit mặc định25,max100, sort stable `(created_at,id)`; cursor opaque bound filter. Không cho client quyết định role/quyền.
+Base /api/v1; bắt buộc UUID stable IDs, schema_version=1, source_kind(synthetic|unknown|real_verified), timestamps RFC3339 UTC có timezone, version>=1 cho state. Không dùng room 507 làm khóa. response object `{data,meta:{schema_version,request_id}}`; lists data array và meta.next_cursor nullable, limit mặc định 25, tối đa 100, sort stable `(created_at,id)`; cursor opaque bound filter. Không cho client quyết định role/quyền.
 
 | Endpoint dự kiến | Request bắt buộc | Response / semantics | Quyền dự kiến |
 |---|---|---|---|
@@ -23,25 +23,35 @@ Base /api/v1; bắt buộc UUID stable IDs, schema_version=1, source_kind(synthe
 | GET /reports/sessions | from,to,cursor?,limit? | aggregate không PII, sample counts | analyst có scope |
 | POST /reports/exports | from,to,format |202 export_id,status; polling có quyền | analyst, hạn chế tải |
 
-Các field theo docs13, metadata/payload validate theo loại và reject unknown unsafe fields; không accept arbitrary URL để fetch server-side. Hạn mức dự kiến100events/256KB/batch và body limit256KB; validate ở gateway/app, rate limit theo principal/session. 400 malformed/422schema,401unauthenticated,403forbidden,404unpublished/notfound,409version/idempotency conflict,413size,429rate,503dependency. Error `{error:{code,message,request_id,retryable}}`, không PII/stack trace. Quyền ghi phải kiểm server theo room/object/session và audit; chưa chọn provider/hosting/CORS credentials policy.
+Các field theo docs13, metadata/payload validate theo loại và reject unknown unsafe fields; không accept arbitrary URL để fetch server-side. Hạn mức dự kiến 100 events / 256KB / batch và body limit 256KB; validate ở gateway/app, rate limit theo principal/session. 400 malformed, 422 schema, 401 unauthenticated, 403 forbidden, 404 unpublished/not found, 409 version/idempotency conflict, 413 size, 429 rate, 503 dependency. Error `{error:{code,message,request_id,retryable}}`, không PII/stack trace. Quyền ghi phải kiểm server theo room/object/session và audit; chưa chọn provider/hosting/CORS credentials policy.
 
 ## WebSocket — PROPOSED /ws/v1/state
 
-Handshake HTTPS/WSS same-origin, xác thực khi cópolicy, kiểm Origin và room scopes; token không đặt trong query log. Subscribe room_ids giới hạn20/phòng cấp quyền (giới hạn là đề xuất cần review), không client publish state trực tiếp. Envelope:
+Handshake HTTPS/WSS same-origin, xác thực khi có policy, kiểm Origin và room scopes; token không đặt trong query log. Subscribe room_ids giới hạn 20 phòng đã cấp quyền (giới hạn là đề xuất cần review), không client publish state trực tiếp. Envelope:
 
 ```json
 {"type":"state.updated","schema_version":1,"message_id":"<uuid>","room_id":"<uuid>","object_id":"<uuid>","state_type":"equipment_status","version":4,"value":{"status":"available"},"source_kind":"synthetic","source_observed_at":null,"committed_at":"2026-11-14T00:00:00Z","published_at":"2026-11-14T00:00:00Z"}
 ```
 
-snapshot: `{type,schema_version,snapshot_id,room_id,watermark,states:[{object_id,state_type,version,value,source_kind,committed_at}]}`. snapshot cóconsistent DBread/watermark; subscriber bufferdelta trong lúc nhận snapshot, sau đó replay >watermark. Paginate/chunk snapshot cóend marker, không ghi UI từng nửa snapshot làm mất data.
-resync.required: `{type,reason:"gap"|"expired_cursor"|"backpressure",room_id}`; client fetchsnapshot, không đoán state thiếu. error: `{type,code,message,retryable}` không rawdetails.
+snapshot: `{type,schema_version,snapshot_id,room_id,watermark,states:[{object_id,state_type,version,value,source_kind,committed_at}]}`. snapshot có consistent DB read / watermark; subscriber buffer delta trong lúc nhận snapshot, sau đó replay >watermark. Paginate/chunk snapshot có end marker, không ghi UI từng nửa snapshot làm mất data.
+resync.required: `{type,reason:"gap"|"expired_cursor"|"backpressure",room_id}`; client fetch snapshot, không đoán state thiếu. error: `{type,code,message,retryable}` không raw details.
 
-Ordering per(object_id,state_type): version<=current bỏ duplicate/cũ; version>current+1 yêu cầu resync; chỉ phiên bản server mới authoritative. Session reconnect exponential backoff+jitter0.5–30s, cócancel lúc unmount/offline; cursor resume nếu server còn window, nếu không snapshot. Window/retention chưa duyệt, không hứa exactly-once. Heartbeat30s, disconnect90s, maxmessage256KB/maxqueue1000 đề xuất; slow consumer chuyểnresync thay queue vô hạn. State value privacy được lọc trước gửi; không đểvisitor subscribe phòng private bằng ID.
+Ordering per(object_id,state_type): version<=current bỏ duplicate/cũ; version>current+1 yêu cầu resync; chỉ phiên bản server mới authoritative. Session reconnect exponential backoff + jitter 0.5–30s, có cancel lúc unmount/offline; cursor resume nếu server còn window, nếu không snapshot. Window/retention chưa duyệt, không hứa exactly-once. Heartbeat 30s, disconnect 90s, max message 256KB / max queue 1000 đề xuất; slow consumer chuyển resync thay queue vô hạn. State value privacy được lọc trước gửi; không để visitor subscribe phòng private bằng ID.
 
-Transaction state+history+outbox atomic; worker gửi saucommit rồi markpublished. Publish fail không rollback DB đãcommit: retry bounded exponential, metric backlog, operator reconciliation; publish lại saucrash códuplicate, client version dedupe. Outbox chưa triển khai.
+Transaction state+history+outbox atomic; worker gửi sau commit rồi mark published. Publish fail không rollback DB đã commit: retry bounded exponential, metric backlog, operator reconciliation; publish lại sau crash có duplicate, client version dedupe. Outbox chưa triển khai.
 
 ## Đo source-to-render và experience dự kiến
 
-source_observed_at nullable là thời gian nguồn thật đo/cập nhật; committed_atserver, published_atserver, received_atclient, rendered_atclient saucommit scene. Chỉ gọisource-to-render nếu cósource timestamp và độlệch clock biết được; ghi monotonic duration client vàclockoffset/uncertainty. Khi nhập tay, source là thao tác ghi hệ thống, **không phải sensor/API AIRC**. Mục tiêu≤5s chưa được đo/chưa đạt. M1 cần thử latency cóload/độ trễ mạng, không dùngSELECT1 để thay KPI.
+source_observed_at nullable là thời gian nguồn thật đo/cập nhật; committed_at server, published_at server, received_at client, rendered_at client sau commit scene. Chỉ gọi source-to-render nếu có source timestamp và độ lệch clock biết được; ghi monotonic duration client và clock offset/uncertainty. Khi nhập tay, source là thao tác ghi hệ thống, **không phải sensor/API AIRC**. Mục tiêu≤5s chưa được đo/chưa đạt. M1 cần thử latency có load/độ trễ mạng, không dùng SELECT 1 để thay KPI.
 
-Session/event tương lai: stable client event UUID trước send, localoutbox cóconsent/privacy, server dedupe; receipt sauDBcommit, retry không tạodoublecount. Resume token storage/retention/multi-tab/offline policy chưa duyệt, M0-B2 không localstorage tracking hoặc persistence. 99% event/50sessions/90%tasks/15users vẫn chờ nghiệm thu đúngMT1–MT3.
+Session/event tương lai: stable client event UUID trước send, local outbox có consent/privacy, server dedupe; receipt sau DB commit, retry không tạo double count. Resume token storage/retention/multi-tab/offline policy chưa duyệt, M0-B2 không localstorage tracking hoặc persistence. 99% event/50 sessions / 90% tasks / 15 users vẫn chờ nghiệm thu đúng MT1–MT3.
+
+## Cụ thể hóa snapshot/cursor — phương án M1 PROPOSED
+
+Đề xuất thêm `room_sequence` vào mỗi delta/outbox; đây là cursor theo phòng, tách biệt version theo (object_id,state_type). Không dùng auto-increment sequence hoặc timestamp đơn thuần làm commit ordering: transaction có thể commit lệch thứ tự.
+
+Mỗi state transaction khóa một dòng `room_state_cursors(room_id PK, last_sequence)` bằng SELECT FOR UPDATE, tăng số trong cùng transaction rồi ghi state/history/outbox với UNIQUE(room_id,room_sequence). Giữ khóa tới commit để writers của một phòng được tuần tự hóa; rollback trả lại counter. Nếu sau này có multi-room transaction, lấy khóa theo stable room ID để tránh deadlock. Đổi room membership hoặc quyền visibility cũng phải tạo delta/tombstone theo cùng cursor; chưa triển khai catalog mutation ở M0-B2.
+
+Snapshot lấy states và last_sequence trong một transaction READ ONLY REPEATABLE READ, gửi snapshot_id + watermark và kết thúc bằng end marker. Server bắt đầu buffer subscription trước khi lấy snapshot; sau khi client xác nhận snapshot hoàn chỉnh, đọc outbox bền vững `room_sequence > watermark`, gửi theo cursor rồi nối live buffer và loại duplicate. Không chỉ dựa vào buffer RAM vì process có thể crash; gap/retention expiry hoặc quyền đổi phải trả resync.required. Client chỉ tăng cursor sau khi apply toàn bộ delta; snapshot chunk không trộn vào current state trước end marker.
+
+Đây là thiết kế cụ thể để PoC concurrency ở M1, **chưa schema được duyệt và chưa bằng chứng runtime**. Cần test writer đang commit trong lúc snapshot, publish đảo thứ tự, reconnect, tombstone và policy change; xét throughput do khóa theo phòng. Cơ sở isolation: [PostgreSQL transaction isolation](https://www.postgresql.org/docs/18/transaction-iso.html), truy cập 14/11/2026. Quyết định cursor retention và offline/multi-tab session sequence vẫn chờ duyệt.

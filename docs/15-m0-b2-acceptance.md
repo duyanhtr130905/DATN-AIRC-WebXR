@@ -1,6 +1,6 @@
 # Nghiệm thu M0-B2 — nền tảng ứng dụng
 
-Ngày 14/11/2026. Nhánh `feat/m0-b2-app-foundation`, base `3ebd2ec780db80caacd5871ecda911236598f9be`. SHA triển khai và URL CI sẽ được bổ sung sau push; chưa tự merge. M1 NOT STARTED, MT1–MT3 chưa đạt. [Bằng chứng local](evidence/m0-b2-local.json) ghi environment, lệnh, exit code và kết quả thực.
+Ngày 14/11/2026. Nhánh `feat/m0-b2-app-foundation`, base `3ebd2ec780db80caacd5871ecda911236598f9be`. PR [#8](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/8) chưa merge. Source/test/workflow commit được kiểm: `4c6ad13bb138924f9be13a11bb936893fc6935cc`; commit tiếp theo chỉ chốt tài liệu/evidence. Latest HEAD kiểm trực tiếp qua PR checks để tránh tự tham chiếu SHA trong chính commit. M1 NOT STARTED, MT1–MT3 chưa đạt. [Bằng chứng local](evidence/m0-b2-local.json) ghi environment, lệnh, exit code và kết quả thực.
 
 ## Checklist
 
@@ -15,10 +15,10 @@ Ngày 14/11/2026. Nhánh `feat/m0-b2-app-foundation`, base `3ebd2ec780db80caacd5
 | Backend startup/health/ready failure | PASS | pytest 14 passed; browser health200/ready503 not_configured; kết nối thật đến cổng đóng trả unavailable |
 | Config/CORS/error/lifecycle | PASS | ruff, compileall; URL/cors validation, safe errors, pool return/dispose; readiness success unit là mock |
 | PostgreSQL local | BLOCKED | không Docker/PostgreSQL local; không tự cài |
-| PostgreSQL CI thật | NOT RUN | chờ GitHub job với PostgreSQL18.7 riêng; không dùng SQLite |
+| PostgreSQL CI thật | PASS | 1 integration test thực trên PostgreSQL18.7: SELECT1, readiness200, pool return/dispose; không SQLite |
 | Migration/schema constraints | NOT RUN | schema chi tiết PROPOSED, chưa tạo revision; không DDL/seed/create_all |
-| CI mới và hồi quy trên GitHub | NOT RUN | chờ workflow thực, local không thay CI |
-| Security/verifier/internal links | PASS | 115 files,121 links; secret patterns và generated/env checks; không phải full security audit |
+| CI mới và hồi quy trên GitHub | PASS | 3 PR workflows / 7 jobs thành công trên source commit; evidence CI ghi từng job, push workflow cũng PASS |
+| Security/verifier/internal links | PASS | repository files và internal links; secret patterns và generated/env checks; không phải full security audit |
 | Whitespace/YAML | PASS | git diff --check exit0; PyYAML6.0.3 BaseLoader parse 3 workflows và Compose |
 | Documentation | PASS | docs12–14, ADR, runbooks; lịch sử nghiên cứu giữ nguyên kèm cập nhật quyết định |
 | M0-A local regression | PASS | 10 Node,8 Python,3 browser scenarios exit0 |
@@ -40,3 +40,14 @@ Browser lần đầu FAIL do selector mojibake khi đọc file cp1252; sửa UTF
 Chưa business CRUD, admin/auth, session persistence/tracking/export, WebSocket production, AI/RAG, assets507 hoặc hosting. Schema/migration/outbox, auth provider, retention/quyền dữ liệu, phạm vi≥3phòng và VR acceptance chờ duyệt. Issues#1–#5 giữ mở. Mock/headless/emulator không thay hardware test. TestClient có warning httpx deprecation hướng sang httpx2; tests hiện vẫn chạy, không tắt warning. Chunk3D cần budget/asset optimization ở M1, không suy ra30/72FPS.
 
 Đề xuất M1 sau review: duyệt schema dựa survey507; migration và PostgreSQL constraint tests; catalog read API + adapter có provenance; state version/history/outbox và instrumentation latency; kiểm Galaxy thật riêng. Chưa tự triển khai M1.
+
+## CI đã quan sát thực tế
+
+[Bản ghi CI có SHA và từng job](evidence/m0-b2-ci.json). Các run bất biến dưới đây đều conclusion success trên source commit 4c6ad13; follow-up chỉ tài liệu và evidence, GitHub tự chạy lại trên HEAD mới trước bàn giao.
+
+- [Ứng dụng chính thức — PR run](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626704): Web typecheck/build/7unit/6browser PASS; API lint/import/14unit/1PostgreSQL PASS. Python3.13.18; Ubuntu24.04; Chrome157.0.8103.50; hash lock cài thành công trên Linux.
+- [M0-A regression](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626677): 2jobs syntax/unit/verifier/browser PASS.
+- [M0-B1 regression](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626655): 2PoCbuilds + realbrowser/IWER PASS.
+- [Push app run và logs PostgreSQL đã đọc](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575569714): 2jobs PASS, browser report và3PNG đã tải kiểm tra. PRrun có artifact `m0-b2-browser-pull_request` trong phần Artifacts; chỉ report/ảnh ứng dụng, không profiles.
+
+Không có CI FAIL trong các run này; lỗi browser local selector đã sửa được ghi lịch sử ở trên. PostgreSQLlocal vẫn BLOCKED dù PGtrênCI PASS. Migration vẫn NOT RUN vì chưa có schema được duyệt. Local/CI screenshots đều viewport emulation/softwareWebGL, không chứng minh Galaxy/Quest hoặc KPI.
