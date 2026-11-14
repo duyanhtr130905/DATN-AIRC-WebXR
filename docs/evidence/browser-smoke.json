@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14",
+  "browser": "Chrome headless",
+  "version": "157.0.8103.51",
+  "gpu": "disabled; no performance evidence",
+  "result": "PASS\n[\n  {\n    \"environment\": \"browser with mocked XR (not hardware)\",\n    \"secure\": \"Có — secure context.\",\n    \"xr\": \"Có navigator.xr.\",\n    \"ar\": \"Bị chặn bởi quyền hoặc chính sách bảo mật; kiểm tra quyền, secure context và iframe policy.\",\n    \"vr\": \"Có hỗ trợ API — chưa kiểm thử trải nghiệm thực tế.\",\n    \"progress\": \"Đã kiểm tra API. Thiết bị thực tế: chưa nghiệm thu AR/VR.\"\n  },\n  {\n    \"environment\": \"native desktop browser (not hardware AR/VR)\",\n    \"secure\": \"Có — secure context.\",\n    \"xr\": \"Có navigator.xr.\",\n    \"ar\": \"Hết thời gian chờ; chưa xác định khả năng hỗ trợ.\",\n    \"vr\": \"Hết thời gian chờ; chưa xác định khả năng hỗ trợ.\",\n    \"progress\": \"Đã kiểm tra API. Thiết bị thực tế: chưa nghiệm thu AR/VR.\"\n  }\n]",
+  "exit_code": 0
+}

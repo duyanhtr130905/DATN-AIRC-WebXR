@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Kiểm tra WebXR — AIRC M0</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+  <script src="checker.js" defer></script>
+</head>
+<body>
+<main>
+  <p class="eyebrow">DATN AIRC · M0-A</p>
+  <h1>Thiết bị có API WebXR không?</h1>
+  <p>Công cụ chỉ hỏi trình duyệt về khả năng hỗ trợ API. Không mở camera, không bắt đầu AR/VR, không thu thập thông tin cá nhân và không gửi kết quả đi.</p>
+  <button id="check" type="button">Kiểm tra API</button>
+  <section aria-labelledby="result-heading" aria-live="polite" aria-atomic="true">
+    <h2 id="result-heading">Kết quả</h2>
+    <p id="progress" role="status">Chưa kiểm tra.</p>
+    <dl>
+      <dt>Secure context</dt><dd id="secure">Chưa kiểm tra</dd>
+      <dt>navigator.xr</dt><dd id="xr">Chưa kiểm tra</dd>
+      <dt>immersive-ar</dt><dd id="ar">Chưa kiểm tra</dd>
+      <dt>immersive-vr</dt><dd id="vr">Chưa kiểm tra</dd>
+    </dl>
+  </section>
+  <aside><h2>Hiểu đúng kết quả</h2>
+    <p><strong>“Có hỗ trợ API” không chứng minh ARCore, camera tracking, hit-test, FPS hoặc trải nghiệm AR/VR hoạt động đầy đủ.</strong> Kết quả false hoặc lỗi cũng cần đối chiếu trình duyệt, quyền và runtime.</p>
+    <p>Cần HTTPS có chứng chỉ được tin cậy hoặc localhost. Địa chỉ HTTP bằng IP LAN của máy tính thường không phải secure context trên điện thoại. Không tắt bảo mật hoặc bỏ qua cảnh báo chứng chỉ để ép chạy.</p>
+    <p>Chrome Android: dùng USB port forwarding tới localhost hoặc HTTPS hợp lệ, rồi bấm kiểm tra. Hướng dẫn chi tiết ở README đi kèm. Mỗi truy vấn được chờ tối đa 5 giây; có thể bấm lại sau lỗi.</p>
+  </aside>
+  <noscript>Cần bật JavaScript để kiểm tra API. Trang này không cần camera.</noscript>
+</main>
+</body>
+</html>
