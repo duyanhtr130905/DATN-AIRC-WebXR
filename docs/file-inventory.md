@@ -1,6 +1,6 @@
 # Danh sách file bàn giao M0-A
 
-44 file thuộc bộ bàn giao sau review fixes PR #6. Bao gồm workflow, browser driver/tests portable và ảnh checker thật; không có dữ liệu khảo sát AIRC, Chrome profile/cache hoặc dependencies sản phẩm.
+45 file thuộc bộ bàn giao sau review fixes PR #6. Bao gồm workflow, browser driver/tests portable, report local/CI và ảnh checker thật; không có dữ liệu khảo sát AIRC, Chrome profile/cache hoặc dependencies sản phẩm.
 
 - `.gitattributes`
 - `.github/pull_request_template.md`
@@ -31,6 +31,7 @@
 - `docs/evidence/browser-not-run.json`
 - `docs/evidence/browser-smoke.json`
 - `docs/evidence/checker-390.png`
+- `docs/evidence/ci-browser-smoke.json`
 - `docs/evidence/m0-validation.md`
 - `docs/file-inventory.md`
 - `docs/research/sources.md`

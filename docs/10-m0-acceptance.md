@@ -41,6 +41,6 @@ Tài liệu hoặc checker không gỡ các blocker vật lý. Không chấp nh�
 - [x] Runner portable Windows/Linux, CHROME_BIN/PATH, report expected/actual/status; local Chrome và missing-browser scenario đã chạy lại.
 - [x] [Screenshot 390px thật](evidence/checker-390.png) review được; viewport emulation, không phải Galaxy vật lý.
 - [x] Thông tin trao đổi người dùng về phòng 507, inventory và chưa có phần mềm thiết bị được ghi rõ provenance; KPI không thay đổi, admin manual PROPOSED.
-- CI GitHub: kết luận phải lấy từ run thật sau push; trạng thái live và URL run ghi ở phần bàn giao/PR. Không tự tick PASS trước khi chạy.
+- [x] CI GitHub thật trên commit triển khai 48bad17: cả hai job PASS ở trigger push và pull_request, logs và artifact đã đọc; [record](evidence/m0-validation.md). Checks head bàn giao cuối xác minh riêng trong PR/báo cáo cuối.
 
 PR hiện tại là [#6](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/6); sửa ngay trên docs/m0-foundation, không tạo PR mới. Các blocker thực địa chưa được gỡ.

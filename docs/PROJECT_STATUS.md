@@ -4,7 +4,7 @@ Cập nhật 14/11/2026. Repo độc lập: DATN-AIRC-WebXR; local `D:\Code\DATN
 
 ## Gate hiện tại
 
-Đang khắc phục review PR #6 (P1–P4), chưa được chấp thuận merge. Scope M0-A do người dùng cho phép, framework/kiến trúc vẫn PROPOSED. Không có product frontend/backend/database/AI/RAG và không deploy.
+Đã khắc phục review PR #6 (P1–P4), sẵn sàng review lại; chưa được chấp thuận merge. Scope M0-A do người dùng cho phép, framework/kiến trúc vẫn PROPOSED. Không có product frontend/backend/database/AI/RAG và không deploy.
 
 ## Đã có
 
@@ -35,4 +35,4 @@ Giữ nguyên KPI ≥3 phòng, không chia phòng 507 thành ba phòng giả, kh
 
 ## Review fixes P1–P3
 
-Đã thêm workflow read-only gồm validation và browser job; runner portable CHROME_BIN/PATH với cleanup/report schema v2 và ảnh checker 390px có thể review trong PR. Local regression: Node 10/10, runner tests 8/8, Chrome native/mock/viewport PASS theo phạm vi utility; thử thiếu browser trả NOT RUN/exit 2. Checker.js không đổi. CI thực tế phải theo dõi sau push, không coi local là CI. Evidence và cách tái lập tại [báo cáo](evidence/m0-validation.md).
+Đã thêm workflow read-only gồm validation và browser job; runner portable CHROME_BIN/PATH với cleanup/report schema v2 và ảnh checker 390px có thể review trong PR. Local regression: Node 10/10, runner tests 8/8, Chrome native/mock/viewport PASS theo phạm vi utility; thử thiếu browser trả NOT RUN/exit 2. Checker.js không đổi. CI thật commit 48bad17 đã PASS hai job ở cả push và pull_request; Linux browser thực sự chạy, artifact được kiểm tra. Xem URL và provenance trong evidence; checks head bàn giao cuối được đối chiếu live trên PR, không coi local là CI. Evidence và cách tái lập tại [báo cáo](evidence/m0-validation.md).
