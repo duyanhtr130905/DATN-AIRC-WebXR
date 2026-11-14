@@ -1,11 +1,13 @@
 import os
 from datetime import UTC, datetime, timedelta, timezone
+from io import StringIO
 from pathlib import Path
 from uuid import uuid4
 
 import pytest
 from alembic.config import Config
 from fastapi.testclient import TestClient
+from pydantic import SecretStr
 from sqlalchemy import create_engine, func, insert, inspect, select, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import DBAPIError
@@ -35,6 +37,7 @@ def catalog_database():
         url.drivername != "postgresql+psycopg"
         or url.database != "airc_foundation_test"
         or url.host not in {"127.0.0.1", "localhost"}
+        or url.query
     ):
         pytest.fail("Refusing non-loopback or non-project disposable test database")
     # New database per test. Never DROP/reset a pre-existing database; CI destroys its own service.
@@ -42,6 +45,7 @@ def catalog_database():
     administrator = create_engine(url, isolation_level="AUTOCOMMIT", poolclass=NullPool)
     try:
         with administrator.connect() as connection:
+            assert connection.scalar(text("SELECT current_database()")) == "airc_foundation_test"
             connection.exec_driver_sql(f'CREATE DATABASE "{name}"')
     finally:
         administrator.dispose()
@@ -54,7 +58,7 @@ def catalog_database():
             config = Config(str(API_ROOT / "alembic.ini"))
             config.attributes["connection"] = connection
             command.upgrade(config, "head")
-        yield database, target
+        yield database, SecretStr(target)
     finally:
         database.close()
 
@@ -64,16 +68,17 @@ def seed(database):
         seed_demo(session)
 
 
-def test_migration_empty_database_head_repeat_and_model_drift(catalog_database, capsys):
+def test_migration_empty_database_head_repeat_and_model_drift(catalog_database):
     database, _ = catalog_database
     with database.engine.begin() as connection:
-        config = Config(str(API_ROOT / "alembic.ini"))
+        output = StringIO()
+        config = Config(str(API_ROOT / "alembic.ini"), stdout=output)
         config.attributes["connection"] = connection
         assert set(inspect(connection).get_table_names()) == {"rooms", "objects", "alembic_version"}
         assert connection.scalar(select(func.count()).select_from(Room)) == 0
         assert connection.scalar(select(func.count()).select_from(Object)) == 0
         command.current(config)
-        assert "0001_catalog" in capsys.readouterr().out
+        assert "0001_catalog" in output.getvalue()
         command.upgrade(config, "head")
         command.check(config)
         assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0001_catalog"

@@ -29,3 +29,7 @@ Independent review phát hiện parentvisibility race ở listobjects; sửa JOI
 Catalog schema baseline đượcphéptriểnkhai, khôngtoànbộDigitalTwin schema. Transform/domainmetadata, state/session/event/outbox schema vẫnPROPOSED. Khôngsceneintegration/frontendredesign/publicwrites/authgiả/WebSocket/admin/AI. Không dữ liệuAIRC/507thật; không đạt≥20objects/≥3rooms hoặcKPI khác. Authprovider, retention, hosting, source/quyền, scopephòngcuối vàVRacceptance chờduyệt; Issues1–5 mở.
 
 Đềxuất M1-B sauphêduyệt: state types/version/history vàstate read contracts, outbox/reconnect concurrency tests; chỉxemxétwrite khi operatorauthorization vàdata rightsđượcchốt. Sceneintegration riêngM1-C. Chưa tựtriểnkhai cácphầnđó.
+
+## Lịch sử CI ban đầu
+
+[Push run43579935413](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43579935413) trên8e603b5:21PGtests PASS,1testmigration FAIL vì assertion đọcstdout sai stream, trong khi Alembic thực tế in0001_catalog(head). Đã đổi sang Config(stdout=StringIO) để kiểm đúng output; không bỏ assertion/current/repeat/drift. Kết quả PGtoànbộ cầnCIrerun sau sửa. Review còn phát hiện queryparameter có thểghiđè host/dbname trong testURL; đãrejecturl.query vàcheckcurrent_database trướcCREATEDATABASE, thêm3unitnegative.

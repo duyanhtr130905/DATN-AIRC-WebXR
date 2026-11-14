@@ -157,3 +157,27 @@ def test_alembic_offline_sql_and_guard(monkeypatch):
     config.cmd_opts = Namespace(x=[])
     with pytest.raises(RuntimeError, match="confirmation required"):
         command.upgrade(config, "head", sql=True)
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "postgresql+psycopg://test@127.0.0.1/airc_foundation_test?host=example.invalid&dbname=unrelated",
+        "postgresql+psycopg://test@example.invalid/airc_foundation_test",
+        "postgresql+psycopg://test@127.0.0.1/unrelated",
+    ],
+)
+def test_postgres_fixture_refuses_override_before_connect(monkeypatch, url):
+    import test_catalog_postgres as postgres_tests
+
+    monkeypatch.setenv("TEST_DATABASE_URL", url)
+    monkeypatch.setenv("AIRC_ALLOW_TEST_DATABASES", "1")
+    connect = Mock(side_effect=AssertionError("Must not connect to rejected target"))
+    monkeypatch.setattr(postgres_tests, "create_engine", connect)
+    fixture = postgres_tests.catalog_database.__wrapped__()
+    try:
+        with pytest.raises(pytest.fail.Exception):
+            next(fixture)
+    finally:
+        fixture.close()
+    connect.assert_not_called()
