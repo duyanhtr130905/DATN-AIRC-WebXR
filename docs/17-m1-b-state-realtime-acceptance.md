@@ -73,3 +73,7 @@ Nguồn kiểm 14/11/2026: [SQLAlchemy versioning](https://docs.sqlalchemy.org/e
 Dữ liệu507/source/quyền/inventory/survey chưa có, KPI≥3phòng vàMT1–MT3 giữ nguyên/chưa nghiệm thu. Auth/writeauthorization, retention, hosting, full domain metadata, VR acceptance vẫn PROPOSED/chưa chốt; Issues#1–#5 mở. Khôngvisitor session/event tracking, adminproduction, AI, public write, sceneintegration hoặcdeploy. M1-C đề xuất sau phê duyệt riêng: Catalog+state adapters/reducer/snapshot-resync trong scene, loading/error/reconnect UI và render timestamp thực; chưa bắt đầu.
 
 Làm rõ bounded delivery: retry hữu hạn và lease có thể dẫn tới xử lý trùng; “at-least-once” ở đây mô tả **processing attempts**, không bảo đảm notify thành công cho mọi event. Event exhausted có thể chưa notify thành công lần nào; outbox vẫn giữ dấu vết, client cần resync snapshot. Chính sách/rearm operator chưa triển khai hoặc phê duyệt production, không tự xóa hay retry vô hạn.
+
+## CI race phát hiện sau khi chốt tài liệu
+
+[Push run43586074060](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586074060) trên ecdd09d có46PGPASS/1FAIL: test readiness M0-B2 yêu cầu pool0 trong khi dispatcher mới đang dùng connection hợp lệ. PR run cùng commit PASS. Sửa isolation cho test đọc Catalog/readiness bằng REALTIME_DISPATCHER_ENABLED=False, giữ toàn bộ assertion/schema/API coverage; bổ sung test PG worker thật stop/drain trả pool0 trước dispose. Đây không phải bỏ migration drift test hoặc skip lỗi. Source snapshot47tests phía trên là lịch sử; số mới48tests cần CI xác minh trước bàn giao.

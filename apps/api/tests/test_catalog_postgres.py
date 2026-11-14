@@ -53,7 +53,9 @@ def isolated_catalog_database(migrate=True):
     finally:
         administrator.dispose()
     target = url.set(database=name).render_as_string(hide_password=False)
-    database = Database(Settings(_env_file=None, database_url=target))
+    database = Database(
+        Settings(_env_file=None, database_url=target, realtime_dispatcher_enabled=False)
+    )
     try:
         with database.engine.begin() as connection:
             assert connection.scalar(text("SELECT current_database()")) == name
@@ -226,7 +228,9 @@ def test_timestamps_roundtrip_and_nullable_transform(catalog_database):
 
 def test_api_empty_and_actual_session_read_only(catalog_database):
     database, target = catalog_database
-    with TestClient(create_app(Settings(_env_file=None, database_url=target))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None, database_url=target, realtime_dispatcher_enabled=False))
+    ) as client:
         assert client.get("/api/v1/rooms").json()["data"] == []
         assert client.get(f"/api/v1/rooms/{ROOM_ID}/objects").status_code == 404
         assert client.get(f"/api/v1/objects/{OBJECT_IDS[0]}").status_code == 404
@@ -301,7 +305,9 @@ def test_api_pagination_privacy_multiroom_and_validation(catalog_database):
                 evidence_ref="private-ref",
             )
         )
-    with TestClient(create_app(Settings(_env_file=None, database_url=target))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None, database_url=target, realtime_dispatcher_enabled=False))
+    ) as client:
         result = client.get("/api/v1/rooms?limit=1")
         assert result.status_code == 200
         first = result.json()

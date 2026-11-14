@@ -749,3 +749,17 @@ def test_actual_rollback_never_emits_websocket_delta(live_server):
         change(database, 1, "offline")
         delta = receive_type(ws, "state.updated")
         assert delta["sequence"] == 2 and delta["state"]["value"] == {"status": "offline"}
+
+
+def test_actual_dispatcher_drains_connections_before_dispose(state_database):
+    database, url = state_database
+    change(database, 0)
+    application = create_app(Settings(_env_file=None, database_url=url))
+    with TestClient(application) as client:
+        assert client.get("/api/ready").status_code == 200
+        client.portal.call(application.state.dispatcher.stop)
+        assert application.state.dispatcher.task is None
+        assert application.state.database.engine.pool.checkedout() == 0
+        assert client.get("/api/ready").status_code == 200
+        assert application.state.database.engine.pool.checkedout() == 0
+    assert database.engine.pool.checkedout() == 0
