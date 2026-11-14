@@ -1,0 +1,128 @@
+{
+  "recorded_at": "2026-11-14T08:21:53.063442+00:00",
+  "base_commit": "3ebd2ec780db80caacd5871ecda911236598f9be",
+  "scope": "M0-B2 local; tested code commit is referenced in acceptance after commit. No hardware or PostgreSQL success claim.",
+  "environment": {
+    "os": "win32 10.0.26300",
+    "browser": "157.0.8103.51",
+    "node": "v22.16.0",
+    "python": "Python 3.13.2"
+  },
+  "commands": [
+    {
+      "command": "npm ci --ignore-scripts --no-fund --prefix apps/web",
+      "exit_code": 0,
+      "result": "PASS; installed from lock; npm audit found 0 vulnerabilities"
+    },
+    {
+      "command": "npm run build --prefix apps/web",
+      "exit_code": 0,
+      "result": "PASS typecheck and Vite production build; large chunk warning retained"
+    },
+    {
+      "command": "npm test --prefix apps/web",
+      "exit_code": 0,
+      "result": "7 passed, 0 failed"
+    },
+    {
+      "command": "python -m ruff check apps/api",
+      "exit_code": 0,
+      "result": "All checks passed"
+    },
+    {
+      "command": "python -m compileall -q apps/api/app apps/api/tests tools",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python -m pytest -q -m \"not postgres\" (apps/api venv)",
+      "exit_code": 0,
+      "result": "14 passed, 1 PostgreSQL deselected; httpx deprecation warning"
+    },
+    {
+      "command": "node --test tools/webxr-capability-check/tests/checker.test.cjs",
+      "exit_code": 0,
+      "result": "10 passed"
+    },
+    {
+      "command": "python -m unittest discover -s tools/webxr-capability-check/tests -p test_runner.py -v",
+      "exit_code": 0,
+      "result": "8 passed"
+    },
+    {
+      "command": "python tools/webxr-capability-check/tests/run_browser_smoke.py",
+      "exit_code": 0,
+      "result": "3 scenarios PASS; hardware NOT RUN"
+    },
+    {
+      "command": "npm run build + npm test for each PoC A/B",
+      "exit_code": 0,
+      "result": "Both build/typecheck PASS; 6 shared tests each PASS"
+    },
+    {
+      "command": "npm test --prefix experiments/browser-tests",
+      "exit_code": 0,
+      "result": "8 scenarios including IWER PASS"
+    }
+  ],
+  "app_browser": {
+    "executedAt": "2026-11-14T08:30:21.336Z",
+    "os": "win32 10.0.26300",
+    "browser": "157.0.8103.51",
+    "renderer": "native Chrome WebGL2, software ANGLE",
+    "xr": "NOT RUN: no XR session or physical device",
+    "scenarios": [
+      {
+        "scenario": "Desktop: renderer + real FastAPI health, DB not configured",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "Actual mouse ray pick + keyboard selection + reset",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "390px viewport emulation: touch + focus + no overflow",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "WebGL2 unsupported: injected unavailable getContext, DOM still usable",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "Readiness network failure preserves live backend status",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      },
+      {
+        "scenario": "Backend unavailable: network failure is visible (browser routing mock)",
+        "expected": "Assertions pass",
+        "actual": "All assertions passed",
+        "status": "PASS"
+      }
+    ],
+    "status": "PASS"
+  },
+  "poc_browser_status": "PASS",
+  "postgres_local": {
+    "status": "BLOCKED",
+    "reason": "Docker unavailable; no PostgreSQL installed for this project"
+  },
+  "migration": {
+    "status": "NOT RUN",
+    "reason": "Detailed schema PROPOSED; no revision created"
+  },
+  "hardware": {
+    "status": "NOT RUN",
+    "reason": "No Galaxy AR session or real VR hardware tested"
+  },
+  "browser_runner_note": "Latest local rerun after explicit canvas/host layout synchronization; 6 scenarios PASS. CI rerun failure retained in acceptance."
+}

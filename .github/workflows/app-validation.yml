@@ -1,0 +1,82 @@
+name: M0-B2 application foundation
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feat/m0-b2-app-foundation]
+permissions:
+  contents: read
+concurrency:
+  group: app-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  web:
+    name: Web typecheck, build, unit and browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CHROME_BIN: /usr/bin/google-chrome
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --require-hashes -r apps/api/requirements.lock
+      - run: npm ci --ignore-scripts --no-fund --prefix apps/web
+      - run: npm run build --prefix apps/web
+      - run: npm test --prefix apps/web
+      - run: npm run test:browser --prefix apps/web
+      - name: Browser report and real screenshots only
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: m0-b2-browser-${{ github.event_name }}
+          path: |
+            .local/app-browser/report.json
+            .local/app-browser/*.png
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error
+  api:
+    name: API unit, real PostgreSQL and lifecycle
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:18.7
+        env:
+          POSTGRES_USER: airc_ci
+          POSTGRES_DB: airc_foundation_test
+          # Disposable CI-only credential, no production secret.
+          POSTGRES_PASSWORD: ci-only-ephemeral
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U airc_ci -d airc_foundation_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --require-hashes -r apps/api/requirements.lock
+      - run: python -m ruff check apps/api
+      - run: python -m compileall -q apps/api/app apps/api/tests
+      - run: python -c "import sys; sys.path.insert(0, 'apps/api'); from app.main import create_app; assert create_app().openapi()"
+      - run: python -m pytest -q -m 'not postgres'
+        working-directory: apps/api
+      - run: python -m pytest -q -m postgres
+        working-directory: apps/api
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://airc_ci:ci-only-ephemeral@127.0.0.1:5432/airc_foundation_test
+      - run: python tools/verify_repository.py
+      - run: git diff --check
