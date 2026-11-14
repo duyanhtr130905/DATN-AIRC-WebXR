@@ -1,5 +1,5 @@
 {
-  "executed_at": "2026-11-14T06:52:41.973Z",
+  "executed_at": "2026-11-14T07:03:35.382Z",
   "os": "win32",
   "node": "v22.16.0",
   "scenario_scope": "Synthetic primitives only; desktop software WebGL and viewport emulation, not Galaxy/headset performance.",
@@ -10,7 +10,7 @@
       "status": "PASS",
       "expected": "Real canvas pick, state update, ECS projection (B), orbit/reset, guided next, native XR fallback; no startup session/camera/runtime exception.",
       "actual": {
-        "readyMs": 986,
+        "readyMs": 1126,
         "info": {
           "calls": 14,
           "triangles": 146
@@ -64,7 +64,7 @@
       "status": "PASS",
       "expected": "Real canvas pick, state update, ECS projection (B), orbit/reset, guided next, native XR fallback; no startup session/camera/runtime exception.",
       "actual": {
-        "readyMs": 966,
+        "readyMs": 1174,
         "info": {
           "calls": 14,
           "triangles": 146

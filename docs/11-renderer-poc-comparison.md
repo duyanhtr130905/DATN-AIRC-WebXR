@@ -26,7 +26,7 @@ Latest được kiểm tra nhưng không mặc định dùng: Vite latest 8.3.8,
 
 `npm ls three` xác nhận A Canvas/R3F/XR dùng cùng stock 0.185.0, B project/core/plugin dedupe cùng super-three 0.185.0. Không override alias B bằng stock Three. Tool browser-test riêng dùng Playwright 1.58.2 + Chrome có sẵn, không tải browser.
 
-License artifact đã đọc: React/Three/R3F/core/plugin là MIT; XR metadata SEE LICENSE nhưng LICENSE trong package có nội dung MIT; Havok transitive 1.3.14 có MIT trong package (physics tắt). Playwright Apache-2.0, TypeScript Apache-2.0. Lockfile lưu metadata license transitive; đây không phải xác nhận pháp lý hoặc security audit đầy đủ. npm audit production được chạy để ghi nhận snapshot, không phải chứng minh không có lỗ hổng chưa công bố.
+License artifact đã đọc: React/Three/R3F/core/plugin là MIT; XR metadata SEE LICENSE nhưng LICENSE trong package có nội dung MIT; Havok transitive 1.3.14 có MIT trong package (physics tắt). Playwright Apache-2.0, TypeScript Apache-2.0. Lockfile lưu metadata license transitive; đây không phải xác nhận pháp lý hoặc security audit đầy đủ. npm audit production được chạy để ghi nhận snapshot, không phải chứng minh không có lỗ hổng chưa công bố. Snapshot audit production cuối của cả A/B báo 0 vấn đề ở các mức; không bao gồm audit đầy đủ mọi dev tool.
 
 ## Kết quả thực nghiệm
 
@@ -62,6 +62,10 @@ CI [PoC workflow](../.github/workflows/poc-validation.yml) build/test hai packag
 5. IWER 2.8 bảo vệ native navigator.xr kể cả khi Chrome không có XR device; chỉ URL `?emulate=1` mới gọi API chính thức forceInstall, không áp dụng native path. Không chỉnh Chrome flag insecure origin hoặc coi emulation là phần cứng.
 6. XR overlay chặn nút DOM của trang (đúng ranh giới immersive); test dùng nút Exit của IWER thay vì force click. DevUI 1.x/2.x có title Exit khác nhau, harness nhận diện cả hai tên.
 7. Canvas resize sau panel mount làm một lần click harness xảy ra quá sớm; chờ panel + settle render trước chiếu tọa độ. Vẫn click/touch canvas thật, không chọn qua store để làm PASS. B có warning annotation Rollup từ Zod và cả hai có warning bundle; không tắt cảnh báo.
+
+8. CI PoC lần đầu [43568831269](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43568831269) build/domain A/B PASS nhưng browser setup FAIL: Chrome POSIX `SingletonSocket` vượt giới hạn độ dài vì temp path workspace sâu. Giữ temp trong workspace nhưng rút xuống `.local/t`; không chuyển sang profile cá nhân, không skip hoặc đổi FAIL thành PASS. Run mới phải xác minh sau push.
+
+9. Một lần cold dev load B vượt timeout load-event 10s dù app đã hiện đầy đủ. Các luồng chính dùng DOMContentLoaded + đợi renderer readiness; emulator giữ navigation deadline 30s và đợi IWER readiness tường minh; không dùng load của mọi dev asset làm điều kiện nghiệp vụ và không bỏ kiểm tra runtime errors.
 
 SDK dev tự sinh `.iwsdk/runtime` có metadata/credential tạm: ignore toàn thư mục, verifier báo lỗi nếu vô tình track, không push hoặc upload. Profile/cache Playwright cũng chỉ trong `.local`; server loopback, browser context đóng và dev/preview processes được kết thúc sau suite. Test failure làm exit 1; báo cáo/screenshot chỉ của lần chạy hiện tại. Screenshot local đã xem: desktop, Guided Tour, mobile và IWER; không ảnh AI.
 

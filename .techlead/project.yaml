@@ -1,6 +1,6 @@
 name: DATN-AIRC-WebXR
 workspace: 'D:\Code\DATN'
-mode: initialize
+mode: continue
 scale: small
 milestone: M0-B1
 status: ready-for-review

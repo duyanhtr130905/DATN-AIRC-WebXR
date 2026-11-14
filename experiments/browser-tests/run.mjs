@@ -20,7 +20,7 @@ for (const name of readdirSync(out)) {
   if (/^poc-[ab]-(r3f-xr|iwsdk).*\.(png|log)$/.test(name))
     unlinkSync(path.join(out, name));
 }
-const temp = path.join(root, ".local/playwright-tmp");
+const temp = path.join(root, ".local/t");
 mkdirSync(temp, { recursive: true });
 process.env.TEMP = temp;
 process.env.TMP = temp;
@@ -126,6 +126,7 @@ async function pageFor(
   });
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
+  page.setDefaultNavigationTimeout(30000);
   const errors = [];
   page.on("pageerror", (e) => {
     if (errors.length < 10) errors.push(e.stack || e.message);
@@ -144,7 +145,7 @@ async function testDesktop(project, url) {
   const { page, context, errors } = await pageFor();
   const start = performance.now();
   try {
-    await page.goto(url);
+    await page.goto(url, {waitUntil:"domcontentloaded"});
     await until(
       () =>
         page.evaluate(() => !!window.__poc && window.__poc.info().calls > 0),
@@ -270,7 +271,7 @@ async function testDesktop(project, url) {
         project + "-panel-desktop.png",
       ],
     });
-    await page.goto(url + "/?forceNoWebGL=1");
+    await page.goto(url + "/?forceNoWebGL=1", {waitUntil:"domcontentloaded"});
     await page.getByRole("alert").waitFor();
     assert.ok((await page.getByRole("alert").textContent()).includes("WebGL2"));
     rows.push({
@@ -290,7 +291,7 @@ async function testMobile(project, url) {
     true,
   );
   try {
-    await page.goto(url);
+    await page.goto(url, {waitUntil:"domcontentloaded"});
     await until(
       () =>
         page.evaluate(() => !!window.__poc && window.__poc.info().calls > 0),
