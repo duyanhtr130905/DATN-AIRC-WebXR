@@ -3,16 +3,22 @@ from pathlib import Path
 import re
 import sys
 import struct
+import subprocess
 from html.parser import HTMLParser
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDED = {'.git', '.local', 'node_modules', '__pycache__', '.venv'}
-files = [p for p in ROOT.rglob('*') if p.is_file() and not EXCLUDED.intersection(p.relative_to(ROOT).parts)]
+# Inspect all tracked and non-ignored new files, including a tracked file even if a later ignore rule matches it.
+listing = subprocess.check_output(['git', 'ls-files', '--cached', '--others', '--exclude-standard', '-z'], cwd=ROOT).decode('utf-8')
+files = sorted({ROOT / name for name in listing.split('\0') if name and (ROOT / name).is_file()})
 errors = []
 links = 0
 patterns = [r'gh[pousr]_[A-Za-z0-9]{30,}', r'github_pat_[A-Za-z0-9_]{40,}', r'AKIA[0-9A-Z]{16}', r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----']
 for path in files:
+    if '.iwsdk' in path.relative_to(ROOT).parts or path.name == 'command-credential.json':
+        errors.append(f'SDK runtime credentials/metadata must stay ignored: {path.relative_to(ROOT)}')
+        continue
     if path.suffix.lower() == '.png':
         data = path.read_bytes()
         if path.relative_to(ROOT).as_posix() != 'docs/evidence/checker-390.png':

@@ -1,5 +1,7 @@
 # 09 — Architecture options
 
+> Ghi chú lịch sử: nội dung M0-A dưới đây là snapshot trước PoC. M0-B1 nay có adapter/bridge PoC đã chạy; xem [comparison](11-renderer-poc-comparison.md). Kiến trúc/framework/UI sản phẩm vẫn PROPOSED.
+
 **TẤT CẢ KIẾN TRÚC TRONG TÀI LIỆU LÀ PROPOSED.** Chưa có quyết định stack, schema, hosting hay frontend/backend chính thức. Ngày 14/11/2026.
 
 ## Sơ đồ module đề xuất

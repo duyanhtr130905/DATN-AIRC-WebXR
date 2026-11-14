@@ -2,10 +2,10 @@ name: DATN-AIRC-WebXR
 workspace: 'D:\Code\DATN'
 mode: initialize
 scale: small
-milestone: M0-A
+milestone: M0-B1
 status: ready-for-review
 language: vi
-scope_authority: user-task-2026-11-14
+scope_authority: user-task-m0-b1-2026-11-14
 stack: PROPOSED
 architecture: PROPOSED
 charter: docs/01-project-charter.md

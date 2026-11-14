@@ -1,38 +1,21 @@
-# Trạng thái dự án — M0-A
+# Trạng thái dự án — M0-B1
 
-Cập nhật 14/11/2026. Repo độc lập: DATN-AIRC-WebXR; local `D:\Code\DATN`; account `duyanhtr130905`; main bootstrap `b3c4f43`; nhánh `docs/m0-foundation`.
+Cập nhật 14/11/2026. Workspace duy nhất D:\Code\DATN; repo duyanhtr130905/DATN-AIRC-WebXR; PR #6 đã merge bằng `1a736d558f6b721921cd5f38de069d63a733721e`. Nhánh hiện tại feat/m0-b1-renderer-poc, không sửa main hoặc tạo repo con.
 
-## Gate hiện tại
+## Đã triển khai trong phạm vi PoC
 
-Đã khắc phục review PR #6 (P1–P4), sẵn sàng review lại; chưa được chấp thuận merge. Scope M0-A do người dùng cho phép, framework/kiến trúc vẫn PROPOSED. Không có product frontend/backend/database/AI/RAG và không deploy.
+Hai prototype A R3F/XR và B IWSDK World/ECS dùng chung fixture/domain/UI: 1 phòng DEMO, 5 primitive, 3 nhóm trạng thái. Có chọn canvas/danh mục, trạng thái/metadata, reset/orbit, Guided Tour và Scene + Panel, mobile/loading/error/WebGL/native XR fallback. DataAdapter và validation mẫu, không network/backend/database. [README chạy](../experiments/README.md), [so sánh bằng chứng](11-renderer-poc-comparison.md).
 
-## Đã có
+Build/typecheck và domain tests đã chạy; browser suite Windows/Chrome thực đã thử mouse/touch/DOM/viewport và IWER, có lịch sử lỗi và khắc phục trong comparison. Kết quả latest local tại docs/evidence/m0-b1-local.json. CI được kiểm tra live trên PR sau push; local không thay CI. Ảnh thật trong .local/poc-browser và CI artifacts; không commit hàng loạt binary, không profile/cache/SDK runtime credential.
 
-Charter, requirements/KPI, risks, survey/data strategy, device/technology/UI research, architecture options, ADR template + proposed ADR, source/version index, checker độc lập, tests và PR template. Các tài liệu giữ nguyên MT1–MT3.
+## Gate và blocker
 
-## Evidence và hạn chế
+Chờ ChatGPT review PoC và chủ dự án phê duyệt bước tiếp; chưa chọn framework/kiến trúc/UI chính thức, ADR-0001 PROPOSED. Không bắt đầu M1, không deploy/merge PR. Galaxy/iPhone/kính thật, FPS/latency và MT1–MT3 sản phẩm NOT TESTED/NOT RUN. Ray controller target selection chưa test, IWER chỉ chứng minh lifecycle/input sources.
 
-Kết quả cũ ở commit cdf43fd chỉ là lịch sử. Regression trên bản sửa và browser report v2 được ghi trong evidence; không dùng kết quả cũ để nghiệm thu code mới. Xem [evidence](evidence/m0-validation.md). Không có chứng cứ vật lý AR/VR, FPS hay KPI sản phẩm. Dữ liệu AIRC, ba phòng và quyền sử dụng chưa được xác minh.
+Issues #1–#5 vẫn mở; scope cuối ≥3 phòng, survey/inventory/nguồn/quyền chưa được giải quyết. Hướng admin nhập tay chỉ PROPOSED.
 
-## Handoff
+## M0-B1 — chỉ đạo phòng 507 và PoC synthetic (14/11/2026)
 
-[Acceptance](10-m0-acceptance.md) là checklist trạng thái; [backlog](backlog/README.md) chứa năm blocker issues #1–#5 đã tạo và đang OPEN. Validation được ghi trong evidence; commit/PR xác thực bằng GitHub và báo cáo cuối sau thao tác tạo PR. Không coi PR mở là phê duyệt của người dùng/giảng viên.
+Theo thông tin người dùng cung cấp, giảng viên chỉ đạo “Cứ làm 1 phòng 507 trước.” Phòng 507 là phạm vi triển khai đầu tiên; KPI ≥3 phòng chưa được điều chỉnh chính thức, Issue #1 vẫn BLOCKED về phạm vi nghiệm thu cuối. Dự kiến khảo sát khoảng 16/11/2026, chưa có số đo/ảnh/sơ đồ/inventory/quyền dữ liệu. Không giả lập 507 rồi coi là dữ liệu thật, không chia phòng giả.
 
-## Bước tiếp theo cần người dùng quyết định
-
-Review PR; bổ sung đầu mối/quyền AIRC, số phòng/inventory, nguồn dữ liệu; thử Galaxy; trao đổi phương pháp nghiệm thu VR. Đề xuất M0-B gỡ blocker và duyệt PoC; chưa bắt đầu. M1 bị chặn đến khi có phê duyệt riêng và ADR được chấp nhận bằng phản hồi có thẩm quyền.
-
-## Thông tin trao đổi mới do người dùng cung cấp — 14/11/2026
-
-Đây là nội dung người dùng thuật lại từ trao đổi với giảng viên và anh Nguyễn Tiến Nhật Quang, **chưa phải dữ liệu khảo sát hoặc xác nhận phạm vi chính thức**:
-
-- Giảng viên cho biết AIRC hiện chỉ có phòng **507**. Người dùng đang hỏi lại về mâu thuẫn với KPI **≥3 phòng**; Issue #1 vẫn BLOCKED chờ quyết định phạm vi chính thức.
-- Anh Quang đề nghị hỏi giảng viên để xác định phòng/khu vực cần mô phỏng; sau khi chọn phòng, anh có thể hỗ trợ danh mục thiết bị. Chưa có inventory được bàn giao, Issue #2 vẫn BLOCKED.
-- Theo trao đổi, hiện chưa có phần mềm quản lý thiết bị. Không mặc định tồn tại API/database thiết bị của AIRC. Nguồn và quyền dữ liệu chưa được xác nhận chính thức, Issue #3 vẫn BLOCKED.
-- Có thể cân nhắc dựng không gian theo quan sát trực quan, không nhất thiết đo quá chi tiết. Đây là đề xuất phương pháp cần giảng viên duyệt và ghi giới hạn độ chính xác; không phải khảo sát đã xong.
-
-Giữ nguyên KPI ≥3 phòng, không chia phòng 507 thành ba phòng giả, không tự kết luận một phòng là đủ. Không đăng ảnh hội thoại cá nhân. Không thay các lựa chọn công nghệ PROPOSED hoặc triển khai quản trị/database ở M0.
-
-## Review fixes P1–P3
-
-Đã thêm workflow read-only gồm validation và browser job; runner portable CHROME_BIN/PATH với cleanup/report schema v2 và ảnh checker 390px có thể review trong PR. Local regression: Node 10/10, runner tests 8/8, Chrome native/mock/viewport PASS theo phạm vi utility; thử thiếu browser trả NOT RUN/exit 2. Checker.js không đổi. CI thật commit 48bad17 đã PASS hai job ở cả push và pull_request; Linux browser thực sự chạy, artifact được kiểm tra. Xem URL và provenance trong evidence; checks head bàn giao cuối được đối chiếu live trên PR, không coi local là CI. Evidence và cách tái lập tại [báo cáo](evidence/m0-validation.md).
+Task M0-B1 đã cho phép hai PoC trong experiments/ dùng chung 1 room/5 objects synthetic; đây là thử nghiệm renderer/UI, không phải sản phẩm hoặc M1. Framework, kiến trúc, UX và contract vẫn PROPOSED. [Kết quả và giới hạn](11-renderer-poc-comparison.md). Chưa có quản trị, API/DB/auth/WebSocket production; không mặc định AIRC có phần mềm/API thiết bị.
