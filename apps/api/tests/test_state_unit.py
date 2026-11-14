@@ -66,3 +66,42 @@ def test_pool_disposed_even_if_dispatcher_stop_fails():
             with TestClient(application):
                 pass
     database.close.assert_called_once()
+
+
+def test_state_cli_rejects_url_override_before_database(monkeypatch):
+    from app.modules.state import cli
+
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "cli",
+            "--confirm-database",
+            "airc_foundation",
+            "--room-id",
+            "10000000-0000-4000-8000-000000000001",
+            "--target-kind",
+            "room",
+            "--target-id",
+            "10000000-0000-4000-8000-000000000001",
+            "--state-type",
+            "room_schedule",
+            "--expected-version",
+            "0",
+            "--value",
+            '{"status":"free","activity":"DEMO"}',
+        ],
+    )
+    monkeypatch.setattr(
+        cli,
+        "Settings",
+        lambda: Settings(
+            _env_file=None,
+            database_url="postgresql+psycopg://test@127.0.0.1/airc_foundation?host=example.invalid",
+        ),
+    )
+    database = Mock()
+    monkeypatch.setattr(cli, "Database", database)
+    with pytest.raises(SystemExit) as error:
+        cli.main()
+    assert error.value.code == 2
+    database.assert_not_called()

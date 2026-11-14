@@ -27,7 +27,7 @@ from app.database.state_models import CurrentState, Outbox, RoomStateCursor, Sta
 from app.main import create_app
 from app.modules.catalog.seed import OBJECT_IDS, ROOM_ID, seed_demo
 from app.modules.realtime.client_rules import sequence_action
-from app.modules.realtime.dispatcher import Broker, Dispatcher, claim
+from app.modules.realtime.dispatcher import Broker, Dispatcher, claim, finish
 from app.modules.state.read import replay, snapshot
 from app.modules.state.service import StateConflict, StateUnavailable, change_state
 
@@ -142,7 +142,8 @@ def test_two_real_postgres_writers_only_one_wins(state_database):
     assert counts(database) == [1, 2, 2]
 
 
-def test_target_mapping_protection_read_api_history(state_database):
+@pytest.mark.parametrize("protected", ["unknown", "real_verified"])
+def test_target_mapping_protection_read_api_history(state_database, protected):
     database, url = state_database
     change(database, 0)
     change(database, 1, "maintenance")
@@ -167,7 +168,7 @@ def test_target_mapping_protection_read_api_history(state_database):
         session.execute(
             update(CurrentState)
             .where(CurrentState.state_type == "equipment_status")
-            .values(source_kind="unknown")
+            .values(source_kind=protected)
         )
     with pytest.raises(StateUnavailable):
         change(database, 2, "offline")
@@ -278,8 +279,12 @@ def test_outbox_claim_retry_crash_restart_and_worker_race(state_database):
             .where(Outbox.published_at.is_(None))
             .values(lease_until=func.now() - text("interval '1 second'"))
         )
-    recovered = claim(database.engine, uuid4())
+    recovery_owner = uuid4()
+    recovered = claim(database.engine, recovery_owner)
     assert len(recovered) == 1 and recovered[0]["attempts"] == 2
+    finish(database.engine, recovery_owner, recovered[0], True)
+    with Session(database.engine) as session:
+        assert all(row.published_at is not None for row in session.scalars(select(Outbox)))
 
 
 def test_latest_exhausted_delta_requires_resync_and_gap(state_database):
@@ -322,20 +327,25 @@ def live_server(state_database):
         )
     )
     thread = threading.Thread(target=lambda: server.run(sockets=[listener]), daemon=True)
-    thread.start()
-    deadline = time.monotonic() + 10
-    while not server.started and thread.is_alive() and time.monotonic() < deadline:
-        time.sleep(0.02)
-    assert server.started
     try:
+        thread.start()
+        deadline = time.monotonic() + 10
+        while not server.started and thread.is_alive() and time.monotonic() < deadline:
+            time.sleep(0.02)
+        assert server.started
         yield database, url, application, server, port
     finally:
         server.should_exit = True
-        thread.join(timeout=15)
+        if thread.ident is not None:
+            thread.join(timeout=15)
+            if thread.is_alive():
+                server.force_exit = True
+                thread.join(timeout=3)
         listener.close()
         assert not thread.is_alive(), "Server must shut down within timeout"
         assert database.engine.pool.checkedout() == 0
-        assert not application.state.broker.subscribers
+        broker = getattr(application.state, "broker", None)
+        assert broker is None or not broker.subscribers
 
 
 def receive_type(ws, kind):
@@ -353,6 +363,7 @@ def test_real_tcp_websocket_snapshot_delta_reconnect_backlog_and_metrics(live_se
     change(database, 0)
     uri = f"ws://127.0.0.1:{port}/ws/v1/state?room_id={ROOM_ID}"
     measurements = []
+    replica = {"sequence": 0, "state": None}
     with connect(uri, origin="http://localhost:5173", open_timeout=5, close_timeout=2) as ws:
         first = receive_type(ws, "snapshot")
         assert first["states"][0]["value"] == {"status": "available"}
@@ -366,6 +377,20 @@ def test_real_tcp_websocket_snapshot_delta_reconnect_backlog_and_metrics(live_se
                 delta["state"]["version"] == index + 2 and delta["sequence"] == result["sequence"]
             )
             assert delta["message_id"] == result["message_id"]
+            assert (
+                sequence_action(
+                    first["sequence"] if index == 0 else replica["sequence"], delta["sequence"]
+                )
+                == "apply"
+            )
+            previous = replica["state"]
+            replica = {"sequence": delta["sequence"], "state": delta["state"]}
+            saved = json.dumps(replica, sort_keys=True)
+            for old_sequence in [delta["sequence"], delta["sequence"] - 1]:
+                if sequence_action(replica["sequence"], old_sequence) == "apply":
+                    replica["state"] = previous
+            assert json.dumps(replica, sort_keys=True) == saved
+
             with Session(database.engine) as session:
                 row = session.get(Outbox, UUID(delta["message_id"]))
                 # Same-host test clocks: report wall-clock split with uncertainty, monotonic total.
