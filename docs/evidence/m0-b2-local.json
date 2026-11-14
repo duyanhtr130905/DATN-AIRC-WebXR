@@ -66,7 +66,7 @@
     }
   ],
   "app_browser": {
-    "executedAt": "2026-11-14T08:18:51.252Z",
+    "executedAt": "2026-11-14T08:30:21.336Z",
     "os": "win32 10.0.26300",
     "browser": "157.0.8103.51",
     "renderer": "native Chrome WebGL2, software ANGLE",
@@ -123,5 +123,6 @@
   "hardware": {
     "status": "NOT RUN",
     "reason": "No Galaxy AR session or real VR hardware tested"
-  }
+  },
+  "browser_runner_note": "Latest local rerun after explicit canvas/host layout synchronization; 6 scenarios PASS. CI rerun failure retained in acceptance."
 }

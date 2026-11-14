@@ -1,6 +1,6 @@
 # Nghiệm thu M0-B2 — nền tảng ứng dụng
 
-Ngày 14/11/2026. Nhánh `feat/m0-b2-app-foundation`, base `3ebd2ec780db80caacd5871ecda911236598f9be`. PR [#8](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/8) chưa merge. Source/test/workflow commit được kiểm: `4c6ad13bb138924f9be13a11bb936893fc6935cc`; commit tiếp theo chỉ chốt tài liệu/evidence. Latest HEAD kiểm trực tiếp qua PR checks để tránh tự tham chiếu SHA trong chính commit. M1 NOT STARTED, MT1–MT3 chưa đạt. [Bằng chứng local](evidence/m0-b2-local.json) ghi environment, lệnh, exit code và kết quả thực.
+Ngày 14/11/2026. Nhánh `feat/m0-b2-app-foundation`, base `3ebd2ec780db80caacd5871ecda911236598f9be`. PR [#8](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/8) chưa merge. Source/test/workflow commit được kiểm: `4c6ad13bb138924f9be13a11bb936893fc6935cc`; follow-up chốt tài liệu/evidence và sửa race layout trong browser runner; source nghiệp vụ không đổi. Latest HEAD kiểm trực tiếp qua PR checks để tránh tự tham chiếu SHA trong chính commit. M1 NOT STARTED, MT1–MT3 chưa đạt. [Bằng chứng local](evidence/m0-b2-local.json) ghi environment, lệnh, exit code và kết quả thực.
 
 ## Checklist
 
@@ -43,11 +43,13 @@ Chưa business CRUD, admin/auth, session persistence/tracking/export, WebSocket 
 
 ## CI đã quan sát thực tế
 
-[Bản ghi CI có SHA và từng job](evidence/m0-b2-ci.json). Các run bất biến dưới đây đều conclusion success trên source commit 4c6ad13; follow-up chỉ tài liệu và evidence, GitHub tự chạy lại trên HEAD mới trước bàn giao.
+[Bản ghi CI có SHA và từng job](evidence/m0-b2-ci.json). Các run bất biến dưới đây đều conclusion success trên source commit 4c6ad13; GitHub chạy lại trên từng HEAD; latest result kiểm qua PR checks trước bàn giao.
 
 - [Ứng dụng chính thức — PR run](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626704): Web typecheck/build/7unit/6browser PASS; API lint/import/14unit/1PostgreSQL PASS. Python3.13.18; Ubuntu24.04; Chrome157.0.8103.50; hash lock cài thành công trên Linux.
 - [M0-A regression](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626677): 2jobs syntax/unit/verifier/browser PASS.
 - [M0-B1 regression](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575626655): 2PoCbuilds + realbrowser/IWER PASS.
 - [Push app run và logs PostgreSQL đã đọc](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575569714): 2jobs PASS, browser report và3PNG đã tải kiểm tra. PRrun có artifact `m0-b2-browser-pull_request` trong phần Artifacts; chỉ report/ảnh ứng dụng, không profiles.
 
-Không có CI FAIL trong các run này; lỗi browser local selector đã sửa được ghi lịch sử ở trên. PostgreSQLlocal vẫn BLOCKED dù PGtrênCI PASS. Migration vẫn NOT RUN vì chưa có schema được duyệt. Local/CI screenshots đều viewport emulation/softwareWebGL, không chứng minh Galaxy/Quest hoặc KPI.
+Các run source đầu tiên đều PASS; lần PR rerun43575973680 trên commit0b14d0a FAIL do runner đọc canvas khi ResizeObserver chưa commit layout. Push run cùng commit PASS. Đã sửa runner chờ canvas/host cùng kích thước và hai animation frames, không giảm assertion hoặc skip; kết quả sau sửa theo latest PR checks. lỗi browser local selector đã sửa được ghi lịch sử ở trên. PostgreSQLlocal vẫn BLOCKED dù PGtrênCI PASS. Migration vẫn NOT RUN vì chưa có schema được duyệt. Local/CI screenshots đều viewport emulation/softwareWebGL, không chứng minh Galaxy/Quest hoặc KPI.
+
+Lịch sử CI race: [run lỗi layout](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43575973680), API/PG job vẫn PASS. Phần FAIL này thuộc test synchronization, được giữ bằng chứng thay vì che bằng retry tự động; browser runner đã bổ sung điều kiện chờ layout thật.

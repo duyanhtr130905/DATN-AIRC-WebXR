@@ -37,6 +37,19 @@ async function wait(url, child) {
   }
   throw new Error(`Service startup timeout: ${url}`);
 }
+async function waitForCanvasLayout(page, minimumWidth) {
+  // Canvas can exist at its initial 300x150 size before ResizeObserver commits.
+  // Wait for measurable host/canvas agreement instead of weakening the assertion or sleeping.
+  await page.waitForFunction(minimum => {
+    const canvas = document.querySelector("canvas");
+    const host = canvas?.closest(".scene");
+    if (!canvas || !host) return false;
+    const rect = canvas.getBoundingClientRect();
+    const bounds = host.getBoundingClientRect();
+    return rect.width > minimum && rect.height > 300 && Math.abs(rect.width - bounds.width) < 2;
+  }, minimumWidth);
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+}
 async function scenario(name, action) {
   const row = { scenario: name, expected: "Assertions pass", actual: "", status: "FAIL" };
   report.scenarios.push(row);
@@ -65,6 +78,7 @@ try {
     await page.getByTestId("health").filter({ hasText: "Backend đang hoạt động" }).waitFor();
     assert.match(await page.getByTestId("readiness").innerText(), /not_configured/);
     await page.locator("canvas").waitFor();
+    await waitForCanvasLayout(page, 400);
     const box = await page.locator("canvas").boundingBox(); assert.ok(box.width > 400);
     await page.getByRole("button", { name: /Khối mẫu A/ }).click();
     assert.equal(await page.getByRole("button", { name: /Khối mẫu A/ }).getAttribute("aria-pressed"), "true");
@@ -87,6 +101,7 @@ try {
     const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
     const p = await mobile.newPage(); p.on("pageerror", e => errors.push(e.message));
     await p.goto(`http://127.0.0.1:${webPort}`, { waitUntil: "networkidle" });
+    await waitForCanvasLayout(p, 300);
     await p.getByRole("button", { name: /Khối mẫu B/ }).tap();
     assert.equal(await p.getByRole("button", { name: /Khối mẫu B/ }).getAttribute("aria-pressed"), "true");
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth));

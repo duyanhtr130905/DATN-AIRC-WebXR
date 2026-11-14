@@ -26,3 +26,5 @@ Theo người dùng, thầy chỉ đạo “Cứ làm 1 phòng 507 trước”. 
 3. Chỉ sau phê duyệt M1: chốt schema/migration, catalog API + adapter có provenance; state/history/outbox và instrumentation latency. Không tự bắt đầu M1.
 
 PR bàn giao [#8](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/8). Ba PR workflows PASS trên source commit4c6ad13, gồm PostgreSQL18.7 integration thật; latest HEAD checks được xác minh trước bàn giao. [Bản ghi CI](evidence/m0-b2-ci.json). PostgreSQL local vẫn BLOCKED; schema migration NOT RUN.
+
+Một PR rerun trên0b14d0a gặp race ResizeObserver trong browser assertion, đã sửa runner chờ layout canvas/host ổn định; giữ assertion và toàn bộ jobs. Lịch sử ở acceptance; latest HEAD phải PASS trước bàn giao.
