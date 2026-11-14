@@ -1,0 +1,49 @@
+# Danh sách file bàn giao M0-A
+
+45 file thuộc bộ bàn giao sau review fixes PR #6. Bao gồm workflow, browser driver/tests portable, report local/CI và ảnh checker thật; không có dữ liệu khảo sát AIRC, Chrome profile/cache hoặc dependencies sản phẩm.
+
+- `.gitattributes`
+- `.github/pull_request_template.md`
+- `.github/workflows/m0-validation.yml`
+- `.gitignore`
+- `.techlead/project.yaml`
+- `AGENTS.md`
+- `README.md`
+- `docs/01-project-charter.md`
+- `docs/02-requirements-kpi.md`
+- `docs/03-risk-register.md`
+- `docs/04-airc-survey-checklist.md`
+- `docs/05-data-source-strategy.md`
+- `docs/06-device-feasibility.md`
+- `docs/07-technology-research.md`
+- `docs/08-ui-ux-research.md`
+- `docs/09-architecture-options.md`
+- `docs/10-m0-acceptance.md`
+- `docs/PROJECT_STATUS.md`
+- `docs/backlog/01-airc-rooms.md`
+- `docs/backlog/02-airc-survey.md`
+- `docs/backlog/03-data-rights.md`
+- `docs/backlog/04-galaxy-ar.md`
+- `docs/backlog/05-vr-acceptance.md`
+- `docs/backlog/README.md`
+- `docs/decisions/0000-template.md`
+- `docs/decisions/0001-technology-options.md`
+- `docs/evidence/browser-not-run.json`
+- `docs/evidence/browser-smoke.json`
+- `docs/evidence/checker-390.png`
+- `docs/evidence/ci-browser-smoke.json`
+- `docs/evidence/m0-validation.md`
+- `docs/file-inventory.md`
+- `docs/research/sources.md`
+- `docs/research/versions.json`
+- `tools/verify_repository.py`
+- `tools/webxr-capability-check/README.md`
+- `tools/webxr-capability-check/checker.js`
+- `tools/webxr-capability-check/index.html`
+- `tools/webxr-capability-check/styles.css`
+- `tools/webxr-capability-check/tests/browser-driver.cjs`
+- `tools/webxr-capability-check/tests/browser-smoke.html`
+- `tools/webxr-capability-check/tests/browser-smoke.js`
+- `tools/webxr-capability-check/tests/checker.test.cjs`
+- `tools/webxr-capability-check/tests/run_browser_smoke.py`
+- `tools/webxr-capability-check/tests/test_runner.py`

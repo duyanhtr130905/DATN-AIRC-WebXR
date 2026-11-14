@@ -1,0 +1,33 @@
+{
+  "schema_version": 2,
+  "executed_at": "2026-11-14T12:36:54+07:00",
+  "environment": {
+    "os": "Windows",
+    "release": "11",
+    "python": "3.13.2",
+    "ci": false
+  },
+  "status": "NOT RUN",
+  "scenarios": [
+    {
+      "id": "runtime-discovery",
+      "kind": "environment",
+      "status": "NOT RUN",
+      "expected": "An existing Chrome/Chromium executable and Node >=22 are available.",
+      "actual": {
+        "browser_found": false,
+        "node_found": true
+      }
+    }
+  ],
+  "hardware": {
+    "status": "NOT RUN",
+    "reason": "No physical AR/VR device tested."
+  },
+  "reason": "Không tìm thấy Chrome/Chromium hoặc Node >=22. Đặt CHROME_BIN hoặc thêm browser/Node vào PATH; runner không tự cài đặt.",
+  "cleanup": {
+    "browser_stopped": true,
+    "server_closed": true,
+    "temporary_profile_removed": true
+  }
+}

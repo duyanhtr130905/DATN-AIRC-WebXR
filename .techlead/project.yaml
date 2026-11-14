@@ -1,0 +1,17 @@
+name: DATN-AIRC-WebXR
+workspace: 'D:\Code\DATN'
+mode: initialize
+scale: small
+milestone: M0-A
+status: ready-for-review
+language: vi
+scope_authority: user-task-2026-11-14
+stack: PROPOSED
+architecture: PROPOSED
+charter: docs/01-project-charter.md
+requirements: docs/02-requirements-kpi.md
+risks: docs/03-risk-register.md
+architecture_options: docs/09-architecture-options.md
+acceptance: docs/10-m0-acceptance.md
+status_document: docs/PROJECT_STATUS.md
+next_gate: human-review-no-M1-without-approval
