@@ -14,3 +14,5 @@ Cập nhật 14/11/2026. Root D:\Code\DATN; repo duyanhtr130905/DATN-AIRC-WebXR;
 Giới hạn: một API process, multiinstancebroadcast chưa hỗ trợ; metrics20 samples loopback không source-to-render. LocalPostgreSQL BLOCKED, không tự cài/SQLite. PhysicalGalaxy/VR NOT RUN. Auth/retention/hosting/data rights/domain metadata/VR acceptance vẫn chưa chốt. Outbox retained/exhausted cần operations policy sau; không xóa DB/volume hoặc destructive downgrade.
 
 Thầy chỉ đạo phòng 507 trước, chưa khảo sát/inventory/ảnh/sơ đồ/kích thước/nguồn/quyền vàchưa phần mềm thiết bị. Synthetic DEMO không phải507. KPI≥3phòng chưa điều chỉnh, MT1–MT3 chưa nghiệm thu; Issues1–5 giữ mở. Sau ChatGPT review và phê duyệt mới bắt đầu M1-C.
+
+Cập nhật regression pool: a1ac798 PASS 38 unit +48 PG tests, thêm actual worker drain trước dispose; full M0/PoC/frontend PASS. Snapshot metrics source320c3bc giữ nguyên; latest HEAD checks xác minh khi bàn giao. [Chi tiết48tests và lịch sử CI race](17-m1-b-state-realtime-acceptance.md).

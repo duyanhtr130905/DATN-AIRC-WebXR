@@ -18,7 +18,7 @@ Ngày 14/11/2026, [PR#10](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull
 | Database disconnect/outage | PASS | terminate backend rollback; WS safe error khi unique disposable DB bị chặn kết nối, restorefinally và reconnect snapshot thành công |
 | Cleanup/shutdown | PASS | subscriptions/receive task/server thread/listener vàpool scopes được dọn; startup failure cófinally; unit fault injection stop lỗi vẫn dispose |
 | Backend lint/import/unit | PASS |38 unit,ruff/compileall/import exit0; TestClient/httpx warning giữ nguyên |
-| PostgreSQL suite | PASS |47 passed,0 failure,0 error,0 skipped; actual JUnit artifact đã tải kiểm |
+| PostgreSQL suite | PASS |48 passed,0 failure,0 error,0 skipped; actual JUnit artifact đã tải kiểm |
 | Frontend/M0-A/PoC A+B regression | PASS | web typecheck/build/7unit/6browser; M0 checker vàhai PoC build/domain/WebGL/IWER; source frontend không đổi |
 | Secret/internal links/whitespace | PASS | verifier,git diff --check; không phải full security audit |
 | Local PostgreSQL | BLOCKED | không có Docker/PG, không tự cài hoặc dùngSQLite thay bằng chứng |
@@ -77,3 +77,9 @@ Làm rõ bounded delivery: retry hữu hạn và lease có thể dẫn tới x�
 ## CI race phát hiện sau khi chốt tài liệu
 
 [Push run43586074060](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586074060) trên ecdd09d có46PGPASS/1FAIL: test readiness M0-B2 yêu cầu pool0 trong khi dispatcher mới đang dùng connection hợp lệ. PR run cùng commit PASS. Sửa isolation cho test đọc Catalog/readiness bằng REALTIME_DISPATCHER_ENABLED=False, giữ toàn bộ assertion/schema/API coverage; bổ sung test PG worker thật stop/drain trả pool0 trước dispose. Đây không phải bỏ migration drift test hoặc skip lỗi. Source snapshot47tests phía trên là lịch sử; số mới48tests cần CI xác minh trước bàn giao.
+
+## Kết quả sau sửa isolation — 48 tests
+
+Source a1ac798 đã PASS 38 unit + 48 PostgreSQL tests, JUnit 0 failures/0 errors/0 skipped. [App PR run43586319811](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319811), [M0 run43586319812](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319812), [PoC run43586319809](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319809), [push run43586316023](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586316023) đều success. Evidence có mục regression_after_pool_isolation; metrics20mẫu và tên47tests ở snapshot320c3bc được giữ lịch sử đúngSHA, không thay hoặc trộn số liệu.
+
+Follow-up đặt rõ realtime_dispatcher_enabled=True trong actualTCP/drain fixtures và assert task tồn tại trước stop, tránh environment bên ngoài làm test vô tình tắt worker. Không đổi implementation nghiệp vụ. Các Catalog/readiness assertions vẫn nguyên; không che migration drift hoặc skip. Latest HEAD chạy lại CI và được xác minh trước bàn giao.

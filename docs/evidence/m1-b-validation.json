@@ -387,5 +387,109 @@
   "artifacts": {
     "postgres_metrics": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43585383896/artifacts/14109659900",
     "browser": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43585383896/artifacts/14109837373"
+  },
+  "regression_after_pool_isolation": {
+    "verified_at": "2026-11-14T13:01:36.618223+00:00",
+    "tested_commit": "a1ac7986a3e0819c489f9b308462d2c1023bc8a0",
+    "unit": 38,
+    "postgres_tests": 48,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "runs": [
+      {
+        "conclusion": "success",
+        "event": "pull_request",
+        "headSha": "a1ac7986a3e0819c489f9b308462d2c1023bc8a0",
+        "jobs": [
+          {
+            "name": "API unit, real PostgreSQL and lifecycle",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319811/job/132421470625"
+          },
+          {
+            "name": "Web typecheck, build, unit and browser",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319811/job/132421470868"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319811"
+      },
+      {
+        "conclusion": "success",
+        "event": "pull_request",
+        "headSha": "a1ac7986a3e0819c489f9b308462d2c1023bc8a0",
+        "jobs": [
+          {
+            "name": "Syntax, unit tests and repository checks",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319812/job/132421470546"
+          },
+          {
+            "name": "Browser smoke and viewport evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319812/job/132421470711"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319812"
+      },
+      {
+        "conclusion": "success",
+        "event": "pull_request",
+        "headSha": "a1ac7986a3e0819c489f9b308462d2c1023bc8a0",
+        "jobs": [
+          {
+            "name": "Build and domain tests (poc-b-iwsdk)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319809/job/132421470442"
+          },
+          {
+            "name": "Build and domain tests (poc-a-r3f-xr)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319809/job/132421470544"
+          },
+          {
+            "name": "Real WebGL browser A/B and IWER",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319809/job/132421605989"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586319809"
+      },
+      {
+        "conclusion": "success",
+        "event": "push",
+        "headSha": "a1ac7986a3e0819c489f9b308462d2c1023bc8a0",
+        "jobs": [
+          {
+            "name": "API unit, real PostgreSQL and lifecycle",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586316023/job/132421459250"
+          },
+          {
+            "name": "Web typecheck, build, unit and browser",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586316023/job/132421459547"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586316023"
+      }
+    ],
+    "reason": "Catalog/readiness assertions isolated from legitimate active worker; separate PostgreSQL test verifies worker drain before dispose",
+    "failed_prior_run": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43586074060",
+    "metrics_note": "Raw 20-sample metrics remain the immutable source320c3bc snapshot; no merge of measurements"
   }
 }

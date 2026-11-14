@@ -312,7 +312,9 @@ def test_latest_exhausted_delta_requires_resync_and_gap(state_database):
 @pytest.fixture
 def live_server(state_database):
     database, url = state_database
-    application = create_app(Settings(_env_file=None, database_url=url))
+    application = create_app(
+        Settings(_env_file=None, database_url=url, realtime_dispatcher_enabled=True)
+    )
     listener = socket.socket()
     listener.bind(("127.0.0.1", 0))
     port = listener.getsockname()[1]
@@ -754,8 +756,11 @@ def test_actual_rollback_never_emits_websocket_delta(live_server):
 def test_actual_dispatcher_drains_connections_before_dispose(state_database):
     database, url = state_database
     change(database, 0)
-    application = create_app(Settings(_env_file=None, database_url=url))
+    application = create_app(
+        Settings(_env_file=None, database_url=url, realtime_dispatcher_enabled=True)
+    )
     with TestClient(application) as client:
+        assert application.state.dispatcher.task is not None
         assert client.get("/api/ready").status_code == 200
         client.portal.call(application.state.dispatcher.stop)
         assert application.state.dispatcher.task is None
