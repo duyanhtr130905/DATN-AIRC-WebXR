@@ -1,5 +1,7 @@
 # 07 — Technology research
 
+> Ghi chú lịch sử: nội dung M0-A dưới đây là snapshot trước PoC. M0-B1 nay có cài/build/package được thử; xem [comparison](11-renderer-poc-comparison.md). Kiến trúc/framework/UI sản phẩm vẫn PROPOSED.
+
 **PROPOSED, chưa chọn framework.** Nghiên cứu ngày 14/11/2026, chỉ đọc tài liệu/registry/metadata; chưa cài hay build hai stack. [Sổ nguồn](research/sources.md) và [snapshot](research/versions.json) ghi chi tiết kiểm chứng.
 
 ## Snapshot phiên bản và maintenance

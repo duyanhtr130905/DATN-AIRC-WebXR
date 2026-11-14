@@ -24,3 +24,7 @@ A cần kiểm tra peer/dependency và license exact XR package. B cần đo bri
 ## Phê duyệt
 
 Chưa có; không có quyết định ACCEPTED. Bổ sung bằng chứng PoC và link phản hồi người duyệt trước thay trạng thái.
+
+## Bằng chứng PoC M0-B1 — chưa phê duyệt
+
+Task người dùng ngày 14/11/2026 cho phép thực nghiệm hai renderer. [So sánh chạy thật](../11-renderer-poc-comparison.md) bổ sung evidence, khuyến nghị A cho bước thử DOM/metadata tiếp theo, không phải quyết định framework. Trạng thái ADR giữ PROPOSED; chưa có chấp thuận ACCEPTED hoặc bắt đầu M1.

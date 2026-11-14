@@ -10,3 +10,12 @@ __pycache__/
 Thumbs.db
 .local/
 artifacts/private/
+
+# Local-only PoC output
+**/dist/
+**/.vite/
+**/test-results/
+**/playwright-report/
+
+# IWSDK local runtime/editor metadata may include development credentials
+**/.iwsdk/

@@ -39,3 +39,9 @@ Thông tin người dùng cung cấp ngày 14/11/2026 từ anh Nguyễn Tiến N
 Phương án đề xuất cho milestone được duyệt sau này: người có quyền dùng trang quản trị để nhập inventory/thông tin trưng bày và cập nhật tình trạng; validation + audit/provenance, thời điểm quan sát thực, thời điểm nhập/xác nhận và revision. Server phát thay đổi đến các client đang xem qua cơ chế realtime đã được duyệt. **Chưa triển khai trang quản trị hay database.**
 
 Phân biệt hai khoảng thời gian: (1) thay đổi ngoài đời → người phụ trách quan sát/nhập, có thể chậm và chưa được đo; (2) thao tác cập nhật hợp lệ trong hệ thống → client hiển thị, có thể đo riêng. Realtime cho (2) không phải dữ liệu tự động từ hệ thống AIRC và không chứng minh tổng độ trễ từ thay đổi ngoài đời ≤5 giây. Ranh giới nguồn/timestamp cho MT1 phải được giảng viên duyệt minh bạch; không tự thay KPI. UI cần nhãn “cập nhật thủ công”, observed_at/last_updated và stale/unknown khi thiếu xác nhận.
+
+## M0-B1 — chỉ đạo phòng 507 và PoC synthetic (14/11/2026)
+
+Theo thông tin người dùng cung cấp, giảng viên chỉ đạo “Cứ làm 1 phòng 507 trước.” Phòng 507 là phạm vi triển khai đầu tiên; KPI ≥3 phòng chưa được điều chỉnh chính thức, Issue #1 vẫn BLOCKED về phạm vi nghiệm thu cuối. Dự kiến khảo sát khoảng 16/11/2026, chưa có số đo/ảnh/sơ đồ/inventory/quyền dữ liệu. Không giả lập 507 rồi coi là dữ liệu thật, không chia phòng giả.
+
+Task M0-B1 đã cho phép hai PoC trong experiments/ dùng chung 1 room/5 objects synthetic; đây là thử nghiệm renderer/UI, không phải sản phẩm hoặc M1. Framework, kiến trúc, UX và contract vẫn PROPOSED. [Kết quả và giới hạn](11-renderer-poc-comparison.md). Chưa có quản trị, API/DB/auth/WebSocket production; không mặc định AIRC có phần mềm/API thiết bị.

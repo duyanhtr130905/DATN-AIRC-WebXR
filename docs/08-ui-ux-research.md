@@ -1,5 +1,7 @@
 # 08 — UI/UX research
 
+> Ghi chú lịch sử: nội dung M0-A dưới đây là snapshot trước PoC. M0-B1 nay có hai mode UI đã chạy; xem [comparison](11-renderer-poc-comparison.md). Kiến trúc/framework/UI sản phẩm vẫn PROPOSED.
+
 Trạng thái: PROPOSED. Ngày 14/11/2026. Đây là desk research từ nguồn sản phẩm; không phải usability test hoặc thiết kế giao diện chính thức. Chưa thao tác tour XR trên thiết bị thật. Nhận xét áp dụng AIRC là suy luận thiết kế.
 
 ## Sản phẩm tham khảo

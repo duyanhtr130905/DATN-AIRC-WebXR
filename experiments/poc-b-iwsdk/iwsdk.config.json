@@ -1,0 +1,32 @@
+{
+  "version": "iwsdk.project.v1",
+  "scene": "public/scenes/empty.iwsdk.scene.json",
+  "world": {
+    "xr": {
+      "mode": "vr",
+      "offer": "none"
+    },
+    "features": {
+      "spatialUI": false,
+      "locomotion": false,
+      "grabbing": false,
+      "physics": false,
+      "camera": false
+    },
+    "render": {
+      "camera": {
+        "position": [10, 9, 14],
+        "lookAt": [0, 0.4, 0]
+      },
+      "fov": 50
+    }
+  },
+  "dev": {
+    "emulator": {
+      "iwer": true,
+      "device": "metaQuest3",
+      "activation": "localhost",
+      "injectOnBuild": false
+    }
+  }
+}

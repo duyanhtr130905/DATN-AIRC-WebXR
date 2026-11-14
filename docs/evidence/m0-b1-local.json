@@ -1,0 +1,118 @@
+{
+  "executed_at": "2026-11-14T07:03:35.382Z",
+  "os": "win32",
+  "node": "v22.16.0",
+  "scenario_scope": "Synthetic primitives only; desktop software WebGL and viewport emulation, not Galaxy/headset performance.",
+  "results": [
+    {
+      "project": "poc-a-r3f-xr",
+      "scenario": "desktop-main-flows",
+      "status": "PASS",
+      "expected": "Real canvas pick, state update, ECS projection (B), orbit/reset, guided next, native XR fallback; no startup session/camera/runtime exception.",
+      "actual": {
+        "readyMs": 1126,
+        "info": {
+          "calls": 14,
+          "triangles": 146
+        },
+        "before": "Sẵn sàng · DEMO",
+        "after": "Bảo trì · DEMO"
+      },
+      "screenshots": [
+        "poc-a-r3f-xr-guided-desktop.png",
+        "poc-a-r3f-xr-panel-desktop.png"
+      ]
+    },
+    {
+      "project": "poc-a-r3f-xr",
+      "scenario": "webgl-unsupported",
+      "status": "PASS",
+      "expected": "Readable error, no scene",
+      "actual": "WebGL2 error displayed (controlled failure path)"
+    },
+    {
+      "project": "poc-a-r3f-xr",
+      "scenario": "mobile-touch-and-layout",
+      "status": "PASS",
+      "expected": "390px no overflow, actual canvas touch, object list tap, state update, focus; viewport emulation only",
+      "actual": {
+        "width": 390,
+        "scroll": 390
+      },
+      "screenshots": [
+        "poc-a-r3f-xr-panel-mobile.png"
+      ]
+    },
+    {
+      "project": "poc-a-r3f-xr",
+      "scenario": "iwer-lifecycle-and-input-sources",
+      "status": "PASS",
+      "expected": "Explicit VR entry, IWER input sources >0, exit returns browser-first; no physical hardware claim",
+      "actual": {
+        "active": true,
+        "inputs": 2
+      },
+      "unverified": "Controller ray target selection, locomotion/comfort and physical hardware not tested",
+      "runtimeErrors": [],
+      "screenshots": [
+        "poc-a-r3f-xr-iwer.png"
+      ]
+    },
+    {
+      "project": "poc-b-iwsdk",
+      "scenario": "desktop-main-flows",
+      "status": "PASS",
+      "expected": "Real canvas pick, state update, ECS projection (B), orbit/reset, guided next, native XR fallback; no startup session/camera/runtime exception.",
+      "actual": {
+        "readyMs": 1174,
+        "info": {
+          "calls": 14,
+          "triangles": 146
+        },
+        "before": "Sẵn sàng · DEMO",
+        "after": "Bảo trì · DEMO"
+      },
+      "screenshots": [
+        "poc-b-iwsdk-guided-desktop.png",
+        "poc-b-iwsdk-panel-desktop.png"
+      ]
+    },
+    {
+      "project": "poc-b-iwsdk",
+      "scenario": "webgl-unsupported",
+      "status": "PASS",
+      "expected": "Readable error, no scene",
+      "actual": "WebGL2 error displayed (controlled failure path)"
+    },
+    {
+      "project": "poc-b-iwsdk",
+      "scenario": "mobile-touch-and-layout",
+      "status": "PASS",
+      "expected": "390px no overflow, actual canvas touch, object list tap, state update, focus; viewport emulation only",
+      "actual": {
+        "width": 390,
+        "scroll": 390
+      },
+      "screenshots": [
+        "poc-b-iwsdk-panel-mobile.png"
+      ]
+    },
+    {
+      "project": "poc-b-iwsdk",
+      "scenario": "iwer-lifecycle-and-input-sources",
+      "status": "PASS",
+      "expected": "Explicit VR entry, IWER input sources >0, exit returns browser-first; no physical hardware claim",
+      "actual": {
+        "active": true,
+        "inputs": 2
+      },
+      "unverified": "Controller ray target selection, locomotion/comfort and physical hardware not tested",
+      "runtimeErrors": [],
+      "screenshots": [
+        "poc-b-iwsdk-iwer.png"
+      ]
+    }
+  ],
+  "browser": "157.0.8103.51",
+  "status": "PASS"
+}

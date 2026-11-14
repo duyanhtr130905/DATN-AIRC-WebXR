@@ -6,12 +6,12 @@
 - Không truy cập, đọc, chỉnh sửa, sao chép, fork hay dùng dữ liệu/mã/tài liệu của KLTN-Factory-Agentic-DT. Không dùng repository cũ làm template.
 - Trước mọi thao tác ghi GitHub: kiểm tra `Get-Location`, `git rev-parse --show-toplevel`, `git remote -v`, `git branch --show-current`, `git status --short`, diff và secret. Sai root/remote thì dừng.
 - Không force push, merge PR, xóa nhánh/repo, thay visibility, deploy hoặc bắt đầu M1 nếu chưa được yêu cầu. Không sửa Git global config; không cài công cụ hệ thống nếu không cần.
-- M0 chỉ tài liệu nghiên cứu và công cụ capability check độc lập; không scaffold sản phẩm, database, AI/RAG. Không tự chốt framework, schema, kiến trúc hoặc thay KPI.
+- M0-A chỉ tài liệu và checker; task M0-B1 ngày 14/11/2026 cho phép hai PoC cô lập trong experiments/ và test tooling dùng dữ liệu synthetic. Không scaffold sản phẩm, database, AI/RAG. Không tự chốt framework, schema, kiến trúc hoặc thay KPI.
 
 ## Quy trình
 
 1. Đọc README, `docs/PROJECT_STATUS.md`, task hiện hành và ADR liên quan; giữ thay đổi người dùng.
-2. Branch theo task; M0 dùng `docs/m0-foundation`, PR vào `main`. Commit nhỏ, mô tả đúng nội dung.
+2. Branch theo task; M0-A dùng `docs/m0-foundation`; M0-B1 dùng `feat/m0-b1-renderer-poc`, PR vào `main`. Commit nhỏ, mô tả đúng nội dung.
 3. Ưu tiên nguồn chính thức; ghi URL, ngày truy cập, phiên bản và giới hạn. Ghi VERIFIED/PROPOSED/BLOCKED/NOT TESTED đúng nghĩa.
 4. Chỉ sửa trong phạm vi task. Thay đổi kiến trúc đã duyệt cần ADR và phê duyệt mới; không ghi ACCEPTED khi chưa có người duyệt.
 5. Test tương xứng; `node --check tools/webxr-capability-check/checker.js`, `node --test tools/webxr-capability-check/tests/checker.test.cjs`, `python tools/verify_repository.py`, `git diff --check`. Chạy browser smoke khi có môi trường.

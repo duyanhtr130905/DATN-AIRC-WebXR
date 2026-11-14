@@ -56,3 +56,9 @@ Có danh sách phòng xác nhận, quyền sử dụng, bộ đo/ảnh có prove
 - Có thể cân nhắc dựng không gian theo quan sát trực quan, không nhất thiết đo quá chi tiết. Đây là đề xuất phương pháp cần giảng viên duyệt và ghi giới hạn độ chính xác; không phải khảo sát đã xong.
 
 Giữ nguyên KPI ≥3 phòng, không chia phòng 507 thành ba phòng giả, không tự kết luận một phòng là đủ. Không đăng ảnh hội thoại cá nhân. Không thay các lựa chọn công nghệ PROPOSED hoặc triển khai quản trị/database ở M0.
+
+## M0-B1 — chỉ đạo phòng 507 và PoC synthetic (14/11/2026)
+
+Theo thông tin người dùng cung cấp, giảng viên chỉ đạo “Cứ làm 1 phòng 507 trước.” Phòng 507 là phạm vi triển khai đầu tiên; KPI ≥3 phòng chưa được điều chỉnh chính thức, Issue #1 vẫn BLOCKED về phạm vi nghiệm thu cuối. Dự kiến khảo sát khoảng 16/11/2026, chưa có số đo/ảnh/sơ đồ/inventory/quyền dữ liệu. Không giả lập 507 rồi coi là dữ liệu thật, không chia phòng giả.
+
+Task M0-B1 đã cho phép hai PoC trong experiments/ dùng chung 1 room/5 objects synthetic; đây là thử nghiệm renderer/UI, không phải sản phẩm hoặc M1. Framework, kiến trúc, UX và contract vẫn PROPOSED. [Kết quả và giới hạn](11-renderer-poc-comparison.md). Chưa có quản trị, API/DB/auth/WebSocket production; không mặc định AIRC có phần mềm/API thiết bị.

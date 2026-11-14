@@ -4,7 +4,11 @@
 
 AIRC là Trung tâm Nghiên cứu tiên tiến quốc tế về Trí tuệ nhân tạo ứng dụng, thuộc Viện Công nghệ thông tin – ĐHQGHN (bối cảnh do chủ đề cung cấp).
 
-## Trạng thái
+## Trạng thái hiện tại — M0-B1
+
+PR #6 (M0-A) đã merge; đang thử hai PoC synthetic, chưa triển khai sản phẩm. Xem [prototype và lệnh chạy](experiments/README.md) và [so sánh A/B](docs/11-renderer-poc-comparison.md). Một phòng DEMO/năm object không phải phòng 507, không chứng minh KPI sản phẩm. Chỉ đạo mới: làm phòng 507 trước, survey dự kiến 16/11/2026; KPI ≥3 phòng vẫn chờ giải quyết chính thức.
+
+## Mốc nền tảng trước đó
 
 M0-A — Foundation & Feasibility, ngày 14/11/2026. Chưa khảo sát chi tiết, chưa có dữ liệu thực AIRC, chưa xác nhận đủ ba phòng. Theo trao đổi mới do người dùng cung cấp, giảng viên cho biết hiện chỉ có phòng 507; đang chờ xác nhận phạm vi chính thức để xử lý mâu thuẫn KPI ≥3 phòng, không tự điều chỉnh KPI. Chưa có frontend/backend sản phẩm, cơ sở dữ liệu, AR scene hoặc VR trải nghiệm. Framework và kiến trúc chưa được phê duyệt. Dự án độc lập hoàn toàn với KLTN-Factory-Agentic-DT, không sử dụng tài sản của dự án đó.
 
@@ -35,7 +39,7 @@ Các phân hệ chỉ là đề xuất: không gian/3D assets, tương tác & XR
 | Danh sách toàn bộ file | [Inventory](docs/file-inventory.md) |
 | Tiếp tục công việc | [Project status](docs/PROJECT_STATUS.md) |
 
-## Công cụ duy nhất ở M0
+## Công cụ nền tảng M0-A
 
 [WebXR capability check](tools/webxr-capability-check/README.md): HTML/JS tĩnh, không dependency, không camera, không telemetry. Chỉ kiểm tra API; kết quả `true` không chứng minh ARCore, hit-test, tracking, FPS hoặc trải nghiệm AR/VR hoạt động đầy đủ.
 

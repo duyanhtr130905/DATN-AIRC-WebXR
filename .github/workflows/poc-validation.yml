@@ -1,0 +1,74 @@
+name: M0-B1 PoC validation
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feat/m0-b1-renderer-poc]
+permissions:
+  contents: read
+concurrency:
+  group: poc-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    name: Build and domain tests (${{ matrix.poc }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        poc: [poc-a-r3f-xr, poc-b-iwsdk]
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    defaults:
+      run:
+        working-directory: experiments/${{ matrix.poc }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-fund
+      - run: npm run build
+      - run: npm test
+  browser:
+    name: Real WebGL browser A/B and IWER
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      CHROME_BIN: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Install isolated packages without downloading browsers
+        run: |
+          npm ci --ignore-scripts --no-fund --prefix experiments/poc-a-r3f-xr
+          npm ci --ignore-scripts --no-fund --prefix experiments/poc-b-iwsdk
+          npm ci --ignore-scripts --no-fund --prefix experiments/browser-tests
+      - name: Build actual previews
+        run: |
+          npm run build --prefix experiments/poc-a-r3f-xr
+          npm run build --prefix experiments/poc-b-iwsdk
+      - name: Mouse, touch, metadata, responsive, errors and IWER
+        run: npm test --prefix experiments/browser-tests
+      - name: Upload only test report and screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: m0-b1-browser-${{ github.event_name }}
+          path: |
+            .local/poc-browser/report.json
+            .local/poc-browser/*.png
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error

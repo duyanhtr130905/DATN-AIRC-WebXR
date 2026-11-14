@@ -1,10 +1,11 @@
-# Danh sách file bàn giao M0-A
+# File inventory — M0-B1
 
-45 file thuộc bộ bàn giao sau review fixes PR #6. Bao gồm workflow, browser driver/tests portable, report local/CI và ảnh checker thật; không có dữ liệu khảo sát AIRC, Chrome profile/cache hoặc dependencies sản phẩm.
+75 file source/docs/config/evidence non-ignored. Build output, node_modules, .local và .iwsdk metadata không thuộc bàn giao.
 
 - `.gitattributes`
 - `.github/pull_request_template.md`
 - `.github/workflows/m0-validation.yml`
+- `.github/workflows/poc-validation.yml`
 - `.gitignore`
 - `.techlead/project.yaml`
 - `AGENTS.md`
@@ -19,6 +20,7 @@
 - `docs/08-ui-ux-research.md`
 - `docs/09-architecture-options.md`
 - `docs/10-m0-acceptance.md`
+- `docs/11-renderer-poc-comparison.md`
 - `docs/PROJECT_STATUS.md`
 - `docs/backlog/01-airc-rooms.md`
 - `docs/backlog/02-airc-survey.md`
@@ -32,10 +34,38 @@
 - `docs/evidence/browser-smoke.json`
 - `docs/evidence/checker-390.png`
 - `docs/evidence/ci-browser-smoke.json`
+- `docs/evidence/m0-b1-local.json`
 - `docs/evidence/m0-validation.md`
 - `docs/file-inventory.md`
+- `docs/m0-b1-acceptance.md`
 - `docs/research/sources.md`
 - `docs/research/versions.json`
+- `experiments/README.md`
+- `experiments/browser-tests/package-lock.json`
+- `experiments/browser-tests/package.json`
+- `experiments/browser-tests/run.mjs`
+- `experiments/poc-a-r3f-xr/README.md`
+- `experiments/poc-a-r3f-xr/index.html`
+- `experiments/poc-a-r3f-xr/package-lock.json`
+- `experiments/poc-a-r3f-xr/package.json`
+- `experiments/poc-a-r3f-xr/src/main.tsx`
+- `experiments/poc-a-r3f-xr/tsconfig.json`
+- `experiments/poc-a-r3f-xr/vite.config.ts`
+- `experiments/poc-b-iwsdk/README.md`
+- `experiments/poc-b-iwsdk/index.html`
+- `experiments/poc-b-iwsdk/iwsdk.config.json`
+- `experiments/poc-b-iwsdk/package-lock.json`
+- `experiments/poc-b-iwsdk/package.json`
+- `experiments/poc-b-iwsdk/public/scenes/empty.iwsdk.scene.json`
+- `experiments/poc-b-iwsdk/src/main.tsx`
+- `experiments/poc-b-iwsdk/src/vite-env.d.ts`
+- `experiments/poc-b-iwsdk/tsconfig.json`
+- `experiments/poc-b-iwsdk/vite.config.ts`
+- `experiments/shared-fixtures/domain.ts`
+- `experiments/shared-fixtures/tests/domain.test.ts`
+- `experiments/shared-ui/Shell.tsx`
+- `experiments/shared-ui/diagnostics.d.ts`
+- `experiments/shared-ui/styles.css`
 - `tools/verify_repository.py`
 - `tools/webxr-capability-check/README.md`
 - `tools/webxr-capability-check/checker.js`
