@@ -8,6 +8,7 @@ from sqlalchemy.engine import make_url
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True)
 
+    realtime_dispatcher_enabled: bool = True
     database_url: SecretStr | None = None
     cors_origins: str = "http://127.0.0.1:5173,http://localhost:5173"
 

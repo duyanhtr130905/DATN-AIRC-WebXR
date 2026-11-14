@@ -1,3 +1,11 @@
+# Trạng thái dự án — M1-B
+
+M0-A/M0-B1/M0-B2 DONE; M1-A DONE, PR#9 merged99f65377746a0eb7c924b6493db3a8e4680a444d. M1-B IN PROGRESS trênfeat/m1-b-state-realtime (IN REVIEW khi bàn giao); M1-C NOT STARTED.
+
+Scope đượcduyệt: synthetic state/history/version/cursor/outbox, readREST/WebSocket/internalCLI; khôngpublicwrite hoặcsceneintegration. [Acceptance M1-B](17-m1-b-state-realtime-acceptance.md) ghi kiếntrúc/checks/giớihạn; PostgreSQLlocalBLOCKED, CIđangchuẩnbịchạy. ChưaAIRC507realdata, quyềnnguồn/inventory/survey; KPI≥3phòng vàMT1–MT3giữnguyên/chưanghiệmthu. GalaxyARsession/kínhVRchưatest; Issues1–5mở.
+
+## Trạng thái lịch sử M1-A
+
 # Trạng thái dự án — M1-A Catalog
 
 Cập nhật14/11/2026. Workspace D:\Code\DATN, repo duyanhtr130905/DATN-AIRC-WebXR, branch feat/m1-a-catalog. M0-B2 đã merge b4e4b910c9ed8cd43feeafccff66bbf3d5b6e811.

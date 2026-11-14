@@ -75,6 +75,7 @@ class Object(CatalogFields, Base):
     external_reference: Mapped[str | None] = mapped_column(String(256))
     __table_args__ = (
         *catalog_checks("objects"),
+        UniqueConstraint("id", "room_id", name="uq_object_id_room"),
         CheckConstraint("length(trim(type)) > 0", name="ck_objects_type"),
         CheckConstraint(
             "transform IS NULL OR (jsonb_typeof(transform) = 'object' AND "
@@ -83,3 +84,7 @@ class Object(CatalogFields, Base):
         ),
         Index("ix_objects_room_source_id", "room_id", "source_kind", "id"),
     )
+
+
+# Register the additional M1-B tables in the same Modular Monolith metadata.
+from app.database import state_models as state_models  # noqa: E402

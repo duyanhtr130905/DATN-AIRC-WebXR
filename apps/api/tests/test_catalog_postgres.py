@@ -84,14 +84,25 @@ def test_migration_empty_database_head_repeat_and_model_drift(catalog_database):
         output = StringIO()
         config = Config(str(API_ROOT / "alembic.ini"), stdout=output)
         config.attributes["connection"] = connection
-        assert set(inspect(connection).get_table_names()) == {"rooms", "objects", "alembic_version"}
+        assert set(inspect(connection).get_table_names()) == {
+            "rooms",
+            "objects",
+            "alembic_version",
+            "current_states",
+            "state_history",
+            "outbox",
+            "room_state_cursors",
+        }
         assert connection.scalar(select(func.count()).select_from(Room)) == 0
         assert connection.scalar(select(func.count()).select_from(Object)) == 0
         command.current(config)
-        assert "0001_catalog" in output.getvalue()
+        assert "0002_state_realtime" in output.getvalue()
         command.upgrade(config, "head")
         command.check(config)
-        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0001_catalog"
+        assert (
+            connection.scalar(text("SELECT version_num FROM alembic_version"))
+            == "0002_state_realtime"
+        )
         inspector = inspect(connection)
         assert inspector.get_foreign_keys("objects")[0]["options"]["ondelete"] == "RESTRICT"
         assert any(
@@ -378,7 +389,7 @@ def test_actual_cli_migration_and_seed_on_new_database():
             )
             assert result.returncode == 0, f"Alembic CLI {action[0]} failed; see isolated test"
             if action == ["current"]:
-                assert "0001_catalog (head)" in result.stdout
+                assert "0002_state_realtime (head)" in result.stdout
         for _ in range(2):
             result = subprocess.run(
                 [

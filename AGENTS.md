@@ -26,3 +26,7 @@ Xem apps/web/README.md và apps/api/README.md. Build/typecheck/unit/browser fron
 ## M1-A được phê duyệt
 
 Task M1-A cho phép Catalog rooms/objects, initial Alembic, read-only API và fixture synthetic riêng; branch feat/m1-a-catalog. Không M1-B/C, auth giả, write endpoints, state/session/event schema hoặc scene integration. User task mới thay giới hạn lịch sử chưa M1 ở trên. Không create_all/startup DDL/seed. Migration/seed phải xác nhận DB project dev/test loopback, không DROP/reset hoặc xóa volume. CI PostgreSQL riêng tạo database airc_test_catalog_UUID; TEST_DATABASE_URL chỉ base airc_foundation_test và AIRC_ALLOW_TEST_DATABASES=1. Chạy ruff/compileall/unit và toàn bộ PG migrations/constraints/API tests, giữ M0/PoC/frontend/browser regression.
+
+## M1-B được phê duyệt
+
+Task M1-B cho phép state/history/outbox/cursor, migration0002, internal synthetic service/CLI, readREST/WebSocket vàPG/TCP/concurrency tests. Branch feat/m1-b-state-realtime; không M1-C/publicwrites/authgiả/real507data. Giữ nguyên revision0001; assertion cũ vềhead/tables phải cập nhật đúng0002 nhưng giữ coverage Catalog. PGfaultinjection chỉunique disposable database đãguard, không đụng databasekhác. LocalPG khôngcó ghiBLOCKED, CIphảichạy thật.

@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feat/m0-b2-app-foundation, feat/m1-a-catalog]
+    branches: [feat/m0-b2-app-foundation, feat/m1-a-catalog, feat/m1-b-state-realtime]
 permissions:
   contents: read
 concurrency:
@@ -74,7 +74,7 @@ jobs:
       - run: python -c "import sys; sys.path.insert(0, 'apps/api'); from app.main import create_app; assert create_app().openapi()"
       - run: python -m pytest -q -m 'not postgres'
         working-directory: apps/api
-      - run: python -m pytest -v -m postgres --junitxml=../../.local/m1-a-postgres.xml
+      - run: python -m pytest -v -m postgres --junitxml=../../.local/m1-b-postgres.xml
         working-directory: apps/api
         env:
           AIRC_ALLOW_TEST_DATABASES: '1'
@@ -83,8 +83,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: m1-a-postgres-${{ github.event_name }}
-          path: .local/m1-a-postgres.xml
+          name: m1-b-postgres-${{ github.event_name }}
+          path: |
+            .local/m1-b-postgres.xml
+            .local/m1-b-metrics.json
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error

@@ -10,6 +10,9 @@ from starlette.exceptions import HTTPException
 from app.core.config import Settings
 from app.database.connection import Database
 from app.modules.catalog.router import router as catalog_router
+from app.modules.realtime.dispatcher import Broker, Dispatcher
+from app.modules.realtime.router import router as realtime_router
+from app.modules.state.router import router as state_router
 from app.modules.status import router
 
 
@@ -22,10 +25,18 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.database = database_factory(config)
+        app.state.origins = config.origins
+        app.state.broker = Broker()
+        app.state.dispatcher = Dispatcher(app.state.database.engine, app.state.broker)
+        if config.realtime_dispatcher_enabled and config.database_url is not None:
+            app.state.dispatcher.start()
         try:
             yield
         finally:
-            app.state.database.close()
+            try:
+                await app.state.dispatcher.stop()
+            finally:
+                app.state.database.close()
 
     application = FastAPI(title="DATN AIRC Foundation API", version="0.1.0", lifespan=lifespan)
     application.add_middleware(
@@ -68,4 +79,6 @@ def create_app(
 
     application.include_router(router)
     application.include_router(catalog_router)
+    application.include_router(realtime_router)
+    application.include_router(state_router)
     return application
