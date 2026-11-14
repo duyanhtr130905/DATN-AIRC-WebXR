@@ -1,3 +1,67 @@
+# M1-B — state và realtime dev runbook
+
+Chỉ project dev/test synthetic, không dữ liệu507 thật. Giữ setup Catalog bên dưới; cài lại requirements.lock có hash (thêm websockets17.4), PostgreSQL18 riêng nếu máy cóDocker. Không tự cài Docker/PG hoặc dùng DB không rõ nguồn gốc.
+
+Từ root D:\Code\DATN, sau khi xác nhận .env/DATABASE_URL trỏ loopback project dev **airc_foundation**:
+
+```powershell
+.local/api-venv/Scripts/python.exe -m pip install --require-hashes -r apps/api/requirements.lock
+.local/api-venv/Scripts/python.exe -m alembic -c apps/api/alembic.ini -x confirm_catalog_database=airc_foundation upgrade head
+$env:PYTHONPATH = 'D:/Code/DATN/apps/api'
+.local/api-venv/Scripts/python.exe -m app.modules.catalog.seed --confirm-database airc_foundation
+.local/api-venv/Scripts/python.exe -m uvicorn app.main:create_app --factory --app-dir apps/api --host 127.0.0.1 --port 8000 --workers 1 --ws websockets-sansio --ws-max-size 8192 --ws-max-queue 1 --timeout-graceful-shutdown 5
+```
+
+0002 nối0001, không seed lúc startup/migration, không create_all hoặc destructive downgrade. Giữ PostgreSQL volume, không reset/drop/prune. Linux dùng .local/api-venv/bin/python. .env thật ignored; không đưa credentials vàoVITE_ hoặc CLI report/Git. `REALTIME_DISPATCHER_ENABLED=false` tạm dừng worker để thử backlog, bật lại và restartAPI sẽ xử lý các lease/pending còn lại; không phải production kill-switch.
+
+## Update synthetic tường minh
+
+Chỉ sau seed generic DEMO Catalog, từ root với PYTHONPATH ở trên:
+
+```powershell
+.local/api-venv/Scripts/python.exe -m app.modules.state.cli --confirm-database airc_foundation --room-id 10000000-0000-4000-8000-000000000001 --target-kind object --target-id 20000000-0000-4000-8000-000000000001 --state-type equipment_status --expected-version 0 --value-file apps/api/examples/equipment-available.json
+.local/api-venv/Scripts/python.exe -m app.modules.state.cli --confirm-database airc_foundation --room-id 10000000-0000-4000-8000-000000000001 --target-kind object --target-id 20000000-0000-4000-8000-000000000001 --state-type equipment_status --expected-version 1 --value-file apps/api/examples/equipment-maintenance.json
+```
+
+JSON file được giới hạn4096bytes và phải resolve bên trong workspace; cách này tránh khác biệt native JSON quoting giữa PowerShell/Linux. Có thể dùng --value cho shell giữ nguyên JSON quoting. Các UUID là DEMO, không phòng507/thiết bị thật. CLI chỉ localhost/127.0.0.1, exactdatabaseconfirmation, dev/test allowlist và không URLquery override. Validation/expectedversion conflict làm rollback, không history/outbox mới. Service change_state phải được gọi trong Session.begin; không commit/publish trước transaction hoàn tất.
+
+Room schedule dùng target-kind room,target-id=room-id,value {"status":"free","activity":"DEMO"}; exhibit dùng object vàvalue {"title":"DEMO","text":"Synthetic"}. Chỉ source_kind synthetic; không sửa unknown/real_verified hoặc hidden parent. Không có public POST/PATCH/DELETE/API admin token.
+
+## Đọc và subscribe
+
+REST: GET /api/v1/objects/{UUID}/states, /api/v1/rooms/{UUID}/states, object state history theo docs14. WS ws://127.0.0.1:8000/ws/v1/state?room_id=10000000-0000-4000-8000-000000000001; client phải gửi Origin http://localhost:5173 hoặc origin đã cấu hình. Browser không tự phát mutation; dùng terminalCLI riêng để tạo update rồi nhận delta. Reconnect nhận freshsnapshot; gap/backpressure/stall cần reconnect, không tự apply message cũ.
+
+Ví dụ Python (một terminal riêng, venv cówebsockets):
+
+```python
+from websockets.sync.client import connect
+
+with connect(
+    "ws://127.0.0.1:8000/ws/v1/state?room_id=10000000-0000-4000-8000-000000000001",
+    origin="http://localhost:5173",
+) as ws:
+    print(ws.recv(timeout=5))  # snapshot
+    print(ws.recv(timeout=10))  # delta hoặc heartbeat sau khi CLI cập nhật
+```
+
+MộtAPIprocess duy nhất; không --workers>1 hoặc nhiềuinstance và không tuyên bố multiinstancebroadcast. Chưa auth/hosting/retention production. Không dùng metrics backend thay source-to-render scene.
+
+## Kiểm thử
+
+```powershell
+.local/api-venv/Scripts/python.exe -m ruff check apps/api
+.local/api-venv/Scripts/python.exe -m compileall -q apps/api/app apps/api/alembic apps/api/tests
+.local/api-venv/Scripts/python.exe -m pytest -q -m "not postgres" -c apps/api/pyproject.toml apps/api/tests
+```
+
+PostgreSQL suite từ apps/api với TEST_DATABASE_URL chỉbase loopbackairc_foundation_test và AIRC_ALLOW_TEST_DATABASES=1 (service riêng, không DB người dùng): pytest -v -m postgres --junitxml=../../.local/m1-b-postgres.xml. Suite tạo database UUID riêng, kiểm0001→0002 vàM1-A regression; state/writers/rollback/outbox retries/leases; TCP Uvicorn+websockets, snapshotrace/reconnect/gap/queuepressure và DBoutage. Fault injection chỉunique disposable DB: ALLOW_CONNECTIONS false vàterminate đúngdatname, restorefinally. Không DROP/reset database hoặc volume.
+
+.local/m1-b-metrics.json có20samples thật khi test thành công, monotonic timings vàbacklog/retries/subscribers; artifacts chỉJUnit/metrics/browserUI, khôngprofile/credentials. Local thiếuPG ghiBLOCKED; không dùngSQLite thay. [Acceptance M1-B](../../docs/17-m1-b-state-realtime-acceptance.md) ghi actualCI/metrics. Ctrl+C dừngAPI/dispatcher, Docker stop giữvolume.
+
+---
+
+## Runbook Catalog và foundation lịch sử
+
 # Catalog API + Alembic — M1-A
 
 Chạy từ D:\Code\DATN, Python3.13. Giữ setup FastAPI ở phần lịch sử bên dưới; sau npm/frontend không có thay đổi M1-A. Cài hashlock:

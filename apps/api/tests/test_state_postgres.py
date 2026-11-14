@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import socket
 import statistics
 import threading
@@ -653,3 +654,87 @@ def test_actual_websocket_database_outage_returns_safe_error(live_server):
         administrator.dispose()
     with connect(uri, origin="http://localhost:5173", open_timeout=5, close_timeout=2) as ws:
         assert receive_type(ws, "snapshot")["states"][0]["version"] == 1
+
+
+def test_actual_guarded_state_cli_value_file_and_duplicate(state_database):
+    import subprocess
+    import sys
+
+    from sqlalchemy.engine import make_url
+
+    database, url = state_database
+    api_root = Path(__file__).resolve().parents[1]
+    name = make_url(url.get_secret_value()).database
+    env = {**os.environ, "DATABASE_URL": url.get_secret_value()}
+    base = [
+        sys.executable,
+        "-m",
+        "app.modules.state.cli",
+        "--confirm-database",
+        name,
+        "--room-id",
+        str(ROOM_ID),
+        "--target-kind",
+        "object",
+        "--target-id",
+        str(OBJECT_IDS[0]),
+        "--state-type",
+        "equipment_status",
+    ]
+    for version, filename in [(0, "equipment-available.json"), (1, "equipment-maintenance.json")]:
+        result = subprocess.run(
+            base
+            + [
+                "--expected-version",
+                str(version),
+                "--value-file",
+                str(api_root / "examples" / filename),
+            ],
+            cwd=api_root,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        assert result.returncode == 0
+        assert json.loads(result.stdout)["state"]["version"] == version + 1
+    result = subprocess.run(
+        base
+        + [
+            "--expected-version",
+            "0",
+            "--value-file",
+            str(api_root / "examples/equipment-available.json"),
+        ],
+        cwd=api_root,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+    assert result.returncode != 0 and counts(database) == [1, 2, 2]
+
+
+def test_actual_rollback_never_emits_websocket_delta(live_server):
+    database, _, _, _, port = live_server
+    change(database, 0)
+    uri = f"ws://127.0.0.1:{port}/ws/v1/state?room_id={ROOM_ID}"
+    with connect(uri, origin="http://localhost:5173", open_timeout=5, close_timeout=2) as ws:
+        assert receive_type(ws, "snapshot")["sequence"] == 1
+        with pytest.raises(RuntimeError), Session(database.engine) as session, session.begin():
+            change_state(
+                session,
+                room_id=ROOM_ID,
+                target_kind="object",
+                target_id=OBJECT_IDS[0],
+                state_type="equipment_status",
+                value={"status": "maintenance"},
+                expected_version=1,
+            )
+            with pytest.raises(TimeoutError):
+                ws.recv(timeout=0.4)
+            raise RuntimeError("transaction rollback")
+        assert counts(database) == [1, 1, 1]
+        change(database, 1, "offline")
+        delta = receive_type(ws, "state.updated")
+        assert delta["sequence"] == 2 and delta["state"]["value"] == {"status": "offline"}
