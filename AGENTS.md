@@ -22,3 +22,7 @@
 ## Kiểm tra ứng dụng chính thức
 
 Xem apps/web/README.md và apps/api/README.md. Build/typecheck/unit/browser frontend; ruff/compileall/pytest backend. Test PostgreSQL yêu cầu TEST_DATABASE_URL của database kiểm thử riêng; không dùng SQLite làm bằng chứng PostgreSQL. Không DDL/seed tự động. Khi chưa duyệt schema, migration NOT RUN, không gọi create_all. Giữ regression M0-A và hai PoC.
+
+## M1-A được phê duyệt
+
+Task M1-A cho phép Catalog rooms/objects, initial Alembic, read-only API và fixture synthetic riêng; branch feat/m1-a-catalog. Không M1-B/C, auth giả, write endpoints, state/session/event schema hoặc scene integration. User task mới thay giới hạn lịch sử chưa M1 ở trên. Không create_all/startup DDL/seed. Migration/seed phải xác nhận DB project dev/test loopback, không DROP/reset hoặc xóa volume. CI PostgreSQL riêng tạo database airc_test_catalog_UUID; TEST_DATABASE_URL chỉ base airc_foundation_test và AIRC_ALLOW_TEST_DATABASES=1. Chạy ruff/compileall/unit và toàn bộ PG migrations/constraints/API tests, giữ M0/PoC/frontend/browser regression.

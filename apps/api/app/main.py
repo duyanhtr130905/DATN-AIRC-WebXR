@@ -9,6 +9,7 @@ from starlette.exceptions import HTTPException
 
 from app.core.config import Settings
 from app.database.connection import Database
+from app.modules.catalog.router import router as catalog_router
 from app.modules.status import router
 
 
@@ -38,7 +39,16 @@ def create_app(
     @application.exception_handler(HTTPException)
     async def http_error(request: Request, error: HTTPException):
         return JSONResponse(
-            {"error": {"code": "HTTP_ERROR", "message": "Yêu cầu không hợp lệ."}},
+            {
+                "error": {
+                    "code": error.detail
+                    if isinstance(error.detail, str)
+                    and error.detail
+                    in {"CATALOG_NOT_FOUND", "INVALID_CURSOR", "DATABASE_UNAVAILABLE"}
+                    else "HTTP_ERROR",
+                    "message": "Yêu cầu không hợp lệ.",
+                }
+            },
             status_code=error.status_code,
             headers=error.headers,
         )
@@ -57,4 +67,5 @@ def create_app(
         )
 
     application.include_router(router)
+    application.include_router(catalog_router)
     return application

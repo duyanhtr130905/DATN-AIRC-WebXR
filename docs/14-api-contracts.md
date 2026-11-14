@@ -1,3 +1,27 @@
+# Catalog API M1-A — READ ONLY / SYNTHETIC
+
+Cập nhật14/11/2026. Ba endpoint dưới đây đã triển khai; status endpoints M0-B2 giữ nguyên. Các state/session/event/report/write/WebSocket contracts trong phần lịch sử phía dưới **vẫn PROPOSED**.
+
+| Endpoint hiện có | Input | Response200 |
+|---|---|---|
+| GET /api/v1/rooms | limit1..100(default25),cursor? max400chars | {data:[Room],meta:{schema_version:1,next_cursor:string|null}} |
+| GET /api/v1/rooms/{room_id}/objects | UUID room_id,limit,cursor | {data:[Object],meta:{schema_version:1,next_cursor}}; room không tồn tại/không synthetic →404 |
+| GET /api/v1/objects/{object_id} | UUID object_id | {data:Object,meta:{schema_version:1,next_cursor:null}}; object hoặc parent không synthetic →404 |
+
+Room: id UUID,code,name,source_kind literal synthetic,metadata:{label?:string|null,description?:string|null},created_at và updated_at RFC3339 cótimezone. Object: id,room_id,name,type,source_kind,metadata,timestamps. API không trả evidence_ref/external_reference/transform hoặc metadata tùy ý. Tất cả field ở response models; OpenAPI mô tả cả error envelopes. Không dùng ORM trực tiếp làm response.
+
+Ordering thực tế M1-A là **UUID id tăng dần**, keyset `id > after`; chọn vì identity bất biến, không phụ thuộc code/timestamp thay đổi. Khác phương án created_at,id trong lịch sử M0-B2. next_cursor là base64url JSON {v:1,scope:'rooms'|'room:<uuid>',after:'<uuid>'}; kiểm version/shape/UUID và scope, không là token auth. Server luôn áp synthetic filters; cursor giả mạo không bỏ được bộ lọc. Không count tổng; chèn UUID thấp hơn cursor giữa các request không thuộc snapshot, client refresh để thấy; chưa có consistency snapshot xuyên trang.
+
+404 CATALOG_NOT_FOUND;422 INVALID_CURSOR hoặc VALIDATION_ERROR (UUID/limit/length);503 DATABASE_UNAVAILABLE;500 INTERNAL_ERROR; unsupported method405 HTTP_ERROR. Body {error:{code,message}}, không raw driver/SQL/URL/credentials. M0-B2 HTTP_ERROR cho lỗi HTTP khác giữ tương thích. Chưa request_id hoặc auth provider. Source filter là hàng rào tạm cho synthetic, không thay authorization production.
+
+Session mỗi request dùng transaction PostgreSQL READ ONLY, đóng/rollback khi lỗi, không connection leak. Objects query JOIN parent với filter synthetic trong cùng SQL để tránh đọc children sau khi parent được ẩn giữa hai query. Không có POST/PATCH/DELETE Catalog và không auth giả/admin token. Catalog rỗng trả200 data[]; nếu phòng hợp lệ chưa có object trả200 data[]. Chưa DB/migration hoặc DB mất kết nối trả503 an toàn.
+
+Không nối scene frontend trong M1-A; scene DEMO M0-B2 và API status client giữ nguyên. Việc nối Catalog vào scene thuộc M1-C.
+
+---
+
+## Lịch sử contracts M0-B2 và đề xuất mở rộng
+
 # API và realtime contracts — foundation + đề xuất M1
 
 14/11/2026. **Chỉ GET /api/health và /api/ready đã triển khai**; docs/OpenAPI FastAPI có thật. Mọi resource/write/WebSocket bên dưới PROPOSED, chưa có endpoint và chưa có auth production.

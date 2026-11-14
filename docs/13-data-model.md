@@ -1,3 +1,38 @@
+# Catalog schema M1-A — đã được cho phép triển khai
+
+Cập nhật 14/11/2026. Yêu cầu M1-A của chủ dự án cho phép baseline **rooms + objects** và Alembic; không phê duyệt toàn bộ mô hình Digital Twin. Migration `0001_catalog`, models ở apps/api/app/database/models.py. Kết quả PostgreSQL thật xem [acceptance M1-A](16-m1-a-catalog-acceptance.md). Phần đề xuất M0-B2 bên dưới là lịch sử, không thay trạng thái hiện tại.
+
+## Catalog thực tế
+
+| Bảng | Trường và constraints triển khai |
+|---|---|
+| rooms | id UUID PK (stable); code varchar64 UNIQUE NOT NULL/nonblank; name varchar256 NOT NULL/nonblank; source_kind varchar16 NOT NULL/default unknown/CHECK ba giá trị; metadata JSONB NOT NULL/default {}; evidence_ref text nullable; created_at/updated_at timestamptz NOT NULL/default now() |
+| objects | id UUID PK; room_id UUID NOT NULL FK rooms.id ON DELETE RESTRICT; name varchar256 và type varchar64 NOT NULL/nonblank; source_kind/metadata/evidence_ref/timestamps như rooms; transform JSONB nullable; external_reference varchar256 nullable |
+
+CHECK source_kind: synthetic, unknown, real_verified. real_verified cần evidence_ref nonblank ở mức DB, **không có nghĩa DB đã xác minh quyền hoặc nội dung bằng chứng**; không có pipeline nhập dữ liệu thật ở M1-A. API chỉ đọc synthetic và parent room cũng synthetic. Seed chính thức chỉ gắn synthetic; một số test âm trên DB disposable dùng source labels khác để kiểm ràng buộc/không công bố, không được coi là dữ liệu AIRC đã xác minh.
+
+Metadata phải là JSON object và kích thước biểu diễn JSONB::text tối đa8192 bytes. Transform nếu có cũng phải object/tối đa8192 bytes, dùng SQL NULL khi chưa biết. Chưa duyệt đơn vị/trục/transform semantics hoặc domain metadata thiết bị; không tự sinh kích thước507. Giới hạn byte là baseline kỹ thuật, không schema khảo sát cuối. API chỉ công bố metadata.label(str<=256) và description(str<=512), bỏ trường lạ/nested/oversized; evidence_ref, external_reference và transform không công bố ở M1-A.
+
+Indexes: ix_rooms_source_id(source_kind,id), ix_objects_room_source_id(room_id,source_kind,id), ngoài PK và unique rooms.code. Không CASCADE; không hardcode507 hoặc giới hạn số phòng. UUID do application/import cấp một lần, không đổi theo code/tên/vị trí. ORM updated_at có onupdate=now(); nếu sau này viết SQL trực tiếp phải cập nhật timestamp trong cùng transaction, hiện không có write API.
+
+## Migration và seed
+
+Alembic1.20.1, initial revision0001_catalog chỉ tạo2bảng, constraints/indexes; không seed, không create_all/startup DDL. CLI chỉ nhận PostgreSQL loopback, database project dev airc_foundation hoặc test airc_test_catalog_*, không query parameters và phải xác nhận đúng database name; kiểm current_database trước online migration. Downgrade phá hủy bị chặn, chưa thử; không DROP/reset DB hoặc xóa volume.
+
+CI tạo database trống tên airc_test_catalog_UUID trên PG service riêng cho từng integration test, chạy upgrade head/current/upgrade head lại/check model drift, test constraints và API. Không dùng SQLite. Base TEST_DATABASE_URL phải là loopback airc_foundation_test và AIRC_ALLOW_TEST_DATABASES=1; không DROP các database, chúng kết thúc cùng CI service.
+
+Fixture có1phòng genericDEMO +4objects, UUID cố định, nhãn SYNTHETIC — NOT AIRC REAL DATA. Lệnh seed riêng có xác nhận DB, transaction và advisory lock; chạy lại idempotent khi fixture khớp, conflict thì rollback không overwrite. Không tự seed khi startup/migration. Đây không phải phòng507, không đạt KPI20objects.
+
+## Chưa triển khai
+
+object_states/state_history/sessions/events/outbox/room_state_cursors và các semantics phía dưới vẫn PROPOSED. Auth, retention, quyền sử dụng, source integration và scope≥3phòng chưa chốt. Chỉ Catalog baseline được cho phép trong M1-A; không tự bắt đầu M1-B/C.
+
+Nguồn kiểm lại14/11/2026: [SQLAlchemy typed declarative](https://docs.sqlalchemy.org/en/21/orm/declarative_tables.html), [Alembic tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html), [PostgreSQL constraints](https://www.postgresql.org/docs/18/ddl-constraints.html), [FastAPI yield dependencies](https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/). Giữ SQLAlchemy2.1.8/FastAPI0.162.7/psycopg3.3.9/Python3.13 đã kiểmCI; bổ sungAlembic1.20.1 (release22/10/2026,Python>=3.10,SQLAlchemy>=2.0,MIT) và Mako/MarkupSafe transitive trong hashlock, không nângbaseline. [PyPI Alembic metadata](https://pypi.org/pypi/alembic/json).
+
+---
+
+## Lịch sử đề xuất M0-B2
+
 # Data model v1 — PROPOSED
 
 14/11/2026. PostgreSQL đã ACCEPTED, **schema chi tiết chưa được duyệt**. M0-B2 chỉ có connection management và SELECT1; không tables/migrations/seed, không create_all. Alembic được nghiên cứu cho migration khi duyệt schema. Không thể coi tài liệu là schema đã hoạt động.

@@ -1,30 +1,13 @@
-# Trạng thái dự án — M0-B2
+# Trạng thái dự án — M1-A Catalog
 
-Cập nhật 14/11/2026, Codex. Root `D:\Code\DATN`, repo duyanhtr130905/DATN-AIRC-WebXR, branch `feat/m0-b2-app-foundation`. Không deploy hoặc merge PR; M1 NOT STARTED.
+Cập nhật14/11/2026. D:\Code\DATN; repo duyanhtr130905/DATN-AIRC-WebXR; branch feat/m1-a-catalog. Main đã có M0-B2 merge b4e4b910c9ed8cd43feeafccff66bbf3d5b6e811.
 
-| Milestone | Trạng thái | Bằng chứng |
-|---|---|---|
-| M0-A | DONE | PR6 merge 1a736d558f6b721921cd5f38de069d63a733721e |
-| M0-B1 | DONE | PR7 merge 3ebd2ec780db80caacd5871ecda911236598f9be; docs11 và hai PoC giữ nguyên |
-| M0-B2 | IN REVIEW | apps/web, apps/api, infra, docs12–15 và app-validation CI |
-| M1 | NOT STARTED | Chưa nghiệp vụ trạng thái/session/reports/realtime |
+M0-A DONE, M0-B1 DONE, M0-B2 DONE. M1 chính thức bắt đầu theo yêu cầu chủ dự án; M1-A IN PROGRESS (IN REVIEW khi bàn giao PR). M1-B/M1-C NOT STARTED.
 
-Chủ dự án phê duyệt qua ChatGPT ngày 14/11/2026: R3F/XR, FastAPI/PostgreSQL, REST/WebSocket, Modular Monolith, Scene + Information Panel chính và Guided Tour phụ. [ADR-0001 ACCEPTED](decisions/0001-technology-options.md). Giữ Meta IWSDK làm PoC đối chứng. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/KPI ba phòng/VR acceptance vẫn chưa duyệt.
+Được phép: schema Catalog rooms/objects, Alembic0001_catalog,3GET API chỉ synthetic, seed tường minh và PG tests. State/session/event/outbox, auth/retention/hosting và real data policy vẫn PROPOSED/chưa duyệt. ADR0001 ACCEPTED giữ nguyên. Không CRUD write/WebSocket/scene integration/admin.
 
-## Kết quả và bằng chứng
+26unit tests và lint đã PASS local; SQL offline được sinh, không thay PG migration thật. PostgreSQL local BLOCKED vì khôngDocker, không tự cài. CI sẽ kiểm migration từDBtrống/current/repeat/schema drift, constraints/READONLY/API/privacy/pagination/timezone/seed. Kết quả chốt ở [acceptance](16-m1-a-catalog-acceptance.md). Giữ hồi quy M0-A, haiPoC và app browser.
 
-Frontend primitive synthetic, scene/panel, API client; backend factory/config/CORS/liveness/readiness/pool lifecycle. Design model và contracts PROPOSED, không migration/seed. [Run web](../apps/web/README.md), [API](../apps/api/README.md), [infra](../infra/README.md), [acceptance và CI](15-m0-b2-acceptance.md). Local build/7 frontend tests/14 backend tests/6 app browser scenarios đã PASS; M0-A và hai PoC build/tests/browser đã PASS lại. PostgreSQL local BLOCKED vì không Docker; kết quả PostgreSQL CI ghi riêng trong acceptance.
+Thầy yêu cầu làm phòng507 trước; chưa khảo sát/inventory/ảnh/sơđồ/kíchthước/nguồn/quyền dữ liệu, AIRC chưa phần mềm thiết bị. KPI≥3phòng chưa đổi; không KPI MT1–MT3 được nghiệm thu từfixture1room/4objects. Galaxy ARsession chưa test, khôngkínhVR. Issues1–5 không đóng. Dữ liệu synthetic không phải507.
 
-## Blocker thực địa giữ nguyên
-
-Theo người dùng, thầy chỉ đạo “Cứ làm 1 phòng 507 trước”. Đây là thông tin trao đổi, chưa phải dữ liệu khảo sát chính thức. Dự kiến khảo sát 16/11/2026; chưa ảnh/sơ đồ/kích thước/inventory/nguồn/quyền dữ liệu, chưa phần mềm quản lý thiết bị. Không dựng mô hình 507 giả làm thật; DEMO không phải AIRC. KPI ≥3 phòng chưa điều chỉnh chính thức: giữ MT1–MT3 và Issues #1–#5 mở/BLOCKED. Galaxy A17 chưa thử AR session; iPhone chưa biết model; không kính VR. Chưa nghiệm thu FPS, latency, task completion hoặc tracking sản phẩm.
-
-## Sau review
-
-1. ChatGPT review PR M0-B2 và bằng chứng CI/browser, xử lý quyết định còn mở.
-2. Khảo sát phòng 507, xác minh inventory/nguồn/quyền và phạm vi ≥3 phòng chính thức.
-3. Chỉ sau phê duyệt M1: chốt schema/migration, catalog API + adapter có provenance; state/history/outbox và instrumentation latency. Không tự bắt đầu M1.
-
-PR bàn giao [#8](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/8). Ba PR workflows PASS trên source commit4c6ad13, gồm PostgreSQL18.7 integration thật; latest HEAD checks được xác minh trước bàn giao. [Bản ghi CI](evidence/m0-b2-ci.json). PostgreSQL local vẫn BLOCKED; schema migration NOT RUN.
-
-Một PR rerun trên0b14d0a gặp race ResizeObserver trong browser assertion, đã sửa runner chờ layout canvas/host ổn định; giữ assertion và toàn bộ jobs. Lịch sử ở acceptance; latest HEAD phải PASS trước bàn giao.
+Sau review: ChatGPT nghiệm thu M1-A, khảo sát và quyền dữ liệu, chốt phạm vi M1-B riêng. Không tự bắt đầu M1-B/C hoặc merge/deploy.
