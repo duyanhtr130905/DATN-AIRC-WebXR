@@ -1,3 +1,9 @@
+# DATN AIRC WebXR — M1-A Catalog đang review
+
+M0-A/M0-B1/M0-B2 DONE; M1-A có schema Catalog, Alembic và API chỉ đọc synthetic. [PR#9](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/9), [trạng thái](docs/PROJECT_STATUS.md), [nghiệm thu M1-A](docs/16-m1-a-catalog-acceptance.md), [API runbook](apps/api/README.md). M1-B/C NOT STARTED; chưa dữ liệu AIRC thực hoặc KPI đạt.
+
+## README lịch sử foundation và nghiên cứu
+
 # DATN AIRC WebXR — ứng dụng nền tảng M0-B2
 
 M0-A và M0-B1 đã DONE/merge. M0-B2 nền tảng chính thức theo [ADR đã duyệt](docs/decisions/0001-technology-options.md); M1 NOT STARTED. **Chưa có dữ liệu khảo sát thực AIRC/phòng507; mọi cảnh hiện tại SYNTHETIC/DEMO, chưa đạt KPI sản phẩm.**

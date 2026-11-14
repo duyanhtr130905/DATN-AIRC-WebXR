@@ -1,37 +1,47 @@
 # Nghiệm thu M1-A — Database schema và Catalog API
 
-Ngày14/11/2026, branch feat/m1-a-catalog; base merge M0-B2 b4e4b910c9ed8cd43feeafccff66bbf3d5b6e811. Chưa tự merge/deploy/M1-B/C. Bảng sẽ chốt theo actual CI sau push.
+Ngày 14/11/2026. [PR #9](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/9), branch feat/m1-a-catalog, base merge M0-B2 b4e4b910c9ed8cd43feeafccff66bbf3d5b6e811. Source/test/workflow commit đã kiểm: **4f6541935816b257ef052d420d2ed3e3014bd0b8**; follow-up chốt tài liệu/evidence. Latest HEAD được kiểm qua PR checks trước bàn giao. Không merge/deploy hoặc bắt đầu M1-B/C.
 
-| Mục | Trạng thái | Bằng chứng / giới hạn |
+## Checklist đã kiểm
+
+| Hạng mục | Kết quả | Bằng chứng thực tế |
 |---|---|---|
-| Schema rooms/objects, ORM tách response | PASS | models + revision0001_catalog, UUID/FK/RESTRICT/unique/CHECK/JSONB/timestamptz/indexes; chưa runtime localPG |
-| Alembic offlineSQL | PASS | unit sinh DDL2bảng, không seed; không thay migrationPG |
-| Lint/compile/unit | PASS |29 unit,ruff,compileall exit0; warninghttpxTestClient giữ nguyên |
-| MigrationPG từdatabase trống/current/repeat/drift | NOT RUN | chờCI; khôngSELECT1-only claim |
-| PG constraints/timezone/seed/API/pagination/privacy | NOT RUN | chờCI riêng, khôngSQLite |
-| API read-only/validation/empty/no publicwrite | PASS | unittests + OpenAPI; PGreal queries chờCI |
-| Seed dev/test guard/idempotency | NOT RUN | unit guardPASS, PGidempotency chờCI; khôngstartupseed |
-| LocalPostgreSQL | BLOCKED | khôngDocker/PG, khôngtựcài |
-| M0-A/PoC/app regressionCI | NOT RUN | chờCIHEADmới |
-| Secret/link/whitespace/YAML | NOT RUN | chờcheckchốt |
-| Dữ liệu thực/KPI/ARVRhardware | NOT RUN | thiếu survey/quyền/thiết bị |
+| Catalog schema và ORM/DTO | PASS | rooms/objects, UUID PK, FK RESTRICT, unique code, non-null/CHECK, bounded JSONB, timestamptz và indexes |
+| Alembic migration từ database trống | PASS | PG18.7 CI tạo DB riêng mới, upgrade head, exact tables rooms/objects/alembic_version, zero Catalog rows |
+| Current / upgrade khi đã head / schema drift | PASS | revision0001_catalog, nâng cấp lặp, command.check và CLI check đều thành công |
+| Constraints/timezone | PASS | duplicate room/object IDs, duplicate code, invalid/null source/name/room/type, invalid FK, RESTRICT, metadata/transform shape và byte limit, timezone round-trip |
+| Catalog API thật với PostgreSQL | PASS | empty DB, multiple rooms, UUID keyset ordering/pagination,404/422, hidden source/parent, private fields filtering |
+| Read-only / connection lifecycle | PASS | PG SHOW transaction_read_only=on, write attempt bị từ chối; connection trả về pool, lifespan dispose; health/readiness regression |
+| Synthetic seed | PASS | CLI và function seed hai lần vẫn1room/4objects; UUID cố định, nhãn synthetic, collision rollback không overwrite |
+| Migration/seed safety | PASS | loopback/dev-test allowlist/exact confirmation/current_database; reject URL query overrides trước kết nối; không startupDDL/seed/create_all |
+| Backend lint/import/unit | PASS | ruff/compileall/OpenAPI import;29unit exit0; TestClient/httpx deprecation warning giữ nguyên |
+| PostgreSQL suite | PASS | **23 passed,0failed,0errors,0skipped**, JUnit artifact đã tải và kiểm tra; bao gồm CLI migration và seed thật |
+| Frontend foundation regression | PASS | typecheck/build/7unit/6browser; không thay scene hoặc client sang Catalog |
+| M0-A / PoC A+B regression | PASS | CI syntax/checker/verifier/browser; hai PoC build/domain tests và WebGL/IWER browser suite |
+| Secret/link/whitespace/YAML | PASS | verifier/pattern scan/internal links, git diff --check, YAML parser; không phải full security audit |
+| PostgreSQL local | BLOCKED | không Docker/PostgreSQL local, không tự cài; CI PostgreSQL thật thay thế môi trường kiểm thử, không dùng SQLite |
+| Downgrade | NOT RUN | chủ động chặn destructive downgrade; không DROP/reset DB hoặc xóa volume |
+| AIRC real data/KPI/AR-VR hardware | NOT RUN | chưa survey/quyền/thiết bị; fixture không chứng minh MT1–MT3 |
 
-## Thiết kế và bằng chứng cần kiểm
+## Evidence và môi trường
 
-[Model](13-data-model.md), [contracts](14-api-contracts.md), [runbook](../apps/api/README.md). Initial revision0001_catalog không DMLseed, khôngcreate_all. DBCLI chỉloopbackprojectdev/test cóconfirmation/current_database. CI chỉbase airc_foundation_test đượcACK, tạodatabasenewUUID mỗiPGtest; khôngDROP/reset, serviceCI disposable. Downgrade bịchặn, NOTRUN.
+[Bản ghi lệnh, exit codes, SHA, từng job và tên 23 PG tests](evidence/m1-a-validation.json). Local Windows11/Python3.13.2/Node22.16/Chrome157.0.8103.51. CI Ubuntu24.04/Python3.13.18/PostgreSQL18.7; browser headless software WebGL, 390px viewport emulation, không Galaxy thật.
 
-Unit test mock táchPGthật: response schemas, cursor malformed/scope, 404/422/405, metadata filtering, noDB503, seedwrongDBguard và offlineDDL. PGsuite kiểm emptyschema/head/repeat/alembiccheck/constraints/index/FKRESTRICT, duplicateID/code,invalidsource/FK/metadata/transform/nulls, timezone,READONLY/sessionreturn, fixtures/idempotency/collision, multiple rooms/pagination/exclusion/privatefields. Chỉsyntheticfixture được côngbố; negativeprovenancelabels trongDBtest không dữliệuthật.
+- [Application + Catalog CI](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467918):2jobs PASS,29unit+23PGtests và frontend/browser; artifact m1-a-postgres-pull_request có JUnit, m0-b2-browser-pull_request có report/3ảnh giao diện.
+- [M0-A regression](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467951):2jobs PASS.
+- [PoC A/B + IWER regression](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467911):3jobs PASS.
+- [Push CI độc lập cùng source](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580464382):2jobs PASS.
 
-Independent review phát hiện parentvisibility race ở listobjects; sửa JOINRoom/source_kind trongcùngSQL vàthêmPGregression, khônggiảmtest. Chờ reviewclosure/CI.
+CI tạo database airc_test_catalog_UUID trống riêng cho từng integration case trên service disposable. TEST_DATABASE_URL chỉ base loopback airc_foundation_test cùng explicit ACK; kiểm current_database trước CREATE DATABASE, không DROP/reset database đã có. Initial migration không chứa seed AIRC hoặc synthetic; CLI seed riêng có guard. Chỉ2bảng Catalog ngoài Alembic bookkeeping, không state/session/event.
 
-## Giới hạn và quyết định tiếp
+## Lỗi và review đã đóng
 
-Catalog schema baseline đượcphéptriểnkhai, khôngtoànbộDigitalTwin schema. Transform/domainmetadata, state/session/event/outbox schema vẫnPROPOSED. Khôngsceneintegration/frontendredesign/publicwrites/authgiả/WebSocket/admin/AI. Không dữ liệuAIRC/507thật; không đạt≥20objects/≥3rooms hoặcKPI khác. Authprovider, retention, hosting, source/quyền, scopephòngcuối vàVRacceptance chờduyệt; Issues1–5 mở.
+[CI đầu tiên](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43579935413) trên8e603b5 có21PASS/1FAIL: Alembic thực tế in0001_catalog(head), nhưng assertion đọc nhầm stdout stream. Sửa Config(stdout=StringIO), giữ current/repeat/drift assertions; bản sau có23PGtests PASS. Không skip hoặc tắt job để che lỗi.
 
-Đềxuất M1-B sauphêduyệt: state types/version/history vàstate read contracts, outbox/reconnect concurrency tests; chỉxemxétwrite khi operatorauthorization vàdata rightsđượcchốt. Sceneintegration riêngM1-C. Chưa tựtriểnkhai cácphầnđó.
+Independent review phát hiện parent visibility race trong listobjects và test URL query có thể override host/dbname. Đã sửa JOIN Room/source trong cùng SQL; reject query trước engine creation và kiểm database nền; thêm regression tests. Reviewer xác nhận closure và rà CLI helper; không còn P1/P2 được phát hiện trong phạm vi review. Không thay review nghiệm thu của ChatGPT hoặc quyền dữ liệu của AIRC.
 
-## Lịch sử CI ban đầu
+## Giới hạn và bước kế tiếp
 
-[Push run43579935413](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43579935413) trên8e603b5:21PGtests PASS,1testmigration FAIL vì assertion đọcstdout sai stream, trong khi Alembic thực tế in0001_catalog(head). Đã đổi sang Config(stdout=StringIO) để kiểm đúng output; không bỏ assertion/current/repeat/drift. Kết quả PGtoànbộ cầnCIrerun sau sửa. Review còn phát hiện queryparameter có thểghiđè host/dbname trong testURL; đãrejecturl.query vàcheckcurrent_database trướcCREATEDATABASE, thêm3unitnegative.
+[Model](13-data-model.md), [contract](14-api-contracts.md), [lệnh local](../apps/api/README.md). Catalog baseline được phép triển khai; domain metadata/transform semantics, state/session/event/outbox schema vẫn PROPOSED. Không frontend integration, public mutation, auth giả, admin, WebSocket hoặc AI/RAG. Phòng507 chưa khảo sát, không có inventory/ảnh/sơ đồ/kích thước/nguồn/quyền; fixture generic DEMO không phải507 và không đạt KPI20objects/3rooms. Issues#1–#5 giữ mở.
 
-Bản4178f3f đã PASS application CI [run43580289121](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580289121), gồm toàn bộ22PostgreSQL tests sau sửastdout. Bổ sung một test chạy **CLI thật** trênDBmới: upgrade/current/upgrade/check vàseedCLI2lần; kết quả cầnchốt trêncommit tiếp theo, không tựdùng22PASS thay23tests mới.
+Cần chủ dự án chốt source/quyền, metadata/transform theo survey, auth/operator policy, retention, hosting, scope≥3phòng và VR acceptance. Đề xuất M1-B sau phê duyệt riêng: state types/version/history và state read contracts, outbox/concurrency tests; chỉ xem xét write khi authorization/data rights được chốt. Scene integration thuộc M1-C, chưa bắt đầu.

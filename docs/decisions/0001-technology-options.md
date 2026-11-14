@@ -22,3 +22,7 @@ R3F cần kiểm soát bundle/asset, lifecycle XR, phiên bản peer dependencie
 ## Chưa được phê duyệt — PROPOSED/BLOCKED
 
 Schema chi tiết và migration nghiệp vụ; authentication provider; hosting/deployment; retention; chính sách quyền dữ liệu AIRC; KPI ≥3 phòng cuối cùng; phương pháp nghiệm thu VR không có kính. REST/WebSocket được duyệt làm phương thức giao tiếp, **chi tiết endpoint/message trong docs/14 vẫn PROPOSED**. SQLAlchemy dùng trong foundation; Alembic là công cụ dự kiến khi schema được duyệt, chưa có revision nghiệp vụ.
+
+## Bổ sung phạm vi M1-A
+
+Yêu cầu M1-A của chủ dự án cho phép Catalog baseline rooms/objects, Alembic và API read-only synthetic; xem docs13/14 và acceptance16. Đây không phải phê duyệt toàn bộ schema state/session/event/outbox, auth/retention/hosting hoặc quyền dữ liệu. Các quyết định stack/kiến trúc/UI đã ACCEPTED giữ nguyên.
