@@ -1,3 +1,41 @@
+# State REST/WebSocket M1-B — thực tế triển khai
+
+Cập nhật14/11/2026. Chỉ synthetic, không client/browser writes. Catalog GET M1-A và health/ready giữ tương thích; các session/event/report/auth contracts trong lịch sử vẫn PROPOSED.
+
+## REST
+
+- GET /api/v1/rooms/{room_id}/states: mọi current state có visibility trong phòng, gồm target Room hoặc Object, không gán room_schedule vào thiết bị.
+- GET /api/v1/objects/{object_id}/states: current states của object và parent đều synthetic.
+- GET /api/v1/objects/{object_id}/states/{state_type}/history: history synthetic với current/target/parent còn công bố.
+
+State DTO: id(UUID state),room_id,target_kind(room|object),target_id(UUID),state_type(room_schedule|equipment_status|exhibit_info),value(schema theo docs13),version>=1,source_kind literal synthetic,source_observed_at nullable vàcommitted_at RFC3339 timezone. Không metadata/evidence_ref/private fields. Value có validator theo state_type và cấm extra keys.
+
+Lists dùng limit1..100(default25),cursor UUID keyset tăng theo state.id,scopebound; response {data:[State],meta:{schema_version:1,next_cursor:string|null}}. History dùng after_version>=0 vàlimit, sortversionASC, meta.next_after_version nullable. 404 CATALOG_NOT_FOUND;422 UUID/limit/state-type/cursor validation;503 DATABASE_UNAVAILABLE;500 INTERNAL_ERROR. Body error {error:{code,message}}, không rawSQL/credentials. Chưa auth provider/write routes.
+
+## WebSocket single-process
+
+URL `/ws/v1/state?room_id=<uuid>`. Origin bắt buộc thuộc explicit configured CORS_ORIGINS, UUID phải hợp lệ, Room phải synthetic; UUID không cấp quyền xem room hidden. Wrong Origin/UUID/connection cap: handshake close1008; hidden/nonexistent room hoặc DB lỗi: safe error rồiclose1011, không snapshot. Client gửi text/binary bất kỳ: READ_ONLY/close1008. Không nhận state update từ browser.
+
+Mọi message có type,schema_version=1,message_id,room_id,sequence,timestamp. Shapes:
+
+```json
+{"type":"snapshot","schema_version":1,"message_id":"<uuid>","room_id":"<uuid>","sequence":7,"states":["State DTO"],"timestamp":"<RFC3339>"}
+```
+
+Delta: {type:'state.updated',schema_version,message_id(outboxUUID),room_id,sequence,published_at,state:StateDTO,timestamp}. Heartbeat: cùng envelope và cursor hiện tại, không thay state. resync.required thêm reason:'gap' hoặc'backpressure', sau đóclose1013. error thêm code:'STATE_UNAVAILABLE' hoặc'READ_ONLY', không rawdetails.
+
+Đăng ký subscriber trước SQL snapshot; snapshot REPEATABLE READ lấy states và cursor cùng view. Outbox durable tail `sequence>snapshot_cursor` đóng khoảng trống giữa snapshot và subscribe; broker chỉ wake hint, không là kho dữ liệu. Replay luôn recheck source/parent và chỉ xử lý durable rows đã published. Queue hints có thể trùng, SQLcursor loại duplicate. Consumer reference rule: incoming<=cursor ignore, incoming=cursor+1 apply, lớn hơn yêu cầu resync. Controlled old/duplicate consumer injection không được coi là client frontend đã tích hợp.
+
+Nếu gap, quá32delta một lượt, hoặc unpublished đầu tiên sau cursor bị đình trệ>2s (kể cả exhausted) →resync.required; reconnect fresh snapshot đọc current state. Không im lặng giữ state cũ khi publisher chết. Chưa resume cursor qua query hoặc retention window; prototype không hứa replay toàn lịch sử sau disconnect, snapshot mới là authoritative.
+
+Giới hạn:32connections/process,8wake tokens/client,32states/snapshot,32delta/page,256KiB outgoing,sendtimeout1s, polling fallback250ms/heartbeat khoảng10ticks. Incoming giới hạn8KiB/queue1 bằng cấu hình Uvicorn trong runbook/test. Slow queue→resync/close; network sendtimeout→cleanup. Không giữ DBconnection suốt WS; SQLsync chạy to_thread trong scope ngắn; task receive và subscription được hủy/dọn khi disconnect. Shutdown đợi dispatcher hiện tại hoàn tất boundedSQL/notify rồi dispose trongfinally, không cancel một DBthread đang chạy.
+
+Chỉ một API worker/process được kiểm. Durable lease/claim có concurrency tests, **multi-worker/multi-instance WebSocket broadcast chưa hỗ trợ** vì broker RAM không dùng chung. Không Redis/Kafka mới. Auth, data rights, retention, scale/production và phép đo source-to-render vẫn cần quyết định/kiểm chứng. [Acceptance và metrics](17-m1-b-state-realtime-acceptance.md).
+
+---
+
+## Lịch sử contracts M1-A/M0-B2 và phần mở rộng
+
 # Catalog API M1-A — READ ONLY / SYNTHETIC
 
 Cập nhật14/11/2026. Ba endpoint dưới đây đã triển khai; status endpoints M0-B2 giữ nguyên. Các state/session/event/report/write/WebSocket contracts trong phần lịch sử phía dưới **vẫn PROPOSED**.

@@ -1,3 +1,28 @@
+# State + realtime schema M1-B
+
+Cập nhật 14/11/2026. Chủ dự án đã cho phép baseline kỹ thuật M1-B dùng **synthetic**. Revision `0002_state_realtime` nối tiếp `0001_catalog`; không sửa source revision0001, không đổi Catalog columns hoặc seed khi startup/migration. Schema state/session/event dành người tham quan trong phần lịch sử không được coi là đã triển khai toàn bộ.
+
+| Bảng mới | Trường và ràng buộc thực tế |
+|---|---|
+| current_states | UUID id PK; room_id FK rooms RESTRICT; target_room_id FK rooms nullable, object_id nullable/composite FK(object_id,room_id)→objects(id,room_id); state_type; value JSONB object<=4096bytes; version bigint>=1; source_kind CHECK3giá trị; source_observed_at nullable/committed_at NOT NULL timestamptz |
+| state_history | UUID id PK; state_id FK current_states RESTRICT; version/value/source_kind/source timestamps; UNIQUE(state_id,version); JSONB bound; trigger chặn UPDATE/DELETE, không CASCADE |
+| room_state_cursors | room_id PK/FK rooms RESTRICT; sequence bigint>=0, được tăng trong business transaction; không dùng PostgreSQL sequence/serial như commit ordering |
+| outbox | message_id UUID PK; room_id FK RESTRICT; sequence>=1; event_type='state.updated'; payload JSONB object<=8192bytes; committed_at/published_at/next_attempt_at/lease_until timestamptz; attempts0..5,lease_owner UUID,exhausted; UNIQUE(room_id,sequence); pending index |
+
+Target mapping DB CHECK: room_schedule phải target_room_id=room_id và object_id NULL; equipment_status/exhibit_info phải object_id NOT NULL và target_room_id NULL. Hai unique constraints(target_room_id,state_type)/(object_id,state_type) giữ một current state mỗi loại/target. Unique objects(id,room_id) được thêm trong0002 **để composite FK enforce đúng room scope**, không sửa0001 hoặc hardcode507. Chỉ thêm constraint Catalog cần thiết, không thêm bảng dư.
+
+Value schemas thực thi ở internal service và response validation: equipment_status.status∈available/maintenance/offline; room_schedule.status∈free/occupied/closed và activity1..160chars; exhibit_info.title1..160/text<=800chars. Extra keys bị chặn. DB thêm object/size/type-target/version/FK checks; không coi schema JSON thử nghiệm là nghiệp vụ AIRC đã xác minh. source_kind unknown/real_verified có thể tồn tại làm bản ghi được bảo vệ, nhưng service không sửa và API/WS không công bố chúng. Negative test labels trong database disposable không phải dữ liệu thật.
+
+Business transaction: khóa Room→Object (nếu có)→CurrentState→Cursor, kiểm expected_version (0khởi tạo), tăng version1 và room sequence1, ghi current/history/outbox atomically; CAS UPDATE thêm điều kiện expected version. Rollback không để history/outbox/cursor phát sinh. committed_at là clock_timestamp tại mutation trong transaction, **không phải timestamp WAL COMMIT chính xác**; source_observed_at nullable, không bịa timestamp từ sensor.
+
+Outbox claim lease5s bằng FOR UPDATE SKIP LOCKED, commit claim trước notify; finish theo owner, timeout notify1s, retry backoff2–30s tối đa5claims, exhausted giữ record. Claim bị crash có thể reclaim sau lease; xử lý ít nhất một lần, không exactly-once. published_at là notification đã xử lý/đánh dấu, không phải browser ACK/render. Rows chưa purge; retention/rearm exhausted/production operations cần quyết định sau. Một API process/broker hiện tại; claim concurrency đã test riêng không chứng minh multi-instance broadcast.
+
+Xem [acceptance M1-B](17-m1-b-state-realtime-acceptance.md) và [contract](14-api-contracts.md). Catalog M1-A bên dưới giữ làm lịch sử; session/event visitor, auth, data rights, retention/hosting và phạm vi KPI còn mở.
+
+---
+
+## Lịch sử Catalog M1-A và mô hình đề xuất
+
 # Catalog schema M1-A — đã được cho phép triển khai
 
 Cập nhật 14/11/2026. Yêu cầu M1-A của chủ dự án cho phép baseline **rooms + objects** và Alembic; không phê duyệt toàn bộ mô hình Digital Twin. Migration `0001_catalog`, models ở apps/api/app/database/models.py. Kết quả PostgreSQL thật xem [acceptance M1-A](16-m1-a-catalog-acceptance.md). Phần đề xuất M0-B2 bên dưới là lịch sử, không thay trạng thái hiện tại.
@@ -75,3 +100,5 @@ Tham khảo14/11/2026: [PostgreSQL constraints](https://www.postgresql.org/docs/
 Để snapshot/delta có ordering kiểm chứng được, phương án ở docs14 thêm bảng dự kiến `room_state_cursors(room_id PK/FK rooms,last_sequence bigint >=0)` và `outbox.room_sequence`, UNIQUE(room_id,room_sequence). Writers khóa counter trong transaction, không dùng serial/timestamp như commit order. Chi tiết và concurrency tests cần duyệt ở M1, không bổ sung bảng thật trong foundation.
 
 M1-A dependency additions (kiểm14/11/2026): Mako1.4.3 release22/09/2026/Python>=3.10/MIT, MarkupSafe3.0.4 release02/10/2026/Python>=3.9/BSD3; dependency transitive bắt buộc của Alembic, pin hashlock và cài thành công trên LinuxCI. [Mako metadata](https://pypi.org/pypi/mako/json), [MarkupSafe metadata](https://pypi.org/pypi/MarkupSafe/3.0.4/json). Các package baseline giữ nguyên.
+
+Làm rõ bounded delivery: retry hữu hạn và lease có thể dẫn tới xử lý trùng; “at-least-once” ở đây mô tả **processing attempts**, không bảo đảm notify thành công cho mọi event. Event exhausted có thể chưa notify thành công lần nào; outbox vẫn giữ dấu vết, client cần resync snapshot. Chính sách/rearm operator chưa triển khai hoặc phê duyệt production, không tự xóa hay retry vô hạn.

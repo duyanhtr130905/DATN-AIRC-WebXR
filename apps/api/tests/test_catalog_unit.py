@@ -17,7 +17,14 @@ from app.modules.catalog.service import decode_cursor, encode_cursor
 
 
 def test_orm_ddl_has_catalog_constraints():
-    assert set(Base.metadata.tables) == {"rooms", "objects"}
+    assert set(Base.metadata.tables) == {
+        "rooms",
+        "objects",
+        "current_states",
+        "state_history",
+        "outbox",
+        "room_state_cursors",
+    }
     for model in (Room, Object):
         sql = str(CreateTable(model.__table__).compile(dialect=postgresql.dialect()))
         assert "JSONB" in sql and "TIMESTAMP WITH TIME ZONE" in sql

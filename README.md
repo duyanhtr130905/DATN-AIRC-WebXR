@@ -1,3 +1,9 @@
+# DATN AIRC WebXR — M1-B đang review
+
+State/history/outbox và WebSocket chỉ synthetic đã triển khai; [PR#10](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/10), [acceptance M1-B](docs/17-m1-b-state-realtime-acceptance.md), [trạng thái hiện tại](docs/PROJECT_STATUS.md), [runbook](apps/api/README.md). M0 vàM1-A DONE; M1-C NOT STARTED. Chưa dữ liệu507 thật hoặcKPI đạt, không publicwrite/deploy.
+
+## README lịch sử M1-A và foundation
+
 # DATN AIRC WebXR — M1-A Catalog đang review
 
 M0-A/M0-B1/M0-B2 DONE; M1-A có schema Catalog, Alembic và API chỉ đọc synthetic. [PR#9](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/9), [trạng thái](docs/PROJECT_STATUS.md), [nghiệm thu M1-A](docs/16-m1-a-catalog-acceptance.md), [API runbook](apps/api/README.md). M1-B/C NOT STARTED; chưa dữ liệu AIRC thực hoặc KPI đạt.

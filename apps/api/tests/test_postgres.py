@@ -14,7 +14,7 @@ def test_isolated_postgres_readiness_and_pool_return():
     url = os.environ.get("TEST_DATABASE_URL")
     if not url:
         pytest.fail("TEST_DATABASE_URL is required for PostgreSQL integration; do not claim PASS")
-    settings = Settings(_env_file=None, database_url=url)
+    settings = Settings(_env_file=None, database_url=url, realtime_dispatcher_enabled=False)
     database = Database(settings)
     try:
         assert database.probe() == "ready"

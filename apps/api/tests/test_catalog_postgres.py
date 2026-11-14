@@ -53,7 +53,9 @@ def isolated_catalog_database(migrate=True):
     finally:
         administrator.dispose()
     target = url.set(database=name).render_as_string(hide_password=False)
-    database = Database(Settings(_env_file=None, database_url=target))
+    database = Database(
+        Settings(_env_file=None, database_url=target, realtime_dispatcher_enabled=False)
+    )
     try:
         with database.engine.begin() as connection:
             assert connection.scalar(text("SELECT current_database()")) == name
@@ -84,14 +86,25 @@ def test_migration_empty_database_head_repeat_and_model_drift(catalog_database):
         output = StringIO()
         config = Config(str(API_ROOT / "alembic.ini"), stdout=output)
         config.attributes["connection"] = connection
-        assert set(inspect(connection).get_table_names()) == {"rooms", "objects", "alembic_version"}
+        assert set(inspect(connection).get_table_names()) == {
+            "rooms",
+            "objects",
+            "alembic_version",
+            "current_states",
+            "state_history",
+            "outbox",
+            "room_state_cursors",
+        }
         assert connection.scalar(select(func.count()).select_from(Room)) == 0
         assert connection.scalar(select(func.count()).select_from(Object)) == 0
         command.current(config)
-        assert "0001_catalog" in output.getvalue()
+        assert "0002_state_realtime" in output.getvalue()
         command.upgrade(config, "head")
         command.check(config)
-        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0001_catalog"
+        assert (
+            connection.scalar(text("SELECT version_num FROM alembic_version"))
+            == "0002_state_realtime"
+        )
         inspector = inspect(connection)
         assert inspector.get_foreign_keys("objects")[0]["options"]["ondelete"] == "RESTRICT"
         assert any(
@@ -215,7 +228,9 @@ def test_timestamps_roundtrip_and_nullable_transform(catalog_database):
 
 def test_api_empty_and_actual_session_read_only(catalog_database):
     database, target = catalog_database
-    with TestClient(create_app(Settings(_env_file=None, database_url=target))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None, database_url=target, realtime_dispatcher_enabled=False))
+    ) as client:
         assert client.get("/api/v1/rooms").json()["data"] == []
         assert client.get(f"/api/v1/rooms/{ROOM_ID}/objects").status_code == 404
         assert client.get(f"/api/v1/objects/{OBJECT_IDS[0]}").status_code == 404
@@ -290,7 +305,9 @@ def test_api_pagination_privacy_multiroom_and_validation(catalog_database):
                 evidence_ref="private-ref",
             )
         )
-    with TestClient(create_app(Settings(_env_file=None, database_url=target))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None, database_url=target, realtime_dispatcher_enabled=False))
+    ) as client:
         result = client.get("/api/v1/rooms?limit=1")
         assert result.status_code == 200
         first = result.json()
@@ -378,7 +395,7 @@ def test_actual_cli_migration_and_seed_on_new_database():
             )
             assert result.returncode == 0, f"Alembic CLI {action[0]} failed; see isolated test"
             if action == ["current"]:
-                assert "0001_catalog (head)" in result.stdout
+                assert "0002_state_realtime (head)" in result.stdout
         for _ in range(2):
             result = subprocess.run(
                 [

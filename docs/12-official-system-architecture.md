@@ -1,3 +1,9 @@
+# Cập nhật kiến trúc M1-B
+
+State service và PostgreSQL current/history/cursor/outbox, dispatcher lease/retry và WebSocket read-only đã triển khai trong một Modular Monolith process. Snapshot REPEATABLE READ + durable tail, không broker mới; không nối scene M1-C. [Model](13-data-model.md), [contract](14-api-contracts.md), [acceptance](17-m1-b-state-realtime-acceptance.md) là trạng thái hiện tại. Phần M0-B2 dưới đây giữ lịch sử; source/rights/auth/retention/production/multi-instance chưa chốt.
+
+## Kiến trúc lịch sử foundation
+
 # Kiến trúc hệ thống chính thức — M0-B2
 
 Cập nhật 14/11/2026. Stack và Modular Monolith ACCEPTED theo [ADR-0001](decisions/0001-technology-options.md). Chi tiết module/contract/mô hình dưới đây là thiết kế v1 PROPOSED cho M1, trừ phần foundation thực sự hiện có.
