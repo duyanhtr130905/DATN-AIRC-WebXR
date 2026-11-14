@@ -43,3 +43,36 @@ node --test tools/webxr-capability-check/tests/checker.test.cjs
 Unit/DOM mock chỉ chứng minh logic lỗi và UI. Browser smoke (nếu chạy) ghi riêng tại [evidence](../../docs/evidence/m0-validation.md). Galaxy A17 5G, iPhone và kính VR thực tế: **NOT TESTED**. Công cụ không render AR, không đo FPS, không lưu session và không thay test MT1–MT3.
 
 Ngày đối chiếu nguồn: 14/11/2026. [Google WebXR requirements](https://developers.google.com/ar/develop/webxr/requirements), [WebXR Device API](https://www.w3.org/TR/2026/CRD-webxr-20261109/).
+
+## Browser smoke portable và screenshot tái lập (review fixes P2/P3)
+
+Cần Python 3.13 và Node >=22; không cần npm/pip dependencies cho runner. Windows/Linux được hỗ trợ: ưu tiên `CHROME_BIN`, sau đó Chrome/Chromium trong PATH và các vị trí hệ thống phổ biến. Không tự tải/cài browser. `CHROME_BIN` sai sẽ báo NOT RUN thay vì âm thầm dùng browser khác.
+
+Windows PowerShell, tại root:
+
+```powershell
+$env:CHROME_BIN = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+python tools/webxr-capability-check/tests/run_browser_smoke.py
+```
+
+Có thể bỏ biến trên để tự tìm. Linux, tại clone của chính repository này (không thay workspace local Windows):
+
+```sh
+CHROME_BIN=/usr/bin/google-chrome python3 tools/webxr-capability-check/tests/run_browser_smoke.py
+# hoặc tự tìm browser trong PATH
+python3 tools/webxr-capability-check/tests/run_browser_smoke.py
+```
+
+Kết quả `.local/browser-smoke/result.json` chứa timestamp +07:00, OS/Python, Chrome product/version, từng scenario expected/actual/status và cleanup. `.local/browser-smoke/checker-390.png` là ảnh checker thật do Chrome chụp với viewport emulation 390×900 CSS px, không phải Galaxy. Không mở camera/requestSession. File `browser-driver.cjs` dùng CDP và WebSocket tích hợp Node, không cần package ngoài.
+
+Exit code: **0 = utility scenarios PASS**, **1 = FAIL** (bao gồm browser startup/driver/cleanup), **2 = NOT RUN** (không tìm được browser hoặc Node). NOT RUN phải được hiển thị rõ; không đổi thành browser PASS. Native là quan sát runtime, mock chỉ kiểm tra nhánh lỗi/quyền; không trường hợp nào chứng minh phần cứng AR/VR.
+
+Runner chỉ bind `127.0.0.1`, phục vụ thư mục checker; CDP cũng chỉ loopback. Tạo profile duy nhất trong `.local/browser-smoke/profile-*`, không dùng profile cá nhân. Có startup/driver deadline, đóng bằng Browser.close; finally đóng server/thread và chờ browser, fallback chỉ kết thúc process tree do runner tạo. Profile tạm được xóa; stderr/report ở vùng ignored. Không upload profile, cache hoặc stderr. Để tái lập trạng thái thiếu browser, đặt `CHROME_BIN` tới file không tồn tại và kiểm tra exit 2/report NOT RUN.
+
+Test discovery/cleanup:
+
+```sh
+python -m unittest discover -s tools/webxr-capability-check/tests -p test_runner.py -v
+```
+
+CI có job `validation` bắt buộc và job `browser` riêng. Browser có sẵn thì lỗi test làm job FAIL; browser thiếu thì warning + report NOT RUN, không giả PASS. CI chỉ upload đúng JSON/screenshot qua allowlist; không ghi commit/deploy. [Ảnh review](../../docs/evidence/checker-390.png) và [report local mới](../../docs/evidence/browser-smoke.json) được lưu có chủ đích; artifact CI là kết quả lần chạy riêng, không ghi đè report local trong Git.

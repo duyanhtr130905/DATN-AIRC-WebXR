@@ -34,3 +34,13 @@ Tài liệu hoặc checker không gỡ các blocker vật lý. Không chấp nh�
 3. Xác nhận ưu tiên gỡ năm issues, người phụ trách và đầu mối AIRC; duyệt protocol/nguồn/quyền trước dữ liệu thật.
 4. Chọn hướng UX để nghiên cứu tiếp và quyết định có cho phép PoC A/B sau M0 hay không. Việc review M0 không tự chốt framework/kiến trúc.
 5. Giữ PR mở đến khi được nghiệm thu; Codex dừng sau bàn giao. M0-B/PoC chỉ là đề xuất, không thực hiện tự động.
+
+## Bổ sung nghiệm thu review fixes P1–P4
+
+- [x] Workflow read-only với PR main/push docs/m0-foundation; syntax/unit/verifier/Python/diff checks, browser job và artifact allowlist.
+- [x] Runner portable Windows/Linux, CHROME_BIN/PATH, report expected/actual/status; local Chrome và missing-browser scenario đã chạy lại.
+- [x] [Screenshot 390px thật](evidence/checker-390.png) review được; viewport emulation, không phải Galaxy vật lý.
+- [x] Thông tin trao đổi người dùng về phòng 507, inventory và chưa có phần mềm thiết bị được ghi rõ provenance; KPI không thay đổi, admin manual PROPOSED.
+- CI GitHub: kết luận phải lấy từ run thật sau push; trạng thái live và URL run ghi ở phần bàn giao/PR. Không tự tick PASS trước khi chạy.
+
+PR hiện tại là [#6](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/6); sửa ngay trên docs/m0-foundation, không tạo PR mới. Các blocker thực địa chưa được gỡ.

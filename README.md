@@ -6,7 +6,7 @@ AIRC là Trung tâm Nghiên cứu tiên tiến quốc tế về Trí tuệ nhân
 
 ## Trạng thái
 
-M0-A — Foundation & Feasibility, ngày 14/11/2026. Chưa khảo sát chi tiết, chưa có dữ liệu thực AIRC, chưa xác nhận đủ ba phòng. Chưa có frontend/backend sản phẩm, cơ sở dữ liệu, AR scene hoặc VR trải nghiệm. Framework và kiến trúc chưa được phê duyệt. Dự án độc lập hoàn toàn với KLTN-Factory-Agentic-DT, không sử dụng tài sản của dự án đó.
+M0-A — Foundation & Feasibility, ngày 14/11/2026. Chưa khảo sát chi tiết, chưa có dữ liệu thực AIRC, chưa xác nhận đủ ba phòng. Theo trao đổi mới do người dùng cung cấp, giảng viên cho biết hiện chỉ có phòng 507; đang chờ xác nhận phạm vi chính thức để xử lý mâu thuẫn KPI ≥3 phòng, không tự điều chỉnh KPI. Chưa có frontend/backend sản phẩm, cơ sở dữ liệu, AR scene hoặc VR trải nghiệm. Framework và kiến trúc chưa được phê duyệt. Dự án độc lập hoàn toàn với KLTN-Factory-Agentic-DT, không sử dụng tài sản của dự án đó.
 
 ## Mục tiêu và phân hệ dự kiến
 

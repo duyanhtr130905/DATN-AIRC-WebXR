@@ -4,7 +4,7 @@ Các ngưỡng do đề bài quy định; phương pháp đo dưới đây là P
 
 | ID | Yêu cầu giữ nguyên | Tiêu chí và bằng chứng dự kiến | Trạng thái hiện tại |
 | --- | --- | --- | --- |
-| MT1-01 | ≥3 phòng | danh sách ≥3 phòng thực được AIRC xác nhận; sơ đồ, ảnh có quyền, mapping room ID ↔ scene; đi đủ từng phòng trong build | BLOCKED: chưa xác nhận phòng |
+| MT1-01 | ≥3 phòng | danh sách ≥3 phòng thực được AIRC xác nhận; sơ đồ, ảnh có quyền, mapping room ID ↔ scene; đi đủ từng phòng trong build | BLOCKED: trao đổi người dùng nói chỉ phòng 507; chờ xác nhận scope, KPI ≥3 phòng chưa đổi |
 | MT1-02 | ≥20 đối tượng tương tác | ≥20 object ID duy nhất có đối chiếu thực địa; kiểm thử mở thông tin/tương tác từng ID, không đếm nhiều mesh của một thiết bị thành nhiều đối tượng | BLOCKED: chưa có inventory |
 | MT1-03 | ≥3 loại trạng thái | lịch phòng, tình trạng thiết bị, thông tin trưng bày; test cập nhật từng loại từ nguồn đã xác nhận đến UI, kèm provenance | BLOCKED: chưa có nguồn |
 | MT1-04 | độ trễ hiển thị ≤5 giây | trace từ thời điểm thay đổi được ghi tại nguồn đến frame UI áp dụng; mọi mẫu đo hợp lệ ≤5s trong workload đã duyệt; lưu raw timestamp, clock offset, cấu hình mạng, log lỗi | NOT TESTED |

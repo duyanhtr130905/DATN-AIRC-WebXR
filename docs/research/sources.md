@@ -40,3 +40,9 @@ Chênh lệch npm stable/source main/release page được giữ nguyên và gi�
 ## Cách kiểm tra lại
 
 Đọc lại trang chính thức, tìm đúng model/feature và ngày cập nhật; dùng `gh api repos/<owner>/<repo>` lấy archived/pushed_at/license và `releases/latest` (404 IWSDK nghĩa chưa có latest release, không tự suy ra SDK ngừng duy trì). GET registry endpoint trên để đối chiếu version/peer/engine. Không lưu header đăng nhập hoặc stdout token. Khi nguồn đổi, cập nhật ngày/snapshot và ghi rõ thay đổi trước chọn stack.
+
+## Nguồn CI cho review fixes — kiểm tra 14/11/2026
+
+Đọc README/action.yml và GitHub release/API chính thức trước chọn: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.1.0](https://github.com/actions/setup-node/releases/tag/v7.1.0), [setup-python v7.1.0](https://github.com/actions/setup-python/releases/tag/v7.1.0), [upload-artifact v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2). Workflow pin SHA full của từng tag thay vì nhánh main; không dùng action cài browser. Node 22/Python 3.13, cache không cần nên tắt, checkout không lưu credential.
+
+[Workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax): filter PR base main, push branch và contents: read; không pull_request_target/secrets/deploy/write. [upload-artifact](https://github.com/actions/upload-artifact) dùng allowlist chỉ report/screenshot với retention 14 ngày; include-hidden-files chỉ vì output ở `.local`, không glob profile. PyYAML [6.0.3](https://pypi.org/project/PyYAML/6.0.3/) chỉ cài vào `.local/validation-deps` để parse YAML local bằng BaseLoader (giữ key on), không là dependency sản phẩm/runner/CI. Kết quả GitHub chạy thật được bàn giao bằng URL run, không suy ra từ parse local.

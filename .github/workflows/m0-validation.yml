@@ -1,0 +1,87 @@
+name: M0 validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [docs/m0-foundation]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m0-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validation:
+    name: Syntax, unit tests and repository checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.13'
+      - name: JavaScript syntax
+        run: |
+          for file in tools/webxr-capability-check/*.js tools/webxr-capability-check/tests/*.js tools/webxr-capability-check/tests/*.cjs; do
+            node --check "$file"
+          done
+      - name: Node unit and DOM tests
+        run: node --test tools/webxr-capability-check/tests/checker.test.cjs
+      - name: Python syntax
+        run: python -m compileall -q tools
+      - name: Browser runner discovery and cleanup tests
+        run: python -m unittest discover -s tools/webxr-capability-check/tests -p test_runner.py -v
+      - name: Repository, links and secret patterns
+        run: python tools/verify_repository.py
+      - name: Whitespace across PR branch
+        run: git diff --check origin/main...HEAD
+
+  browser:
+    name: Browser smoke and viewport evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.13'
+      - name: Run available Chrome or Chromium without installing a browser
+        run: |
+          set +e
+          python tools/webxr-capability-check/tests/run_browser_smoke.py
+          result=$?
+          set -e
+          if [ "$result" -eq 2 ]; then
+            echo '::warning::Browser smoke NOT RUN: Chrome/Chromium or Node unavailable; see result.json.'
+            echo 'Browser smoke: NOT RUN (runtime missing). Required static/unit checks run in the validation job.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Browser smoke runner exit code: $result. See scenario expected/actual in result.json." >> "$GITHUB_STEP_SUMMARY"
+            exit "$result"
+          fi
+      - name: Upload only report and checker screenshot
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: m0-browser-evidence-${{ github.event_name }}
+          path: |
+            .local/browser-smoke/result.json
+            .local/browser-smoke/checker-390.png
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

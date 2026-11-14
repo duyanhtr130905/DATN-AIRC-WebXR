@@ -1,9 +1,10 @@
 # Danh sách file bàn giao M0-A
 
-39 file thuộc bộ bàn giao; README/.gitignore có từ bootstrap và được cập nhật, các file còn lại mới trong nhánh M0. Không có dữ liệu thực AIRC hay dependencies sản phẩm.
+44 file thuộc bộ bàn giao sau review fixes PR #6. Bao gồm workflow, browser driver/tests portable và ảnh checker thật; không có dữ liệu khảo sát AIRC, Chrome profile/cache hoặc dependencies sản phẩm.
 
 - `.gitattributes`
 - `.github/pull_request_template.md`
+- `.github/workflows/m0-validation.yml`
 - `.gitignore`
 - `.techlead/project.yaml`
 - `AGENTS.md`
@@ -27,7 +28,9 @@
 - `docs/backlog/README.md`
 - `docs/decisions/0000-template.md`
 - `docs/decisions/0001-technology-options.md`
+- `docs/evidence/browser-not-run.json`
 - `docs/evidence/browser-smoke.json`
+- `docs/evidence/checker-390.png`
 - `docs/evidence/m0-validation.md`
 - `docs/file-inventory.md`
 - `docs/research/sources.md`
@@ -37,7 +40,9 @@
 - `tools/webxr-capability-check/checker.js`
 - `tools/webxr-capability-check/index.html`
 - `tools/webxr-capability-check/styles.css`
+- `tools/webxr-capability-check/tests/browser-driver.cjs`
 - `tools/webxr-capability-check/tests/browser-smoke.html`
 - `tools/webxr-capability-check/tests/browser-smoke.js`
 - `tools/webxr-capability-check/tests/checker.test.cjs`
 - `tools/webxr-capability-check/tests/run_browser_smoke.py`
+- `tools/webxr-capability-check/tests/test_runner.py`

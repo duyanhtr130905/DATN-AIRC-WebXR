@@ -11,3 +11,5 @@ Ngày 14/11/2026. Năm issues đã tạo và đọc lại qua GitHub CLI; tất 
 | [Nghiệm thu VR — #5](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/5) | [05](05-vr-acceptance.md) |
 
 Không gán người chưa xác nhận, không tự liên hệ AIRC/giảng viên. Chủ dự án bổ sung bằng chứng có quyền chia sẻ và phân công khi review.
+
+Cập nhật review fixes 14/11/2026: theo trao đổi người dùng thuật lại, hiện chỉ có phòng 507 và chưa có phần mềm quản lý thiết bị; inventory chờ chọn phòng. Chưa phải survey/scope/source-rights chính thức. Issues #1–#3 vẫn BLOCKED và OPEN; không thay KPI ≥3 phòng. Xem risk register/project status để biết provenance và giới hạn.

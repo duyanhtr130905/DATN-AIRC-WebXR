@@ -7,7 +7,7 @@ Toàn bộ thiết kế dữ liệu là PROPOSED; chưa có schema database cu�
 | Không gian/phòng | sơ đồ được phép + số đo xác nhận | revision khi không gian thay đổi; model phải trỏ survey version |
 | Đối tượng/thiết bị | inventory AIRC, Excel được phép hoặc phiếu khảo sát | đối chiếu ID, tên, vị trí; sanitize serial/thông tin nội bộ |
 | Lịch phòng | API, database view read-only, Excel hoặc nhập tay | owner và cadence cần xác nhận; ghi thời điểm thay đổi tại nguồn |
-| Tình trạng thiết bị | hệ thống quản lý nếu có, export hoặc nhập tay | không mặc định có sensor; phân biệt thời điểm quan sát và nhập liệu |
+| Tình trạng thiết bị | ưu tiên khảo sát nhập tay; trao đổi người dùng cho biết chưa có phần mềm quản lý thiết bị, chưa có nguồn chính thức | không mặc định có sensor; phân biệt thời điểm quan sát và nhập liệu |
 | Thông tin trưng bày | nội dung đã duyệt | tác giả/quyền, revision, effective date |
 | Phiên/sự kiện | ứng dụng tạo sau này | pseudonymous session/event ID; retention/consent cần duyệt |
 | GLB/glTF/ảnh | tự dựng từ survey hoặc asset có license | checksum, nguồn, quyền, đơn vị/trục, LOD, revision |
@@ -31,3 +31,11 @@ Cấp opaque ID bất biến, ví dụ minh họa `obj_<uuid>` và `room_<uuid>`
 Backend dự kiến là chủ dữ liệu chuẩn đã xác thực; frontend chỉ là cache/render. Có adapter ingest riêng, validation + provenance trước commit, không ghi vào nguồn AIRC khi chưa được cấp quyền. Session queue không mang quyền quản trị. Không lưu raw ảnh/phiên định danh trong repo; nơi lưu, retention, quyền xem/xuất/xóa và consent phải được duyệt trước thu thập. Dữ liệu synthetic thử nghiệm sau này phải tách rõ khỏi dataset khảo sát.
 
 Điểm cần PoC: mapping GLB ID qua export, import Excel lỗi, delta/reconnect, độ mới dữ liệu, dedupe và recovery. Chưa triển khai ở M0-A.
+
+## Nhập và cập nhật trạng thái thủ công — PROPOSED
+
+Thông tin người dùng cung cấp ngày 14/11/2026 từ anh Nguyễn Tiến Nhật Quang: hiện chưa có phần mềm quản lý thiết bị, danh mục có thể được hỗ trợ sau khi chọn phòng với giảng viên. Chưa có inventory, API hoặc quyền dữ liệu chính thức; không coi trao đổi này là dataset khảo sát.
+
+Phương án đề xuất cho milestone được duyệt sau này: người có quyền dùng trang quản trị để nhập inventory/thông tin trưng bày và cập nhật tình trạng; validation + audit/provenance, thời điểm quan sát thực, thời điểm nhập/xác nhận và revision. Server phát thay đổi đến các client đang xem qua cơ chế realtime đã được duyệt. **Chưa triển khai trang quản trị hay database.**
+
+Phân biệt hai khoảng thời gian: (1) thay đổi ngoài đời → người phụ trách quan sát/nhập, có thể chậm và chưa được đo; (2) thao tác cập nhật hợp lệ trong hệ thống → client hiển thị, có thể đo riêng. Realtime cho (2) không phải dữ liệu tự động từ hệ thống AIRC và không chứng minh tổng độ trễ từ thay đổi ngoài đời ≤5 giây. Ranh giới nguồn/timestamp cho MT1 phải được giảng viên duyệt minh bạch; không tự thay KPI. UI cần nhãn “cập nhật thủ công”, observed_at/last_updated và stale/unknown khi thiếu xác nhận.
