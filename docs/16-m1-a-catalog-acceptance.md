@@ -6,7 +6,7 @@ Ngày14/11/2026, branch feat/m1-a-catalog; base merge M0-B2 b4e4b910c9ed8cd43fee
 |---|---|---|
 | Schema rooms/objects, ORM tách response | PASS | models + revision0001_catalog, UUID/FK/RESTRICT/unique/CHECK/JSONB/timestamptz/indexes; chưa runtime localPG |
 | Alembic offlineSQL | PASS | unit sinh DDL2bảng, không seed; không thay migrationPG |
-| Lint/compile/unit | PASS |26unit,ruff,compileall exit0; warninghttpxTestClient giữ nguyên |
+| Lint/compile/unit | PASS |29 unit,ruff,compileall exit0; warninghttpxTestClient giữ nguyên |
 | MigrationPG từdatabase trống/current/repeat/drift | NOT RUN | chờCI; khôngSELECT1-only claim |
 | PG constraints/timezone/seed/API/pagination/privacy | NOT RUN | chờCI riêng, khôngSQLite |
 | API read-only/validation/empty/no publicwrite | PASS | unittests + OpenAPI; PGreal queries chờCI |
@@ -33,3 +33,5 @@ Catalog schema baseline đượcphéptriểnkhai, khôngtoànbộDigitalTwin sch
 ## Lịch sử CI ban đầu
 
 [Push run43579935413](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43579935413) trên8e603b5:21PGtests PASS,1testmigration FAIL vì assertion đọcstdout sai stream, trong khi Alembic thực tế in0001_catalog(head). Đã đổi sang Config(stdout=StringIO) để kiểm đúng output; không bỏ assertion/current/repeat/drift. Kết quả PGtoànbộ cầnCIrerun sau sửa. Review còn phát hiện queryparameter có thểghiđè host/dbname trong testURL; đãrejecturl.query vàcheckcurrent_database trướcCREATEDATABASE, thêm3unitnegative.
+
+Bản4178f3f đã PASS application CI [run43580289121](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580289121), gồm toàn bộ22PostgreSQL tests sau sửastdout. Bổ sung một test chạy **CLI thật** trênDBmới: upgrade/current/upgrade/check vàseedCLI2lần; kết quả cầnchốt trêncommit tiếp theo, không tựdùng22PASS thay23tests mới.

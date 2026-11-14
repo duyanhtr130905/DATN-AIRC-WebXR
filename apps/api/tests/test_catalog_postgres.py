@@ -1,4 +1,7 @@
 import os
+import subprocess
+import sys
+from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta, timezone
 from io import StringIO
 from pathlib import Path
@@ -27,8 +30,8 @@ pytestmark = pytest.mark.postgres
 API_ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.fixture
-def catalog_database():
+@contextmanager
+def isolated_catalog_database(migrate=True):
     raw = os.environ.get("TEST_DATABASE_URL")
     if not raw or os.environ.get("AIRC_ALLOW_TEST_DATABASES") != "1":
         pytest.fail("Requires explicit TEST_DATABASE_URL + AIRC_ALLOW_TEST_DATABASES=1")
@@ -55,12 +58,19 @@ def catalog_database():
         with database.engine.begin() as connection:
             assert connection.scalar(text("SELECT current_database()")) == name
             assert inspect(connection).get_table_names() == []
-            config = Config(str(API_ROOT / "alembic.ini"))
-            config.attributes["connection"] = connection
-            command.upgrade(config, "head")
+            if migrate:
+                config = Config(str(API_ROOT / "alembic.ini"))
+                config.attributes["connection"] = connection
+                command.upgrade(config, "head")
         yield database, SecretStr(target)
     finally:
         database.close()
+
+
+@pytest.fixture
+def catalog_database():
+    with isolated_catalog_database() as result:
+        yield result
 
 
 def seed(database):
@@ -347,3 +357,45 @@ def test_parent_visibility_is_filtered_in_same_object_query(catalog_database):
             rows, cursor = service.objects_page(session, ROOM_ID, 25, None)
         assert rows == [] and cursor is None
         session.rollback()
+
+
+def test_actual_cli_migration_and_seed_on_new_database():
+    with isolated_catalog_database(migrate=False) as (database, secret_url):
+        url = make_url(secret_url.get_secret_value())
+        env = {**os.environ, "DATABASE_URL": secret_url.get_secret_value()}
+        args = [
+            sys.executable,
+            "-m",
+            "alembic",
+            "-c",
+            str(API_ROOT / "alembic.ini"),
+            "-x",
+            f"confirm_catalog_database={url.database}",
+        ]
+        for action in [["upgrade", "head"], ["current"], ["upgrade", "head"], ["check"]]:
+            result = subprocess.run(
+                args + action, cwd=API_ROOT, env=env, capture_output=True, text=True, timeout=30
+            )
+            assert result.returncode == 0, f"Alembic CLI {action[0]} failed; see isolated test"
+            if action == ["current"]:
+                assert "0001_catalog (head)" in result.stdout
+        for _ in range(2):
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "app.modules.catalog.seed",
+                    "--confirm-database",
+                    url.database,
+                ],
+                cwd=API_ROOT,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            assert result.returncode == 0, "Explicit synthetic seed CLI failed"
+        with Session(database.engine) as session:
+            assert session.scalar(select(func.count()).select_from(Room)) == 1
+            assert session.scalar(select(func.count()).select_from(Object)) == 4
+        assert database.engine.pool.checkedout() == 0

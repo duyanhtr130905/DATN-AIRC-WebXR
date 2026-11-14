@@ -174,10 +174,10 @@ def test_postgres_fixture_refuses_override_before_connect(monkeypatch, url):
     monkeypatch.setenv("AIRC_ALLOW_TEST_DATABASES", "1")
     connect = Mock(side_effect=AssertionError("Must not connect to rejected target"))
     monkeypatch.setattr(postgres_tests, "create_engine", connect)
-    fixture = postgres_tests.catalog_database.__wrapped__()
+    fixture = postgres_tests.isolated_catalog_database()
     try:
         with pytest.raises(pytest.fail.Exception):
-            next(fixture)
+            fixture.__enter__()
     finally:
-        fixture.close()
+        fixture.__exit__(None, None, None)
     connect.assert_not_called()
