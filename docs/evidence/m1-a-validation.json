@@ -1,0 +1,262 @@
+{
+  "verified_at": "2026-11-14T09:30:25.859016+00:00",
+  "tested_code_commit": "4f6541935816b257ef052d420d2ed3e3014bd0b8",
+  "pr": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/9",
+  "runs": [
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "4f6541935816b257ef052d420d2ed3e3014bd0b8",
+      "jobs": [
+        {
+          "name": "API unit, real PostgreSQL and lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467918/job/132403896967"
+        },
+        {
+          "name": "Web typecheck, build, unit and browser",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467918/job/132403897220"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467918"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "4f6541935816b257ef052d420d2ed3e3014bd0b8",
+      "jobs": [
+        {
+          "name": "Browser smoke and viewport evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467951/job/132403896921"
+        },
+        {
+          "name": "Syntax, unit tests and repository checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467951/job/132403897096"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467951"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "4f6541935816b257ef052d420d2ed3e3014bd0b8",
+      "jobs": [
+        {
+          "name": "Build and domain tests (poc-a-r3f-xr)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467911/job/132403971819"
+        },
+        {
+          "name": "Build and domain tests (poc-b-iwsdk)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467911/job/132403972168"
+        },
+        {
+          "name": "Real WebGL browser A/B and IWER",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467911/job/132404099661"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580467911"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "headSha": "4f6541935816b257ef052d420d2ed3e3014bd0b8",
+      "jobs": [
+        {
+          "name": "API unit, real PostgreSQL and lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580464382/job/132403886147"
+        },
+        {
+          "name": "Web typecheck, build, unit and browser",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580464382/job/132403886279"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43580464382"
+    }
+  ],
+  "postgres_junit": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "test_names": [
+      "test_migration_empty_database_head_repeat_and_model_drift",
+      "test_database_constraints[duplicate_id]",
+      "test_database_constraints[duplicate_code]",
+      "test_database_constraints[null_source]",
+      "test_database_constraints[duplicate_object_id]",
+      "test_database_constraints[invalid_source]",
+      "test_database_constraints[null_name]",
+      "test_database_constraints[empty_code]",
+      "test_database_constraints[bad_metadata]",
+      "test_database_constraints[huge_metadata]",
+      "test_database_constraints[unproven_verified]",
+      "test_database_constraints[invalid_fk]",
+      "test_database_constraints[null_room]",
+      "test_database_constraints[bad_transform]",
+      "test_database_constraints[empty_type]",
+      "test_database_constraints[restrict]",
+      "test_seed_idempotency_and_collision_no_overwrite",
+      "test_timestamps_roundtrip_and_nullable_transform",
+      "test_api_empty_and_actual_session_read_only",
+      "test_api_pagination_privacy_multiroom_and_validation",
+      "test_parent_visibility_is_filtered_in_same_object_query",
+      "test_actual_cli_migration_and_seed_on_new_database",
+      "test_isolated_postgres_readiness_and_pool_return"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 14108326659,
+      "name": "m0-b2-browser-pull_request",
+      "expired": false,
+      "size_in_bytes": 268028
+    },
+    {
+      "id": 14107479454,
+      "name": "m1-a-postgres-pull_request",
+      "expired": false,
+      "size_in_bytes": 756
+    }
+  ],
+  "local": {
+    "environment": "Windows11,Python3.13.2,Node22.16.0,Chrome157.0.8103.51",
+    "commands": [
+      {
+        "command": "python -m pytest -q -m \"not postgres\" -c apps/api/pyproject.toml apps/api/tests",
+        "exit_code": 0,
+        "actual": "29 passed,23 deselected,1 known httpx warning"
+      },
+      {
+        "command": "python -m ruff check apps/api",
+        "exit_code": 0,
+        "actual": "All checks passed"
+      },
+      {
+        "command": "python -m compileall -q apps/api/app apps/api/alembic apps/api/tests",
+        "exit_code": 0,
+        "actual": "PASS"
+      },
+      {
+        "command": "npm run build --prefix apps/web",
+        "exit_code": 0,
+        "actual": "TypeScript and production build PASS; bundle warning retained"
+      },
+      {
+        "command": "npm test --prefix apps/web",
+        "exit_code": 0,
+        "actual": "7 passed"
+      },
+      {
+        "command": "npm run test:browser --prefix apps/web",
+        "exit_code": 0,
+        "actual": "6 scenarios PASS; actual Chrome and FastAPI, no DB/hardware claim"
+      },
+      {
+        "command": "node --test tools/webxr-capability-check/tests/checker.test.cjs",
+        "exit_code": 0,
+        "actual": "10 passed"
+      },
+      {
+        "command": "python -m unittest discover -s tools/webxr-capability-check/tests -p test_runner.py -v",
+        "exit_code": 0,
+        "actual": "8 passed"
+      },
+      {
+        "command": "python tools/webxr-capability-check/tests/run_browser_smoke.py",
+        "exit_code": 0,
+        "actual": "native/mocked-XR/390px scenarios PASS; hardwareNOTRUN"
+      }
+    ],
+    "postgres": "BLOCKED: no local Docker/PostgreSQL; no SQLite substitution",
+    "app_browser": {
+      "executedAt": "2026-11-14T09:21:15.366Z",
+      "os": "win32 10.0.26300",
+      "browser": "157.0.8103.51",
+      "renderer": "native Chrome WebGL2, software ANGLE",
+      "xr": "NOT RUN: no XR session or physical device",
+      "scenarios": [
+        {
+          "scenario": "Desktop: renderer + real FastAPI health, DB not configured",
+          "expected": "Assertions pass",
+          "actual": "All assertions passed",
+          "status": "PASS"
+        },
+        {
+          "scenario": "Actual mouse ray pick + keyboard selection + reset",
+          "expected": "Assertions pass",
+          "actual": "All assertions passed",
+          "status": "PASS"
+        },
+        {
+          "scenario": "390px viewport emulation: touch + focus + no overflow",
+          "expected": "Assertions pass",
+          "actual": "All assertions passed",
+          "status": "PASS"
+        },
+        {
+          "scenario": "WebGL2 unsupported: injected unavailable getContext, DOM still usable",
+          "expected": "Assertions pass",
+          "actual": "All assertions passed",
+          "status": "PASS"
+        },
+        {
+          "scenario": "Readiness network failure preserves live backend status",
+          "expected": "Assertions pass",
+          "actual": "All assertions passed",
+          "status": "PASS"
+        },
+        {
+          "scenario": "Backend unavailable: network failure is visible (browser routing mock)",
+          "expected": "Assertions pass",
+          "actual": "All assertions passed",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "migration": {
+    "revision": "0001_catalog",
+    "tables": [
+      "rooms",
+      "objects"
+    ],
+    "no_seed_in_migration": true,
+    "actual_postgres_proof": "Real CI upgrade from empty DB, current, repeated upgrade, autogenerate drift check, constraints, actual CLI migration+seed",
+    "downgrade": "NOT RUN; destructive downgrade disabled"
+  },
+  "initial_failure": {
+    "run": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43579935413",
+    "actual": "1 failed,21 passed; Alembic current stdout capture assertion",
+    "fix": "Config(stdout=StringIO), all assertions preserved; later 23 PostgreSQL tests PASS"
+  },
+  "review_closure": [
+    "JOIN parent visibility within same object query",
+    "Reject query parameter host/db override before engine creation",
+    "Verify base current_database before CREATE DATABASE",
+    "SecretStr fixture URL redaction",
+    "CLI upgrade/current/re-upgrade/check and idempotent seed on new database reviewed"
+  ],
+  "hardware": "NOT RUN; no real AIRC dataset or KPI claims"
+}
