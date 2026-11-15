@@ -30,3 +30,10 @@ C2 candidate: app defaultlive, explicitofflinefoundation; typedREST pagination/r
 
 
 C2 intermediate734c1e7 [CI43672507643](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43672507643) PASS cảjobs:62unit/63PG bao gồm actualChrome5scenarios. Đã tải report/screenshots và xem desktop/390px, actualmesh đỏmaintenance +Panelv2 hiện đúng. Sửa thêm deadline/cancel khi bodytransportignoreabort (testRED→GREEN), optionalmetadata empty/null hợp lệ theo backend;24frontendunitPASS local. Cần finalC2CI sau sửa trướcC3. C3 NOT STARTED.
+
+
+## C2 — PASS / C3 — IN PROGRESS
+
+Runtime sourcef775fe3 [CI43672737190](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43672737190) PASS cảjobs,62unit/63PG và24frontendunit,7foundationbrowser +5actualPGbrowser scenarios. Local bổ sung reconnectFSM bounded/oldcallback test→25frontendunitPASS. Independentreview metadatafix vàscope/cancel đãđốichiếu. C2phasecommit kèm evidence trướcC3. KhôngclaimKPI/hardware.
+
+C3 bước tiếp cụ thể: test-only bounded render/receive/Reactdiagnostics, actualmesh afterRender +pixel evidence,20samples với clockoffset/uncertainty, WSfaults/reconnect/gap/duplicate/outage/emptyDB/WebGLfallback/keyboard. CI artifactsrawmetrics/screenshots/JUnit và fullM0/PoC/IWER regressions; chỉtạo1PR saufinalPASS.

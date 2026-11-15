@@ -69,3 +69,15 @@ test("Catalog cancellation settles stalled transport and stops use of response",
  const request=getJson("/api/test",controller.signal,fetcher,1000);controller.abort();
  await assert.rejects(request,(error:unknown)=>error instanceof CatalogError&&error.kind==="cancelled");
 });
+
+
+test("reconnect FSM is bounded, marks stale, and ignores old socket callbacks",(t)=>{
+ t.mock.timers.enable({apis:["setTimeout"]});
+ const sockets:any[]=[];const statuses:string[]=[];
+ const stop=subscribe(room,objects,r=>statuses.push(r.status),{url:"ws://test.invalid",random:()=>0,factory:()=>{const s:any={close(){},onmessage:null,onopen:null,onclose:null,onerror:null};sockets.push(s);return s as WebSocket;}});
+ const oldMessage=sockets[0].onmessage;
+ sockets[0].onclose();assert.ok(statuses.includes("stale"));t.mock.timers.tick(300);assert.equal(sockets.length,2);
+ const before=statuses.length;oldMessage({data:JSON.stringify(frame("snapshot.start",{total_chunks:0,total_states:0}))});assert.equal(statuses.length,before);
+ for(let index=1;index<12;index++){sockets.at(-1).onclose();t.mock.timers.tick(8000);}
+ assert.equal(sockets.length,12);assert.equal(statuses.at(-1),"error");t.mock.timers.tick(100000);assert.equal(sockets.length,12);stop();
+});
