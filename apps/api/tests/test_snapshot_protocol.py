@@ -136,3 +136,21 @@ def test_v2_wakeup_coalescing_is_bounded():
         assert sub.queue.qsize() == 8 and not sub.overflow
 
     asyncio.run(check())
+
+
+@pytest.mark.parametrize("field", ["sequence", "version"])
+def test_v2_all_messages_reject_unsafe_integers(field):
+    import asyncio
+    from unittest.mock import AsyncMock
+
+    from app.modules.realtime.router import send
+
+    frame = {"schema_version": 2, "sequence": 1, "state": {"version": 1}}
+    if field == "sequence":
+        frame["sequence"] = 2**53
+    else:
+        frame["state"]["version"] = 2**53
+    socket = AsyncMock()
+    with pytest.raises(ValueError):
+        asyncio.run(send(socket, frame))
+    socket.send_json.assert_not_called()

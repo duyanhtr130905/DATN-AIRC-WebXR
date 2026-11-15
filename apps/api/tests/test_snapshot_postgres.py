@@ -198,3 +198,26 @@ def test_v2_dispatcher_restart_durable_delta(live_server):
         delta = receive_type(ws, "state.updated")
         assert delta["sequence"] == 2 and delta["state"]["version"] == 2
         assert delta["schema_version"] == 2
+
+
+def test_tcp_client_write_during_snapshot_is_rejected(live_server, monkeypatch):
+    import app.modules.realtime.router as wire
+
+    database, _, _, _, port = live_server
+    populate(database, 41)
+    original = wire.send
+
+    async def slow_start(socket, frame):
+        await original(socket, frame)
+        if frame["type"] == "snapshot.start":
+            await asyncio.sleep(0.2)  # Fault injection: hold sending while client writes.
+
+    monkeypatch.setattr(wire, "send", slow_start)
+    with connect(uri(port), origin="http://localhost:5173", open_timeout=5) as ws:
+        assert json.loads(ws.recv(timeout=5))["type"] == "snapshot.start"
+        ws.send('{"type":"state.update"}')
+        frame = json.loads(ws.recv(timeout=5))
+        assert frame["type"] == "error" and frame["code"] == "READ_ONLY"
+        with pytest.raises(ConnectionClosed) as error:
+            ws.recv(timeout=5)
+        assert error.value.rcvd.code == 1008

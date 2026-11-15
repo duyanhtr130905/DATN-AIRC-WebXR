@@ -14,3 +14,6 @@ Bước tiếp: hoàn thiện C1→lint/unit→push checkpoint C1→đợi actua
 
 
 Checkpoint implementation C1: commit feed865 đã push.55unit tests PASS local; lint/compile/verifier/diff PASS.60PostgreSQL tests (12C1 mới) đang chờ CI, local BLOCKED thiếuPG. V2 wakeup queue coalesce và SQL durable replay authoritative. C2/C3 chưa bắt đầu.
+
+
+C1 gate intermediate: commit404a862 CI [43671389080](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43671389080) PASS cả API PostgreSQL và web/browser. Fixture registration đã sửa;61PGtests gồm13C1 và48M1-A/B tests đã chạy, không skip. Review bổ sung receive READ_ONLY lúc chunking và safe-integer guard cho mọiv2message;58unitPASS local. Những bổ sung này cần finalC1CI trước chuyểnC2.

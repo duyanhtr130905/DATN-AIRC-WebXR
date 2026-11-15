@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy.exc import SQLAlchemyError
 
+from app.modules.realtime.snapshot_protocol import MAX_SAFE_INTEGER
 from app.modules.state.read import replay, revalidate_snapshot_visibility, snapshot, snapshot_v2
 from app.modules.state.service import StateUnavailable
 
@@ -14,6 +15,13 @@ router = APIRouter()
 
 async def send(socket, message):
     message.setdefault("timestamp", datetime.now(UTC).isoformat())
+    if message.get("schema_version") == 2:
+        sequence = message.get("sequence")
+        version = message.get("state", {}).get("version", 1)
+        if not isinstance(sequence, int) or not 0 <= sequence <= MAX_SAFE_INTEGER:
+            raise ValueError("Unsafe wire sequence")
+        if not isinstance(version, int) or not 1 <= version <= MAX_SAFE_INTEGER:
+            raise ValueError("Unsafe wire version")
     capacity = 32 * 1024 if message.get("schema_version") == 2 else 256 * 1024
     if len(json.dumps(message).encode()) > capacity:
         raise ValueError("Message capacity")
@@ -63,6 +71,17 @@ async def websocket_state(socket: WebSocket):
             ]
             for frame in frames:
                 if receive.done():
+                    if receive.result()["type"] != "websocket.disconnect":
+                        await deliver(
+                            {
+                                "type": "error",
+                                "message_id": str(uuid4()),
+                                "room_id": str(room_id),
+                                "sequence": sequence,
+                                "code": "READ_ONLY",
+                            }
+                        )
+                        await socket.close(code=1008)
                     return
                 if sub.overflow:
                     await deliver(
