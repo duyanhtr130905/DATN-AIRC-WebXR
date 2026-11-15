@@ -1,86 +1,34 @@
-# DATN AIRC WebXR — M1-C synthetic vertical slice
-
-M0-A/B1/B2 và M1-A/B đã DONE/merge. M1-C đã qua các gate C1/C2/C3 và đang bàn giao PR để review. Ứng dụng chính thức lấy Catalog UUID và state synthetic từ PostgreSQL qua FastAPI REST/WebSocket, cập nhật primitive 3D và Information Panel. Không có dữ liệu thật507, chưa nghiệm thu KPI MT1–MT3, không publicwrite/deploy.
-
-Bắt đầu: [web](apps/web/README.md), [API + guarded seed/CLI](apps/api/README.md), [PostgreSQL local](infra/README.md), [kiến trúc](docs/12-official-system-architecture.md), [contract](docs/14-api-contracts.md), [acceptance M1-C](docs/18-m1-c-vertical-slice-acceptance.md), [checkpoint tiếp tục](docs/18-m1-c-progress.md), [trạng thái](docs/PROJECT_STATUS.md). Defaultlive không âm thầm fallback; DEMO foundation offline chỉ khi chọn riêng.
-
-## Nội dung lịch sử M1-B và các milestone trước
-
-# DATN AIRC WebXR — M1-B đang review
-
-State/history/outbox và WebSocket chỉ synthetic đã triển khai; [PR#10](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/10), [acceptance M1-B](docs/17-m1-b-state-realtime-acceptance.md), [trạng thái hiện tại](docs/PROJECT_STATUS.md), [runbook](apps/api/README.md). M0 vàM1-A DONE; M1-C NOT STARTED. Chưa dữ liệu507 thật hoặcKPI đạt, không publicwrite/deploy.
-
-## README lịch sử M1-A và foundation
-
-# DATN AIRC WebXR — M1-A Catalog đang review
-
-M0-A/M0-B1/M0-B2 DONE; M1-A có schema Catalog, Alembic và API chỉ đọc synthetic. [PR#9](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/9), [trạng thái](docs/PROJECT_STATUS.md), [nghiệm thu M1-A](docs/16-m1-a-catalog-acceptance.md), [API runbook](apps/api/README.md). M1-B/C NOT STARTED; chưa dữ liệu AIRC thực hoặc KPI đạt.
-
-## README lịch sử foundation và nghiên cứu
-
-# DATN AIRC WebXR — ứng dụng nền tảng M0-B2
-
-M0-A và M0-B1 đã DONE/merge. M0-B2 nền tảng chính thức theo [ADR đã duyệt](docs/decisions/0001-technology-options.md); M1 NOT STARTED. **Chưa có dữ liệu khảo sát thực AIRC/phòng507; mọi cảnh hiện tại SYNTHETIC/DEMO, chưa đạt KPI sản phẩm.**
-
-Bắt đầu: [web](apps/web/README.md), [FastAPI](apps/api/README.md), [PostgreSQL local](infra/README.md), [kiến trúc](docs/12-official-system-architecture.md), [model PROPOSED](docs/13-data-model.md), [contracts](docs/14-api-contracts.md), [nghiệm thu](docs/15-m0-b2-acceptance.md), [trạng thái hiện tại](docs/PROJECT_STATUS.md).
-
-## README lịch sử M0-A/M0-B1
-
-Nội dung bên dưới giữ bối cảnh nghiên cứu trước khi duyệt stack, không thay trạng thái M0-B2 ở trên.
-
 # DATN AIRC WebXR
 
-**Xây dựng bản sao số không gian AIRC trên nền tảng WebXR hỗ trợ tham quan tương tác và lưu vết trải nghiệm.**
+Xây dựng bản sao số không gian AIRC trên nền tảng WebXR hỗ trợ tham quan tương tác và lưu vết trải nghiệm.
 
-AIRC là Trung tâm Nghiên cứu tiên tiến quốc tế về Trí tuệ nhân tạo ứng dụng, thuộc Viện Công nghệ thông tin – ĐHQGHN (bối cảnh do chủ đề cung cấp).
+**Nguồn tiếp tục qua các phiên:** [ROADMAP — PROPOSED, chờ chủ dự án phê duyệt](docs/ROADMAP.md) và [PROJECT_STATUS — trạng thái hiện hành](docs/PROJECT_STATUS.md). Roadmap chỉ được quản lý tại ROADMAP; README không duy trì một kế hoạch riêng.
 
-## Trạng thái hiện tại — M0-B1
+M0-A/B1/B2 và M1-A/B/C đã DONE/merge. [PR #11](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/11) merged tại `33ba38b00e2d6c218c1ab97ba1cc7201d1e92a58`. **M1 chỉ hoàn thành prototype synthetic** nối PostgreSQL → FastAPI REST/WebSocket → React/R3F primitives + Information Panel. Khảo sát P507 chưa được xác nhận hoàn thành; MT1–MT3 chưa được nghiệm thu trên sản phẩm thật; milestone tiếp theo chưa được phê duyệt.
 
-PR #6 (M0-A) đã merge; đang thử hai PoC synthetic, chưa triển khai sản phẩm. Xem [prototype và lệnh chạy](experiments/README.md) và [so sánh A/B](docs/11-renderer-poc-comparison.md). Một phòng DEMO/năm object không phải phòng 507, không chứng minh KPI sản phẩm. Chỉ đạo mới: làm phòng 507 trước, survey dự kiến 16/11/2026; KPI ≥3 phòng vẫn chờ giải quyết chính thức.
+Trước task mới, đọc [AGENTS](AGENTS.md), ROADMAP, PROJECT_STATUS, [requirements/KPI](docs/02-requirements-kpi.md) và [ADR liên quan](docs/decisions/0001-technology-options.md). Không suy ra quyền triển khai từ roadmap PROPOSED hoặc PR đã merge. Giữ KPI gốc; không chia P507 thành ba phòng.
 
-## Mốc nền tảng trước đó
+## Kiểm tra tiến độ trong chat mới
 
-M0-A — Foundation & Feasibility, ngày 14/11/2026. Chưa khảo sát chi tiết, chưa có dữ liệu thực AIRC, chưa xác nhận đủ ba phòng. Theo trao đổi mới do người dùng cung cấp, giảng viên cho biết hiện chỉ có phòng 507; đang chờ xác nhận phạm vi chính thức để xử lý mâu thuẫn KPI ≥3 phòng, không tự điều chỉnh KPI. Chưa có frontend/backend sản phẩm, cơ sở dữ liệu, AR scene hoặc VR trải nghiệm. Framework và kiến trúc chưa được phê duyệt. Dự án độc lập hoàn toàn với KLTN-Factory-Agentic-DT, không sử dụng tài sản của dự án đó.
+Có thể chỉ yêu cầu: `Kiểm tra tiến độ mới nhất của dự án tại repo duyanhtr130905/DATN-AIRC-WebXR`.
 
-## Mục tiêu và phân hệ dự kiến
+AI cần đọc tài liệu trên default branch và truy vấn GitHub live theo [AGENTS](AGENTS.md), báo main HEAD, PR OPEN/MERGED mới nhất, milestone, CI đúng SHA, blockers, lệch tài liệu và task tiếp theo đã được duyệt nếu có. PROJECT_STATUS là snapshot theo ngày, kể cả sau merge; không lấy cache/roadmap PROPOSED làm tiến độ mới nhất. Chỉ đọc/báo cáo không cần duyệt task triển khai. Thiếu quyền private repo/connector thì báo giới hạn và yêu cầu cấp quyền, không nhận đã kiểm tra.
 
-- MT1: ≥3 phòng, ≥20 đối tượng tương tác, ≥3 loại trạng thái (lịch phòng, tình trạng thiết bị, thông tin trưng bày), cập nhật hiển thị ≤5 giây.
-- MT2: Web 3D ≥30 FPS; AR/VR trên thiết bị tương thích; mục tiêu VR ≥72 FPS trên kính được lựa chọn; ≥90% tác vụ hoàn thành với ≥15 người.
-- MT3: lưu phiên/sự kiện, khôi phục sau reload, ghi nhận ≥99% sự kiện trong bộ kiểm thử, báo cáo ≥50 phiên mẫu.
+## Chạy và tìm tài liệu
 
-Các phân hệ chỉ là đề xuất: không gian/3D assets, tương tác & XR, dữ liệu trạng thái, lưu vết & báo cáo, quản trị quyền. AI/RAG là mở rộng, không triển khai M0. Hạn dự kiến tháng 4/2027; quản lý theo milestone.
-
-## Đọc tài liệu
-
-| Nội dung | Tài liệu |
+| Nội dung | Nguồn |
 | --- | --- |
-| Charter, phạm vi | [01](docs/01-project-charter.md) |
-| KPI và cách đo | [02](docs/02-requirements-kpi.md) |
-| Rủi ro | [03](docs/03-risk-register.md) |
-| Khảo sát thực địa | [04](docs/04-airc-survey-checklist.md) |
-| Nguồn dữ liệu | [05](docs/05-data-source-strategy.md) |
-| Thiết bị | [06](docs/06-device-feasibility.md) |
-| Công nghệ | [07](docs/07-technology-research.md) |
-| UI/UX | [08](docs/08-ui-ux-research.md) |
-| Kiến trúc PROPOSED | [09](docs/09-architecture-options.md) |
-| Nghiệm thu và bằng chứng | [10](docs/10-m0-acceptance.md) |
-| Sổ nguồn và phiên bản | [Sources](docs/research/sources.md) |
-| Quyết định chưa duyệt | [ADR](docs/decisions/0001-technology-options.md) |
-| Danh sách toàn bộ file | [Inventory](docs/file-inventory.md) |
-| Tiếp tục công việc | [Project status](docs/PROJECT_STATUS.md) |
+| Web frontend | [apps/web](apps/web/README.md) |
+| API, migration/seed có guard, CLI synthetic | [apps/api](apps/api/README.md) |
+| PostgreSQL local | [infra](infra/README.md); lưu ý câu migration chưa có revision là lịch sử foundation, đối chiếu API runbook/model trước thao tác DB |
+| Charter và KPI gốc | [Charter](docs/01-project-charter.md), [requirements/KPI](docs/02-requirements-kpi.md) |
+| Kiến trúc và quyết định | [Kiến trúc](docs/12-official-system-architecture.md), [ADR-0001](docs/decisions/0001-technology-options.md) |
+| Model và contracts | [Data model](docs/13-data-model.md), [API contracts](docs/14-api-contracts.md) |
+| Survey, nguồn và quyền dữ liệu | [Checklist](docs/04-airc-survey-checklist.md), [nguồn dữ liệu](docs/05-data-source-strategy.md), [blocker issues](docs/backlog/README.md) |
+| Kết quả M1-C | [Acceptance](docs/18-m1-c-vertical-slice-acceptance.md), [checkpoint lịch sử](docs/18-m1-c-progress.md), [evidence](docs/evidence/m1-c-validation.json) |
+| Nghiên cứu và PoC lịch sử | [Sources](docs/research/sources.md), [technology](docs/07-technology-research.md), [UX](docs/08-ui-ux-research.md), [PoC A/B](experiments/README.md) |
+| Công cụ M0-A | [WebXR capability checker](tools/webxr-capability-check/README.md) |
 
-## Công cụ nền tảng M0-A
+Acceptance, research và checkpoint cũ được giữ nguyên; các phát biểu “đang review/chưa triển khai” trong snapshot mô tả thời điểm bàn giao đó. Đối chiếu trạng thái mới trong PROJECT_STATUS và phần lịch sử/merge của ROADMAP; nếu còn mâu thuẫn thì báo chủ dự án.
 
-[WebXR capability check](tools/webxr-capability-check/README.md): HTML/JS tĩnh, không dependency, không camera, không telemetry. Chỉ kiểm tra API; kết quả `true` không chứng minh ARCore, hit-test, tracking, FPS hoặc trải nghiệm AR/VR hoạt động đầy đủ.
-
-Chạy tại PowerShell ở `D:\Code\DATN`:
-
-```powershell
-python -m http.server 8000 --bind 127.0.0.1 --directory tools/webxr-capability-check
-```
-
-Mở `http://localhost:8000` trên máy tính. Hướng dẫn USB forwarding để điện thoại có secure context nằm trong README của công cụ. Không có website được deploy.
-
-## Quy ước bằng chứng
-
-`VERIFIED`: có nguồn hoặc kiểm tra cụ thể, không vượt phạm vi bằng chứng. `PROPOSED`: chờ duyệt. `BLOCKED`: cần dữ liệu/quyền/thiết bị. `NOT TESTED`: chưa thử thực tế. Kết quả test dùng `PASS`, `FAIL`, `NOT RUN` và ghi môi trường. Không suy ra nghiệm thu MT1–MT3 từ kiểm tra M0.
+Default live không âm thầm fallback dữ liệu hardcode; DEMO offline chỉ khi chọn riêng. Dữ liệu synthetic, viewport emulation, software WebGL và IWER không chứng minh dữ liệu thật P507, AR/VR vật lý hoặc KPI. Chưa có visitor session/event persistence, public write hoặc deployment sản phẩm. Hướng dẫn chạy chi tiết nằm trong runbook tương ứng.
