@@ -1,3 +1,13 @@
+# Ứng dụng web — M1-C synthetic integration
+
+Chế độ mặc định dùng Catalog REST + WebSocket protocol2 cùng origin. Không tự thay bằng fixture khi API/DB lỗi. `/?mode=offline` là DEMO foundation riêng được chọn tường minh, không có realtime data. Layout primitive deterministic theo UUID sorting, không phải tọa độ phòng507. Render tối đa100objects/phòng; snapshot tối đa512states. Chưa hỗ trợ catalog mutation khi đang subscribe; cần tải lại Catalog nếu inventory thay đổi.
+
+Chạy `npm ci --ignore-scripts --prefix apps/web`, `npm run dev --prefix apps/web`. API mặc định127.0.0.1:8000; Vite proxy `/api` và `/ws` cho dev/preview. Nếu đổi API port, đặt API_PROXY_TARGET phía Node, không VITE secret. Origin thật của trang cần có trong CORS_ORIGINS backend, không wildcard/changeOrigin. Browser dùng ws/wss theo location.
+
+Tests: `npm run build --prefix apps/web`, `npm test --prefix apps/web`, `npm run test:browser --prefix apps/web`. Browser smoke foundation dùng explicit offline và kiểm tra live mode khi DB unavailable. RealPG→API→WS→Chrome test chạy từ pytest PostgreSQL (xem apps/api/README.md). Không cài browser tự động; CHROME_BIN cho Chrome có sẵn.390px là viewport emulation, không Galaxy.
+
+## Hướng dẫn foundation trước M1-C
+
 # Ứng dụng web chính thức — foundation
 
 Node 22 >=22.12 <23; dependency và lockfile riêng. React 19 / R3F 9 / XR 6 theo baseline M0-B1. Hai primitive dùng dữ liệu synthetic, không phải phòng 507. Chưa có tracking, Guided Tour nghiệp vụ hoặc AR/VR session; không tự mở camera.

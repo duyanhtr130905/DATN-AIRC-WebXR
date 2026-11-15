@@ -6,6 +6,8 @@ export interface SceneObject {
   sourceKind: SourceKind;
   position: [number, number, number];
   description: string;
+  equipmentStatus?: string;
+  stateVersion?: number;
 }
 export interface DemoScene { id: string; sourceKind: "synthetic"; objects: SceneObject[] }
 export interface Health { status: "alive"; service: "airc-api"; timestamp: string }

@@ -17,3 +17,13 @@ Checkpoint implementation C1: commit feed865 đã push.55unit tests PASS local; 
 
 
 C1 gate intermediate: commit404a862 CI [43671389080](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43671389080) PASS cả API PostgreSQL và web/browser. Fixture registration đã sửa;61PGtests gồm13C1 và48M1-A/B tests đã chạy, không skip. Review bổ sung receive READ_ONLY lúc chunking và safe-integer guard cho mọiv2message;58unitPASS local. Những bổ sung này cần finalC1CI trước chuyểnC2.
+
+
+## C1 — PASS / C2 — IN PROGRESS
+
+Final C1 source d62a935, [CI43671658702](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43671658702) PASS API/PG vàweb/typecheck/build/unit/browser.62unit và62PGtests, khôngskip. Source5a13cf2 JUnit đã tải kiểm tra62tests/0error/0failure/0skip, finald62 chỉ tăngoraclecoverage; finalCI cũngPASS.0/1/32/33/41/80/120states quaPG18+TCP,513capacityrejected; snapshot race/hide/overflow/disconnect/restart vàM1B regression. Protocol2 READ_ONLY vàJSsafeintegerreviewfixed. Không đổi schema/dependency. C2 bắt đầu sau gate này; C3 NOT STARTED.
+
+Bước C2: typed runtimevalidated REST + UUID adapter + pure reducer + lifecycleWS +LiveScene/Panel; giữ offline foundationDEMO explicit, không fallbacklive giả. Tiếp theo seed20objects/41statesguarded và browserintegration.
+
+
+C2 candidate: app defaultlive, explicitofflinefoundation; typedREST pagination/runtimevalidation/bounds/cancel; reducer atomic snapshot+sequence/version; boundedWS lifecycle; UUIDsceneadapter vàmeshcolorstates; guardedfixture20objects/41states vàsecondroom. Local typecheck/build PASS,21unitPASS,7Chrome foundation scenariosPASS (realChrome157WinsoftwareWebGL; backendwithoutDB). NewPGbrowserhappy path NOT RUN local, cần actualCI trướcC3. Files đang sửa: apps/web src/api/app/features/scene/styles/types/tests/vite, APIvertical_seed/test_vertical_slice, appCI/readmes/acceptance. Bước tiếp:pushC2candidate→actualPG/ChromeCI→sửalỗi→commitC2gate→C3.

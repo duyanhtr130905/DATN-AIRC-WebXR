@@ -74,6 +74,12 @@ jobs:
       - run: python -c "import sys; sys.path.insert(0, 'apps/api'); from app.main import create_app; assert create_app().openapi()"
       - run: python -m pytest -q -m 'not postgres'
         working-directory: apps/api
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-fund --prefix apps/web
+      - run: npm run build --prefix apps/web
       - run: python -m pytest -v -m postgres --junitxml=../../.local/m1-b-postgres.xml
         working-directory: apps/api
         env:
@@ -87,6 +93,7 @@ jobs:
           path: |
             .local/m1-b-postgres.xml
             .local/m1-b-metrics.json
+            .local/m1-c-browser/
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error

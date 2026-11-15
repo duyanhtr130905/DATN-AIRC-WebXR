@@ -67,14 +67,14 @@ try {
   backend.stdout.on("data", d => { logs += d; }); backend.stderr.on("data", d => { logs += d; });
   const frontend = start(process.execPath, [resolve(web, "node_modules/vite/bin/vite.js"), "preview", "--config", resolve(web, "vite.config.ts"), "--host", "127.0.0.1", "--port", String(webPort), "--strictPort", "--outDir", resolve(web, "dist")], { API_PROXY_TARGET: `http://127.0.0.1:${apiPort}` });
   await wait(`http://127.0.0.1:${apiPort}/api/health`, backend);
-  await wait(`http://127.0.0.1:${webPort}`, frontend);
+  await wait(`http://127.0.0.1:${webPort}/?mode=offline`, frontend);
   browser = await chromium.launch({ executablePath: bin, headless: true, args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"], env: { ...process.env, TEMP: temp, TMP: temp, TMPDIR: temp } });
   report.browser = browser.version();
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage(); const errors = [];
   page.on("pageerror", e => errors.push(e.message));
   await scenario("Desktop: renderer + real FastAPI health, DB not configured", async () => {
-    await page.goto(`http://127.0.0.1:${webPort}`, { waitUntil: "networkidle" });
+    await page.goto(`http://127.0.0.1:${webPort}/?mode=offline`, { waitUntil: "networkidle" });
     await page.getByTestId("health").filter({ hasText: "Backend đang hoạt động" }).waitFor();
     assert.match(await page.getByTestId("readiness").innerText(), /not_configured/);
     await page.locator("canvas").waitFor();
@@ -100,7 +100,7 @@ try {
   await scenario("390px viewport emulation: touch + focus + no overflow", async () => {
     const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
     const p = await mobile.newPage(); p.on("pageerror", e => errors.push(e.message));
-    await p.goto(`http://127.0.0.1:${webPort}`, { waitUntil: "networkidle" });
+    await p.goto(`http://127.0.0.1:${webPort}/?mode=offline`, { waitUntil: "networkidle" });
     await waitForCanvasLayout(p, 300);
     await p.getByRole("button", { name: /Khối mẫu B/ }).tap();
     assert.equal(await p.getByRole("button", { name: /Khối mẫu B/ }).getAttribute("aria-pressed"), "true");
@@ -112,7 +112,7 @@ try {
   await scenario("WebGL2 unsupported: injected unavailable getContext, DOM still usable", async () => {
     const unsupported = await browser.newContext();
     await unsupported.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(type, ...args) { return type === "webgl2" ? null : original.call(this, type, ...args); }; });
-    const p = await unsupported.newPage(); await p.goto(`http://127.0.0.1:${webPort}`);
+    const p = await unsupported.newPage(); await p.goto(`http://127.0.0.1:${webPort}/?mode=offline`);
     await p.getByRole("alert").filter({ hasText: /WebGL2/ }).waitFor();
     await p.getByRole("button", { name: /Khối mẫu A/ }).click();
     await p.screenshot({ path: resolve(out, "unsupported.png"), fullPage: true }); await unsupported.close();
@@ -128,6 +128,12 @@ try {
     await page.route("**/api/*", route => route.abort());
     await page.getByRole("button", { name: /Kiểm tra lại/ }).click();
     await page.getByTestId("health").filter({ hasText: "Không kết nối được backend" }).waitFor();
+  });
+  await scenario("Live mode never silently falls back when DB unavailable", async()=>{
+    const live=await context.newPage();await live.goto(`http://127.0.0.1:${webPort}/`);
+    await live.getByRole("alert").filter({hasText:/Database\/backend/}).waitFor();
+    assert.equal(await live.locator("[data-object-id]").count(),0);
+    assert.equal(await live.locator("canvas").count(),0);await live.close();
   });
   assert.deepEqual(errors, []); report.status = "PASS";
 } catch (error) {
