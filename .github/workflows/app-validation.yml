@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feat/m0-b2-app-foundation, feat/m1-a-catalog, feat/m1-b-state-realtime]
+    branches: [feat/m0-b2-app-foundation, feat/m1-a-catalog, feat/m1-b-state-realtime, feat/m1-c-digital-twin-vertical-slice]
 permissions:
   contents: read
 concurrency:

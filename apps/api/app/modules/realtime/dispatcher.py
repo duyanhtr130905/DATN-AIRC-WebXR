@@ -17,16 +17,17 @@ class Subscription:
     room_id: UUID
     queue: asyncio.Queue = field(default_factory=lambda: asyncio.Queue(maxsize=8))
     overflow: bool = False
+    coalesce: bool = False
 
 
 class Broker:
     def __init__(self):
         self.subscribers: set[Subscription] = set()
 
-    def subscribe(self, room_id):
+    def subscribe(self, room_id, *, coalesce=False):
         if len(self.subscribers) >= 32:
             raise ValueError("Connection limit")
-        subscription = Subscription(room_id)
+        subscription = Subscription(room_id, coalesce=coalesce)
         self.subscribers.add(subscription)
         return subscription
 
@@ -36,7 +37,9 @@ class Broker:
                 try:
                     sub.queue.put_nowait(None)
                 except asyncio.QueueFull:
-                    sub.overflow = True
+                    # V2 hints are coalescible: durable SQL replay owns every delta.
+                    if not sub.coalesce:
+                        sub.overflow = True
 
 
 def claim(engine, owner: UUID, lease_seconds=5) -> list[dict]:
