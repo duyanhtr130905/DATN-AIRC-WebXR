@@ -40,3 +40,8 @@ Runner mở Vite preview/FastAPI trên cổng loopback ngẫu nhiên, process/pr
 Report và ảnh `desktop.png`, `mobile-390.png`, `unsupported.png` ở `.local/app-browser`, ignored; CI upload artifact 14 ngày. 390px là viewport emulation trên Chrome headless/software WebGL, không phải Galaxy thật. WebGL unsupported và network failure có injection rõ trong report; không mock XR hoặc khởi tạo camera. Browser không được tìm thấy trả NOT RUN và exit khác 0.
 
 Các lớp: src/app, components, features/catalog, scene, api, shared, styles. Renderer không gọi backend trực tiếp; demo adapter tách khỏi mesh. Scene lazy nhưng SDK vẫn sinh emulator chunks lúc build dù không kích hoạt/load: cần budget bundle và asset ở M1. Dừng dev server bằng Ctrl+C.
+
+
+## C3 diagnostics và bằng chứng
+
+Bản chạy thông thường không thu thập test diagnostics. Để build phục vụ suite realbrowser: PowerShell `$env:VITE_TEST_DIAGNOSTICS='1'` rồi npm run build; Linux `VITE_TEST_DIAGNOSTICS=1 npm run build --prefix apps/web`. Đặtflag chỉ trongtest; không dữ liệu cá nhân. CI bậtflag, uploadartifact .local/m1-c-browser/report.json cùngảnhCanvas/desktop390px. Khôngcommit profiles/cache hoặc ảnhgiả. Report raw20samples vàclockbounds; khôngFPS thiếtbị/KPI AIRC.

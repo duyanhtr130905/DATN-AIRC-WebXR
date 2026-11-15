@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feat/m0-b1-renderer-poc]
+    branches: [feat/m0-b1-renderer-poc, feat/m1-c-digital-twin-vertical-slice]
 permissions:
   contents: read
 concurrency:

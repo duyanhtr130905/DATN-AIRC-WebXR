@@ -12,13 +12,13 @@ const out=resolve(root,".local/m1-c-browser");await mkdir(out,{recursive:true});
 const python=process.env.API_PYTHON||"python";
 const database=new URL(process.env.DATABASE_URL.replace("postgresql+psycopg:","postgresql:")).pathname.slice(1);
 assert.match(database,/^airc_test_catalog_[0-9a-f]{32}$/);
-const report={status:"FAIL",executedAt:new Date().toISOString(),build:spawnSync("git",["rev-parse","HEAD"],{cwd:root,encoding:"utf8",windowsHide:true}).stdout.trim(),environment:{os:platform(),browser:null,renderer:"Chrome WebGL2 ANGLE software; not physical Galaxy/VR",apiProcesses:1},synthetic:true,scenarios:[],samples:[],network:{requests:0,webSockets:0}};
+const report={status:"FAIL",executedAt:new Date().toISOString(),build:spawnSync("git",["rev-parse","HEAD"],{cwd:root,encoding:"utf8",windowsHide:true}).stdout.trim(),environment:{os:platform(),browser:null,renderer:"Chrome WebGL2 ANGLE software; not physical Galaxy/VR",apiProcesses:1},synthetic:true,scenarios:[],samples:[],network:{requests:0,webSockets:0,assets:[]}};
 let browser,frontend;const children=[];const errors=[];let faulted=false;
 const now=()=>Number(process.hrtime.bigint())/1e6;
 async function scenario(name,run,faultInjection=false){const row={name,faultInjection,status:"FAIL"};report.scenarios.push(row);await run();row.status="PASS";}
 async function waitFor(run,timeout=10000){const start=now();while(now()-start<timeout){if(await run())return;await new Promise(r=>setTimeout(r,20));}throw new Error("Bounded condition timed out");}
 function command(module,args){const result=spawnSync(python,["-m",module,...args],{cwd:resolve(root,"apps/api"),env:process.env,encoding:"utf8",windowsHide:true,timeout:10000});assert.equal(result.status,0,"Guarded synthetic CLI failed");return result;}
-function databaseFault(action){const result=spawnSync(python,[resolve(root,"apps/api/tests/database_fault.py"),action,database],{cwd:root,env:process.env,encoding:"utf8",windowsHide:true,timeout:10000});assert.equal(result.status,0,"Disposable database fault operation failed");faulted=action==="block";}
+function databaseFault(action){if(action==="block")faulted=true;const result=spawnSync(python,[resolve(root,"apps/api/tests/database_fault.py"),action,database],{cwd:root,env:process.env,encoding:"utf8",windowsHide:true,timeout:10000});assert.equal(result.status,0,"Disposable database fault operation failed");faulted=action==="block";}
 async function update(room,target,version,status){
  const value=resolve(root,".local/m1-c-value.json");await writeFile(value,JSON.stringify({status}));
  const t0=now();const child=spawn(python,["-m","app.modules.state.cli","--confirm-database",database,"--room-id",room,"--target-kind","object","--target-id",target,"--state-type","equipment_status","--expected-version",String(version),"--value-file",value,"--diagnostics"],{cwd:resolve(root,"apps/api"),env:process.env,windowsHide:true,stdio:["ignore","pipe","pipe"]});children.push(child);
@@ -38,7 +38,7 @@ try{
  await waitFor(async()=>{try{return(await fetch("http://127.0.0.1:5173/")).ok;}catch{return false;}});
  browser=await chromium.launch({executablePath:bin,headless:true,args:["--use-angle=swiftshader","--enable-unsafe-swiftshader"]});report.environment.browser=browser.version();
  const context=await browser.newContext({viewport:{width:1440,height:1100}});const page=await context.newPage();page.on("pageerror",e=>errors.push(e.message));
- page.on("request",()=>report.network.requests++);page.on("websocket",()=>report.network.webSockets++);
+ page.on("request",request=>{report.network.requests++;const path=new URL(request.url()).pathname;if(path.startsWith("/assets/")&&report.network.assets.length<100&&!report.network.assets.includes(path))report.network.assets.push(path);});page.on("websocket",()=>report.network.webSockets++);
  const origin="http://127.0.0.1:5173";const room=process.env.SYNTHETIC_ROOM_ID;
  await scenario("Empty PostgreSQL startup: no rooms, no hidden hardcoded fallback",async()=>{
   const rooms=await(await fetch(`${origin}/api/v1/rooms`)).json();assert.deepEqual(rooms.data,[]);
@@ -84,8 +84,14 @@ try{
     assert.ok(pyOffsetLower<=pyOffsetUpper);
     report.samples.push({version,sequence,status,t0_node_ms:changed.t0,t1_commit_node_bounds:[pyCommit+pyOffsetLower,pyCommit+pyOffsetUpper],t1_ack_node_ms:changed.t1_ack,t2_browser_ms:received.at,t3_browser_ms:react.at,t4_afterRender_browser_ms:render.at,materialColor:render.materialColor,drawCalls:render.drawCalls,transaction_ms:changed.result.test_diagnostics.transaction_ms,update_to_render_ms:render.at+offset-changed.t0,commit_to_render_bounds_ms:[render.at+report.calibrationBefore.lower-(pyCommit+pyOffsetUpper),render.at+report.calibrationBefore.upper-(pyCommit+pyOffsetLower)],receive_to_react_ms:react.at-received.at,receive_to_render_ms:render.at-received.at});
   }
-  report.calibrationAfter=await calibrate(page);report.latency=summary(report.samples.map(s=>s.update_to_render_ms));report.transaction=summary(report.samples.map(s=>s.transaction_ms));report.receiveToRender=summary(report.samples.map(s=>s.receive_to_render_ms));report.errors=0;report.timeouts=0;
-  report.clockPolicy="Node hrtime orchestrates t0/spawn and commit ack. Browser performance.now mapped by12request/reply offset bounds; report shortest RTT calibration before/after. Python perf_counter commit is mapped only to a conservative Node spawn-to-ack interval; no subtraction of independent origins. t4 is Three onAfterRender draw submission plus pixel screenshot, not hardware scanout. t0 includes guarded CLI process startup.";
+  report.calibrationAfter=await calibrate(page);
+  const beforeMid=(report.calibrationBefore.lower+report.calibrationBefore.upper)/2,afterMid=(report.calibrationAfter.lower+report.calibrationAfter.upper)/2;
+  const drift=Math.abs(afterMid-beforeMid);assert.ok(drift<=10,"Clock endpoint drift exceeds10ms measurement budget");
+  report.clockWindow={lower:Math.min(report.calibrationBefore.lower,report.calibrationAfter.lower)-1,upper:Math.max(report.calibrationBefore.upper,report.calibrationAfter.upper)+1,endpointDriftMs:drift,quantizationAllowanceMs:1,driftBudgetMs:10};
+  const midpoint=(report.clockWindow.lower+report.clockWindow.upper)/2;
+  for(const sample of report.samples){sample.update_to_render_ms=sample.t4_afterRender_browser_ms+midpoint-sample.t0_node_ms;sample.commit_to_render_bounds_ms=[sample.t4_afterRender_browser_ms+report.clockWindow.lower-sample.t1_commit_node_bounds[1],sample.t4_afterRender_browser_ms+report.clockWindow.upper-sample.t1_commit_node_bounds[0]];}
+  report.latency=summary(report.samples.map(s=>s.update_to_render_ms));report.transaction=summary(report.samples.map(s=>s.transaction_ms));report.receiveToRender=summary(report.samples.map(s=>s.receive_to_render_ms));report.errors=0;report.timeouts=0;
+  report.clockPolicy="Node hrtime orchestrates t0/spawn and commit ack. Browser performance.now mapped by12request/reply offset bounds; use hull of shortest-RTT calibration before/after plus1ms allowance; endpoint drift must be<=10ms. Estimated intervals assume stable clock rate inside the window. Python perf_counter commit is mapped only to a conservative Node spawn-to-ack interval; no subtraction of independent origins. t4 is Three onAfterRender draw submission plus pixel screenshot, not hardware scanout. t0 includes guarded CLI process startup.";
  });
  await scenario("Duplicate/old deltas ignored; injected sequence gap forces reconnect snapshot",async()=>{
   const sequence=report.samples.at(-1).sequence;
@@ -124,7 +130,7 @@ try{
   await page.locator('[data-testid="realtime"][data-status="connected"]').waitFor({timeout:20000});await page.locator('[data-state-type="equipment_status"][data-version="22"]').waitFor();
  },true);
  await scenario("Software-rendered browser frame timing and bounded network requests",async()=>{
-  report.frameIntervalsMs=await page.evaluate(()=>new Promise(resolve=>{const times=[];let previous;function frame(at){if(previous!==undefined)times.push(at-previous);previous=at;if(times.length<90)requestAnimationFrame(frame);else resolve(times);}requestAnimationFrame(frame);}));report.frameTiming=summary(report.frameIntervalsMs);assert.ok(report.network.requests<150,"No request polling storm");
+  report.frameIntervalsMs=await page.evaluate(()=>new Promise(resolve=>{const times=[];let previous;function frame(at){if(previous!==undefined)times.push(at-previous);previous=at;if(times.length<90)requestAnimationFrame(frame);else resolve(times);}requestAnimationFrame(frame);}));report.frameTiming=summary(report.frameIntervalsMs);assert.ok(report.network.requests<150,"No request polling storm");assert.ok(!report.network.assets.some(path=>/emulate-|office_|meeting_room-|living_room-|music_room-/.test(path)),"Unused XR emulator/example chunks are not fetched");
   const assetDir=resolve(root,"apps/web/dist/assets");report.bundle=[];for(const file of await readdir(assetDir)){const size=(await stat(resolve(assetDir,file))).size;report.bundle.push({file,bytes:size});}
  });
  await scenario("Actual backend process shutdown -> visible unavailable; no live fallback",async()=>{

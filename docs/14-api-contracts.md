@@ -132,3 +132,10 @@ Client staging bounded512states/2MiB, chưa render chunk. Chỉ swap khi end có
 Subscriber đăng ký trước snapshot. V2 queue8wakeups coalesce vì SQL outbox giữ delta durable. Replay bounded32, backlog/gap vượt năng lực dẫn resync. Send timeout1s và cleanup khi đóng; DB không mở suốt session. Protocol1 giữ chính sách queue overflow cũ.
 
 Nguồn kiểm tra15/11/2026: [PostgreSQL18 isolation](https://www.postgresql.org/docs/18/transaction-iso.html), [FastAPI WebSockets](https://fastapi.tiangolo.com/advanced/websockets/). Runtime evidence chờ CI PostgreSQL18/TCP thật, không dùng unit làm bằng chứng PostgreSQL.
+
+
+### M1-C frontend áp dụng protocol2
+
+Frontend defaultlive chỉ dùng DTO synthetic đãvalidate (UUID, scope, timestamps timezone, enum/value/bounds, metadata public label/description nullable/rỗng hợp lệ). List REST dùng limit25 vànext_cursor tới null, chặn duplicateIDs/repeatedcursor/empty-page-next/32pages/512rows; render max100objects. Các GETrooms/roomobjects/objectdetail/roomstates/objectstates có typedclient, không mutation route. State realtime authoritative riêng, không trộn pages REST thiếu watermark vào snapshot WS.
+
+Client giữ trạng thái cũ đánh STALE khi mấtWS; không gọi dữ liệu cũ là current. Roomswitch reset Catalog/selection/subscription; callback cũ bịgenerationguard. Snapshot đủend thay authoritative toàn bộ, kể cả xóa states không còn trongsnapshot. Deltas oldseq bỏ; forwardgap hoặc versionkhôngliền resync; heartbeatseq khác cursor resync. Missingchunk/disconnect khôngcommit staging. Reconnect lấy fullsnapshotv2, không clientsidepublish. Khôngtoken trongURL. Dev/preview proxy/ws giữOrigin; backendallowlistexplicitcùngorigin, khôngwildcard. Retry12 rồimanualreload, queue/timerscleanup.

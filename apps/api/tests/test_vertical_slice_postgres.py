@@ -6,7 +6,9 @@ import time
 from pathlib import Path
 
 import pytest
+from process_cleanup import terminate_owned
 from sqlalchemy import func, select
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session
 from test_catalog_postgres import isolated_catalog_database
 from test_state_postgres import live_server as live_server
@@ -43,6 +45,8 @@ def test_fixture_idempotency_and_actual_browser_vertical_slice(live_server):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
+        start_new_session=os.name != "nt",
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0,
     )
     deadline = time.monotonic() + 180
     try:
@@ -54,13 +58,25 @@ def test_fixture_idempotency_and_actual_browser_vertical_slice(live_server):
                 break
             except subprocess.TimeoutExpired:
                 if time.monotonic() > deadline:
-                    process.kill()
-                    stdout, stderr = process.communicate(timeout=5)
+                    terminate_owned(process)
                     pytest.fail("Browser E2E timed out")
     finally:
-        if process.poll() is None:
-            process.kill()
-            process.communicate(timeout=5)
+        try:
+            terminate_owned(process)
+        finally:
+            # Parent restores its own disposable DB even if Node was killed mid-fault.
+            restored = subprocess.run(
+                [
+                    sys.executable,
+                    str(root / "apps/api/tests/database_fault.py"),
+                    "restore",
+                    make_url(url.get_secret_value()).database,
+                ],
+                env={**os.environ, "DATABASE_URL": url.get_secret_value()},
+                capture_output=True,
+                timeout=10,
+            )
+            assert restored.returncode == 0, "Parent must restore disposable database connectivity"
     assert process.returncode == 0, stdout[-4000:] + stderr[-4000:]
     report = json.loads((root / ".local/m1-c-browser/report.json").read_text(encoding="utf-8"))
     assert report["status"] == "PASS"

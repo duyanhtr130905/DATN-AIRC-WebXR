@@ -40,3 +40,6 @@ C3 bước tiếp cụ thể: test-only bounded render/receive/Reactdiagnostics,
 
 
 C3 candidate: bounded diagnostics chỉkhi VITE_TEST_DIAGNOSTICS=1, recordWS/Reactcommit/ThreeonAfterRender; fixturetest bắtđầu DBtrống rồi guardedseedCLI;21updates (1functional+20samples); timing Nodeorchestration/browseroffsetbounds/Pythoncommitinterval, pixel screenshots; duplicate/gap/socketdisconnect/WebGLfault, realDBconnectivityfault+restore, actualbackendstop. Newfaulthelper chỉDBdisposableexactUUID+allowflag/loopback/baseguard, khôngDROP/reset. C3runtime NOT RUN local thiếuPG; chờCI; chưaPR. Local62unit+25frontendunitPASS, build/browserregression đangkiểmtra. Bướcnext:CIcandidate→sửalỗi→fullM0/PoC/IWER regression→artifacts/metrics/acceptance→1PRfinal.
+
+
+C3 intermediate94c5fe6 [CI43673575670](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43673575670) PASS68unit/63PG,15actualbrowser scenarios/20samples. Rawartifact đãtải .local/c3-evidence-94c5fe6; đây là kết quả intermediate, chưa dùng thay finalHEAD. Review fixes: partialDBfaultrestore cảhelper/Nodeflag, parentfinallyrestore vàownedprocesscleanup khihardtimeout; calibrationBefore/Afterhull+1ms vàdriftbudget10ms.69unitPASS saufix. ĐãbậtM0/PoCpushtriggerchoM1C (giữnguyênjobs/assertions). Nextpushfullregression→downloadfreshartifacts→reviewmetrics/screenshots→acceptancefinal→1PR.

@@ -32,15 +32,20 @@ def main():
         with engine.connect() as connection:
             assert connection.scalar(text("SELECT current_database()")) == "airc_foundation_test"
             mode = "false" if sys.argv[1] == "block" else "true"
-            connection.exec_driver_sql(f'ALTER DATABASE "{name}" ALLOW_CONNECTIONS {mode}')
-            if mode == "false":
-                connection.execute(
-                    text(
-                        "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
-                        "WHERE datname=:name AND pid<>pg_backend_pid()"
-                    ),
-                    {"name": name},
-                )
+            try:
+                connection.exec_driver_sql(f'ALTER DATABASE "{name}" ALLOW_CONNECTIONS {mode}')
+                if mode == "false":
+                    connection.execute(
+                        text(
+                            "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
+                            "WHERE datname=:name AND pid<>pg_backend_pid()"
+                        ),
+                        {"name": name},
+                    )
+            except Exception:
+                if mode == "false":
+                    connection.exec_driver_sql(f'ALTER DATABASE "{name}" ALLOW_CONNECTIONS true')
+                raise
     finally:
         engine.dispose()
 
