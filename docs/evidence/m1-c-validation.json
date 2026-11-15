@@ -1,0 +1,971 @@
+{
+  "status": "PASS",
+  "source_commit": "09f3e23ecde864e33763881a6ab2806d4564bbec",
+  "ci_run": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43674376007",
+  "artifact": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43674376007/artifacts/14146130518",
+  "postgres_tests": {
+    "tests": 67,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "quantiles": "nearest-rank ceil(n*p)-1; p50 is not averaged median for even n",
+  "limitations": [
+    "Synthetic only; not AIRC source-to-render KPI",
+    "20 material/onAfterRender observations; before/after pixel proof for one representative update",
+    "Node t0 includes Python CLI startup; Python commit mapped to conservative spawn/ack interval",
+    "Browser clock bounds assume stable rate, endpoint drift <=10ms, 1ms allowance",
+    "Chrome software renderer; not physical display scanout or Galaxy/VR FPS",
+    "This committed snapshot describes source_commit; latest HEAD artifacts are authoritative for the PR"
+  ],
+  "browser_report": {
+    "status": "PASS",
+    "executedAt": "2026-11-15T03:55:35.272Z",
+    "build": "09f3e23ecde864e33763881a6ab2806d4564bbec",
+    "environment": {
+      "os": "linux",
+      "browser": "157.0.8103.50",
+      "renderer": "Chrome WebGL2 ANGLE software; not physical Galaxy/VR",
+      "apiProcesses": 1
+    },
+    "synthetic": true,
+    "scenarios": [
+      {
+        "name": "Empty PostgreSQL startup: no rooms, no hidden hardcoded fallback",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Explicit guarded CLI seed creates synthetic Catalog/state, idempotent",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Real PostgreSQL UUID Catalog +41state atomic snapshot +Canvas",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Actual mesh ray pick maps stable UUID into Information Panel",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Guarded CLI -> real WS -> Panel + afterRender material + actual Canvas pixels",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "20 measured updates with browser clock calibration and render observation",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Duplicate/old deltas ignored; injected sequence gap forces reconnect snapshot",
+        "faultInjection": true,
+        "status": "PASS"
+      },
+      {
+        "name": "Actual socket disconnect marks stale; reconnect authoritative snapshot",
+        "faultInjection": true,
+        "status": "PASS"
+      },
+      {
+        "name": "Room switch clears scope, keyboard selection and no leaked old-room state",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Actual empty synthetic room: no objects and zero-state snapshot",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "390px viewport emulation: touch/focus and no overflow",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "WebGL unavailable fault: live DOM Catalog/Panel remains usable",
+        "faultInjection": true,
+        "status": "PASS"
+      },
+      {
+        "name": "Public read contract filters private metadata; no write endpoints",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Real disposable PostgreSQL disconnect ->503/stale -> recovery snapshot",
+        "faultInjection": true,
+        "status": "PASS"
+      },
+      {
+        "name": "Software-rendered browser frame timing and bounded network requests",
+        "faultInjection": false,
+        "status": "PASS"
+      },
+      {
+        "name": "Actual backend process shutdown -> visible unavailable; no live fallback",
+        "faultInjection": true,
+        "status": "PASS"
+      }
+    ],
+    "samples": [
+      {
+        "version": 3,
+        "sequence": 43,
+        "status": "available",
+        "t0_node_ms": 328578.417386,
+        "t1_commit_node_bounds": [
+          328633.116625,
+          329331.755512
+        ],
+        "t1_ack_node_ms": 329331.755512,
+        "t2_browser_ms": 6755.800000000047,
+        "t3_browser_ms": 6759.5,
+        "t4_afterRender_browser_ms": 6763.300000000047,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 54.699239,
+        "update_to_render_ms": 1108.9128619999974,
+        "commit_to_render_bounds_ms": [
+          354.18505899998127,
+          1055.603300000017
+        ],
+        "receive_to_react_ms": 3.699999999953434,
+        "receive_to_render_ms": 7.5
+      },
+      {
+        "version": 4,
+        "sequence": 44,
+        "status": "maintenance",
+        "t0_node_ms": 329711.160135,
+        "t1_commit_node_bounds": [
+          329805.783665,
+          330529.928968
+        ],
+        "t1_ack_node_ms": 330529.928968,
+        "t2_browser_ms": 7716.300000000047,
+        "t3_browser_ms": 7720,
+        "t4_afterRender_browser_ms": 7735,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 94.62353,
+        "update_to_render_ms": 947.8701129999245,
+        "commit_to_render_bounds_ms": [
+          127.71160299994517,
+          854.6362599999993
+        ],
+        "receive_to_react_ms": 3.699999999953434,
+        "receive_to_render_ms": 18.699999999953434
+      },
+      {
+        "version": 5,
+        "sequence": 45,
+        "status": "available",
+        "t0_node_ms": 330871.116429,
+        "t1_commit_node_bounds": [
+          330997.07163499994,
+          331760.870296
+        ],
+        "t1_ack_node_ms": 331760.870296,
+        "t2_browser_ms": 9178.400000000023,
+        "t3_browser_ms": 9181.300000000047,
+        "t4_afterRender_browser_ms": 9205.900000000023,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 125.955206,
+        "update_to_render_ms": 1258.8138189999736,
+        "commit_to_render_bounds_ms": [
+          367.6702749999822,
+          1134.248290000076
+        ],
+        "receive_to_react_ms": 2.900000000023283,
+        "receive_to_render_ms": 27.5
+      },
+      {
+        "version": 6,
+        "sequence": 46,
+        "status": "maintenance",
+        "t0_node_ms": 332152.388895,
+        "t1_commit_node_bounds": [
+          332241.74955699994,
+          333159.584853
+        ],
+        "t1_ack_node_ms": 333159.584853,
+        "t2_browser_ms": 10606.100000000035,
+        "t3_browser_ms": 10607.5,
+        "t4_afterRender_browser_ms": 10611.700000000012,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 89.360662,
+        "update_to_render_ms": 1383.341352999967,
+        "commit_to_render_bounds_ms": [
+          374.75571799994214,
+          1295.3703680000617
+        ],
+        "receive_to_react_ms": 1.3999999999650754,
+        "receive_to_render_ms": 5.599999999976717
+      },
+      {
+        "version": 7,
+        "sequence": 47,
+        "status": "available",
+        "t0_node_ms": 333571.762454,
+        "t1_commit_node_bounds": [
+          333659.238543,
+          334627.176791
+        ],
+        "t1_ack_node_ms": 334627.176791,
+        "t2_browser_ms": 11807.300000000047,
+        "t3_browser_ms": 11809.300000000047,
+        "t4_afterRender_browser_ms": 11838.600000000035,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 87.476089,
+        "update_to_render_ms": 1190.8677939999616,
+        "commit_to_render_bounds_ms": [
+          134.06377999996766,
+          1104.7813820000156
+        ],
+        "receive_to_react_ms": 2,
+        "receive_to_render_ms": 31.29999999998836
+      },
+      {
+        "version": 8,
+        "sequence": 48,
+        "status": "maintenance",
+        "t0_node_ms": 334807.182828,
+        "t1_commit_node_bounds": [
+          334883.077366,
+          335510.409685
+        ],
+        "t1_ack_node_ms": 335510.409685,
+        "t2_browser_ms": 12949.100000000035,
+        "t3_browser_ms": 12949.900000000023,
+        "t4_afterRender_browser_ms": 12985.100000000035,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 75.894538,
+        "update_to_render_ms": 1101.9474199999822,
+        "commit_to_render_bounds_ms": [
+          397.33088599995244,
+          1027.4425590000465
+        ],
+        "receive_to_react_ms": 0.7999999999883585,
+        "receive_to_render_ms": 36
+      },
+      {
+        "version": 9,
+        "sequence": 49,
+        "status": "available",
+        "t0_node_ms": 335931.10671,
+        "t1_commit_node_bounds": [
+          336049.47579500003,
+          337030.226158
+        ],
+        "t1_ack_node_ms": 337030.226158,
+        "t2_browser_ms": 14388.700000000012,
+        "t3_browser_ms": 14390.100000000035,
+        "t4_afterRender_browser_ms": 14425.800000000047,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 118.369085,
+        "update_to_render_ms": 1418.723537999962,
+        "commit_to_render_bounds_ms": [
+          318.2144129999797,
+          1301.7441300000064
+        ],
+        "receive_to_react_ms": 1.400000000023283,
+        "receive_to_render_ms": 37.100000000034925
+      },
+      {
+        "version": 10,
+        "sequence": 50,
+        "status": "maintenance",
+        "t0_node_ms": 337406.343997,
+        "t1_commit_node_bounds": [
+          337460.77087600005,
+          338632.436087
+        ],
+        "t1_ack_node_ms": 338632.436087,
+        "t2_browser_ms": 15773.700000000012,
+        "t3_browser_ms": 15774.5,
+        "t4_afterRender_browser_ms": 15909.700000000012,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 54.426879,
+        "update_to_render_ms": 1427.3862509999308,
+        "commit_to_render_bounds_ms": [
+          199.90448399994057,
+          1374.349048999953
+        ],
+        "receive_to_react_ms": 0.7999999999883585,
+        "receive_to_render_ms": 136
+      },
+      {
+        "version": 11,
+        "sequence": 51,
+        "status": "available",
+        "t0_node_ms": 338889.030329,
+        "t1_commit_node_bounds": [
+          338967.255073,
+          340030.157952
+        ],
+        "t1_ack_node_ms": 340030.157952,
+        "t2_browser_ms": 17428.600000000035,
+        "t3_browser_ms": 17433,
+        "t4_afterRender_browser_ms": 17446.5,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 78.224744,
+        "update_to_render_ms": 1481.4999189999653,
+        "commit_to_render_bounds_ms": [
+          338.9826189999585,
+          1404.6648520000163
+        ],
+        "receive_to_react_ms": 4.399999999965075,
+        "receive_to_render_ms": 17.899999999965075
+      },
+      {
+        "version": 12,
+        "sequence": 52,
+        "status": "maintenance",
+        "t0_node_ms": 340401.76547,
+        "t1_commit_node_bounds": [
+          340452.95672499994,
+          341509.159547
+        ],
+        "t1_ack_node_ms": 341509.159547,
+        "t2_browser_ms": 18961.900000000023,
+        "t3_browser_ms": 18962.70000000001,
+        "t4_afterRender_browser_ms": 19030.100000000035,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 51.191255,
+        "update_to_render_ms": 1552.3647779999883,
+        "commit_to_render_bounds_ms": [
+          443.5810239999555,
+          1502.5632000000915
+        ],
+        "receive_to_react_ms": 0.7999999999883585,
+        "receive_to_render_ms": 68.20000000001164
+      },
+      {
+        "version": 13,
+        "sequence": 53,
+        "status": "available",
+        "t0_node_ms": 341982.227219,
+        "t1_commit_node_bounds": [
+          342049.90507499996,
+          343157.252051
+        ],
+        "t1_ack_node_ms": 343157.252051,
+        "t2_browser_ms": 20324.900000000023,
+        "t3_browser_ms": 20325.800000000047,
+        "t4_afterRender_browser_ms": 20401.100000000035,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 67.677856,
+        "update_to_render_ms": 1342.9030289999791,
+        "commit_to_render_bounds_ms": [
+          166.48851999995532,
+          1276.6148500000709
+        ],
+        "receive_to_react_ms": 0.9000000000232831,
+        "receive_to_render_ms": 76.20000000001164
+      },
+      {
+        "version": 14,
+        "sequence": 54,
+        "status": "maintenance",
+        "t0_node_ms": 343401.452207,
+        "t1_commit_node_bounds": [
+          343477.766149,
+          344480.368745
+        ],
+        "t1_ack_node_ms": 344480.368745,
+        "t2_browser_ms": 21677.900000000023,
+        "t3_browser_ms": 21678.600000000035,
+        "t4_afterRender_browser_ms": 21716.5,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 76.313942,
+        "update_to_render_ms": 1239.0780409999425,
+        "commit_to_render_bounds_ms": [
+          158.77182599995285,
+          1164.153776000021
+        ],
+        "receive_to_react_ms": 0.7000000000116415,
+        "receive_to_render_ms": 38.59999999997672
+      },
+      {
+        "version": 15,
+        "sequence": 55,
+        "status": "available",
+        "t0_node_ms": 344841.046668,
+        "t1_commit_node_bounds": [
+          344923.92912399996,
+          345851.166777
+        ],
+        "t1_ack_node_ms": 345851.166777,
+        "t2_browser_ms": 23041.100000000035,
+        "t3_browser_ms": 23041.900000000023,
+        "t4_afterRender_browser_ms": 23059.800000000047,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 82.882456,
+        "update_to_render_ms": 1142.7835799999884,
+        "commit_to_render_bounds_ms": [
+          131.2737939999788,
+          1061.2908010000829
+        ],
+        "receive_to_react_ms": 0.7999999999883585,
+        "receive_to_render_ms": 18.70000000001164
+      },
+      {
+        "version": 16,
+        "sequence": 56,
+        "status": "maintenance",
+        "t0_node_ms": 346172.037085,
+        "t1_commit_node_bounds": [
+          346255.96365800005,
+          347242.373429
+        ],
+        "t1_ack_node_ms": 347242.373429,
+        "t2_browser_ms": 24613.100000000035,
+        "t3_browser_ms": 24615.900000000023,
+        "t4_afterRender_browser_ms": 24624,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 83.926573,
+        "update_to_render_ms": 1375.9931629999192,
+        "commit_to_render_bounds_ms": [
+          304.26714199990965,
+          1293.4562669999432
+        ],
+        "receive_to_react_ms": 2.7999999999883585,
+        "receive_to_render_ms": 10.899999999965075
+      },
+      {
+        "version": 17,
+        "sequence": 57,
+        "status": "available",
+        "t0_node_ms": 347575.369255,
+        "t1_commit_node_bounds": [
+          347642.7840500001,
+          348711.407426
+        ],
+        "t1_ack_node_ms": 348711.407426,
+        "t2_browser_ms": 25886.100000000035,
+        "t3_browser_ms": 25886.800000000047,
+        "t4_afterRender_browser_ms": 25991,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 67.414795,
+        "update_to_render_ms": 1339.6609929999104,
+        "commit_to_render_bounds_ms": [
+          202.2331449999474,
+          1273.63587499992
+        ],
+        "receive_to_react_ms": 0.7000000000116415,
+        "receive_to_render_ms": 104.89999999996508
+      },
+      {
+        "version": 18,
+        "sequence": 58,
+        "status": "maintenance",
+        "t0_node_ms": 348991.4396,
+        "t1_commit_node_bounds": [
+          349076.882399,
+          350202.272482
+        ],
+        "t1_ack_node_ms": 350202.272482,
+        "t2_browser_ms": 27651,
+        "t3_browser_ms": 27651.800000000047,
+        "t4_afterRender_browser_ms": 27656.20000000001,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 85.442799,
+        "update_to_render_ms": 1588.7906479999656,
+        "commit_to_render_bounds_ms": [
+          376.5680889999494,
+          1504.7375260000117
+        ],
+        "receive_to_react_ms": 0.8000000000465661,
+        "receive_to_render_ms": 5.2000000000116415
+      },
+      {
+        "version": 19,
+        "sequence": 59,
+        "status": "available",
+        "t0_node_ms": 350611.85186,
+        "t1_commit_node_bounds": [
+          350698.100074,
+          351596.016113
+        ],
+        "t1_ack_node_ms": 351596.016113,
+        "t2_browser_ms": 28722,
+        "t3_browser_ms": 28722.800000000047,
+        "t4_afterRender_browser_ms": 28828.70000000001,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 86.248214,
+        "update_to_render_ms": 1140.8783879999537,
+        "commit_to_render_bounds_ms": [
+          155.32445799995912,
+          1056.01985099999
+        ],
+        "receive_to_react_ms": 0.8000000000465661,
+        "receive_to_render_ms": 106.70000000001164
+      },
+      {
+        "version": 20,
+        "sequence": 60,
+        "status": "maintenance",
+        "t0_node_ms": 351868.533221,
+        "t1_commit_node_bounds": [
+          351944.26777499996,
+          352905.220032
+        ],
+        "t1_ack_node_ms": 352905.220032,
+        "t2_browser_ms": 30319.100000000035,
+        "t3_browser_ms": 30322.100000000035,
+        "t4_afterRender_browser_ms": 30402.20000000001,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 75.734554,
+        "update_to_render_ms": 1457.6970269999583,
+        "commit_to_render_bounds_ms": [
+          419.6205389999668,
+          1383.3521500000497
+        ],
+        "receive_to_react_ms": 3,
+        "receive_to_render_ms": 83.09999999997672
+      },
+      {
+        "version": 21,
+        "sequence": 61,
+        "status": "available",
+        "t0_node_ms": 353352.714593,
+        "t1_commit_node_bounds": [
+          353441.949355,
+          354270.155704
+        ],
+        "t1_ack_node_ms": 354270.155704,
+        "t2_browser_ms": 31714.100000000035,
+        "t3_browser_ms": 31715,
+        "t4_afterRender_browser_ms": 31740.600000000035,
+        "materialColor": "c46b37",
+        "drawCalls": 23,
+        "transaction_ms": 89.234762,
+        "update_to_render_ms": 1311.9156549999607,
+        "commit_to_render_bounds_ms": [
+          393.08486699999776,
+          1224.0705700000399
+        ],
+        "receive_to_react_ms": 0.8999999999650754,
+        "receive_to_render_ms": 26.5
+      },
+      {
+        "version": 22,
+        "sequence": 62,
+        "status": "maintenance",
+        "t0_node_ms": 354695.315035,
+        "t1_commit_node_bounds": [
+          354767.66828199994,
+          355805.209387
+        ],
+        "t1_ack_node_ms": 355805.209387,
+        "t2_browser_ms": 33009.100000000035,
+        "t3_browser_ms": 33009.90000000002,
+        "t4_afterRender_browser_ms": 33031.100000000035,
+        "materialColor": "c14336",
+        "drawCalls": 23,
+        "transaction_ms": 72.353247,
+        "update_to_render_ms": 1259.8152129999944,
+        "commit_to_render_bounds_ms": [
+          148.5311839999631,
+          1188.851643000089
+        ],
+        "receive_to_react_ms": 0.7999999999883585,
+        "receive_to_render_ms": 22
+      }
+    ],
+    "network": {
+      "requests": 18,
+      "webSockets": 9,
+      "assets": [
+        "/assets/index-DSwinsHp.js",
+        "/assets/index-DgI4ncN9.css",
+        "/assets/LiveApp-XBFschkw.js",
+        "/assets/diagnostics-CF1ndjFG.js",
+        "/assets/DemoScene-BroG-qMw.js"
+      ]
+    },
+    "calibrationBefore": {
+      "before": 328562.170433,
+      "browser": 5638.400000000023,
+      "after": 328562.819925,
+      "lower": 322923.770433,
+      "upper": 322924.419925,
+      "exchanges": [
+        {
+          "before": 328562.170433,
+          "browser": 5638.400000000023,
+          "after": 328562.819925,
+          "lower": 322923.770433,
+          "upper": 322924.419925
+        },
+        {
+          "before": 328562.824292,
+          "browser": 5639.200000000012,
+          "after": 328563.590267,
+          "lower": 322923.62429199996,
+          "upper": 322924.390267
+        },
+        {
+          "before": 328560.180865,
+          "browser": 5637.100000000035,
+          "after": 328562.165596,
+          "lower": 322923.08086499997,
+          "upper": 322925.06559599994
+        },
+        {
+          "before": 328572.202648,
+          "browser": 5649.100000000035,
+          "after": 328574.260217,
+          "lower": 322923.10264799994,
+          "upper": 322925.16021699994
+        },
+        {
+          "before": 328566.664662,
+          "browser": 5643.400000000023,
+          "after": 328569.222412,
+          "lower": 322923.264662,
+          "upper": 322925.822412
+        },
+        {
+          "before": 328557.209232,
+          "browser": 5634.300000000047,
+          "after": 328560.175797,
+          "lower": 322922.90923199995,
+          "upper": 322925.87579699996
+        },
+        {
+          "before": 328569.22774,
+          "browser": 5646.300000000047,
+          "after": 328572.201036,
+          "lower": 322922.92773999996,
+          "upper": 322925.90103599994
+        },
+        {
+          "before": 328563.597407,
+          "browser": 5642.100000000035,
+          "after": 328566.655729,
+          "lower": 322921.497407,
+          "upper": 322924.55572899996
+        },
+        {
+          "before": 328549.693966,
+          "browser": 5627.200000000012,
+          "after": 328553.213401,
+          "lower": 322922.493966,
+          "upper": 322926.013401
+        },
+        {
+          "before": 328574.261769,
+          "browser": 5652.800000000047,
+          "after": 328577.830797,
+          "lower": 322921.4617689999,
+          "upper": 322925.0307969999
+        },
+        {
+          "before": 328553.218839,
+          "browser": 5631,
+          "after": 328557.203884,
+          "lower": 322922.218839,
+          "upper": 322926.203884
+        },
+        {
+          "before": 328544.031236,
+          "browser": 5624.600000000035,
+          "after": 328549.668859,
+          "lower": 322919.431236,
+          "upper": 322925.068859
+        }
+      ]
+    },
+    "calibrationAfter": {
+      "before": 356118.240571,
+      "browser": 33194.600000000035,
+      "after": 356118.935491,
+      "lower": 322923.64057099994,
+      "upper": 322924.335491,
+      "exchanges": [
+        {
+          "before": 356118.240571,
+          "browser": 33194.600000000035,
+          "after": 356118.935491,
+          "lower": 322923.64057099994,
+          "upper": 322924.335491
+        },
+        {
+          "before": 356103.225331,
+          "browser": 33179.600000000035,
+          "after": 356104.155179,
+          "lower": 322923.62533099996,
+          "upper": 322924.55517899996
+        },
+        {
+          "before": 356114.36599,
+          "browser": 33191,
+          "after": 356115.30413,
+          "lower": 322923.36599,
+          "upper": 322924.30413
+        },
+        {
+          "before": 356113.292749,
+          "browser": 33190,
+          "after": 356114.364748,
+          "lower": 322923.292749,
+          "upper": 322924.364748
+        },
+        {
+          "before": 356124.197308,
+          "browser": 33200.80000000005,
+          "after": 356125.48057,
+          "lower": 322923.39730799996,
+          "upper": 322924.68056999997
+        },
+        {
+          "before": 356118.936733,
+          "browser": 33196,
+          "after": 356121.130654,
+          "lower": 322922.936733,
+          "upper": 322925.130654
+        },
+        {
+          "before": 356125.482032,
+          "browser": 33203,
+          "after": 356127.972212,
+          "lower": 322922.482032,
+          "upper": 322924.972212
+        },
+        {
+          "before": 356115.305462,
+          "browser": 33191.90000000002,
+          "after": 356118.239239,
+          "lower": 322923.405462,
+          "upper": 322926.339239
+        },
+        {
+          "before": 356121.131996,
+          "browser": 33198,
+          "after": 356124.195976,
+          "lower": 322923.131996,
+          "upper": 322926.195976
+        },
+        {
+          "before": 356109.704782,
+          "browser": 33188,
+          "after": 356113.290776,
+          "lower": 322921.704782,
+          "upper": 322925.290776
+        },
+        {
+          "before": 356104.156461,
+          "browser": 33181,
+          "after": 356109.701898,
+          "lower": 322923.156461,
+          "upper": 322928.701898
+        },
+        {
+          "before": 356096.062417,
+          "browser": 33177.30000000005,
+          "after": 356103.213874,
+          "lower": 322918.76241699996,
+          "upper": 322925.91387399996
+        }
+      ]
+    },
+    "clockWindow": {
+      "lower": 322922.64057099994,
+      "upper": 322925.419925,
+      "endpointDriftMs": 0.10714800003916025,
+      "quantizationAllowanceMs": 1,
+      "driftBudgetMs": 10
+    },
+    "latency": {
+      "n": 20,
+      "p50": 1311.9156549999607,
+      "p95": 1552.3647779999883,
+      "max": 1588.7906479999656
+    },
+    "transaction": {
+      "n": 20,
+      "p50": 78.224744,
+      "p95": 118.369085,
+      "max": 125.955206
+    },
+    "receiveToRender": {
+      "n": 20,
+      "p50": 27.5,
+      "p95": 106.70000000001164,
+      "max": 136
+    },
+    "errors": 0,
+    "timeouts": 0,
+    "clockPolicy": "Node hrtime orchestrates t0/spawn and commit ack. Browser performance.now mapped by12request/reply offset bounds; use hull of shortest-RTT calibration before/after plus1ms allowance; endpoint drift must be<=10ms. Estimated intervals assume stable clock rate inside the window. Python perf_counter commit is mapped only to a conservative Node spawn-to-ack interval; no subtraction of independent origins. t4 is Three onAfterRender draw submission plus pixel screenshot, not hardware scanout. t0 includes guarded CLI process startup.",
+    "reconnect_ms": 812.3119610000285,
+    "frameIntervalsMs": [
+      66.59999999999854,
+      16.60000000000582,
+      100,
+      33.39999999999418,
+      50,
+      50,
+      66.70000000000437,
+      50,
+      49.900000000001455,
+      50.099999999998545,
+      49.900000000001455,
+      83.39999999999418,
+      33.30000000000291,
+      50,
+      83.30000000000291,
+      50.099999999998545,
+      33.299999999995634,
+      50,
+      50,
+      50,
+      49.900000000001455,
+      66.70000000000437,
+      50,
+      50,
+      50,
+      66.59999999999854,
+      66.69999999999709,
+      50,
+      116.70000000000437,
+      33.299999999995634,
+      33.400000000001455,
+      50,
+      50,
+      66.59999999999854,
+      50,
+      50.099999999998545,
+      99.90000000000146,
+      33.30000000000291,
+      33.400000000001455,
+      50,
+      83.29999999999563,
+      33.30000000000291,
+      50,
+      50,
+      83.29999999999563,
+      50,
+      50.10000000000582,
+      33.299999999995634,
+      50,
+      50,
+      83.30000000000291,
+      50,
+      50,
+      50,
+      50,
+      50,
+      50,
+      66.69999999999709,
+      66.59999999999854,
+      50,
+      33.400000000001455,
+      66.59999999999854,
+      66.70000000000437,
+      33.299999999995634,
+      50,
+      83.30000000000291,
+      66.69999999999709,
+      50,
+      33.400000000001455,
+      33.30000000000291,
+      66.69999999999709,
+      50,
+      49.900000000001455,
+      83.40000000000146,
+      50,
+      16.599999999998545,
+      66.69999999999709,
+      66.70000000000437,
+      33.299999999995634,
+      83.30000000000291,
+      16.69999999999709,
+      50,
+      66.70000000000437,
+      49.900000000001455,
+      83.39999999999418,
+      49.900000000001455,
+      33.400000000001455,
+      50,
+      100,
+      16.599999999998545
+    ],
+    "frameTiming": {
+      "n": 90,
+      "p50": 50,
+      "p95": 83.40000000000146,
+      "max": 116.70000000000437
+    },
+    "bundle": [
+      {
+        "file": "DemoScene-BroG-qMw.js",
+        "bytes": 1082793
+      },
+      {
+        "file": "LiveApp-XBFschkw.js",
+        "bytes": 16618
+      },
+      {
+        "file": "OfflineDemo-XdeRPwwV.js",
+        "bytes": 5458
+      },
+      {
+        "file": "diagnostics-CF1ndjFG.js",
+        "bytes": 467
+      },
+      {
+        "file": "emulate-oL4gPU4P.js",
+        "bytes": 1474435
+      },
+      {
+        "file": "index-DSwinsHp.js",
+        "bytes": 224661
+      },
+      {
+        "file": "index-DgI4ncN9.css",
+        "bytes": 4088
+      },
+      {
+        "file": "living_room-CVCYIB7e.js",
+        "bytes": 1500390
+      },
+      {
+        "file": "meeting_room-COtFIOij.js",
+        "bytes": 409868
+      },
+      {
+        "file": "music_room-DAOruTFO.js",
+        "bytes": 2087284
+      },
+      {
+        "file": "office_large-DoJFWIAy.js",
+        "bytes": 548696
+      },
+      {
+        "file": "office_small-BStFvcdU.js",
+        "bytes": 97836
+      }
+    ]
+  }
+}

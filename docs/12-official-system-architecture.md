@@ -66,3 +66,31 @@ pytest9.2.0 (27/10/2026,MIT), httpx0.28.1 (06/12/2024,BSD3), ruff0.17.5 (12/11/2
 [FastAPI lifespan](https://fastapi.tiangolo.com/advanced/events/), [CORS](https://fastapi.tiangolo.com/tutorial/cors/), [SQLAlchemy engine](https://docs.sqlalchemy.org/en/21/core/engines.html), [psycopg binary installation](https://www.psycopg.org/psycopg3/docs/basic/install.html) là cơ sở API triển khai. [PostgreSQL docs](https://www.postgresql.org/docs/) xác minh stable18.7,12/11/2026, PostgreSQL License; không chọn19 RC. [Alembic tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html)/[PyPI metadata](https://pypi.org/pypi/alembic/json)1.20.1,22/10/2026,Python>=3.10,MIT: tương thích SQLAlchemy nhưng chưa cài hoặc tạo revision vì schema chưa duyệt. Mọi nguồn trong mục này truy cập14/11/2026; kết quả CI ở acceptance là bằng chứng compatibility thực tế, metadata không thay test.
 
 Official Actions kiểm lại 14/11/2026 bằng GitHub tag API: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.1.0](https://github.com/actions/setup-node/releases/tag/v7.1.0), [setup-python v7.1.0](https://github.com/actions/setup-python/releases/tag/v7.1.0), [upload-artifact v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2). SHA trong workflow trùng tag; permissions contents:read, không secrets/deploy/write. Đây là baseline kế thừa workflow M0-B1, không thêm action bên thứ ba.
+
+
+## M1-C — Kiến trúc vertical slice hiện hành (15/11/2026)
+
+Các phần phía trên ghi quyết định/baseline M0-B2 ở thời điểm lịch sử. M1-A/B đã hiện thực Catalog và state/history/outbox; M1-C nối frontend, không đổi stack hoặc database revisions0001/0002. Không session/event tracking của khách.
+
+```mermaid
+flowchart LR
+  CLI[Guarded synthetic CLI] --> S[State service transaction]
+  S --> DB[(PostgreSQL18 current/history/cursor/outbox)]
+  DB --> REST[Catalog and state read REST]
+  DB --> W[Single-process dispatcher and WS v2]
+  REST --> C[Typed Catalog client and UUID adapter]
+  W --> R[Atomic snapshot and sequence reducer]
+  C --> V[React Three Fiber primitives]
+  R --> V
+  R --> P[Information Panel and stale indicators]
+```
+
+C1 một repeatable-read view, watermark và bounded start/chunk/end, DB đóng trước network. C2 scope theo room UUID, API abort khi unmount/đổiroom, pagination bounded512rows/32pages; scene max100objects. Layout sorting UUID deterministic theo cùng inventory, không phải transform khảo sát và không bảo đảm giữ vị trí nếu inventory thay đổi. Meshkey=CatalogUUID, domainstates tách reducer khỏi React/Three.
+
+WS server-authoritative, schema_version2 opt-in; stagedsnapshot không render partial. Delta strictlysequence+1/stateversion+1; old bỏ, gap resync. WS chỉ nhận subscription vàkhôngmutation. Retry tốiđa12attempts, exponentialbackoff+jitter, watchdog10s, cleanup/generation ngăn stale callbacks. Catalog chưa hotreload trongsubscription: inventory đổi cầnmanualreload. Source/parent được serverfilter/revalidate; browserkhôngquyếtđịnhquyền. Offlinefixture riêng explicit, khônggọi live.
+
+C3 diagnostics chỉbuildflag VITE_TEST_DIAGNOSTICS=1 cho testsynthetic, ring512entries, khôngpersistence/visitorcollection/serverupload. Three.onAfterRender kiểm material sau draw submission kết hợpảnhCanvas, khônghardware scanout. Python perf_counter vàbrowser performance.now không coi cùngorigin: Nodeorchestration dùng browserrequest/replybounds vàPythonspawn/commitackinterval, rawuncertainty báo trongartifact. CLIflag--diagnostics không thay transaction/provenance/guard.
+
+Errorboundaries/lazy scene/fallbackDOM giữ; statusloading/no-room/no-object/unavailable/connecting/synchronizing/connected/stale/reconnecting/resync tách riêng. Không pollCatalog/reconnectvôhạn. Unknown state hiển thị chưa có authoritative, không tự suy đoán available. No autoXR/camera. Multiinstance/auth/assetrights/retention/hosting vàVRphysical vẫn chưa xác minh/PROPOSED.
+
+Nguồn kiểm tra15/11/2026: [Vite WS proxy](https://vite.dev/config/server-options#server-proxy), [R3F hooks](https://r3f.docs.pmnd.rs/api/hooks), [MDN WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket). Giữ toàn bộ dependency versions/hashlocks baseline đãCI, không thêm package.

@@ -149,3 +149,27 @@ D:/Code/DATN/.local/api-venv/Scripts/python.exe -m pytest -q -m postgres
 Integration trả FAIL có giải thích nếu thiếu TEST_DATABASE_URL; không tự skip để báo PASS. Khi local chưa có PostgreSQL, ghi BLOCKED và chỉ chạy nhóm unit. CI chạy cả hai nhóm với PG 18.7 riêng. Integration chỉ SELECT, không DDL/drop/reset; SQLite không được dùng thay bằng chứng PostgreSQL. Unit có injected probe thành công/lỗi, khác với PostgreSQL thật.
 
 core/config, database/connection, modules/status đã triển khai. Catalog/state/realtime/experience/reporting/auth chỉ là ranh giới đề xuất trong docs12, chưa có nghiệp vụ. Schema docs13 PROPOSED; chưa tạo Alembic revision nên chưa có migration command. Không gọi create_all. Dừng API bằng Ctrl+C để lifespan đóng pool.
+
+
+## M1-C: chạy vertical slice synthetic tường minh
+
+Không tự seed/startupDDL. Dùng database dự án dev/test loopback đã xác nhận, migrations0001/0002 giữ nguyên. PostgreSQL18 local nếu có: khởi động cấu hình infra theo hướng dẫn phía trên, không dùng volume của dự án khác và không xóa volume. DATABASE_URL chỉ đặt phía API; không đưa vào VITE_.
+
+Từ apps/api, sau upgrade head và cấu hình DATABASE_URL đúng database dev airc_foundation:
+
+```powershell
+python -m app.modules.catalog.vertical_seed --confirm-database airc_foundation
+python -m uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000
+```
+
+Seed tạo2phòng generic: phòng thứ nhất20objects/41states, phòng thứ hai1object/3states. Nhãn SYNTHETIC — NOT AIRC REAL DATA. UUID cố định từ namespace synthetic; không507/inventory thật. Rerun không overwrite Catalog mismatch hoặc reset trạng thái đã cập nhật; transaction rollback khi collision. Chọn Synthetic vertical room1 trong web. Guard từ chối thiếuconfirm/nonloopback/URLquery/database ngoàiallowlist.
+
+Dùng GET Catalog để lấy room/object UUID thực; update bằng CLI hiện có:
+
+```powershell
+python -m app.modules.state.cli --confirm-database airc_foundation --room-id ROOM_UUID --target-kind object --target-id OBJECT_UUID --state-type equipment_status --expected-version 1 --value-file D:\Code\DATN\.local\maintenance.json
+```
+
+File JSON trong workspace có nội dung `{"status":"maintenance"}`; expected_version phải đúng hiện tại. Không publicwriteAPI. Quan sát Panel/mesh đổi và sequence tăng. Room schedule/exhibit cũng synthetic. Restart/reconnect lấy snapshot authoritative, dữ liệu mấtWS đánh stale.
+
+Real browser integration yêu cầu npmci/build apps/web và Chrome sẵn. Chạy suite PostgreSQL như phần M1-A/B; test_vertical_slice_postgres tạo DB riêng theo guard cũ và khởi động realUvicorn/Vite5173/Chrome; không mock happy path. Artifact trong .local/m1-c-browser, không commit profile/cache. Local thiếuPostgreSQL ghiBLOCKED; CI PostgreSQL18 thật bắt buộc.

@@ -1,18 +1,16 @@
-# Trạng thái dự án — M1-B
+# Trạng thái dự án — M1-C
 
-Cập nhật 14/11/2026. Root D:\Code\DATN; repo duyanhtr130905/DATN-AIRC-WebXR; branch feat/m1-b-state-realtime. M1-A merge 99f65377746a0eb7c924b6493db3a8e4680a444d.
+Cập nhật15/11/2026. Root D:\Code\DATN; repository duyanhtr130905/DATN-AIRC-WebXR. Branch feat/m1-c-digital-twin-vertical-slice. M1-B merge66e166626a63285e1c49925004ec10c286ab43f2 đã xác minh.
 
 | Milestone | Trạng thái |
 |---|---|
-| M0-A / M0-B1 / M0-B2 | DONE |
-| M1-A | DONE — PR#9 merged |
-| M1-B | IN REVIEW — [PR#10](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/10) |
-| M1-C | NOT STARTED |
+| M0-A / M0-B1 / M0-B2 / M1-A | DONE |
+| M1-B | DONE — PR#10 merged |
+| M1-C | IN REVIEW — C1/C2/C3 PASS, chờ ChatGPT nghiệm thu PR |
 
-Đã triển khai synthetic state/history/version/cursor/outbox, migration0002, internalCLI vàreadREST/WebSocket. Source 320c3bc PASS 38 unit +47 PG tests thật, actualTCP/concurrency/outage/retry/CLI vàfullM0/Catalog/frontend/PoC regression. [Acceptance](17-m1-b-state-realtime-acceptance.md), [evidence/metrics](evidence/m1-b-validation.json), [runbook](../apps/api/README.md). Follow-up chỉ tài liệu/evidence, latest HEAD checks xác minh trước bàn giao. Không merge/deploy/M1-C.
+Một branch và một PR cuối sau C1→C2→C3. [Checkpoint](18-m1-c-progress.md) ghi bằng chứng và bước tiếp; không mở PR riêng mỗi giai đoạn. Các kết quả lịch sử M1-B giữ trong [acceptance M1-B](17-m1-b-state-realtime-acceptance.md), không dùng làm PASS cho code M1-C mới.
 
-Giới hạn: một API process, multiinstancebroadcast chưa hỗ trợ; metrics20 samples loopback không source-to-render. LocalPostgreSQL BLOCKED, không tự cài/SQLite. PhysicalGalaxy/VR NOT RUN. Auth/retention/hosting/data rights/domain metadata/VR acceptance vẫn chưa chốt. Outbox retained/exhausted cần operations policy sau; không xóa DB/volume hoặc destructive downgrade.
+Dữ liệu khảo sát507/inventory/ảnh/kích thước/nguồn/quyền vẫn BLOCKED; chưa có phần mềm quản lý thiết bị. Mọi fixture M1-C là synthetic, không phải507 và không nghiệm thu KPI. Giữ MT1–MT3, KPI≥3phòng và Issues1–5 mở. LocalPG BLOCKED; CI dùngPG18 riêng. Galaxy/VR physical NOT TESTED. Multi-instance/auth/retention/hosting/quyền dữ liệu chưa phê duyệt. Không visitor tracking/AI/deploy/milestone sau.
 
-Thầy chỉ đạo phòng 507 trước, chưa khảo sát/inventory/ảnh/sơ đồ/kích thước/nguồn/quyền vàchưa phần mềm thiết bị. Synthetic DEMO không phải507. KPI≥3phòng chưa điều chỉnh, MT1–MT3 chưa nghiệm thu; Issues1–5 giữ mở. Sau ChatGPT review và phê duyệt mới bắt đầu M1-C.
 
-Cập nhật regression pool: a1ac798 PASS 38 unit +48 PG tests, thêm actual worker drain trước dispose; full M0/PoC/frontend PASS. Snapshot metrics source320c3bc giữ nguyên; latest HEAD checks xác minh khi bàn giao. [Chi tiết48tests và lịch sử CI race](17-m1-b-state-realtime-acceptance.md).
+M1-C source09f3e23 đã PASS full CI:70backend unit,67PostgreSQL tests,25frontend unit,16realbrowser groups/20render samples; M0/PoC/IWER đềuPASS. [Acceptance M1-C](18-m1-c-vertical-slice-acceptance.md) và [raw evidence](evidence/m1-c-validation.json). Final HEAD checks ở PR là nguồn bàn giao hiện hành. Milestone sau M1-C NOT STARTED. Đây là synthetic vertical slice, không nghiệm thu MT1–MT3.

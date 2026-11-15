@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [docs/m0-foundation]
+    branches: [docs/m0-foundation, feat/m1-c-digital-twin-vertical-slice]
 
 permissions:
   contents: read

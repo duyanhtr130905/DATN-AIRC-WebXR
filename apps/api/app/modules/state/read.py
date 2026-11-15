@@ -8,16 +8,18 @@ from app.database.state_models import CurrentState, Outbox, RoomStateCursor, Sta
 from app.modules.state.service import StateUnavailable, public_state, visible_room, visible_states
 
 
-def snapshot(engine, room_id: UUID) -> dict:
+def consistent_snapshot(engine, room_id: UUID, capacity: int) -> dict:
     with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
         with connection.begin(), Session(bind=connection) as session:
             connection.exec_driver_sql("SET TRANSACTION READ ONLY")
             visible_room(session, room_id)
             cursor = session.get(RoomStateCursor, room_id)
             rows = list(
-                session.scalars(visible_states(room_id).order_by(CurrentState.id).limit(33))
+                session.scalars(
+                    visible_states(room_id).order_by(CurrentState.id).limit(capacity + 1)
+                )
             )
-            if len(rows) > 32:
+            if len(rows) > capacity:
                 raise StateUnavailable("Snapshot capacity exceeded")
             return {
                 "type": "snapshot",
@@ -27,6 +29,33 @@ def snapshot(engine, room_id: UUID) -> dict:
                 "sequence": cursor.sequence if cursor else 0,
                 "states": [public_state(row) for row in rows],
             }
+
+
+def snapshot(engine, room_id: UUID) -> dict:
+    """Legacy protocol1 remains limited32; explicit protocol2 supports larger rooms."""
+    return consistent_snapshot(engine, room_id, 32)
+
+
+def snapshot_v2(engine, room_id: UUID) -> list[dict]:
+    from app.modules.realtime.snapshot_protocol import MAX_STATES, frames_from_snapshot
+
+    # consistent_snapshot closes connection/transaction before framing/network send.
+    return frames_from_snapshot(consistent_snapshot(engine, room_id, MAX_STATES))
+
+
+def revalidate_snapshot_visibility(engine, room_id: UUID, state_ids: list[UUID]) -> None:
+    with Session(engine) as session, session.begin():
+        visible_room(session, room_id)
+        if state_ids:
+            visible = set(
+                session.scalars(
+                    visible_states(room_id)
+                    .where(CurrentState.id.in_(state_ids))
+                    .with_only_columns(CurrentState.id)
+                )
+            )
+            if visible != set(state_ids):
+                raise StateUnavailable("Snapshot visibility changed")
 
 
 def replay(engine, room_id: UUID, after: int) -> tuple[list[dict], bool]:

@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feat/m0-b2-app-foundation, feat/m1-a-catalog, feat/m1-b-state-realtime]
+    branches: [feat/m0-b2-app-foundation, feat/m1-a-catalog, feat/m1-b-state-realtime, feat/m1-c-digital-twin-vertical-slice]
 permissions:
   contents: read
 concurrency:
@@ -31,6 +31,8 @@ jobs:
       - run: python -m pip install --require-hashes -r apps/api/requirements.lock
       - run: npm ci --ignore-scripts --no-fund --prefix apps/web
       - run: npm run build --prefix apps/web
+        env:
+          VITE_TEST_DIAGNOSTICS: '1'
       - run: npm test --prefix apps/web
       - run: npm run test:browser --prefix apps/web
       - name: Browser report and real screenshots only
@@ -74,6 +76,14 @@ jobs:
       - run: python -c "import sys; sys.path.insert(0, 'apps/api'); from app.main import create_app; assert create_app().openapi()"
       - run: python -m pytest -q -m 'not postgres'
         working-directory: apps/api
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-fund --prefix apps/web
+      - run: npm run build --prefix apps/web
+        env:
+          VITE_TEST_DIAGNOSTICS: '1'
       - run: python -m pytest -v -m postgres --junitxml=../../.local/m1-b-postgres.xml
         working-directory: apps/api
         env:
@@ -87,6 +97,7 @@ jobs:
           path: |
             .local/m1-b-postgres.xml
             .local/m1-b-metrics.json
+            .local/m1-c-browser/
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error

@@ -30,3 +30,7 @@ Task M1-A cho phép Catalog rooms/objects, initial Alembic, read-only API và fi
 ## M1-B được phê duyệt
 
 Task M1-B cho phép state/history/outbox/cursor, migration0002, internal synthetic service/CLI, readREST/WebSocket vàPG/TCP/concurrency tests. Branch feat/m1-b-state-realtime; không M1-C/publicwrites/authgiả/real507data. Giữ nguyên revision0001; assertion cũ vềhead/tables phải cập nhật đúng0002 nhưng giữ coverage Catalog. PGfaultinjection chỉunique disposable database đãguard, không đụng databasekhác. LocalPG khôngcó ghiBLOCKED, CIphảichạy thật.
+
+## M1-C được phê duyệt
+
+Task15/11/2026 cho phép C1 snapshot scalability →C2 frontend Catalog/state/3D integration →C3 realPG/TCP/Chrome render evidence, mộtbranch feat/m1-c-digital-twin-vertical-slice vàmộtPR cuối. Không chuyển giai đoạn khi gate trước chưaPASS. Mỗi giai đoạn commit/push vàcập nhật docs/18-m1-c-progress.md. Không visitor tracking/publicwrites/auth giả/GLB507/AI/multiinstance/deploy/milestone sau. Giữ protocol1 compatibility hoặc testpolicyđổiwire rõràng; protocol2 explicit opt-in. Synthetic chỉdev/test đãguard, khôngstartupseed/migrations destructive.

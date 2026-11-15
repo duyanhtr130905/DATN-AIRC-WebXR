@@ -1,3 +1,11 @@
+# DATN AIRC WebXR — M1-C synthetic vertical slice
+
+M0-A/B1/B2 và M1-A/B đã DONE/merge. M1-C đã qua các gate C1/C2/C3 và đang bàn giao PR để review. Ứng dụng chính thức lấy Catalog UUID và state synthetic từ PostgreSQL qua FastAPI REST/WebSocket, cập nhật primitive 3D và Information Panel. Không có dữ liệu thật507, chưa nghiệm thu KPI MT1–MT3, không publicwrite/deploy.
+
+Bắt đầu: [web](apps/web/README.md), [API + guarded seed/CLI](apps/api/README.md), [PostgreSQL local](infra/README.md), [kiến trúc](docs/12-official-system-architecture.md), [contract](docs/14-api-contracts.md), [acceptance M1-C](docs/18-m1-c-vertical-slice-acceptance.md), [checkpoint tiếp tục](docs/18-m1-c-progress.md), [trạng thái](docs/PROJECT_STATUS.md). Defaultlive không âm thầm fallback; DEMO foundation offline chỉ khi chọn riêng.
+
+## Nội dung lịch sử M1-B và các milestone trước
+
 # DATN AIRC WebXR — M1-B đang review
 
 State/history/outbox và WebSocket chỉ synthetic đã triển khai; [PR#10](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/10), [acceptance M1-B](docs/17-m1-b-state-realtime-acceptance.md), [trạng thái hiện tại](docs/PROJECT_STATUS.md), [runbook](apps/api/README.md). M0 vàM1-A DONE; M1-C NOT STARTED. Chưa dữ liệu507 thật hoặcKPI đạt, không publicwrite/deploy.
