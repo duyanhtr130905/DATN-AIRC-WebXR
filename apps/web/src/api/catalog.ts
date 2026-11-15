@@ -12,7 +12,7 @@ export async function getJson(path: string, signal?: AbortSignal, fetcher: typeo
   if(signal?.aborted)abort();
   const work=async()=>{
     const response=await fetcher(path,{signal:controller.signal,credentials:"omit"});
-    if(!response.ok)throw new CatalogError(response.status===503?"unavailable":response.status===404?"not_found":"contract");
+    if(!response.ok)throw new CatalogError(response.status===503?"unavailable":response.status>=500?"network":response.status===404?"not_found":"contract");
     reader=response.body?.getReader();if(!reader)throw new CatalogError("contract");
     const chunks:Uint8Array[]=[];let size=0;
     try {while(true){const item=await reader.read();if(item.done)break;size+=item.value.byteLength;

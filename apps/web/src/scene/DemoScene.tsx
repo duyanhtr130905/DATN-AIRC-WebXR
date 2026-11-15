@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { diagnostic } from "../features/live/diagnostics.ts";
+import type { SceneObject } from "../shared/types.ts";
+import type { Mesh, MeshStandardMaterial } from "three";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { XR, createXRStore } from "@react-three/xr";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -41,10 +44,20 @@ export default function DemoScene({ scene, selectedId, select }: { scene: SceneD
         <mesh rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[9, 7]} /><meshStandardMaterial color="#d1ddd4" /></mesh>
         <gridHelper args={[9, 9, "#96ada1", "#bdcbc2"]} position={[0, 0.01, 0]} />
         <mesh position={[0, 1.5, -3.5]}><boxGeometry args={[9, 3, 0.12]} /><meshStandardMaterial color="#f6f3e9" /></mesh>
-        {scene.objects.map(object => <mesh key={object.id} name={object.id} userData={{ objectId:object.id, equipmentStatus:object.equipmentStatus??"unknown", version:object.stateVersion??0 }} position={object.position} onClick={event => { event.stopPropagation(); select(object.id); }}>
-          <boxGeometry args={[1.3, 1.3, 1.3]} /><meshStandardMaterial color={object.equipmentStatus === "maintenance" ? "#c14336" : object.equipmentStatus === "offline" ? "#6c7377" : object.id === selectedId ? "#c46b37" : object.equipmentStatus === "unknown" ? "#768b98" : "#357469"} />
-        </mesh>)}
+        {scene.objects.map(object => <StateMesh key={object.id} object={object} selected={object.id===selectedId} select={select}/>)}
       </XR>
     </Canvas>
   </ErrorBoundary>;
+}
+
+function StateMesh({object,selected,select}:{object:SceneObject;selected:boolean;select(id:string):void}){
+ const mesh=useRef<Mesh>(null);const observed=useRef("");
+ const color=object.equipmentStatus==="maintenance"?"#c14336":object.equipmentStatus==="offline"?"#6c7377":selected?"#c46b37":object.equipmentStatus==="unknown"?"#768b98":"#357469";
+ return <mesh ref={mesh} name={object.id} position={object.position} userData={{objectId:object.id,equipmentStatus:object.equipmentStatus??"unknown",version:object.stateVersion??0}}
+  onClick={event=>{event.stopPropagation();select(object.id);}}
+  onAfterRender={renderer=>{
+    const material=mesh.current?.material as MeshStandardMaterial|undefined;
+    const actual=material?.color.getHexString();const key=`${object.stateVersion}/${actual}`;
+    if(actual && observed.current!==key){observed.current=key;diagnostic("scene.afterRender",{roomId:object.roomId,objectId:object.id,version:object.stateVersion??0,status:object.equipmentStatus??"unknown",materialColor:actual,drawCalls:renderer.info.render.calls});}
+  }}><boxGeometry args={[1.3,1.3,1.3]}/><meshStandardMaterial color={color}/></mesh>;
 }

@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { diagnostic } from "../features/live/diagnostics.ts";
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { CatalogError, readObjects, readRooms } from "../api/catalog.ts";
 import type { CatalogObject, Room } from "../features/live/contracts.ts";
 import { sceneFromCatalog } from "../features/catalog/adapter.ts";
@@ -38,6 +39,7 @@ export default function LiveApp(){
     if(!catalog || catalog.roomId!==roomId)return;
     return subscribe(roomId,new Set(catalog.objects.map(o=>o.id)),setReplica);
   },[catalog,roomId]);
+  useLayoutEffect(()=>{if(replica?.roomId===roomId && replica.status==="connected")diagnostic("react.applied",{roomId,sequence:replica.sequence});},[replica,roomId]);
   const scoped=catalog?.roomId===roomId?catalog:null;
   const live=replica?.roomId===roomId?replica:null;
   const states=live?.states??{};

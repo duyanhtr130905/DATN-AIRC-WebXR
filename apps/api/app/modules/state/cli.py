@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import time
 from pathlib import Path
 from uuid import UUID
 
@@ -27,6 +28,9 @@ def main():
     values = parser.add_mutually_exclusive_group(required=True)
     values.add_argument("--value", help="Bounded JSON value")
     values.add_argument("--value-file", type=Path, help="JSON file within project workspace")
+    parser.add_argument(
+        "--diagnostics", action="store_true", help="Bounded synthetic test timing only"
+    )
     args = parser.parse_args()
     settings = Settings()
     if settings.database_url is None:
@@ -55,6 +59,7 @@ def main():
     value = json.loads(raw_value)
     database = Database(settings)
     try:
+        started = time.perf_counter_ns()
         with Session(database.engine) as session, session.begin():
             if session.scalar(text("SELECT current_database()")) != args.confirm_database:
                 raise RuntimeError("Database identity mismatch")
@@ -67,7 +72,15 @@ def main():
                 value=value,
                 expected_version=args.expected_version,
             )
-        print(json.dumps(result))
+        committed = time.perf_counter_ns()
+        if args.diagnostics:
+            result["test_diagnostics"] = {
+                "started_ns": started,
+                "committed_ns": committed,
+                "transaction_ms": (committed - started) / 1e6,
+                "clock": "Python perf_counter_ns; use Node spawn/ack bounds",
+            }
+        print(json.dumps(result), flush=True)
     finally:
         database.close()
 
