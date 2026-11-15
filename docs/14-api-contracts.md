@@ -117,3 +117,18 @@ Mỗi state transaction khóa một dòng `room_state_cursors(room_id PK, last_s
 Snapshot lấy states và last_sequence trong một transaction READ ONLY REPEATABLE READ, gửi snapshot_id + watermark và kết thúc bằng end marker. Server bắt đầu buffer subscription trước khi lấy snapshot; sau khi client xác nhận snapshot hoàn chỉnh, đọc outbox bền vững `room_sequence > watermark`, gửi theo cursor rồi nối live buffer và loại duplicate. Không chỉ dựa vào buffer RAM vì process có thể crash; gap/retention expiry hoặc quyền đổi phải trả resync.required. Client chỉ tăng cursor sau khi apply toàn bộ delta; snapshot chunk không trộn vào current state trước end marker.
 
 Đây là thiết kế cụ thể để PoC concurrency ở M1, **chưa schema được duyệt và chưa bằng chứng runtime**. Cần test writer đang commit trong lúc snapshot, publish đảo thứ tự, reconnect, tombstone và policy change; xét throughput do khóa theo phòng. Cơ sở isolation: [PostgreSQL transaction isolation](https://www.postgresql.org/docs/18/transaction-iso.html), truy cập 14/11/2026. Quyết định cursor retention và offline/multi-tab session sequence vẫn chờ duyệt.
+
+
+## M1-C C1 — Snapshot protocol2 (opt-in)
+
+Client mới kết nối `/ws/v1/state?room_id=UUID&protocol=2`. Thiếu protocol vẫn là1, snapshot đơn tối đa32states và compatibility tests M1-B được giữ. Protocol2 mọi message có schema_version=2; version khác bị từ chối.
+
+Snapshot gồm snapshot.start, snapshot.chunk, snapshot.end. Envelope: snapshot_id, room_id, watermark, sequence=watermark, message_id, timestamp. Start/end: total_chunks/total_states; chunk: chunk_index bắt đầu0 và states DTO public. Max512states,2MiB JSON conservative,16states/chunk và32KiB/frame. Vượt capacity trả STATE_UNAVAILABLE rồi đóng1011, không partial success. RAM bounded theo32connections; chưa multi-instance.
+
+Một transaction REPEATABLE READ READ ONLY đọc visibility/cursor/rows (limit513 phát hiện overflow), đóng connection trước framing/network await. Không pagination bằng nhiều DB snapshots. Revalidate parent/source từng chunk và toàn bộ stateIDs trước end; thay đổi visibility abort staging. Đây là kiểm tra tại thời điểm gửi, không thu hồi bytes hoặc cam kết revocation tức thời sau lần kiểm tra cuối.
+
+Client staging bounded512states/2MiB, chưa render chunk. Chỉ swap khi end có scope/watermark/sequence/IDs, index liên tiếp, totals và unique stateIDs hợp lệ. Missing/duplicate/reordered chunks, scope sai hoặc disconnect: bỏ staging, stale/reconnect. Delta sau end bắt đầu watermark+1; old/duplicate bỏ qua, gap resync. Không mutation.
+
+Subscriber đăng ký trước snapshot. V2 queue8wakeups coalesce vì SQL outbox giữ delta durable. Replay bounded32, backlog/gap vượt năng lực dẫn resync. Send timeout1s và cleanup khi đóng; DB không mở suốt session. Protocol1 giữ chính sách queue overflow cũ.
+
+Nguồn kiểm tra15/11/2026: [PostgreSQL18 isolation](https://www.postgresql.org/docs/18/transaction-iso.html), [FastAPI WebSockets](https://fastapi.tiangolo.com/advanced/websockets/). Runtime evidence chờ CI PostgreSQL18/TCP thật, không dùng unit làm bằng chứng PostgreSQL.

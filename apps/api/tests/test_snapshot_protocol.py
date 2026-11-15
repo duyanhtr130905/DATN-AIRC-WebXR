@@ -120,3 +120,19 @@ def test_capacity_and_byte_limits():
         state["value"] = {"text": "x" * 5000}
     with pytest.raises(StateUnavailable):
         frames_from_snapshot(data)
+
+
+def test_v2_wakeup_coalescing_is_bounded():
+    import asyncio
+
+    from app.modules.realtime.dispatcher import Broker
+
+    async def check():
+        broker = Broker()
+        room = uuid4()
+        sub = broker.subscribe(room, coalesce=True)
+        for _ in range(1000):
+            await broker.notify(room)
+        assert sub.queue.qsize() == 8 and not sub.overflow
+
+    asyncio.run(check())

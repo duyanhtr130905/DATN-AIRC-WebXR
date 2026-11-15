@@ -9,9 +9,9 @@ import pytest
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 from test_snapshot_protocol import AtomicReceiver
-from test_state_postgres import (
-    receive_type,
-)
+from test_state_postgres import change, receive_type
+from test_state_postgres import live_server as live_server
+from test_state_postgres import state_database as state_database
 from websockets.exceptions import ConnectionClosed
 from websockets.sync.client import connect
 
@@ -183,3 +183,18 @@ def test_interrupted_snapshot_not_committed_and_cleanup(live_server, monkeypatch
     while application.state.broker.subscribers and time.monotonic() < deadline:
         time.sleep(0.01)
     assert not application.state.broker.subscribers
+
+
+def test_v2_dispatcher_restart_durable_delta(live_server):
+    database, _, application, _, port = live_server
+    change(database, 0)
+    with connect(uri(port), origin="http://localhost:5173", open_timeout=5) as ws:
+        receiver, _ = receive_snapshot(ws)
+        assert next(iter(receiver.visible.values()))["version"] == 1
+        loop = application.state.dispatcher.task.get_loop()
+        asyncio.run_coroutine_threadsafe(application.state.dispatcher.stop(), loop).result(8)
+        change(database, 1, "maintenance")
+        loop.call_soon_threadsafe(application.state.dispatcher.start)
+        delta = receive_type(ws, "state.updated")
+        assert delta["sequence"] == 2 and delta["state"]["version"] == 2
+        assert delta["schema_version"] == 2

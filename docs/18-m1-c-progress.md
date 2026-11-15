@@ -11,3 +11,6 @@ Tests mới sẽ có0/1/32/33/41/80/120states, malformed chunks/atomic assembler
 Files dự kiến: apps/api/modules/state/read.py, realtime/router.py, snapshot protocol module vàtests, CI branch trigger/docs14. Không migration/schema mới hoặc sửa0001/0002.
 
 Bước tiếp: hoàn thiện C1→lint/unit→push checkpoint C1→đợi actualPG/TCP/M1-BregressionCI PASS→commit evidence gate trước khi bắt đầu C2. Nếu quota dừng, giữ working tree/commits, đọc file này vàgitlog; không reset/main/PRriêng.
+
+
+Checkpoint implementation C1: commit feed865 đã push.55unit tests PASS local; lint/compile/verifier/diff PASS.60PostgreSQL tests (12C1 mới) đang chờ CI, local BLOCKED thiếuPG. V2 wakeup queue coalesce và SQL durable replay authoritative. C2/C3 chưa bắt đầu.

@@ -14,7 +14,8 @@ router = APIRouter()
 
 async def send(socket, message):
     message.setdefault("timestamp", datetime.now(UTC).isoformat())
-    if len(json.dumps(message).encode()) > 256 * 1024:
+    capacity = 32 * 1024 if message.get("schema_version") == 2 else 256 * 1024
+    if len(json.dumps(message).encode()) > capacity:
         raise ValueError("Message capacity")
     await asyncio.wait_for(socket.send_json(message), timeout=1)
 
