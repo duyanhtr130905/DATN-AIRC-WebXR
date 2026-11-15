@@ -110,6 +110,13 @@ try{
   await page.getByLabel("Phòng synthetic").selectOption(process.env.SECOND_ROOM_ID);await page.locator('[data-testid="realtime"][data-status="connected"]').waitFor();assert.equal(await page.locator("[data-object-id]").count(),1);assert.equal(await page.locator(`[data-object-id="${target.id}"]`).count(),0);
   await page.getByLabel("Phòng synthetic").selectOption(room);await page.locator('[data-testid="realtime"][data-status="connected"]').waitFor();const button=page.locator(`[data-object-id="${target.id}"]`);await button.focus();await page.keyboard.press("Enter");await page.locator('[data-state-type="equipment_status"][data-version="22"]').waitFor();
  });
+ await scenario("Actual empty synthetic room: no objects and zero-state snapshot",async()=>{
+  await writeFile(resolve(root,".local/m1-c-seed-empty.request"),"explicit disposable test fixture only");
+  await waitFor(async()=>{const response=await fetch(`${origin}/api/v1/rooms/${process.env.EMPTY_ROOM_ID}/objects`);return response.ok;});
+  await page.getByRole("button",{name:/Tải lại Catalog/}).click();await page.getByLabel("Phòng synthetic").selectOption(process.env.EMPTY_ROOM_ID);
+  await page.getByTestId("catalog-status").filter({hasText:/chưa có đối tượng/}).waitFor();await page.locator('[data-testid="realtime"][data-status="connected"]').waitFor();assert.equal(await page.locator("[data-object-id]").count(),0);
+  await page.getByLabel("Phòng synthetic").selectOption(room);await page.locator('[data-testid="realtime"][data-status="connected"]').waitFor();await page.locator(`[data-object-id="${target.id}"]`).click();
+ });
  await scenario("390px viewport emulation: touch/focus and no overflow",async()=>{
   const mobile=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});const p=await mobile.newPage();p.on("pageerror",e=>errors.push(e.message));await p.goto(origin);await p.getByLabel("Phòng synthetic").selectOption(room);await p.locator('[data-testid="realtime"][data-status="connected"]').waitFor();await p.locator(`[data-object-id="${target.id}"]`).tap();await p.locator('[data-state-type="equipment_status"][data-version="22"]').waitFor();assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await p.screenshot({path:resolve(out,"mobile-390.png"),fullPage:true});await mobile.close();
  });

@@ -221,3 +221,41 @@ def test_tcp_client_write_during_snapshot_is_rejected(live_server, monkeypatch):
         with pytest.raises(ConnectionClosed) as error:
             ws.recv(timeout=5)
         assert error.value.rcvd.code == 1008
+
+
+@pytest.mark.parametrize("fault", ["missing", "duplicate", "reordered", "watermark"])
+def test_tcp_corrupted_snapshot_is_rejected_atomically(live_server, monkeypatch, fault):
+    import app.modules.realtime.router as wire
+
+    database, _, _, _, port = live_server
+    populate(database, 41)
+    original = wire.send
+    held = None
+
+    async def corrupt(socket, frame):
+        nonlocal held
+        if frame["type"] == "snapshot.chunk":
+            index = frame["chunk_index"]
+            if fault == "missing" and index == 0:
+                return
+            if fault == "duplicate" and index == 0:
+                await original(socket, frame)
+            if fault == "watermark" and index == 0:
+                frame = {**frame, "watermark": frame["watermark"] + 1}
+            if fault == "reordered" and index == 0:
+                held = frame
+                return
+            if fault == "reordered" and index == 1:
+                await original(socket, frame)
+                await original(socket, held)
+                return
+        await original(socket, frame)
+
+    monkeypatch.setattr(wire, "send", corrupt)
+    receiver = AtomicReceiver()
+    with connect(uri(port), origin="http://localhost:5173", open_timeout=5) as ws:
+        with pytest.raises(AssertionError):
+            for _ in range(10):
+                frame = json.loads(ws.recv(timeout=5))
+                receiver.receive(frame)
+        assert receiver.visible == {"old": True}

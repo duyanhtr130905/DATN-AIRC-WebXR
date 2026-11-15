@@ -80,3 +80,14 @@ def test_partial_database_fault_restores_connectivity(monkeypatch):
         f'ALTER DATABASE "{name}" ALLOW_CONNECTIONS true',
     ]
     engine.dispose.assert_called_once()
+
+
+def test_timeout_cleanup_discovers_children_from_all_owned_threads(tmp_path):
+    from process_cleanup import child_ids
+
+    for thread, children in [("10", "20 30"), ("11", "30 40")]:
+        directory = tmp_path / "10" / "task" / thread
+        directory.mkdir(parents=True)
+        (directory / "children").write_text(children)
+    assert child_ids(10, tmp_path) == [20, 30, 40]
+    assert child_ids(99, tmp_path) == []

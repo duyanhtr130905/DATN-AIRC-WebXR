@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 from process_cleanup import terminate_owned
@@ -13,6 +14,7 @@ from sqlalchemy.orm import Session
 from test_catalog_postgres import isolated_catalog_database
 from test_state_postgres import live_server as live_server
 
+from app.database.models import Room
 from app.database.state_models import CurrentState, Outbox, StateHistory
 from app.modules.catalog.vertical_seed import ROOM_IDS, seed_vertical_slice
 
@@ -31,6 +33,10 @@ def test_fixture_idempotency_and_actual_browser_vertical_slice(live_server):
     root = Path(__file__).resolve().parents[3]
     request = root / ".local/m1-c-stop-api.request"
     request.unlink(missing_ok=True)  # This runner's own ignored sentinel only.
+    empty_id = uuid4()
+    empty_request = root / ".local/m1-c-seed-empty.request"
+    empty_request.unlink(missing_ok=True)
+    empty_seeded = False
     process = subprocess.Popen(
         ["node", str(root / "apps/web/tests/vertical-slice.mjs")],
         cwd=root,
@@ -41,6 +47,7 @@ def test_fixture_idempotency_and_actual_browser_vertical_slice(live_server):
             "DATABASE_URL": url.get_secret_value(),
             "SYNTHETIC_ROOM_ID": str(ROOM_IDS[0]),
             "SECOND_ROOM_ID": str(ROOM_IDS[1]),
+            "EMPTY_ROOM_ID": str(empty_id),
         },
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -53,6 +60,18 @@ def test_fixture_idempotency_and_actual_browser_vertical_slice(live_server):
         while True:
             if request.exists():
                 server.should_exit = True
+            if empty_request.exists() and not empty_seeded:
+                with Session(database.engine) as session, session.begin():
+                    session.add(
+                        Room(
+                            id=empty_id,
+                            code="DEMO-EMPTY-TEST",
+                            name="Synthetic empty test room",
+                            source_kind="synthetic",
+                            metadata_json={"label": "SYNTHETIC — NOT AIRC REAL DATA"},
+                        )
+                    )
+                empty_seeded = True
             try:
                 stdout, stderr = process.communicate(timeout=0.1)
                 break

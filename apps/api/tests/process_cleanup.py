@@ -6,6 +6,16 @@ import subprocess
 from pathlib import Path
 
 
+def child_ids(identity, proc_root=Path("/proc")):
+    result = set()
+    for entry in (proc_root / str(identity) / "task").glob("*/children"):
+        try:
+            result.update(int(value) for value in entry.read_text().split())
+        except FileNotFoundError:
+            pass
+    return sorted(result)
+
+
 def terminate_owned(process):
     if process.poll() is not None:
         return  # Normal Node finally already closed its children; never inspect a reaped PID.
@@ -22,19 +32,20 @@ def terminate_owned(process):
         # our Node parent is alive, without enumerating unrelated apps/profiles.
         pending = [process.pid]
         owned = []
-        while pending:
-            identity = pending.pop()
-            if identity in owned:
-                continue
-            owned.append(identity)
-            if len(owned) > 512:
-                raise RuntimeError("Owned test process capacity exceeded")
-            children = Path(f"/proc/{identity}/task/{identity}/children")
-            try:
-                pending.extend(int(value) for value in children.read_text().split())
-            except FileNotFoundError:
-                pass
-        if process.poll() is None:
+        try:
+            while pending:
+                identity = pending.pop()
+                if identity in owned:
+                    continue
+                try:
+                    os.kill(identity, signal.SIGSTOP)  # Stop test-only forks before discovery.
+                except ProcessLookupError:
+                    continue
+                owned.append(identity)
+                if len(owned) > 512:
+                    raise RuntimeError("Owned test process capacity exceeded")
+                pending.extend(child_ids(identity))
+        finally:
             for identity in reversed(owned):
                 try:
                     os.kill(identity, signal.SIGKILL)

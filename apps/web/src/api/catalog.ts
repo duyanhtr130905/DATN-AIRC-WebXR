@@ -23,7 +23,7 @@ export async function getJson(path: string, signal?: AbortSignal, fetcher: typeo
   };
   try{return await Promise.race([work(),deadline]);}
   catch(error){if(error instanceof CatalogError)throw error;throw new CatalogError(signal?.aborted?"cancelled":error instanceof SyntaxError?"contract":"network");}
-  finally{clearTimeout(timer);signal?.removeEventListener("abort",abort);}
+  finally{clearTimeout(timer);signal?.removeEventListener("abort",abort);controller.abort();}
 }
 
 async function pages<T extends {id:string}>(path:string, parse:(raw:unknown)=>T, signal?:AbortSignal, fetcher:typeof fetch=fetch):Promise<T[]> {

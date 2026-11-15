@@ -43,3 +43,6 @@ C3 candidate: bounded diagnostics chỉkhi VITE_TEST_DIAGNOSTICS=1, recordWS/Rea
 
 
 C3 intermediate94c5fe6 [CI43673575670](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43673575670) PASS68unit/63PG,15actualbrowser scenarios/20samples. Rawartifact đãtải .local/c3-evidence-94c5fe6; đây là kết quả intermediate, chưa dùng thay finalHEAD. Review fixes: partialDBfaultrestore cảhelper/Nodeflag, parentfinallyrestore vàownedprocesscleanup khihardtimeout; calibrationBefore/Afterhull+1ms vàdriftbudget10ms.69unitPASS saufix. ĐãbậtM0/PoCpushtriggerchoM1C (giữnguyênjobs/assertions). Nextpushfullregression→downloadfreshartifacts→reviewmetrics/screenshots→acceptancefinal→1PR.
+
+
+Fullregression source1e6e589 PASS: [app43674071210](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43674071210), [M043674071254](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43674071254), [PoC/IWER43674071293](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43674071293). C3review đóng partialfault/clockwindow gaps. Bổ sung finalcoverage: TCPcorruptedchunk4cases +actualemptyroom0statesbrowser vàtimeoutcleanup allownedthreads/Chrome detached. FrontendHTTPfinallyabort tránhbodyconnectionleak. Cầnrerun toàn bộ latestsource sau các thayđổi cuối này; chưaPR.
