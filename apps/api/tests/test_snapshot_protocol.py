@@ -22,7 +22,13 @@ class AtomicReceiver:
         self.pending = None
 
     def receive(self, frame):
+        assert frame["schema_version"] == 2
+        assert frame["sequence"] == frame["watermark"]
+        assert 0 <= frame["watermark"] <= 2**53 - 1
+        assert encoded_size(frame) <= MAX_FRAME_BYTES
         if frame["type"] == "snapshot.start":
+            assert 0 <= frame["total_states"] <= MAX_STATES
+            assert 0 <= frame["total_chunks"] <= MAX_STATES
             self.pending = {"start": frame, "chunks": [], "states": []}
             return
         assert self.pending is not None
@@ -36,6 +42,7 @@ class AtomicReceiver:
             assert frame["chunk_index"] == len(staged["chunks"])
             staged["chunks"].append(frame)
             staged["states"].extend(frame["states"])
+            assert encoded_size(staged["states"]) <= 2 * 1024 * 1024
             assert len(staged["states"]) <= start["total_states"] <= MAX_STATES
         else:
             assert frame["type"] == "snapshot.end"
@@ -154,3 +161,22 @@ def test_v2_all_messages_reject_unsafe_integers(field):
     with pytest.raises(ValueError):
         asyncio.run(send(socket, frame))
     socket.send_json.assert_not_called()
+
+
+@pytest.mark.parametrize("fault", ["sequence", "schema", "unsafe", "capacity"])
+def test_invalid_snapshot_start_cannot_commit(fault):
+    frames = frames_from_snapshot(fixture(41))
+    for frame in frames:
+        if fault == "sequence":
+            frame["sequence"] += 1
+        elif fault == "schema":
+            frame["schema_version"] = 1
+        elif fault == "unsafe":
+            frame["watermark"] = frame["sequence"] = 2**53
+        elif frame["type"] in {"snapshot.start", "snapshot.end"}:
+            frame["total_states"] = 513
+    receiver = AtomicReceiver()
+    with pytest.raises(AssertionError):
+        for frame in frames:
+            receiver.receive(frame)
+    assert receiver.visible == {"old": True}
