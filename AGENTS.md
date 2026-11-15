@@ -15,7 +15,21 @@
 - Không tự đổi tên, thứ tự hoặc nội dung milestone đã duyệt. Đề xuất thay đổi phải ghi riêng và chờ phê duyệt, không sửa KPI hoặc chia P507 thành ba phòng.
 - Sau mỗi PR đã được nghiệm thu, cập nhật PROJECT_STATUS: kết quả, PR/HEAD, merge commit nếu có, evidence, giới hạn, blocker và bước tiếp đã được phép. Khi chưa nghiệm thu phải ghi IN REVIEW; merge kỹ thuật không đồng nghĩa KPI đạt.
 - Nếu tài liệu mâu thuẫn, báo chủ dự án kèm nguồn, thời điểm và tác động; không tự chọn một cách hiểu, sửa quyết định hoặc dùng kế hoạch lịch sử làm quyền triển khai. Giữ nguyên acceptance/evidence lịch sử và dẫn trạng thái hiện tại.
-- Task 15/11/2026 hiện hành chỉ chuẩn hóa bốn tài liệu trên branch `docs/project-roadmap-source-of-truth`, một PR vào main. M1-C DONE, PR #11 merged tại `33ba38b00e2d6c218c1ab97ba1cc7201d1e92a58`; chỉ prototype synthetic. Dừng sau bàn giao PR tài liệu; không merge, không thay mã nguồn/schema/API/dependencies/assets/CI và không bắt đầu milestone mới.
+- Snapshot bàn giao task tài liệu ngày 15/11/2026: [PR #12](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/12) IN REVIEW as-of 15/11/2026 — verify GitHub live. Phạm vi và lệnh dừng của lần bàn giao này được lưu trong PR; không dùng chúng làm task hiện hành vĩnh viễn hoặc ngăn yêu cầu kiểm tra tiến độ chỉ đọc. Sau merge, status vẫn là snapshot theo ngày; cập nhật khi task sau được chủ dự án duyệt. Merge tài liệu không phê duyệt roadmap hoặc task M2/M3.
+
+## Kiểm tra tiến độ chỉ đọc trong cuộc chat mới
+
+Repository `duyanhtr130905/DATN-AIRC-WebXR` là entry point để tiếp tục tìm thông tin dự án. Câu kích hoạt mẫu: `Kiểm tra tiến độ mới nhất của dự án tại repo duyanhtr130905/DATN-AIRC-WebXR`.
+
+Yêu cầu chỉ đọc để báo cáo tiến độ không cần phê duyệt task triển khai. Thực hiện ngay các bước sau, không sửa file/GitHub hoặc bắt đầu milestone:
+
+1. Xác minh đúng repository và default branch qua GitHub live; đọc `README.md`, `AGENTS.md`, `docs/ROADMAP.md`, `docs/PROJECT_STATUS.md`, `docs/02-requirements-kpi.md` và ADR liên quan từ default branch. PR chưa merge chỉ là nội dung đang review, phải tách khỏi tài liệu trên default branch; nếu ROADMAP chưa có thì báo rõ và đọc bản đề xuất trong PR nếu truy cập được.
+2. Truy vấn GitHub live main HEAD, PR mới nhất OPEN và MERGED, cùng HEAD/base/merge commit tương ứng; kiểm tra CI/checks theo đúng SHA, trạng thái run/job và các checks đang chờ/thất bại. Không coi synthetic merge SHA của PR là branch HEAD; ghi rõ SHA mà kết quả CI áp dụng, không gán kết quả cũ cho HEAD mới.
+3. Truy vấn issues/blockers đang mở, đọc nội dung/thảo luận liên quan và đối chiếu PROJECT_STATUS/ROADMAP/ADR với commit/PR/CI vừa xác minh. Timestamp của tài liệu chỉ cho biết lúc lập snapshot, không chứng minh đó là tiến độ mới nhất. Không suy đoán “latest” từ cache, lịch sử chat, metadata cũ hoặc roadmap PROPOSED.
+4. Báo thời điểm kiểm tra và nguồn/link: main HEAD; PR/HEAD/merge và CI; các nhóm **đã merge / đang review / đề xuất chờ duyệt / chưa được triển khai**; blocker; điểm lệch tài liệu so với GitHub; hành động kế tiếp và task đã được phê duyệt nếu có bằng chứng. Nếu chưa có task triển khai được duyệt, ghi rõ điều đó; không tự chọn milestone để làm.
+5. Nếu không truy cập được private repository/connector, báo giới hạn và yêu cầu chủ dự án cấp/kết nối quyền truy cập phù hợp. Nếu chỉ kiểm được một phần, nêu rõ phần đã/chưa xác minh; không nhận đã kiểm tra live đầy đủ. Không yêu cầu gửi token/credentials vào chat hoặc Git.
+
+Quy trình này áp dụng cả sau khi PR #12 merge. Một yêu cầu triển khai mới vẫn cần phạm vi được chủ dự án phê duyệt; việc đọc/báo cáo không tự cấp quyền ghi, merge, deploy, sửa KPI hoặc triển khai roadmap.
 
 ## Quy trình
 

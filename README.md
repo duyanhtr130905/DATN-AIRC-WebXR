@@ -8,6 +8,12 @@ M0-A/B1/B2 và M1-A/B/C đã DONE/merge. [PR #11](https://github.com/duyanhtr130
 
 Trước task mới, đọc [AGENTS](AGENTS.md), ROADMAP, PROJECT_STATUS, [requirements/KPI](docs/02-requirements-kpi.md) và [ADR liên quan](docs/decisions/0001-technology-options.md). Không suy ra quyền triển khai từ roadmap PROPOSED hoặc PR đã merge. Giữ KPI gốc; không chia P507 thành ba phòng.
 
+## Kiểm tra tiến độ trong chat mới
+
+Có thể chỉ yêu cầu: `Kiểm tra tiến độ mới nhất của dự án tại repo duyanhtr130905/DATN-AIRC-WebXR`.
+
+AI cần đọc tài liệu trên default branch và truy vấn GitHub live theo [AGENTS](AGENTS.md), báo main HEAD, PR OPEN/MERGED mới nhất, milestone, CI đúng SHA, blockers, lệch tài liệu và task tiếp theo đã được duyệt nếu có. PROJECT_STATUS là snapshot theo ngày, kể cả sau merge; không lấy cache/roadmap PROPOSED làm tiến độ mới nhất. Chỉ đọc/báo cáo không cần duyệt task triển khai. Thiếu quyền private repo/connector thì báo giới hạn và yêu cầu cấp quyền, không nhận đã kiểm tra.
+
 ## Chạy và tìm tài liệu
 
 | Nội dung | Nguồn |
