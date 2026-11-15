@@ -3,27 +3,31 @@ import type { CatalogObject, Room, TwinState } from "../features/live/contracts.
 export type FailureKind = "cancelled" | "timeout" | "unavailable" | "not_found" | "contract" | "network";
 export class CatalogError extends Error { kind: FailureKind; constructor(kind: FailureKind) { super(kind); this.kind=kind; } }
 export async function getJson(path: string, signal?: AbortSignal, fetcher: typeof fetch=fetch, timeoutMs=4000): Promise<unknown> {
-  const controller=new AbortController(); let timedOut=false;
-  const abort=()=>controller.abort(); signal?.addEventListener("abort",abort,{once:true});
-  if(signal?.aborted) controller.abort();
-  const timer=setTimeout(()=>{timedOut=true;controller.abort();},timeoutMs);
-  try {
+  const controller=new AbortController();let reader:ReadableStreamDefaultReader<Uint8Array>|undefined;
+  let rejectDeadline:(reason:CatalogError)=>void=()=>{};
+  const deadline=new Promise<never>((_resolve,reject)=>{rejectDeadline=reject;});
+  const stop=(kind:FailureKind)=>{controller.abort();void reader?.cancel().catch(()=>{});rejectDeadline(new CatalogError(kind));};
+  const abort=()=>stop("cancelled");signal?.addEventListener("abort",abort,{once:true});
+  const timer=setTimeout(()=>stop("timeout"),timeoutMs);
+  if(signal?.aborted)abort();
+  const work=async()=>{
     const response=await fetcher(path,{signal:controller.signal,credentials:"omit"});
-    if(!response.ok) throw new CatalogError(response.status===503?"unavailable":response.status===404?"not_found":"contract");
-    // Bound response allocation; streaming also covers an absent/untrusted Content-Length.
-    const reader=response.body?.getReader(); if(!reader) throw new CatalogError("contract");
-    const chunks: Uint8Array[]=[]; let size=0;
-    try { while(true) {const item=await reader.read();if(item.done)break;size+=item.value.byteLength;
-      if(size>2*1024*1024) {await reader.cancel();throw new CatalogError("contract");} chunks.push(item.value);}
-    } finally {reader.releaseLock();}
+    if(!response.ok)throw new CatalogError(response.status===503?"unavailable":response.status===404?"not_found":"contract");
+    reader=response.body?.getReader();if(!reader)throw new CatalogError("contract");
+    const chunks:Uint8Array[]=[];let size=0;
+    try {while(true){const item=await reader.read();if(item.done)break;size+=item.value.byteLength;
+      if(size>2*1024*1024){void reader.cancel().catch(()=>{});throw new CatalogError("contract");}chunks.push(item.value);}
+    }finally{reader.releaseLock();reader=undefined;}
     const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
-    return JSON.parse(new TextDecoder().decode(bytes));
-  } catch(error) {
-    if(error instanceof CatalogError)throw error;
-    throw new CatalogError(signal?.aborted?"cancelled":timedOut?"timeout":error instanceof SyntaxError?"contract":"network");
-  } finally {clearTimeout(timer);signal?.removeEventListener("abort",abort);}
+    return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+  };
+  try{return await Promise.race([work(),deadline]);}
+  catch(error){if(error instanceof CatalogError)throw error;throw new CatalogError(signal?.aborted?"cancelled":error instanceof SyntaxError?"contract":"network");}
+  finally{clearTimeout(timer);signal?.removeEventListener("abort",abort);}
 }
+
 async function pages<T extends {id:string}>(path:string, parse:(raw:unknown)=>T, signal?:AbortSignal, fetcher:typeof fetch=fetch):Promise<T[]> {
+  try {
   const result:T[]=[]; const ids=new Set<string>();const cursors=new Set<string>();let cursor:string|null=null;
   for(let page=0;page<32;page++) {
     const raw=record(await getJson(path+"?limit=25"+(cursor?"&cursor="+encodeURIComponent(cursor):""),signal,fetcher));
@@ -34,6 +38,7 @@ async function pages<T extends {id:string}>(path:string, parse:(raw:unknown)=>T,
     if(typeof meta.next_cursor!=="string" || !meta.next_cursor || meta.next_cursor.length>400 || cursors.has(meta.next_cursor) || raw.data.length===0)throw new CatalogError("contract");
     cursor=meta.next_cursor;cursors.add(cursor);
   } throw new CatalogError("contract");
+  } catch(error){if(error instanceof CatalogError)throw error;throw new CatalogError("contract");}
 }
 export const readRooms=(signal?:AbortSignal,fetcher?:typeof fetch):Promise<Room[]>=>pages("/api/v1/rooms",room,signal,fetcher);
 export async function readObjects(roomId:string,signal?:AbortSignal,fetcher?:typeof fetch):Promise<CatalogObject[]> {

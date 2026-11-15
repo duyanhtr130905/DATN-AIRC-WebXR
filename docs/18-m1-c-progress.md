@@ -27,3 +27,6 @@ Bước C2: typed runtimevalidated REST + UUID adapter + pure reducer + lifecycl
 
 
 C2 candidate: app defaultlive, explicitofflinefoundation; typedREST pagination/runtimevalidation/bounds/cancel; reducer atomic snapshot+sequence/version; boundedWS lifecycle; UUIDsceneadapter vàmeshcolorstates; guardedfixture20objects/41states vàsecondroom. Local typecheck/build PASS,21unitPASS,7Chrome foundation scenariosPASS (realChrome157WinsoftwareWebGL; backendwithoutDB). NewPGbrowserhappy path NOT RUN local, cần actualCI trướcC3. Files đang sửa: apps/web src/api/app/features/scene/styles/types/tests/vite, APIvertical_seed/test_vertical_slice, appCI/readmes/acceptance. Bước tiếp:pushC2candidate→actualPG/ChromeCI→sửalỗi→commitC2gate→C3.
+
+
+C2 intermediate734c1e7 [CI43672507643](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43672507643) PASS cảjobs:62unit/63PG bao gồm actualChrome5scenarios. Đã tải report/screenshots và xem desktop/390px, actualmesh đỏmaintenance +Panelv2 hiện đúng. Sửa thêm deadline/cancel khi bodytransportignoreabort (testRED→GREEN), optionalmetadata empty/null hợp lệ theo backend;24frontendunitPASS local. Cần finalC2CI sau sửa trướcC3. C3 NOT STARTED.

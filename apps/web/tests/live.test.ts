@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { consume, initialReplica } from "../src/features/realtime/reducer.ts";
 import { object, state } from "../src/features/live/contracts.ts";
-import { readObjects, readRooms } from "../src/api/catalog.ts";
+import { getJson, CatalogError, readObjects, readRooms } from "../src/api/catalog.ts";
 import { sceneFromCatalog } from "../src/features/catalog/adapter.ts";
 import { socketUrl, subscribe } from "../src/features/realtime/client.ts";
 const room="10000000-0000-4000-8000-000000000001", target="20000000-0000-4000-8000-000000000001", sid="30000000-0000-4000-8000-000000000001",mid="40000000-0000-4000-8000-000000000001";
@@ -48,4 +48,24 @@ test("real pagination, repeated cursor guard, invalid UUID/scope/source",async()
 test("socket disposal prevents stale callbacks; no client writes",()=>{
  let socket:any;let updates=0;const stop=subscribe(room,objects,()=>updates++,{url:"ws://example.test",factory:()=>{socket={close(){},onmessage:null,onopen:null,onclose:null,onerror:null};return socket as WebSocket;}});
  const callback=socket.onmessage;stop();const old=updates;callback({data:JSON.stringify(frame("snapshot.start",{total_chunks:0,total_states:0}))});assert.equal(updates,old);assert.equal(socket.onmessage,null);
+});
+
+
+test("Catalog deadline covers a stalled body even if transport ignores abort",async()=>{
+ let aborted=false;
+ const fetcher=(async(_url,options)=>{options?.signal?.addEventListener("abort",()=>{aborted=true;});return new Response(new ReadableStream({start(){}}));}) as typeof fetch;
+ const result=await Promise.race([getJson("/api/test",undefined,fetcher,10).then(()=>"unexpected",error=>error),new Promise(resolve=>setTimeout(()=>resolve("hung"),100))]);
+ assert.ok(result instanceof CatalogError && result.kind==="timeout");assert.equal(aborted,true);
+});
+
+
+test("public metadata permits backend-valid empty/null optional strings",()=>{
+ const base={id:target,room_id:room,name:"Demo",type:"demo",source_kind:"synthetic",created_at:stamp,updated_at:stamp};
+ assert.deepEqual(object({...base,metadata:{description:"",label:null}}).metadata,{description:"",label:null});
+ assert.throws(()=>object({...base,metadata:{evidence_ref:"private"}}));
+});
+test("Catalog cancellation settles stalled transport and stops use of response",async()=>{
+ const controller=new AbortController();const fetcher=(()=>new Promise(()=>{})) as typeof fetch;
+ const request=getJson("/api/test",controller.signal,fetcher,1000);controller.abort();
+ await assert.rejects(request,(error:unknown)=>error instanceof CatalogError&&error.kind==="cancelled");
 });

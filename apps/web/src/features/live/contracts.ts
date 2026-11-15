@@ -28,7 +28,10 @@ export interface TwinState { id: string; room_id: string; target_kind: "room" | 
 function metadata(raw: unknown): Metadata {
   const r = record(raw); const result: Metadata = {};
   for (const [key, max] of [["label", 256], ["description", 512]] as const) {
-    if (r[key] !== undefined) result[key] = r[key] === null ? null : text(r[key], max);
+    if (r[key] !== undefined) {
+      if(r[key]!==null && (typeof r[key]!=="string" || (r[key] as string).length>max))throw new Error("Invalid metadata");
+      result[key]=r[key] as string|null;
+    }
   }
   if (Object.keys(r).some(key => !["label", "description"].includes(key))) throw new Error("Private metadata rejected");
   return result;
