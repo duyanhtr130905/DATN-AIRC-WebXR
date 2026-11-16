@@ -13,6 +13,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: p507-g1g2-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   provisional-source-checks:
     name: P507 inventory, geometry, Python syntax and privacy boundaries
