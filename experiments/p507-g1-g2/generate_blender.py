@@ -67,7 +67,8 @@ def cube(name, center, size, mat, col, bevel=0.0, ident=None):
         modifier = o.modifiers.new("Edge relief", "BEVEL")
         modifier.width = bevel
         modifier.segments = 2
-        modifier.affect = "EDGES" if hasattr(modifier, "affect") else None
+        if hasattr(modifier, "affect"):
+            modifier.affect = "EDGES"
         o.modifiers.new("Weighted normals", "WEIGHTED_NORMAL")
     if ident:
         o["survey_instance_id"] = ident
@@ -233,7 +234,8 @@ def camera_and_lights(data, camera_col):
     bpy.ops.object.camera_add(location=(1.6,5.65,1.65))
     cam=bpy.context.object; cam.name="CAM_TV_ART_APPROX"; move_to_collection(cam,camera_col)
     target = (1.45,length-.7,1.6)
-    direction = mathutils.Vector(target)-cam.location
+    from mathutils import Vector
+    direction = Vector(target) - cam.location
     cam.rotation_euler = direction.to_track_quat("-Z","Y").to_euler()
     cam.data.lens=24
     bpy.context.scene.camera=cam
@@ -285,9 +287,9 @@ def main():
     tables_and_chairs(data,furniture,furniture,mats)
     ceiling_items(data,ceiling,mats)
     hero_assets(data,equipment,mats)
-    from mathutils import Vector
-    global mathutils
-    import mathutils
+    collection("50_DECOR")
+    collection("60_INTERACTION_PROXY")
+    collection("90_REFERENCE_LOCAL")
     camera_and_lights(data,lookdev)
     scene.render.resolution_x=1280; scene.render.resolution_y=720
     scene.render.resolution_percentage=100
