@@ -8,6 +8,12 @@ M0-A/B1/B2 và M1-A/B/C đã DONE/merge. [PR #11](https://github.com/duyanhtr130
 
 Trước task mới, đọc [AGENTS](AGENTS.md), ROADMAP, PROJECT_STATUS, [requirements/KPI](docs/02-requirements-kpi.md) và [ADR liên quan](docs/decisions/0001-technology-options.md). Không suy ra quyền triển khai từ roadmap PROPOSED hoặc PR đã merge. Giữ KPI gốc; không chia P507 thành ba phòng.
 
+## Đặc tả 3D P507 — G0 (16/11/2026)
+
+Chủ dự án đã chốt **hướng Hybrid Photorealistic Digital Twin** và quy chuẩn G0 để tránh sửa đi sửa lại: [P507 Art Direction & Production Specification v1.0](docs/3d-production/P507-G0-PRODUCTION-SPEC.md). Đây là chuẩn kỹ thuật cho blockout G1, hero lookdev G2 và đánh giá trên Three.js. **Đặc tả không chứng minh đã dựng GLB hoặc P507 đạt KPI; dữ liệu khảo sát/ảnh AIRC còn provisional và quyền chưa xác minh.**
+
+Đã nhận khảo sát P507 từ người dùng ngày 16/11/2026 (ảnh, sơ đồ sàn/trần và danh mục có thể bổ sung); chưa có AIRC sign-off. G0 là task chuẩn hóa thiết kế được chủ dự án yêu cầu, **không phê duyệt toàn bộ roadmap M2/M3**. Theo GitHub live, trạng thái G0 PR mới nhất cần xem tại PROJECT_STATUS và PR.
+
 ## Kiểm tra tiến độ trong chat mới
 
 Có thể chỉ yêu cầu: `Kiểm tra tiến độ mới nhất của dự án tại repo duyanhtr130905/DATN-AIRC-WebXR`.
