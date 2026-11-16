@@ -303,8 +303,10 @@ def main():
         for o in c.objects:
             if o.type=="MESH":
                 o.select_set(True); export_count+=1
-    bpy.ops.export_scene.gltf(filepath=str(glb_path),export_format="GLB",
+    export_result = bpy.ops.export_scene.gltf(filepath=str(glb_path),export_format="GLB",
                               use_selection=True,export_yup=True,export_extras=True)
+    if "FINISHED" not in export_result or not glb_path.is_file() or glb_path.stat().st_size < 1024:
+        raise RuntimeError("glTF export failed, cancelled or produced no GLB. Do not claim PASS.")
     out={**result,"blender_version":bpy.app.version_string,"export_objects":export_count,
          "glb_path":str(glb_path),"blend_path":str(blend_path),
          "notice":"PROVISIONAL dev only. Not AIRC-verified, not licensed real assets; no photos included."}
