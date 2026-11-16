@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="vi"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" /><title>P507 · G1/G2 Local 3D Review</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#131b21;color:#f3f7f5}
+#view{height:100vh;width:100%;display:block}
+.panel{position:absolute;left:16px;top:16px;max-width:380px;padding:16px 18px;background:rgba(13,25,30,.89);border:1px solid #54646b;border-radius:12px;box-shadow:0 6px 30px #0006}
+h1{margin:0 0 6px;font-size:1.15rem}p{margin:5px 0 9px;font-size:.87rem;line-height:1.4}
+#status{font-weight:600;color:#d6f9e8}.alert{color:#ffdbb6}
+button{font:inherit;background:#253d48;color:#e6f3ec;border:1px solid #7e9b9f;border-radius:8px;padding:7px 10px;margin-right:4px;margin-top:6px;cursor:pointer}
+button:hover{background:#335864}button:focus-visible{outline:3px solid #83dcb8}
+#stats{white-space:pre-wrap;color:#c4d4d0;font:12px/1.6 ui-monospace,monospace}
+@media(max-width:650px){.panel{left:8px;top:8px;right:8px;max-width:none;font-size:12px;padding:10px 12px}#view{height:100svh}}
+</style>
+</head><body>
+<canvas id="view" aria-label="G1 G2 3D local provisional review"></canvas>
+<aside class="panel" aria-live="polite">
+<h1>P507 · G1/G2 Preview</h1>
+<p class="alert">CHỈ DÙNG CỤC BỘ · PROVISIONAL · Chưa được AIRC xác minh. Đây không phải scene production hoặc nghiệm thu KPI.</p>
+<p id="status">Đang kiểm tra WebGL và nạp GLB local…</p>
+<div><button type="button" id="overview">Toàn phòng</button><button type="button" id="hero">Góc TV / cửa</button><button type="button" id="logo">Tường logo</button></div>
+<pre id="stats"></pre>
+<p>Không có camera/microphone/WebXR tự khởi động. Chuột kéo để xoay và cuộn để phóng.</p>
+</aside><script type="module" src="/src/p507-preview.ts"></script>
+</body></html>
