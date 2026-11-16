@@ -1,5 +1,17 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## Cập nhật ngày 16/11/2026 — G1/G2 đã khởi động, chưa nghiệm thu (snapshot, xác minh GitHub live)
+
+**Task người dùng vừa duyệt:** bắt đầu **G1 room geometry + G2 hero lookdev**, theo [G0 production spec](3d-production/P507-G0-PRODUCTION-SPEC.md); **không triển khai G3**. [Draft PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) trên `feat/p507-g1-g2-blockout-hero`, đang **IN PROGRESS / NOT MERGE READY** as-of 16/11/2026. Vì [G0 PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) chưa merge, PR #14 được xếp chồng lên branch G0; sau khi G0 được duyệt và merge, mới kiểm tra retarget PR #14 sang main. Không tự merge hai PR.
+
+**Đã viết mã nguồn:** inventory tạm thời P507 có thể bổ sung với 17 bàn và 36 ghế placeholder, kiểm tra boundary/non-overlap/ID/provenance; Blender-Python source dựng shell có cửa/cửa sổ, nội thất/trần và góc hero TV–tủ–bình nước; trang preview Three.js dev-only. Các tọa độ là `PROPOSED_LAYOUT`, không chứng nhận lối đi hoặc dữ liệu AIRC. Chưa thay sản phẩm M1-C, schema, API hay quyền dữ liệu.
+
+**Chưa thực thi:** không có Blender executable trong môi trường tạo mã nên xuất `.blend`/`.glb`, glTF Validator, hình ảnh camera matching và đo WebGL trên GLB thật **NOT RUN**; G2 chưa có visual sign-off. Quyền ảnh/nhãn AIRC PENDING, ảnh gốc có người/nội dung nội bộ không commit. PR #14 chỉ đủ điều kiện chuyển khỏi Draft sau khi chạy thật và người dùng duyệt chất lượng; không bắt đầu G3.
+
+**KPI:** MT1–MT3 chưa nghiệm thu thực địa; ≥3 phòng vẫn nguyên; Issues #1–#5 chưa được đóng chỉ vì G1/G2 code có mặt.
+
+---
+
 ## Cập nhật ngày 16/11/2026 — khảo sát P507 và chuẩn G0 (snapshot, kiểm GitHub live)
 
 **Nguồn quyết định:** chủ dự án xác nhận trực tiếp ngày 16/11/2026 phương pháp dựng P507 **Hybrid Photorealistic Digital Twin** và yêu cầu chốt G0 một lần, tránh chuỗi G0-fix. Xem [P507 G0 Production Specification v1.0](3d-production/P507-G0-PRODUCTION-SPEC.md). Chỉ G0 art/production standard trong phạm vi này được đồng ý; sáu nhóm tương lai trong [ROADMAP](ROADMAP.md) vẫn **PROPOSED**, không mặc nhiên được triển khai.
