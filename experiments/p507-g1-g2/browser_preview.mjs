@@ -61,17 +61,23 @@ async function main() {
       const text = (await page.locator("#status").innerText()).trim();
       if (!text.startsWith("GLB PROVISIONAL")) throw new Error(label + " failed to load GLB: " + text);
       await page.waitForTimeout(1750);
+      await page.evaluate(() => { const e = document.querySelector(".panel"); if (e) e.style.visibility = "hidden"; });
       await page.screenshot({ path: path.join(out, "hero-" + label + ".png") });
+      await page.evaluate(() => { const e = document.querySelector(".panel"); if (e) e.style.visibility = "visible"; });
       const perf = await page.locator("#stats").innerText();
       evidence.push({ viewport: label, size, status: text, perf, errors });
       if (errors.length) throw new Error(label + " browser errors: " + errors.join(" | "));
       if (label === "desktop") {
         await page.locator("#overview").click();
         await page.waitForTimeout(950);
+        await page.evaluate(() => { const e = document.querySelector(".panel"); if (e) e.style.visibility = "hidden"; });
         await page.screenshot({ path: path.join(out, "overview-desktop.png") });
+        await page.evaluate(() => { const e = document.querySelector(".panel"); if (e) e.style.visibility = "visible"; });
         await page.locator("#logo").click();
         await page.waitForTimeout(950);
+        await page.evaluate(() => { const e = document.querySelector(".panel"); if (e) e.style.visibility = "hidden"; });
         await page.screenshot({ path: path.join(out, "logo-desktop.png") });
+        await page.evaluate(() => { const e = document.querySelector(".panel"); if (e) e.style.visibility = "visible"; });
       }
       await context.close();
     }
