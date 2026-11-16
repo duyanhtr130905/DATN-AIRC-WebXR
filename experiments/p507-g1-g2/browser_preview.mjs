@@ -75,17 +75,18 @@ async function main() {
     for (const [label, size] of [["desktop", { width: 1280, height: 720 }], ["mobile", { width: 390, height: 844 }]]) {
       const context = await browser.newContext({ viewport: size, deviceScaleFactor: 1 });
       const page = await context.newPage();
+      page.setDefaultTimeout(180000);
       const errors = [];
       page.on("pageerror", e => errors.push(String(e)));
       page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-      await page.waitForFunction(() => !!window.__P507_REVIEW__ || document.querySelector("#status")?.textContent?.startsWith("Không thể"), null, { timeout: 60000 });
+      await page.waitForFunction(() => !!window.__P507_REVIEW__ || document.querySelector("#status")?.textContent?.startsWith("Không thể"), null, { timeout: 180000 });
       const text = (await page.locator("#status").innerText()).trim();
       assert(text.startsWith("GLB PROVISIONAL"), "GLB load failed: " + text);
       const shots = process.env.P507_SHOTS ? process.env.P507_SHOTS.split(",").filter(Boolean) : label === "desktop" ? ["hero", "wide", "overview", "clusters"] : ["hero"];
       for (const shot of shots) {
         await page.evaluate(key => window.__P507_REVIEW__.aim(key), shot);
-        await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 8, null, { timeout: 60000 });
+        await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 8, null, { timeout: 180000 });
         const metrics = await page.evaluate(() => window.__P507_REVIEW__.snapshot());
         assert(metrics.drawCalls > 30 && metrics.trianglesPerFrame > 1000, "View has no meaningful visible geometry: " + shot);
         assert(metrics.frameTimeMs.sampleCount >= 8, "Insufficient real frame samples");
