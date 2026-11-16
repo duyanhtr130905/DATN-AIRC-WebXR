@@ -55,6 +55,30 @@ def material(name, rgb, roughness=0.7, metalness=0.0, emission=None):
     return mat
 
 
+
+def procedural_floor_tiles():
+    """License-free color pattern authored here: warm, lightly speckled 0.60m tiles with grout."""
+    mat = material("P507_PBR_PROCEDURAL_TILE_060M", (.82,.82,.79), .38)
+    image = bpy.data.images.new("P507_SELF_GENERATED_NEUTRAL_TILE", width=256, height=256, alpha=True)
+    pixels = []
+    import random
+    rng = random.Random(507)
+    for y in range(256):
+        for x in range(256):
+            seam = x < 4 or y < 4 or x > 251 or y > 251
+            variation = rng.uniform(-.013, .013)
+            base = (.53,.54,.53) if seam else (.80,.80,.775)
+            pixels.extend((base[0]+variation,base[1]+variation,base[2]+variation,1.0))
+    image.pixels.foreach_set(pixels)
+    image.pack()
+    shader = mat.node_tree.nodes.get("Principled BSDF")
+    tex = mat.node_tree.nodes.new("ShaderNodeTexImage")
+    tex.image = image
+    tex.extension = "REPEAT"
+    mat.node_tree.links.new(tex.outputs["Color"],shader.inputs["Base Color"])
+    return mat
+
+
 def cube(name, center, size, mat, col, bevel=0.0, ident=None):
     bpy.ops.mesh.primitive_cube_add(size=1, location=center)
     o = bpy.context.object
@@ -93,7 +117,13 @@ def cylinder(name, center, radius, depth, mat, col, vertices=16, ident=None):
 def room_shell(data, col, mats):
     w, length, height = [data["room"][k] for k in ("width_x", "length_y", "height_z")]
     wall_thickness = 0.10
-    cube("P507_ARCH_FLOOR", (w/2, length/2, -0.045), (w, length, 0.09), mats["tile"], col)
+    floor = cube("P507_ARCH_FLOOR", (w/2, length/2, -0.045), (w, length, 0.09), mats["tile"], col)
+    uv = floor.data.uv_layers.active or floor.data.uv_layers.new(name="MetricTileUV")
+    for face in floor.data.polygons:
+        if face.normal.z > .8:
+            for loop_idx in face.loop_indices:
+                vertex = floor.data.vertices[floor.data.loops[loop_idx].vertex_index]
+                uv.data[loop_idx].uv = ((vertex.co.x+w/2)/.60,(vertex.co.y+length/2)/.60)
     cube("P507_ARCH_WALL_LOGO", (w/2, 0, height/2), (w, wall_thickness, height), mats["paint"], col)
     cube("P507_ARCH_WALL_TV", (w/2, length, height/2), (w, wall_thickness, height), mats["paint"], col)
     door = data["openings"]["door"]
@@ -130,6 +160,19 @@ def room_shell(data, col, mats):
     if cursor < length:
         cube("P507_ARCH_WALL_EAST_LAST", (w, (cursor+length)/2, height/2),
              (wall_thickness, length-cursor, height), mats["paint"], col)
+    # Neutral roller blinds and skirting, matching the photographed object classes.
+    for idx, win in enumerate(windows):
+        center_y=(win["from_y"]+win["to_y"])/2
+        cube("P507_ARCH_ROLLER_SHADE_%02d" % idx, (w-.075,center_y,2.78),
+             (.035,win["to_y"]-win["from_y"]-.03,.43),mats["blind"],col,.012)
+        cylinder("P507_ARCH_BLIND_ROLLER_%02d" % idx,(w-.07,center_y,3.01),.035,
+                 win["to_y"]-win["from_y"],mats["white_metal"],col)
+    cube("P507_ARCH_BASEBOARD_LOGO",(w/2,.075,.07),(w,.03,.14),mats["white_metal"],col,.004)
+    cube("P507_ARCH_BASEBOARD_EAST",(w-.07,length/2,.07),(.03,length,.14),mats["white_metal"],col,.004)
+    cube("P507_ARCH_DOOR_FRAME_LOW",(0,door["from_y"],door["height"]/2),
+         (.14,.06,door["height"]),mats["white_metal"],col,.008)
+    cube("P507_ARCH_DOOR_FRAME_HIGH",(0,door["to_y"],door["height"]/2),
+         (.14,.06,door["height"]),mats["white_metal"],col,.008)
     # Ceiling tiles are lightweight geometry; no photographic or confidential texture.
     cube("P507_ARCH_CEILING", (w/2, length/2, height+.025), (w, length, .05), mats["ceiling"], col)
     for x in range(1, 10):
@@ -215,6 +258,18 @@ def hero_assets(data, col, mats):
         xx=cx-sx/2+(i+.5)*sx/3
         cube(f"P507_HERO_CABINET_FRONT_{i}",(xx,cy-sy/2-.013,sz*.50),(sx/3-.023,.022,sz-.11),mats["white_metal"],col,.012,"P507-CABINET-LOW")
         cube(f"P507_HERO_CABINET_HANDLE_{i}",(xx,cy-sy/2-.029,sz*.76),(.078,.02,.01),mats["metal"],col,.004,"P507-CABINET-LOW")
+    # Wall photograph positions are retained as abstract, self-authored color fields:
+    # no actual faces, historical photos or institutional logos are embedded.
+    frame_layout = [
+        (2.9,2.25,.42,.28),(3.35,2.58,.46,.31),(3.9,2.18,.52,.33),
+        (4.55,2.63,.45,.30),(5.15,2.36,.54,.33),(3.05,1.80,.38,.27),
+        (3.78,2.92,.46,.28),(4.8,1.91,.47,.29)
+    ]
+    for i, (xx,zz,ww,hh) in enumerate(frame_layout):
+        cube("P507_HERO_PHOTO_FRAME_NEUTRAL_%02d" % i,(xx,7.99,zz),
+             (ww,.055,hh),mats["frame_wood"],col,.012)
+        cube("P507_HERO_PHOTO_ABSTRACT_NO_IDENTITIES_%02d" % i,(xx,7.950,zz),
+             (ww-.065,.009,hh-.065),mats["abstract"][i%len(mats["abstract"])],col,.002)
     # Display pieces are anonymous geometric silhouettes, not copied certificates/awards.
     for i in range(3):
         xx=cx+(i-1)*.40
@@ -279,10 +334,18 @@ def main():
         "cabinet":material("P507_PBR_CABINET_WARMWHITE",(.82,.79,.72),.6),
         "gold":material("P507_PBR_NEUTRAL_GOLD_PLACEHOLDER",(.43,.31,.12),.39,.70),
         "blue_water":material("P507_PBR_WATER_BOTTLE_PLACEHOLDER",(.22,.53,.78),.25,.15),
+        "blind":material("P507_PBR_ROLLER_BLIND",(.70,.68,.64),.94),
+        "frame_wood":material("P507_PBR_NEUTRAL_WOOD_FRAME",(.34,.28,.22),.58),
+        "abstract":[
+            material("P507_PBR_FAKE_COLOR_FIELD_01",(.34,.48,.50),.9),
+            material("P507_PBR_FAKE_COLOR_FIELD_02",(.43,.36,.36),.9),
+            material("P507_PBR_FAKE_COLOR_FIELD_03",(.40,.48,.35),.9),
+        ],
     }
     arch=collection("10_ARCH"); furniture=collection("20_FURNITURE")
     equipment=collection("30_EQUIPMENT"); ceiling=collection("40_CEILING")
     lookdev=collection("80_LOOKDEV_CAMERAS")
+    mats["tile"] = procedural_floor_tiles()
     room_shell(data,arch,mats)
     tables_and_chairs(data,furniture,furniture,mats)
     ceiling_items(data,ceiling,mats)
