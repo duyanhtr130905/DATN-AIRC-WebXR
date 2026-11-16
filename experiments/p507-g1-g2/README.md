@@ -26,7 +26,7 @@ If you correct a measurement, change the inventory \`size_source\` and \`positio
 
 ## Blender G1 + G2 generation (requires locally installed Blender)
 
-This runtime **is not available in the ChatGPT execution environment that created the PR**. Therefore we have not actually exported or rendered the source; never label GLB/Blender/G2 acceptance PASS until it has been executed and reviewed on a machine with Blender.
+The ChatGPT authoring environment did not have Blender installed, but **disposable GitHub Actions CI successfully ran Blender and exported the editable .blend and GLB** on [CI run 43804659514](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43804659514). Khronos glTF Validator: **0 errors / 0 warnings** (431 info diagnostics about unused TEXCOORD_0 attributes). **That is a technical export PASS, NOT artistic approval for G2**. Browser captures and raw frame-time records are in the same CI artifact. Local user's Blender/device run remains NOT RUN.
 
 From repo root, example:
 
@@ -57,12 +57,12 @@ The viewer is **development-only**: \`import.meta.env.DEV\` guard, not linked fr
 | Check | Current evidence / acceptance |
 | --- | --- |
 | G1 static inventory/geometry checks | Python tests/CI (if green) |
-| G1 Blender source + editable .blend | Script exists; Blender **NOT RUN**, until local export |
+| G1 Blender source + editable .blend | **CI export PASS** (Blender runner; review artifact), local Blender not checked |
 | G1 real photomatch (3 shots) | **BLOCKED** pending authorized reference photos/measurements |
 | G1 36 chairs/door swing/egress | Placeholders, **NOT MEASURED/NOT CERTIFIED** |
-| G2 PBR geometry + web viewer source | Implemented as code; browser image **NOT RUN** until GLB exists |
+| G2 PBR geometry + web viewer source | **Chrome software-WebGL screenshot PASS**; visual quality **NOT ACCEPTED** and photo match BLOCKED |
 | G2 hero visuals and 2 matched shots | **BLOCKED** until real Blender + authorized references + user review |
-| glTF Validator | **NOT RUN** until GLB exists |
+| glTF Validator | **CI PASS 0 errors, 0 warnings**, 431 INFO for unused UV attributes; optimization backlog |
 | Physical mobile/VR and product KPI | **NOT RUN**, not part of G1/G2 acceptance |
 
 Do not merge/claim G2 PASS just because CI and Python tests are green. A reviewer must inspect actual **Three.js screenshots/video** and compare with reference images. G2 can be revised within its asset/lookdev pass without creating any "G0-fix" task. **Never begin G3 without explicit owner approval.**
