@@ -6,7 +6,7 @@
 
 **Đã viết mã nguồn:** inventory tạm thời P507 có thể bổ sung với 17 bàn và 36 ghế placeholder, kiểm tra boundary/non-overlap/ID/provenance; Blender-Python source dựng shell có cửa/cửa sổ, nội thất/trần và góc hero TV–tủ–bình nước; trang preview Three.js dev-only. Các tọa độ là `PROPOSED_LAYOUT`, không chứng nhận lối đi hoặc dữ liệu AIRC. Chưa thay sản phẩm M1-C, schema, API hay quyền dữ liệu.
 
-**Chưa thực thi:** không có Blender executable trong môi trường tạo mã nên xuất `.blend`/`.glb`, glTF Validator, hình ảnh camera matching và đo WebGL trên GLB thật **NOT RUN**; G2 chưa có visual sign-off. Quyền ảnh/nhãn AIRC PENDING, ảnh gốc có người/nội dung nội bộ không commit. PR #14 chỉ đủ điều kiện chuyển khỏi Draft sau khi chạy thật và người dùng duyệt chất lượng; không bắt đầu G3.
+**Kết quả kỹ thuật đã chạy:** [CI G1/G2 run 43804659514](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43804659514) trên commit `e04427e739668e2414aae5acb4eb00c3da1c3f6b` đã xuất được Blender `.blend` + GLB, kiểm qua **Khronos glTF Validator 0 errors/0 warnings** (431 INFO unused UV), build frontend, mở bằng Chrome software WebGL và xuất ảnh 3 góc desktop + 390px mobile. Có khoảng 432 mesh và 7.200 triangles. Xem [báo cáo G1/G2](3d-production/P507-G1-G2-ACCEPTANCE.md). **G1: geometry/source technical PASS có giới hạn. G2: visual NOT ACCEPTED** sau khi ChatGPT trực tiếp xem ảnh; thiếu photo match P507, vật liệu và chi tiết kiểu game, hiệu năng GPU/thiết bị thật. Quyền ảnh/nhãn AIRC PENDING; ảnh gốc có người/nội dung nội bộ không commit. PR #14 phải giữ Draft trước khi user duyệt G2; không bắt đầu G3.
 
 **KPI:** MT1–MT3 chưa nghiệm thu thực địa; ≥3 phòng vẫn nguyên; Issues #1–#5 chưa được đóng chỉ vì G1/G2 code có mặt.
 
