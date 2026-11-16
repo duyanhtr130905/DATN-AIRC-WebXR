@@ -65,9 +65,9 @@ def procedural_floor_tiles():
     rng = random.Random(507)
     for y in range(256):
         for x in range(256):
-            seam = x < 4 or y < 4 or x > 251 or y > 251
+            seam = x < 2 or y < 2
             variation = rng.uniform(-.013, .013)
-            base = (.53,.54,.53) if seam else (.80,.80,.775)
+            base = (.57,.58,.57) if seam else (.79,.80,.78)
             pixels.extend((base[0]+variation,base[1]+variation,base[2]+variation,1.0))
     image.pixels.foreach_set(pixels)
     image.pack()
@@ -76,6 +76,20 @@ def procedural_floor_tiles():
     tex.image = image
     tex.extension = "REPEAT"
     mat.node_tree.links.new(tex.outputs["Color"],shader.inputs["Base Color"])
+    return mat
+
+
+def procedural_wood():
+    mat=material("P507_PBR_SELF_AUTHORED_PALE_OAK",(.68,.55,.39),.55)
+    image=bpy.data.images.new("P507_SELF_GENERATED_OAK_GRAIN",width=256,height=256,alpha=True)
+    pixels=[]
+    for y in range(256):
+        for x in range(256):
+            grain=.020*math.sin(x*.37+math.sin(y*.025)*2)+.008*math.sin(x*1.3+y*.03)
+            pixels.extend((.69+grain,.58+grain,.43+grain,1))
+    image.pixels.foreach_set(pixels); image.pack()
+    tex=mat.node_tree.nodes.new("ShaderNodeTexImage"); tex.image=image
+    mat.node_tree.links.new(tex.outputs["Color"],mat.node_tree.nodes.get("Principled BSDF").inputs["Base Color"])
     return mat
 
 
@@ -90,7 +104,7 @@ def cube(name, center, size, mat, col, bevel=0.0, ident=None):
     if bevel > 0:
         modifier = o.modifiers.new("Edge relief", "BEVEL")
         modifier.width = bevel
-        modifier.segments = 2
+        modifier.segments = 3
         if hasattr(modifier, "affect"):
             modifier.affect = "EDGES"
         o.modifiers.new("Weighted normals", "WEIGHTED_NORMAL")
@@ -118,6 +132,9 @@ def room_shell(data, col, mats):
     w, length, height = [data["room"][k] for k in ("width_x", "length_y", "height_z")]
     wall_thickness = 0.10
     floor = cube("P507_ARCH_FLOOR", (w/2, length/2, -0.045), (w, length, 0.09), mats["tile"], col)
+    floor["chair_inventory_count"]=data["chairs"]["count"]
+    floor["chair_placed_count"]=sum(c["status"]=="PLACED_PROVISIONAL" for c in data["chairs"]["instances"])
+    floor["unplaced_chair_ids"]=json.dumps([c["id"] for c in data["chairs"]["instances"] if c["status"]=="UNPLACED"])
     uv = floor.data.uv_layers.active or floor.data.uv_layers.new(name="MetricTileUV")
     for face in floor.data.polygons:
         if face.normal.z > .8:
@@ -174,52 +191,129 @@ def room_shell(data, col, mats):
          (.14,.06,door["height"]),mats["white_metal"],col,.008)
     cube("P507_ARCH_DOOR_FRAME_HIGH",(0,door["to_y"],door["height"]/2),
          (.14,.06,door["height"]),mats["white_metal"],col,.008)
+    cube("P507_ARCH_DOOR_FRAME_LINTEL",(0,(door["from_y"]+door["to_y"])/2,door["height"]),
+         (.18,door["to_y"]-door["from_y"]+.06,.07),mats["white_metal"],col,.009)
+    for yy in (door["from_y"]-.035,door["to_y"]+.035):
+        cube("P507_ARCH_DOOR_REVEAL",(-.055,yy,door["height"]/2),(.25,.035,door["height"]),mats["wood"],col,.005)
+    # Door leaf count and swing are UNKNOWN: retain open portal, never invent surveyed leaves.
     # Ceiling tiles are lightweight geometry; no photographic or confidential texture.
     cube("P507_ARCH_CEILING", (w/2, length/2, height+.025), (w, length, .05), mats["ceiling"], col)
     for x in range(1, 10):
         cube("P507_ARCH_CEILING_GRID_X_%02d" % x, (x*.6, length/2, height-.015),
-             (.012, length, .012), mats["metal"], col)
+             (.012, length, .012), mats["white_metal"], col)
     for row in range(1, 14):
         cube("P507_ARCH_CEILING_GRID_Y_%02d" % row, (w/2, row*.6, height-.015),
-             (w, .012, .012), mats["metal"], col)
+             (w, .012, .012), mats["white_metal"], col)
+
+
+def combine(objects, name, col, ident=None):
+    """Apply authored relief and combine a modular asset; shared chair data stays linked."""
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in objects:
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
+        for mod in list(obj.modifiers):
+            bpy.ops.object.modifier_apply(modifier=mod.name)
+        obj.select_set(False)
+    for obj in objects:
+        obj.select_set(True)
+    bpy.context.view_layer.objects.active = objects[0]
+    bpy.ops.object.join()
+    obj = bpy.context.object
+    obj.name = name
+    if ident:
+        obj["survey_instance_id"] = ident
+        obj["source_class"] = "PROPOSED_LAYOUT"
+    return obj
+
+
+def tube(name, start, end, radius, mat, col):
+    from mathutils import Vector
+    delta = Vector(end)-Vector(start)
+    obj = cylinder(name, (Vector(start)+Vector(end))/2, radius, delta.length, mat, col, 12)
+    obj.rotation_euler = delta.to_track_quat("Z", "Y").to_euler()
+    for face in obj.data.polygons:
+        face.use_smooth = len(face.vertices) == 4
+    return obj
+
+
+def chair_module(col, mats):
+    parts = [cube("CHAIR_SEAT", (0,0,.475), (.44,.43,.065), mats["chair"], col, .045)]
+    # Closed, gently curved moulded back; edges curl towards the sitter.
+    vertices=[]
+    segments=12
+    for layer in (-.014,.014):
+        for z in (.62,1.0):
+            for i in range(segments+1):
+                x=-.215+.43*i/segments
+                y=-.245+.052*(x/.215)**2+layer
+                vertices.append((x,y,z))
+    n=segments+1
+    faces=[]
+    for i in range(segments):
+        faces.extend([(i,i+1,n+i+1,n+i),
+                      (2*n+i,3*n+i,3*n+i+1,2*n+i+1),
+                      (i,2*n+i,2*n+i+1,i+1),
+                      (n+i,n+i+1,3*n+i+1,3*n+i)])
+    faces.extend([(0,n,3*n,2*n),(n-1,3*n-1,4*n-1,2*n-1)])
+    mesh=bpy.data.meshes.new("P507_CURVED_BACK_MODULE")
+    mesh.from_pydata(vertices,[],faces); mesh.update()
+    back=bpy.data.objects.new("CHAIR_CURVED_BACK",mesh); col.objects.link(back)
+    mesh.materials.append(mats["chair"])
+    for f in mesh.polygons: f.use_smooth=True
+    bevel=back.modifiers.new("Moulded perimeter relief","BEVEL"); bevel.width=.009; bevel.segments=3
+    back.modifiers.new("Weighted normals","WEIGHTED_NORMAL")
+    parts.append(back)
+    for x in (-.175,.175):
+        for y in (-.165,.165):
+            parts.append(tube("CHAIR_TUBULAR_LEG",(x*1.12,y*1.12,.022),(x,y,.45),.012,mats["metal"],col))
+            parts.append(cylinder("CHAIR_RUBBER_FOOT",(x*1.12,y*1.12,.015),.017,.03,mats["chair"],col,12))
+        parts.append(tube("CHAIR_BACK_SUPPORT",(x,-.17,.39),(x,-.225,.85),.011,mats["metal"],col))
+        parts.append(tube("CHAIR_SIDE_RAIL",(x,-.17,.425),(x,.17,.425),.012,mats["metal"],col))
+    obj=combine(parts,"P507_CHAIR_MODULE",col)
+    # Put local origin at floor centre before creating linked instances.
+    bpy.context.scene.cursor.location=(0,0,0)
+    bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
+    return obj
 
 
 def tables_and_chairs(data, tables_col, chairs_col, mats):
     for item in data["objects"]:
-        b = item["rect"]
-        xmin, ymin, xmax, ymax = b
-        cx, cy, sx, sy = (xmin+xmax)/2, (ymin+ymax)/2, xmax-xmin, ymax-ymin
-        ident = item["id"]
-        name = ident.replace("-", "_")
-        if item.get("type") not in ("table_standard", "table_small"):
-            cube(name+"_UNVERIFIED_PLACEHOLDER",(cx,cy,item["height"]/2),(sx,sy,item["height"]),mats["cabinet"],tables_col,.01,ident)
+        xmin,ymin,xmax,ymax=item["rect"]
+        cx,cy,sx,sy=(xmin+xmax)/2,(ymin+ymax)/2,xmax-xmin,ymax-ymin
+        ident=item["id"]; name=ident.replace("-","_"); h=item["height"]
+        if item.get("type") not in ("table_standard","table_small"):
+            cube(name+"_UNVERIFIED_PLACEHOLDER",(cx,cy,item.get("bottom_z",0)+h/2),(sx,sy,h),mats["cabinet"],tables_col,.01,ident)
             continue
-        cube(name+"_TOP", (cx,cy,item["height"]-.04), (sx,sy,.08), mats["laminate"], tables_col, .016, ident)
+        parts=[cube(name+"_LAMINATE_TOP",(cx,cy,h-.025),(sx,sy,.05),mats["laminate"],tables_col,.012)]
         for ix in (-1,1):
             for iy in (-1,1):
-                cube(name+"_LEG_%d_%d"%(ix,iy),
-                     (cx+ix*(sx/2-.07),cy+iy*(sy/2-.07),(item["height"]-.08)/2),
-                     (.044,.044,item["height"]-.08), mats["metal"], tables_col, .005, ident)
-    # The 36 chairs are developer-only placeholders: these coordinates are not surveyed.
-    # 12 around each desk group; room circulation/door swing is NOT certified.
-    for group in "ABC":
-        rows = [o["rect"] for o in data["objects"] if o.get("cluster")==group]
-        minx = min(b[0] for b in rows); maxx = max(b[2] for b in rows)
-        miny = min(b[1] for b in rows); maxy = max(b[3] for b in rows)
-        for side in (0,1):
-            for pos in range(6):
-                idx = pos+1+side*6
-                x = minx + ((pos+.5)/6)*(maxx-minx)
-                y = (miny-.36) if side==0 else (maxy+.36)
-                y = min(max(y,.35),data["room"]["length_y"]-.35)
-                ident = f"P507-CHAIR-{group}-{idx:02d}"
-                cylinder(ident+"_SEAT", (x,y,.48), .225,.08,mats["chair"],chairs_col,14,ident)
-                cube(ident+"_BACK", (x,y+(-.22 if side==0 else .22),.78),
-                     (.43,.05,.48),mats["chair"],chairs_col,.04,ident)
-                for dx in (-.16,.16):
-                    for dy in (-.14,.14):
-                        cube(ident+"_LEG_%d_%d"%(int(dx*100),int(dy*100)),
-                             (x+dx,y+dy,.23),(.022,.022,.46),mats["metal"],chairs_col,0,ident)
+                x=cx+ix*(sx/2-.065); y=cy+iy*(sy/2-.065)
+                parts.append(cube(name+"_STEEL_LEG",(x,y,(h-.05)/2),(.039,.039,h-.05),mats["metal"],tables_col,.004))
+                parts.append(cube(name+"_FOOT",(x,y,.012),(.045,.045,.024),mats["chair"],tables_col,.005))
+        for iy in (-1,1):
+            parts.append(cube(name+"_APRON_X",(cx,cy+iy*(sy/2-.065),h-.10),(sx-.10,.029,.065),mats["metal"],tables_col,.004))
+        for ix in (-1,1):
+            parts.append(cube(name+"_APRON_Y",(cx+ix*(sx/2-.065),cy,h-.10),(.029,sy-.10,.065),mats["metal"],tables_col,.004))
+        combine(parts,name+"_ASSEMBLY",tables_col,ident)
+    module=None
+    for item in data["chairs"]["instances"]:
+        if item["status"] != "PLACED_PROVISIONAL":
+            continue
+        if module is None:
+            module=chair_module(chairs_col,mats)
+            obj=module
+        else:
+            obj=bpy.data.objects.new(item["id"],module.data)
+            chairs_col.objects.link(obj)
+        obj.name=item["id"]
+        obj.location=(*item["center"],0)
+        obj.rotation_euler.z=math.radians(item["orientation_deg"])
+        obj["survey_instance_id"]=item["id"]
+        obj["source_class"]=item["source_kind"]
+        obj["placement_status"]=item["status"]
+        obj["cluster"]=item["cluster"]
+        obj["placement_role"]=item.get("placement_role","row")
 
 
 def ceiling_items(data, col, mats):
@@ -246,53 +340,89 @@ def ceiling_items(data, col, mats):
     cylinder("P507_CEILING_PROJECTOR_LENS",(3.0,3.86,h-.34),.048,.04,mats["screen"],col)
 
 
-def hero_assets(data, col, mats):
-    tv = data["hero"]["tv"]; x=tv["center_x"]; z=tv["center_z"]
-    # TV at north wall (Y=length) near door; unapproved visible screen is blank.
-    y=data["room"]["length_y"]-.08
-    cube("P507_HERO_TV_BEZEL",(x,y,z),(tv["width"],.085,tv["height"]),mats["screen_frame"],col,.025,"P507-TV-LARGE")
-    cube("P507_HERO_TV_BLACK_SCREEN",(x,y-.048,z),(tv["width"]-.055,.015,tv["height"]-.065),mats["screen"],col,.01,"P507-TV-LARGE")
-    cube("P507_HERO_TV_MOUNT",(x,y+.02,z),(.25,.15,.17),mats["metal"],col,.008,"P507-TV-LARGE")
+def lathe(name, center, profile, mat, col, segments=48, ident=None):
+    """Closed turned surface, profile ordered bottom to top (radius, height)."""
+    vertices=[]
+    for radius,z in profile:
+        for i in range(segments):
+            t=2*math.pi*i/segments
+            vertices.append((center[0]+radius*math.cos(t),center[1]+radius*math.sin(t),z))
+    faces=[]
+    for j in range(len(profile)-1):
+        for i in range(segments):
+            ni=(i+1)%segments
+            faces.append((j*segments+i,j*segments+ni,(j+1)*segments+ni,(j+1)*segments+i))
+    faces.extend([tuple(reversed(range(segments))),tuple((len(profile)-1)*segments+i for i in range(segments))])
+    mesh=bpy.data.meshes.new(name); mesh.from_pydata(vertices,[],faces); mesh.update()
+    obj=bpy.data.objects.new(name,mesh); col.objects.link(obj); mesh.materials.append(mat)
+    for f in mesh.polygons: f.use_smooth=len(f.vertices)==4
+    if ident: obj["survey_instance_id"]=ident; obj["source_class"]="PROPOSED_LAYOUT"
+    return obj
 
-    cabinet = data["hero"]["cabinet"]
-    cx,cy,cz=cabinet["center"]; sx,sy,sz=cabinet["size"]
-    cube("P507_HERO_CABINET_BODY",(cx,cy,cz),(sx,sy,sz),mats["cabinet"],col,.019,"P507-CABINET-LOW")
-    cube("P507_HERO_CABINET_COUNTER",(cx,cy,sz+.045),(sx+.02,sy+.02,.05),mats["laminate"],col,.018,"P507-CABINET-LOW")
+
+def hero_assets(data, col, mats):
+    tv=data["hero"]["tv"]; x=tv["center_x"]; z=tv["center_z"]
+    y=data["room"]["length_y"]-.115; ident="P507-TV-LARGE"
+    cube("P507_HERO_TV_MOUNT",(x,y+.025,z),(.30,.10,.22),mats["metal"],col,.009,ident)
+    cube("P507_HERO_TV_REAR",(x,y,z),(tv["width"]-.06,.075,tv["height"]-.055),mats["screen_frame"],col,.028,ident)
+    cube("P507_HERO_TV_BEZEL",(x,y-.035,z),(tv["width"],.027,tv["height"]),mats["screen_frame"],col,.018,ident)
+    cube("P507_HERO_TV_BLACK_SCREEN",(x,y-.051,z+.006),(tv["width"]-.035,.008,tv["height"]-.044),mats["screen"],col,.01,ident)
+    cube("P507_HERO_TV_POWER_LED",(x+.65,y-.057,z-tv["height"]/2+.015),(.009,.004,.003),mats["indicator"],col,.001,ident)
+
+    cabinet=data["hero"]["cabinet"]
+    cx,cy,cz=cabinet["center"]; sx,sy,sz=cabinet["size"]; ident="P507-CABINET-LOW"
+    # Plinth touches floor; front details stay inside the validated occupancy envelope.
+    cube("P507_HERO_CABINET_RECESSED_PLINTH",(cx,cy,.045),(sx-.10,sy-.08,.09),mats["frame_wood"],col,.009,ident)
+    cube("P507_HERO_CABINET_CARCASS",(cx,cy,(sz+.09)/2),(sx,sy,sz-.09),mats["wood"],col,.012,ident)
+    cube("P507_HERO_CABINET_COUNTER",(cx,cy,sz+.018),(sx+.02,sy+.02,.036),mats["laminate"],col,.009,ident)
     for i in range(3):
         xx=cx-sx/2+(i+.5)*sx/3
-        cube(f"P507_HERO_CABINET_FRONT_{i}",(xx,cy-sy/2-.013,sz*.50),(sx/3-.023,.022,sz-.11),mats["white_metal"],col,.012,"P507-CABINET-LOW")
-        cube(f"P507_HERO_CABINET_HANDLE_{i}",(xx,cy-sy/2-.029,sz*.76),(.078,.02,.01),mats["metal"],col,.004,"P507-CABINET-LOW")
-    # Wall photograph positions are retained as abstract, self-authored color fields:
-    # no actual faces, historical photos or institutional logos are embedded.
-    frame_layout = [
-        (2.9,2.25,.42,.28),(3.35,2.58,.46,.31),(3.9,2.18,.52,.33),
-        (4.55,2.63,.45,.30),(5.15,2.36,.54,.33),(3.05,1.80,.38,.27),
-        (3.78,2.92,.46,.28),(4.8,1.91,.47,.29)
-    ]
-    for i, (xx,zz,ww,hh) in enumerate(frame_layout):
-        cube("P507_HERO_PHOTO_FRAME_NEUTRAL_%02d" % i,(xx,7.99,zz),
-             (ww,.055,hh),mats["frame_wood"],col,.012)
-        cube("P507_HERO_PHOTO_ABSTRACT_NO_IDENTITIES_%02d" % i,(xx,7.950,zz),
-             (ww-.065,.009,hh-.065),mats["abstract"][i%len(mats["abstract"])],col,.002)
-    # Display pieces are anonymous geometric silhouettes, not copied certificates/awards.
+        cube(f"P507_HERO_CABINET_DOOR_{i}",(xx,cy-sy/2-.011,(sz+.10)/2),(sx/3-.012,.022,sz-.13),mats["cabinet"],col,.006,ident)
+        for dx in (-.035,.035):
+            cube("P507_HERO_CABINET_PULL_STANDOFF",(xx+dx,cy-sy/2-.026,sz-.12),(.009,.018,.009),mats["metal"],col,.003,ident)
+        cube("P507_HERO_CABINET_PULL",(xx,cy-sy/2-.033,sz-.12),(.09,.009,.012),mats["metal"],col,.004,ident)
     for i in range(3):
-        xx=cx+(i-1)*.40
-        cube(f"P507_HERO_NEUTRAL_DISPLAY_{i}",(xx,cy,sz+.24),(.23,.055,.31),mats["gold"],col,.015)
+        xx=cx+(i-1)*.41
+        cube(f"P507_HERO_NEUTRAL_DISPLAY_BASE_{i}",(xx,cy,sz+.052),(.18,.12,.03),mats["screen_frame"],col,.008)
+        award=cube(f"P507_HERO_NEUTRAL_DISPLAY_{i}",(xx,cy,sz+.20),(.145,.024,.26),mats["gold"],col,.015)
+        award.rotation_euler.y=(i-1)*.12
+        award["support_relation"]="P507-CABINET-LOW"
 
-    water=data["hero"]["water_dispenser"]; px,py,_=water["center"]
-    cube("P507_HERO_WATER_BASE",(px,py,.48),(.39,.43,.95),mats["white_metal"],col,.025,"P507-WATER-DISPENSER")
-    cube("P507_HERO_WATER_PANEL",(px,py-.225,.66),(.27,.015,.15),mats["screen_frame"],col,.008,"P507-WATER-DISPENSER")
-    cylinder("P507_HERO_WATER_BOTTLE",(px,py,1.19),.179,.48,mats["blue_water"],col,24,"P507-WATER-DISPENSER")
-    cylinder("P507_HERO_WATER_CAP",(px,py,1.46),.075,.065,mats["blue_water"],col,20,"P507-WATER-DISPENSER")
-    # Subtle skirting, and realistic edge contrasts for hero zone.
-    cube("P507_HERO_NORTH_SKIRTING",(3.0,8.0,.055),(6.0,.026,.11),mats["white_metal"],col,.005)
+    # Self-authored neutral panels preserve only approximate wall dressing classes.
+    frame_layout=[(2.9,2.25,.42,.28),(3.35,2.58,.46,.31),(3.9,2.18,.52,.33),
+                  (4.55,2.63,.45,.30),(5.15,2.36,.54,.33),(3.05,1.80,.38,.27),
+                  (3.78,2.92,.46,.28),(4.8,1.91,.47,.29)]
+    for i,(xx,zz,ww,hh) in enumerate(frame_layout):
+        cube(f"P507_HERO_FRAME_NEUTRAL_{i}",(xx,8.00,zz),(ww,.038,hh),mats["frame_wood"],col,.006)
+        cube(f"P507_HERO_ABSTRACT_NO_IDENTITIES_{i}",(xx,7.976,zz),(ww-.04,.008,hh-.04),mats["abstract"][i%3],col,.002)
+
+    water=data["hero"]["water_dispenser"]; px,py,_=water["center"]; ident="P507-WATER-DISPENSER"
+    cube("P507_HERO_WATER_FOOT",(px,py,.035),(.36,.38,.07),mats["screen_frame"],col,.018,ident)
+    cube("P507_HERO_WATER_BODY",(px,py,.48),(.39,.40,.89),mats["white_metal"],col,.035,ident)
+    cube("P507_HERO_WATER_FRONT_LOWER",(px,py-.205,.27),(.335,.020,.39),mats["cabinet"],col,.018,ident)
+    # Recess is a dark cavity bounded by raised side cheeks rather than a decal.
+    cube("P507_HERO_WATER_RECESS",(px,py-.211,.655),(.285,.012,.28),mats["screen_frame"],col,.022,ident)
+    for dx in (-.16,.16):
+        cube("P507_HERO_WATER_CHEEK",(px+dx,py-.215,.665),(.035,.045,.31),mats["white_metal"],col,.012,ident)
+    cube("P507_HERO_WATER_CONTROL",(px,py-.217,.865),(.29,.027,.09),mats["screen_frame"],col,.012,ident)
+    for dx,mat in ((-.065,mats["hot"]),(.065,mats["blue_water"])):
+        cube("P507_HERO_WATER_TAP",(px+dx,py-.230,.735),(.034,.038,.033),mat,col,.008,ident)
+        cube("P507_HERO_WATER_BUTTON",(px+dx,py-.235,.87),(.038,.006,.018),mat,col,.007,ident)
+    cube("P507_HERO_WATER_DRIP_TRAY",(px,py-.218,.515),(.28,.035,.026),mats["metal"],col,.008,ident)
+    for i in range(7):
+        cube("P507_HERO_WATER_TRAY_SLOT",(px-.11+i*.036,py-.239,.518),(.009,.007,.005),mats["screen_frame"],col,.002,ident)
+    cylinder("P507_HERO_WATER_COLLAR",(px,py,.955),.10,.07,mats["screen_frame"],col,32,ident)
+    lathe("P507_HERO_WATER_BOTTLE",(px,py),[(.055,.97),(.055,1.025),(.08,1.06),(.145,1.10),(.173,1.16),(.173,1.40),(.16,1.46),(.12,1.49),(.025,1.50)],mats["bottle"],col,48,ident)
+    for zz in (1.18,1.23,1.36,1.40):
+        lathe("P507_HERO_WATER_BOTTLE_RIB",(px,py),[(.173,zz-.008),(.179,zz),(.173,zz+.008)],mats["bottle"],col,48,ident)
+    cube("P507_HERO_NORTH_SKIRTING",(3,8.025,.055),(6,.026,.11),mats["white_metal"],col,.005)
 
 
 def camera_and_lights(data, camera_col):
     length=data["room"]["length_y"]
-    bpy.ops.object.camera_add(location=(1.6,5.65,1.65))
+    bpy.ops.object.camera_add(location=(1.1,5.15,1.65))
     cam=bpy.context.object; cam.name="CAM_TV_ART_APPROX"; move_to_collection(cam,camera_col)
-    target = (1.45,length-.7,1.6)
+    target = (.98,length-.25,1.55)
     from mathutils import Vector
     direction = Vector(target) - cam.location
     cam.rotation_euler = direction.to_track_quat("-Z","Y").to_euler()
@@ -306,6 +436,36 @@ def camera_and_lights(data, camera_col):
         lamp=bpy.data.lights.new(name,"AREA"); lamp.energy=power; lamp.color=color
         lamp.shape="RECTANGLE"; lamp.size=2.5; lamp.size_y=2.0
         obj=bpy.data.objects.new(name,lamp); camera_col.objects.link(obj); obj.location=center
+        obj.rotation_euler=(Vector((2.5,5.5,.3))-obj.location).to_track_quat("-Z","Y").to_euler()
+
+
+def validate_authored_bounds(data, collections):
+    """Measure evaluated Blender vertices, independently of the input proxy report."""
+    from mathutils import Vector
+    deps=bpy.context.evaluated_depsgraph_get()
+    measured={}
+    for col in collections:
+        for obj in col.objects:
+            ident=obj.get("survey_instance_id")
+            if obj.type!="MESH" or not ident: continue
+            evaluated=obj.evaluated_get(deps)
+            for corner in evaluated.bound_box:
+                v=evaluated.matrix_world @ Vector(corner)
+                if ident not in measured: measured[ident]=[v.x,v.y,v.z,v.x,v.y,v.z]
+                else:
+                    b=measured[ident]
+                    measured[ident]=[min(b[0],v.x),min(b[1],v.y),min(b[2],v.z),max(b[3],v.x),max(b[4],v.y),max(b[5],v.z)]
+    expected={p["id"]:p for p in verify(data)["occupancy"]}
+    for ident,proxy in expected.items():
+        if ident not in measured: raise RuntimeError("Missing authored geometry: "+ident)
+        b=measured[ident]; pts=proxy["polygon"]
+        limits=[min(p[0] for p in pts),min(p[1] for p in pts),max(p[0] for p in pts),max(p[1] for p in pts)]
+        if b[0]<limits[0]-.001 or b[1]<limits[1]-.001 or b[3]>limits[2]+.001 or b[4]>limits[3]+.001:
+            raise RuntimeError("Authored geometry exceeds validated proxy: "+ident+str(b)+str(limits))
+        if b[2]<-.001: raise RuntimeError("Furniture below floor: "+ident)
+        if proxy.get("bottom_z") is not None and abs(b[2]-proxy["bottom_z"])>.001:
+            raise RuntimeError("Authored support height mismatch: "+ident)
+    return measured
 
 
 def main():
@@ -321,6 +481,8 @@ def main():
         if existing.name=="Collection" and not existing.objects:
             bpy.data.collections.remove(existing)
     scene=bpy.context.scene
+    scene.render.film_transparent=False
+    bpy.context.preferences.filepaths.save_version=0
     scene.unit_settings.system="METRIC"
     scene.unit_settings.scale_length=1
     mats={
@@ -346,21 +508,53 @@ def main():
             material("P507_PBR_FAKE_COLOR_FIELD_03",(.40,.48,.35),.9),
         ],
     }
+    screen=mats["screen"].node_tree.nodes.get("Principled BSDF")
+    screen.inputs["Roughness"].default_value=.32
+    screen.inputs["Specular IOR Level" if "Specular IOR Level" in screen.inputs else "Specular"].default_value=.06
+    glass=mats["glass"].node_tree.nodes.get("Principled BSDF")
+    glass.inputs["Alpha"].default_value=.16
+    if hasattr(mats["glass"],"surface_render_method"):
+        mats["glass"].surface_render_method="DITHERED"
+    else:
+        mats["glass"].blend_method="BLEND"
     arch=collection("10_ARCH"); furniture=collection("20_FURNITURE")
     equipment=collection("30_EQUIPMENT"); ceiling=collection("40_CEILING")
     lookdev=collection("80_LOOKDEV_CAMERAS")
     mats["tile"] = procedural_floor_tiles()
+    mats["wood"]=procedural_wood()
+    mats["indicator"]=material("P507_TV_STANDBY",(.09,.16,.12),.3,emission=.3)
+    mats["hot"]=material("P507_WATER_RED_BUTTON",(.32,.025,.02),.4)
+    mats["bottle"]=material("P507_PBR_TRANSLUCENT_BLUE_PET",(.20,.48,.67),.17)
+    bottle=mats["bottle"].node_tree.nodes.get("Principled BSDF")
+    bottle.inputs["Transmission Weight" if "Transmission Weight" in bottle.inputs else "Transmission"].default_value=.58
+    bottle.inputs["IOR"].default_value=1.46
     room_shell(data,arch,mats)
+    floor=bpy.data.objects.get("P507_ARCH_FLOOR")
+    floor["chair_inventory_count"]=data["chairs"]["count"]
+    floor["chair_placed_count"]=sum(c["status"]=="PLACED_PROVISIONAL" for c in data["chairs"]["instances"])
+    floor["unplaced_chair_ids"]=json.dumps([c["id"] for c in data["chairs"]["instances"] if c["status"]=="UNPLACED"])
     tables_and_chairs(data,furniture,furniture,mats)
     ceiling_items(data,ceiling,mats)
     hero_assets(data,equipment,mats)
     collection("50_DECOR")
     collection("60_INTERACTION_PROXY")
     collection("90_REFERENCE_LOCAL")
+    grids=[o for o in arch.objects if o.name.startswith("P507_ARCH_CEILING_GRID")]
+    if grids: combine(grids,"P507_ARCH_CEILING_GRID",arch)
     camera_and_lights(data,lookdev)
     scene.render.resolution_x=1280; scene.render.resolution_y=720
     scene.render.resolution_percentage=100
     scene.world.color=(.18,.18,.18)
+    authored_bounds=validate_authored_bounds(data,(furniture,equipment))
+    door=data["openings"]["door"]
+    for obj in arch.objects:
+        if obj.name.startswith("P507_ARCH_WALL_WEST"):
+            ys=[(obj.matrix_world @ __import__("mathutils").Vector(v)).y for v in obj.bound_box]
+            if min(max(ys),door["to_y"])-max(min(ys),door["from_y"])>.001:
+                raise RuntimeError("West wall blocks intended door opening")
+    import hashlib, subprocess, os
+    source_sha=subprocess.check_output(["git","rev-parse","HEAD"],cwd=HERE,text=True).strip()
+    input_hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),HERE/"geometry.py",args.inventory)}
     blend_path=args.output_dir/"P507_G1_G2_PROVISIONAL.blend"
     glb_path=args.output_dir/"P507_G1_G2_PROVISIONAL.glb"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
@@ -375,6 +569,9 @@ def main():
     if "FINISHED" not in export_result or not glb_path.is_file() or glb_path.stat().st_size < 1024:
         raise RuntimeError("glTF export failed, cancelled or produced no GLB. Do not claim PASS.")
     out={**result,"blender_version":bpy.app.version_string,"export_objects":export_count,
+         "authored_bounds":authored_bounds,"checkout_sha":source_sha,"source_sha":os.environ.get("GITHUB_HEAD_SHA",source_sha),"input_sha256":input_hashes,
+         "glb_bytes":glb_path.stat().st_size,"glb_sha256":hashlib.sha256(glb_path.read_bytes()).hexdigest(),
+         "embedded_images":[i.name for i in bpy.data.images if i.packed_file],
          "glb_path":str(glb_path),"blend_path":str(blend_path),
          "notice":"PROVISIONAL dev only. Not AIRC-verified, not licensed real assets; no photos included."}
     (args.output_dir/"report.json").write_text(json.dumps(out,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
