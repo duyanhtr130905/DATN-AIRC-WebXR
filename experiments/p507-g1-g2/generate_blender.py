@@ -165,8 +165,9 @@ def room_shell(data, col, mats):
         center_y=(win["from_y"]+win["to_y"])/2
         cube("P507_ARCH_ROLLER_SHADE_%02d" % idx, (w-.075,center_y,2.78),
              (.035,win["to_y"]-win["from_y"]-.03,.43),mats["blind"],col,.012)
-        cylinder("P507_ARCH_BLIND_ROLLER_%02d" % idx,(w-.07,center_y,3.01),.035,
+        roller = cylinder("P507_ARCH_BLIND_ROLLER_%02d" % idx,(w-.07,center_y,3.01),.035,
                  win["to_y"]-win["from_y"],mats["white_metal"],col)
+        roller.rotation_euler.x = math.pi/2
     cube("P507_ARCH_BASEBOARD_LOGO",(w/2,.075,.07),(w,.03,.14),mats["white_metal"],col,.004)
     cube("P507_ARCH_BASEBOARD_EAST",(w-.07,length/2,.07),(.03,length,.14),mats["white_metal"],col,.004)
     cube("P507_ARCH_DOOR_FRAME_LOW",(0,door["from_y"],door["height"]/2),
@@ -190,6 +191,9 @@ def tables_and_chairs(data, tables_col, chairs_col, mats):
         cx, cy, sx, sy = (xmin+xmax)/2, (ymin+ymax)/2, xmax-xmin, ymax-ymin
         ident = item["id"]
         name = ident.replace("-", "_")
+        if item.get("type") not in ("table_standard", "table_small"):
+            cube(name+"_UNVERIFIED_PLACEHOLDER",(cx,cy,item["height"]/2),(sx,sy,item["height"]),mats["cabinet"],tables_col,.01,ident)
+            continue
         cube(name+"_TOP", (cx,cy,item["height"]-.04), (sx,sy,.08), mats["laminate"], tables_col, .016, ident)
         for ix in (-1,1):
             for iy in (-1,1):
