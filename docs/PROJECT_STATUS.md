@@ -8,7 +8,7 @@ Task hiện hành được chủ dự án giao: sửa A, ghế phải B/C, tủ/
 
 **G1 geometry PASS cho occupancy provisional đã đặt; survey PROVISIONAL.** Clearance UNKNOWN: khoảng giữa envelope ghế chỉ .20/.40m, không chứng nhận sử dụng/PCCC. Tủ/kệ chưa có tọa độ và hướng/số cánh cửa UNKNOWN. **G2_VISUAL PENDING OWNER APPROVAL**; vẫn là scene procedural đơn giản, không photorealistic hoàn tất. PHOTO_MATCH BLOCKED; REAL_DEVICE_WEBXR NOT RUN; REAL_AIRC_DATA NOT VERIFIED; G3 NOT STARTED.
 
-Local checks: 30 geometry tests, Blender4.5.9 export/evaluated bounds (cả thêm supported item), Khronos validator, frontend build/25 unit, checker10, repository verifier/diff/privacy scan. Final exact-HEAD CI và artifact links ghi trong PR handoff khi run hoàn tất; không lấy run cũ làm chứng cứ mới. Raw neutral artifacts nằm `.local/p507-g1-g2/` và CI artifact, không có ảnh khảo sát. Bước tiếp: exact-HEAD CI → ChatGPT/chủ dự án xem render → dừng chờ visual sign-off; không tự bắt đầu G3.
+Local checks: 31 geometry tests, Blender4.5.9 export/evaluated bounds (cả thêm supported item), Khronos validator, frontend build/25 unit, checker10, repository verifier/diff/privacy scan. Final exact-HEAD CI và artifact links ghi trong PR handoff khi run hoàn tất; không lấy run cũ làm chứng cứ mới. Raw neutral artifacts nằm `.local/p507-g1-g2/` và CI artifact, không có ảnh khảo sát. Bước tiếp: exact-HEAD CI → ChatGPT/chủ dự án xem render → dừng chờ visual sign-off; không tự bắt đầu G3.
 
 ---
 

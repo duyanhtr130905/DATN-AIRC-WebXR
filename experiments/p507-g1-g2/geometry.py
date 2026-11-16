@@ -400,6 +400,13 @@ def verify(data):
                 errors.append(f"{g} must have exactly two right-end chairs")
             elif enddesk and valid_rect(enddesk.get("rect")):
                 r = enddesk["rect"]
+                geometric_right = [c for c in chairs
+                    if c.get("cluster") == g and c.get("status") == "PLACED_PROVISIONAL"
+                    and isinstance(c.get("center"), list) and len(c["center"]) == 2
+                    and all(finite(v) for v in c["center"])
+                    and c["center"][0] > r[2] and r[1] < c["center"][1] < r[3]]
+                if {c["id"] for c in geometric_right} != {c["id"] for c in right}:
+                    errors.append(f"{g} must have exactly two geometrically right-end chairs matching their roles")
                 for c in right:
                     if (
                         not isinstance(c.get("center"), list)

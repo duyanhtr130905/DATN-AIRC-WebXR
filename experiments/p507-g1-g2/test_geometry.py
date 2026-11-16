@@ -282,6 +282,15 @@ class P507GeometryTests(unittest.TestCase):
         d["objects"][0]["bottom_z"]=3
         self.assertFails(d,"vertical bounds")
 
+    def test_third_right_chair_cannot_hide_behind_row_role(self):
+        d=copy.deepcopy(self.data)
+        chairs={c["id"]:c for c in d["chairs"]["instances"]}
+        for ident,y in (("09",3.75),("10",4.25),("11",4.75)):
+            c=chairs["P507-CHAIR-B-"+ident]
+            c.update(center=[5.42,y],orientation_deg=90,desk_id="P507-DESK-B05")
+        self.assertEqual(chairs["P507-CHAIR-B-11"]["placement_role"],"left_end")
+        self.assertFails(d,"geometrically right-end")
+
     def test_contact_is_allowed(self):
         self.assertEqual(area_intersection([0, 0, 1, 1], [1, 0, 2, 1]), 0)
 
