@@ -64,7 +64,7 @@ jobs:
       - name: Install Blender in disposable GitHub runner, not user laptop
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends blender
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
           blender --version | head -3
       - name: Export actual editable Blender scene and glTF binary
         run: |
