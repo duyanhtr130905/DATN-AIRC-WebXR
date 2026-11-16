@@ -1,5 +1,18 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## Cập nhật 16/11/2026 — tiếp tục PR #14 sửa layout/hero G1/G2
+
+Task hiện hành được chủ dự án giao: sửa A, ghế phải B/C, tủ/bình nước/cửa, inventory v2 và góc hero; **không merge/deploy/G3**. Root `D:\Code\DATN`, branch `feat/p507-g1-g2-blockout-hero`; [PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) giữ Draft/base `docs/g0-p507-3d-production-spec`. PR #13 vẫn open lúc kiểm tra đầu task; không retarget/sửa G0.
+
+Đã sửa 17 bàn/36 ghế explicit, SAT occupancy và mesh bounds độc lập trong Blender; không còn tủ–ghế/bình nước–entry overlap. A dịch +.60m X, cửa −.90m Y. Xem [revision với tọa độ và giới hạn](3d-production/P507-G1-G2-LAYOUT-LOOKDEV-REVISION.md) và [acceptance](3d-production/P507-G1-G2-ACCEPTANCE.md). Hero có ghế cong/khung ống, apron bàn, TV/tủ/máy nước nhiều chi tiết và vật liệu procedural; Three.js có lighting/camera/metrics riêng. Không thay Scene production, PostgreSQL/API/KPI.
+
+**G1 geometry PASS cho occupancy provisional đã đặt; survey PROVISIONAL.** Clearance UNKNOWN: khoảng giữa envelope ghế chỉ .20/.40m, không chứng nhận sử dụng/PCCC. Tủ/kệ chưa có tọa độ và hướng/số cánh cửa UNKNOWN. **G2_VISUAL PENDING OWNER APPROVAL**; vẫn là scene procedural đơn giản, không photorealistic hoàn tất. PHOTO_MATCH BLOCKED; REAL_DEVICE_WEBXR NOT RUN; REAL_AIRC_DATA NOT VERIFIED; G3 NOT STARTED.
+
+Local checks: 30 geometry tests, Blender4.5.9 export/evaluated bounds (cả thêm supported item), Khronos validator, frontend build/25 unit, checker10, repository verifier/diff/privacy scan. Final exact-HEAD CI và artifact links ghi trong PR handoff khi run hoàn tất; không lấy run cũ làm chứng cứ mới. Raw neutral artifacts nằm `.local/p507-g1-g2/` và CI artifact, không có ảnh khảo sát. Bước tiếp: exact-HEAD CI → ChatGPT/chủ dự án xem render → dừng chờ visual sign-off; không tự bắt đầu G3.
+
+---
+
+
 ## Cập nhật ngày 16/11/2026 — G1/G2 đã khởi động, chưa nghiệm thu (snapshot, xác minh GitHub live)
 
 **Task người dùng vừa duyệt:** bắt đầu **G1 room geometry + G2 hero lookdev**, theo [G0 production spec](3d-production/P507-G0-PRODUCTION-SPEC.md); **không triển khai G3**. [Draft PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) trên `feat/p507-g1-g2-blockout-hero`, đang **IN PROGRESS / NOT MERGE READY** as-of 16/11/2026. Vì [G0 PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) chưa merge, PR #14 được xếp chồng lên branch G0; sau khi G0 được duyệt và merge, mới kiểm tra retarget PR #14 sang main. Không tự merge hai PR.

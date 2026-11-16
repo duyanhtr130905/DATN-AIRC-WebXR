@@ -1,5 +1,20 @@
 # P507 G1/G2 — Implementation Evidence & Acceptance Status
 
+## Current revision — 16/11/2026 layout correction (PR #14)
+
+See [layout/lookdev revision and exact coordinates](P507-G1-G2-LAYOUT-LOOKDEV-REVISION.md), [before/after occupancy](../evidence/p507-layout-before-after.svg) and final PR handoff for exact HEAD/CI artifacts. This section supersedes the desk-only verdict in the historical snapshot below.
+
+- **G1_GEOMETRY: PASS** for 17 desks + 36 explicit placed chair instances + cabinet/water/entry/bounds. Zero invalid proxy collisions; actual Blender evaluated bounds must fit those proxies. Previous cabinet–chair overlap regression fails as expected. Unknown unplaced utility items and door swing remain UNKNOWN.
+- **G1_SURVEY_ACCURACY: PROVISIONAL**. Desk-edge gaps 1.25/1.30m differ from static chair-envelope gaps .20/.40m; neither certifies usable circulation.
+- **G2_PIPELINE:** actual local Blender/GLB/Khronos/Chrome checks run; final exact-HEAD CI is linked in the handoff after completion. Reports record both PR head and checkout SHA.
+- **G2_VISUAL: PENDING OWNER APPROVAL.** More developed hero silhouettes/materials and reusable curved chairs; still simplified procedural art. No automatic artistic acceptance.
+- **PHOTO_MATCH: BLOCKED; REAL_DEVICE_WEBXR: NOT RUN; REAL_AIRC_DATA: NOT VERIFIED; G3: NOT STARTED.** No authorized reference photos were used or embedded.
+
+## Historical first-look evidence (before layout correction)
+
+The following dated snapshot describes the old `2c23fd1` lineage; old PASS/checks and images are not evidence for the revised HEAD.
+
+
 **As-of 16/11/2026 — PARTIAL (G1 technical build, G2 visual NOT ACCEPTED).**
 
 Source: [G0 art direction](P507-G0-PRODUCTION-SPEC.md) in stacked [PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13), code in [Draft PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14). Neither PR has been merged or deployed at time of writing. Verify GitHub live before using these snapshots.

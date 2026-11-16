@@ -1,74 +1,33 @@
-# P507 G1 + G2 — geometry & hero-zone lookdev (provisional)
+# P507 G1/G2 — provisional layout and hero review
 
-**Status: IN PROGRESS — not visually accepted, not production, not AIRC-verified.** This work is based on [G0 art/production baseline](../../docs/3d-production/P507-G0-PRODUCTION-SPEC.md). The G0 PR #13 must be merged before this stacked PR is integrated into main. Only synthetic-neutral shapes and P507 user-reported geometry are committed: **no raw photos, recognizable people, live displays, copyrighted posters, private lab notes or AIRC brand textures**.
+Continue Draft PR #14, stacked on G0 PR #13. No merge, retarget, production integration, deploy or G3. Read [G0](../../docs/3d-production/P507-G0-PRODUCTION-SPEC.md), [revision report](../../docs/3d-production/P507-G1-G2-LAYOUT-LOOKDEV-REVISION.md) and [acceptance](../../docs/3d-production/P507-G1-G2-ACCEPTANCE.md).
 
-## Scope / truth levels
+## Inventory/schema
 
-- **G1 geometry:** room shell 8.10 × 6.00 × 3.50 m; west entrance; 4 windows on east side, glass/frames; 17 independently ID'd desks (16 standard, 1 small), 36 **unmeasured chair placeholders**, ceiling modules (8 LEDs, 4 fans, 2 ceiling AC, 1 projector). Initial positions are all \`PROPOSED_LAYOUT\`.
-- **G2 lookdev first implementation:** one **hero corner** (entrance, large TV, low cabinet, water dispenser, part of nearest desks), PBR-compatible materials and Blender lookdev camera plus a **dev-only** Three.js GLB viewer with three camera presets and frame stats.
-- **Not included:** real photo alignment (originals and camera metadata not provided to local pipeline), exact measured desk/door clearances, AIRC logo/textures or privacy-sensitive images, full-room art pass (G3), production Catalog UUID mapping, real source state or source-to-render KPI, hardware XR acceptance.
+Schema v2 keeps17 stable desks A6/B6/C5 and36 explicit chair instances. Each chair has ID, cluster, status, centre, orientation, full seat/back envelope, role and provenance. 0° faces+Y;90° faces−X. B09/B10 and C11/C12 are right-end chairs. No count-distribution heuristic remains. v1 imports without invented poses: old chair IDs become UNPLACED/UNKNOWN. Additional objects/chairs remain supported; no system capacity ceiling.
 
-This is an **open inventory**. The included provisional fixture is not a locked/final device list; adding another object changes the fixture revision, not the G0 art direction. Position changes must not rename established survey IDs. Frontend production M1-C remains unchanged. No P507 fixture is loaded automatically by the application/backend or written to PostgreSQL.
+All positions PROPOSED_LAYOUT, AIRC rights PENDING. Unknown utility shelves/cabinets/fridge/shoe rack and door swing remain UNKNOWN. All36 chairs are provisionally placed; .20/.40m static chair-envelope gaps are **not usable walkway clearance**. No photographs, people, private screens, artwork or authentic logos are included.
 
-## Input / geometry check
+## Run from root
 
-- \`p507-provisional.json\`: unit meter, proposed rectangles, metadata sources, 17 desk instance IDs, 36 chair count, openings and hero positions. **No permission to treat any source as AIRC real_verified.**
-- \`geometry.py\`: no dependencies beyond Python standard library. Checks unique IDs, positive dimensions, bounds, table-table overlap and proposed inter-cluster desk-edge gaps. **Does NOT certify aisles**, escape clearance, furniture-to-furniture collisions, or door swing.
-- \`test_geometry.py\`: unit tests for 17 desks, A6/B6/C5, new-object append, duplicate IDs, overlap, out-of-bounds, provenance and gaps.
+```sh
+python experiments/p507-g1-g2/geometry.py --report .local/p507-g1-g2/geometry-report.json
+python -m unittest discover -s experiments/p507-g1-g2 -p test_geometry.py -v
+blender --background --python-exit-code 1 --python experiments/p507-g1-g2/generate_blender.py -- --output-dir .local/p507-g1-g2
+npm install --no-save --package-lock=false --ignore-scripts --prefix .local/p507-gltf-validator gltf-validator@2.0.0-dev.3.10
+node experiments/p507-g1-g2/validate_glb.mjs
+npm ci --ignore-scripts --prefix apps/web
+npm run build --prefix apps/web
+```
 
-From repository root:
+Copy generated GLB to ignored `apps/web/public/p507-local-preview/`. Run `node experiments/p507-g1-g2/browser_preview.mjs` (set CHROME_BIN on Windows), or Vite dev and open `/p507-g1-g2-preview.html`. This dev-only page is not linked from production App and never starts microphone/camera/XR or writes backend data.
 
-    python experiments/p507-g1-g2/geometry.py
-    python -m unittest discover -s experiments/p507-g1-g2 -p "test_geometry.py" -v
-    python -m py_compile experiments/p507-g1-g2/geometry.py experiments/p507-g1-g2/generate_blender.py
+## Evidence
 
-If you correct a measurement, change the inventory \`size_source\` and \`position_source\` field **only with evidence**. On future instances, add stable IDs and update generators as necessary; no fixed object-cap imposed by validator.
+SAT covers desks, chair seat/back, hero/positioned generic furniture, entry and inner walls. Edge contact allowed; support relations require correct height; generator honors bottom_z. Regression fixtures preserve old cabinet–chair overlap and original v1 data. Blender independently checks evaluated mesh bounds against proxies and west-wall door void before export. Linked chair geometry and per-asset joins preserve independent IDs.
 
-## Blender G1 + G2 generation (requires locally installed Blender)
+Ignored `.local/p507-g1-g2/` contains editable .blend, GLB, geometry-report.json, report.json (input hashes/actual mesh bounds), Khronos gltf-validation-report.json, browser-report.json (unfiltered rAF timings/sample count/p50/p95, materials/geometry/texture memory estimate, bytes/hash, GPU/browser/viewports/cameras/source and checkout SHA) plus HERO/wide/overview/B-C/mobile screenshots. Architectural cutaways hide walls/ceiling only. `P507_SHOTS=hero,overview` restricts capture; `P507_BASELINE=1` labels old invalid layout instead of applying new-layout assertions; `P507_EVIDENCE_DIR` changes output location.
 
-The ChatGPT authoring environment did not have Blender installed, but **disposable GitHub Actions CI successfully ran Blender and exported the editable .blend and GLB** on [CI run 43804659514](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43804659514). Khronos glTF Validator: **0 errors / 0 warnings** (431 info diagnostics about unused TEXCOORD_0 attributes). **That is a technical export PASS, NOT artistic approval for G2**. Browser captures and raw frame-time records are in the same CI artifact. Local user's Blender/device run remains NOT RUN.
+CI actually runs Blender/build/Khronos/Chrome and retains neutral artifacts7 days. Verify exact final PR HEAD, never cite old runs as final evidence. Software WebGL/mobile viewport is not physical GPU/phone/WebXR performance. Screenshots are reviewed manually; mesh count and checks do not establish art quality. Label differing camera/lighting in before/after comparisons.
 
-From repo root, example:
-
-    blender --background --python experiments/p507-g1-g2/generate_blender.py -- --inventory experiments/p507-g1-g2/p507-provisional.json --output-dir experiments/p507-g1-g2/out
-
-Files **expected if generation succeeds**, all ignored:
-- \`experiments/p507-g1-g2/out/P507_G1_G2_PROVISIONAL.blend\`
-- \`experiments/p507-g1-g2/out/P507_G1_G2_PROVISIONAL.glb\`
-- \`experiments/p507-g1-g2/out/report.json\`
-
-Manually verify Blender version, dimensions, wall openings, normals, material compatibility, and object IDs. Run [Khronos glTF Validator](https://github.com/KhronosGroup/glTF-Validator) against the generated GLB. If this fails, report the stack trace and environment; **do not change G0 target or fabricate evidence**.
-
-**Provisional art:** no advanced image textures; hero uses neutral materials and editable geometry silhouettes. This is the first procedural lookdev pass, **not a guarantee of game-demo quality**. Blender Area Lights are preview only; Three.js runtime defines independent lighting.
-
-## Three.js browser review (dev-only, does not affect official App)
-
-1. Copy the generated \`P507_G1_G2_PROVISIONAL.glb\` into \`apps/web/public/p507-local-preview/\` (ignored).
-2. \`cd apps/web\`, \`npm ci\`, \`npm run dev\`.
-3. Open \`http://127.0.0.1:5173/p507-g1-g2-preview.html\`.
-4. Inspect HERO, OVERVIEW and LOGO camera presets. Check WebGL2/errors, shading, window orientation, actual frame-time samples, asset statistics, and absence of source photos or AIRC claims.
-5. Capture browser screenshots (desktop + mobile viewport), and **compare with locally authorized** reference shots PHOTO-ENTRY-TV, PHOTO-DESKS and PHOTO-LOGO. Report camera differences if lens/EXIF absent.
-6. User must **visually accept G2** before any G3 full-room modeling.
-
-The viewer is **development-only**: \`import.meta.env.DEV\` guard, not linked from \`App.tsx\`; it fetches the ignored local GLB and does not touch the official API, database or real-time data.
-
-## How to review & pass gates
-
-| Check | Current evidence / acceptance |
-| --- | --- |
-| G1 static inventory/geometry checks | Python tests/CI (if green) |
-| G1 Blender source + editable .blend | **CI export PASS** (Blender runner; review artifact), local Blender not checked |
-| G1 real photomatch (3 shots) | **BLOCKED** pending authorized reference photos/measurements |
-| G1 36 chairs/door swing/egress | Placeholders, **NOT MEASURED/NOT CERTIFIED** |
-| G2 PBR geometry + web viewer source | **Chrome software-WebGL screenshot PASS**; visual quality **NOT ACCEPTED** and photo match BLOCKED |
-| G2 hero visuals and 2 matched shots | **BLOCKED** until real Blender + authorized references + user review |
-| glTF Validator | **CI PASS 0 errors, 0 warnings**, 431 INFO for unused UV attributes; optimization backlog |
-| Physical mobile/VR and product KPI | **NOT RUN**, not part of G1/G2 acceptance |
-
-Do not merge/claim G2 PASS just because CI and Python tests are green. A reviewer must inspect actual **Three.js screenshots/video** and compare with reference images. G2 can be revised within its asset/lookdev pass without creating any "G0-fix" task. **Never begin G3 without explicit owner approval.**
-
-## Privacy and open issues
-
-Survey snapshots were supplied in a ChatGPT conversation, not in this repo or the local generator workspace. Original photos show people, screens and a whiteboard; they are not committed or fetched. Rights for authentic AIRC logo, posters and images are **pending**. Keep private/ and out/ folders ignored, and get AIRC confirmation on publishing conditions before any public asset.
-
-The ≥3-room academic KPI, real status sources, room measurements, session tracking, and real-device WebXR remain out of scope and unresolved.
+**G1_SURVEY_ACCURACY PROVISIONAL; G2_VISUAL PENDING OWNER APPROVAL; PHOTO_MATCH BLOCKED; REAL_DEVICE_WEBXR NOT RUN; REAL_AIRC_DATA NOT VERIFIED; G3 NOT STARTED.** Still a simplified procedural architectural study, not photorealistic complete. Stop after handoff.

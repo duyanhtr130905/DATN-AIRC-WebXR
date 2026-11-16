@@ -8,6 +8,9 @@ on:
       - "apps/web/src/p507-preview.ts"
       - ".github/workflows/p507-g1-g2.yml"
       - ".gitignore"
+      - "docs/3d-production/P507-G1-G2*"
+      - "docs/evidence/p507*"
+      - "docs/PROJECT_STATUS.md"
   workflow_dispatch:
 
 permissions:
@@ -55,6 +58,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
+      GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       CHROME_BIN: /usr/bin/google-chrome
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
@@ -72,7 +76,8 @@ jobs:
           blender --version | head -3
       - name: Export actual editable Blender scene and glTF binary
         run: |
-          blender --background --python experiments/p507-g1-g2/generate_blender.py -- --inventory experiments/p507-g1-g2/p507-provisional.json --output-dir .local/p507-g1-g2
+          blender --background --python-exit-code 1 --python experiments/p507-g1-g2/generate_blender.py -- --inventory experiments/p507-g1-g2/p507-provisional.json --output-dir .local/p507-g1-g2
+          python experiments/p507-g1-g2/geometry.py --report .local/p507-g1-g2/geometry-report.json
           ls -lh .local/p507-g1-g2/
       - name: Basic GLB binary structure and ID metadata check
         run: |
