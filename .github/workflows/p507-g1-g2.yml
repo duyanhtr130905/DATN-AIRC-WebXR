@@ -1,0 +1,46 @@
+name: P507 G1 geometry and G2 source validation
+
+on:
+  pull_request:
+    paths:
+      - "experiments/p507-g1-g2/**"
+      - "apps/web/p507-g1-g2-preview.html"
+      - "apps/web/src/p507-preview.ts"
+      - ".github/workflows/p507-g1-g2.yml"
+      - ".gitignore"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  provisional-source-checks:
+    name: P507 inventory, geometry, Python syntax and privacy boundaries
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Geometry verifier and source provenance
+        run: python experiments/p507-g1-g2/geometry.py --report /tmp/p507-g1-report.json
+      - name: Geometry and extensibility tests
+        run: python -m unittest discover -s experiments/p507-g1-g2 -p "test_geometry.py" -v
+      - name: Compile Blender generator source without pretending Blender ran
+        run: python -m py_compile experiments/p507-g1-g2/geometry.py experiments/p507-g1-g2/generate_blender.py
+      - name: Ensure raw photo/export folders were not committed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files -- 'experiments/p507-g1-g2/private/**' 'experiments/p507-g1-g2/out/**' 'apps/web/public/p507-local-preview/**' | grep -q .; then
+            echo "Unapproved P507 private or generated binaries tracked"
+            exit 1
+          fi
+          echo "P507 raw photo/output paths not tracked"
+      - name: Upload provisional geometry report (no private assets)
+        uses: actions/upload-artifact@v4
+        with:
+          name: p507-provisional-geometry-report
+          path: /tmp/p507-g1-report.json
+          retention-days: 7
