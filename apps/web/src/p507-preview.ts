@@ -49,11 +49,13 @@ async function run(element: HTMLCanvasElement) {
   scene.add(sun);
   // Blender glTF exporter does Z-up -> glTF Y-up. Never apply it twice.
   const presets = {
-    overview: { pos: new Vector3(9, 6.6, 4), target: new Vector3(3, 1.2, -4) },
+    overview: { pos: new Vector3(3, 9.2, -4.05), target: new Vector3(3, .05, -4.05) },
     hero: { pos: new Vector3(3.5, 2.1, -3.2), target: new Vector3(1.3, 1.65, -7.75) },
     logo: { pos: new Vector3(3, 2, -6.9), target: new Vector3(3, 1.7, -.08) }
   };
+  let overheadNodes: Object3D[] = [];
   function aim(key: keyof typeof presets) {
+    overheadNodes.forEach(node => { node.visible = key !== "overview"; });
     camera.position.copy(presets[key].pos);
     controls.target.copy(presets[key].target);
     controls.update();
@@ -84,6 +86,10 @@ async function run(element: HTMLCanvasElement) {
     if (mesh.geometry.index) triangleCount += Math.floor(mesh.geometry.index.count / 3);
     else if (mesh.geometry.attributes.position) triangleCount += Math.floor(mesh.geometry.attributes.position.count / 3);
     if (typeof mesh.userData.survey_instance_id === "string") ids.add(mesh.userData.survey_instance_id);
+  });
+  overheadNodes = [];
+  loaded.traverse(node => {
+    if (node.name.startsWith("P507_ARCH_CEILING") || node.name.startsWith("P507_CEILING")) overheadNodes.push(node);
   });
   scene.add(loaded);
   show("GLB PROVISIONAL đã tải: " + meshCount + " meshes, " + triangleCount + " triangles, " + ids.size + " survey IDs. Cần chủ dự án duyệt góc HERO.");
