@@ -2,7 +2,7 @@
 
 ## Cập nhật R4 ngày17/11/2026 — đóng băng asset, chờ nghiệm thu trước thử WebXR
 
-Theo quyết định mới của owner, [R4](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) tách survey6×8.1×3.5m USER_REPORTED khỏi virtual6.9×9.315×3.5m OWNER_APPROVED_VIRTUAL_ADAPTATION.17bàn giữ kích thước,36ID ghế lịch sử/34placed A12B12C10/C09C10UNPLACED. Cửa2cánh OUTWARD, tủ3khoang kính, kệ1.50m sâu.47m, sơnkemvani#F5E6C8.121placed vertex proxies; static/occupied-use report tách riêng, circulation PARTIAL; trụcTây1.08/.93m, centraluse.20/.30m. [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md) READY FOR WEBXR EXPERIMENT sau technical gates/exactHEAD CI trong PRhandoff, không runtime mới. G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; không merge/deploy/G3. R3 bên dưới là lịch sử.
+Theo quyết định mới của owner, [R4](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) tách survey6×8.1×3.5m USER_REPORTED khỏi virtual6.9×9.315×3.5m OWNER_APPROVED_VIRTUAL_ADAPTATION.17bàn giữ kích thước,36ID ghế lịch sử/34placed A12B12C10/C09C10UNPLACED. Cửa2cánh OUTWARD, tủ3khoang kính, kệ1.50m sâu.47m, sơnkemvani#F5E6C8.121placed vertex proxies; static/occupied-use report tách riêng, circulation PARTIAL; trụcTây1.08/.93m, centraluse.20/.15m. [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md) READY FOR WEBXR EXPERIMENT sau technical gates/exactHEAD CI trong PRhandoff, không runtime mới. G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; không merge/deploy/G3. R3 bên dưới là lịch sử.
 
 ---
 

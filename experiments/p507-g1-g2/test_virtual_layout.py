@@ -182,7 +182,7 @@ class VirtualLayoutTests(unittest.TestCase):
         self.assertEqual(u["collision_count"], 0)
         self.assertEqual(u["west_main_route_static_min_m"], 1.08)
         self.assertEqual(u["west_main_route_occupied_min_m"], 0.93)
-        self.assertEqual(u["intercluster_clearance_m"], {"A-B": 0.2, "B-C": 0.3})
+        self.assertEqual(u["intercluster_clearance_m"], {"A-B": 0.2, "B-C": 0.15})
         self.assertEqual(u["status"], "PARTIAL")
 
     def test_proposed_entrance_start_has_nominal_2d_clearance(self):
@@ -206,6 +206,16 @@ class VirtualLayoutTests(unittest.TestCase):
                 self.assertGreaterEqual(
                     math.hypot(x - a[0] - t * dx, y - a[1] - t * dy), radius, p["id"]
                 )
+
+    def test_occupied_chair_cannot_cross_inner_wall(self):
+        d = copy.deepcopy(self.data)
+        c = next(c for c in d["chairs"]["instances"] if c["id"] == "P507-CHAIR-C-01")
+        c["center"][1] = 0.35
+        r = verify(d)
+        self.assertFalse(r["ok"])
+        self.assertTrue(
+            any("occupied-use chair wall" in e.lower() for e in r["errors"])
+        )
 
 
 if __name__ == "__main__":

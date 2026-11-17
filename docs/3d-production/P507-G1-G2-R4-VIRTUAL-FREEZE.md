@@ -23,13 +23,13 @@ BBox `[xmin,ymin,xmax,ymax]`, đơn vị mét.
 | --- | --- | --- |
 | A6,3×2 |[1.35,5.75,5.85,6.95]|[1.80,6.40,6.30,7.60]|
 | B6,lõi4+phảiB05+tráiB06 |[.98,3.15,5.18,4.65]|[1.70,3.45,5.90,4.95]|
-| C5,lõi4+phảiC05 |[1.58,.50,5.18,2.00]|[2.30,.55,5.90,2.05]|
+| C5,lõi4+phảiC05 |[1.58,.50,5.18,2.00]|[2.30,.70,5.90,2.20]|
 
 17 bàn giữ ID/kích thước1.5×.6×.9m; B06 dài1.2m, rộng/cao provisional.36 ID ghế lịch sử giữ nguyên, không khẳng định đã kiểm kê lại phòng thật:
 
 - A01…A06 hàng dưới, A07…A12 hàng trên:6+6. X2.175…5.925, Y6.12/7.88; orientation0°/180° nhìn vào bàn.
 - B01…B04 dưới, B05…B08 trên:4+4, Y3.32/5.08. B09/B10 đầu phải X6.20/Y3.85,4.55,90°. B11/B12 đầu trái X1.40/Y3.85,4.55,270°.
-- C01…C04 dưới, C05…C08 trên:4+4, Y.42/2.18. C11/C12 đầu phải X6.20/Y.95,1.65,90°.
+- C01…C04 dưới, C05…C08 trên:4+4, Y.57/2.33. C11/C12 đầu phải X6.20/Y1.10,1.80,90°.
 - C09/C10:UNPLACED/UNASSIGNED, placement_allocation=null, không center/mesh. Lý do ngoài sơ đồ34 ghế vừa được chủ dự án chốt; historical_cluster vẫn C.
 
 Tổng inventory lịch sử36, bố cục được chốt34, đặt34, chưa bố trí2. Không đổi ID/thu nhỏ ghế hoặc dùng heuristic chia đều quanh bbox. Full-size chair proxy localX±.23/localY−.27…+.23, cao1.02m, giữ từ R3.
@@ -38,13 +38,13 @@ Tổng inventory lịch sử36, bố cục được chốt34, đặt34, chưa b�
 
 | Khoảng | Tĩnh | Proxy sử dụng |
 | --- | ---: | ---: |
-| Mép bàn A–B/B–C |1.45/1.40|Không dùng mép bàn thay lối đi|
-| Envelope ghế A–B/B–C |.50/.60|.20/.30|
+| Mép bàn A–B/B–C |1.45/1.25|Không dùng mép bàn thay lối đi|
+| Envelope ghế A–B/B–C |.50/.45|.20/.15|
 | Trục đi chính phía Tây, min theo lát cắt Y |1.08|.93|
 | Sau ghế phải tới mặt trong tường cửa sổ |.38|.23|
 | Mặt tủ thấp tới tựa ghế A gần nhất |.625|.475|
 
-Proxy sử dụng dịch nguyên envelope ghế lùi0.15m ngược hướng ngồi, không thu nhỏ mesh hoặc envelope. Đây là giả định kỹ thuật có khai báo, không phải chair-pullout đo thực/người/đầu gối.0 collision trong hai trạng thái. Trục Tây dùng mục tiêu thiết kế đề xuất0.80m; kiểm tra lát cắt là bằng chứng hình học có giới hạn, chưa thay kiểm tra đường đi capsule/người dùng. Khoảng giữa cụm và sau ghế phải không coi là through-route. Tiếp cận tủ thấp vẫn hẹp khi kéo ghế, cần thực nghiệm sau; circulation **PARTIAL**, không xác nhận PCCC/an toàn/accessibility. Không triển khai locomotion trong task này.
+Proxy sử dụng dịch nguyên envelope ghế lùi0.15m ngược hướng ngồi, không thu nhỏ mesh hoặc envelope. Đây là giả định kỹ thuật có khai báo, không phải chair-pullout đo thực/người/đầu gối.0 collision trong hai trạng thái, gồm bounds tựa ghế khi kéo lùi; hàng C cách mặt trong tường tối thiểu.10m ở pose sử dụng và không là lối đi. Regression tư thế tĩnh hợp lệ nhưng kéo lùi xuyên tường đã chạy RED trước fix/GREEN sau fix. Trục Tây dùng mục tiêu thiết kế đề xuất0.80m; kiểm tra lát cắt là bằng chứng hình học có giới hạn, chưa thay kiểm tra đường đi capsule/người dùng. Khoảng giữa cụm và sau ghế phải không coi là through-route. Tiếp cận tủ thấp vẫn hẹp khi kéo ghế, cần thực nghiệm sau; circulation **PARTIAL**, không xác nhận PCCC/an toàn/accessibility. Không triển khai locomotion trong task này.
 
 ## 4. Cửa mở ngoài
 
@@ -66,7 +66,7 @@ Giữ TV25° chéo, dispenser90°, cabinet thấp, AI wall, logo placeholder, fr
 
 ## 6. Kiểm thử/evidence và giới hạn
 
-75 unit tests bảo vệ migration/baseline/adaptation,34chairs/36IDs,hai rows A/B/C,ghế trái/phải,không scale đồ,occupied proxy,collision/support,sector/hinge/outward exception có giới hạn, nguồn không giả verified. Regression cũ vẫn bảo vệ. Bộ test mới đã RED trên R3 trước sửa, GREEN sau triển khai.
+76 unit tests bảo vệ migration/baseline/adaptation,34chairs/36IDs,hai rows A/B/C,ghế trái/phải,không scale đồ,occupied proxy,collision/support,sector/hinge/outward exception có giới hạn, nguồn không giả verified. Regression cũ vẫn bảo vệ. Bộ test mới đã RED trên R3 trước sửa, GREEN sau triển khai.
 
 Blender phải xuất thật.blend/GLB, kiểm evaluated vertex của121 placed IDs và10raychecks đèn/AC. Khronos Validator + contract asset-manifest hash/IDs/room/unit/glass. Browser kiểm121IDs thật,34chairbacks từ vertex transform (không chỉ metadata),3pane kính thật, hướng máy nước/TV,room/window bounds,door open/closed,vanilla material,smallTV support,không giấu nội thất.16góc desktop +hero mobile, inventory disclosure/contact sheet. CI40min giữ actual Blender/Chrome pipeline, không dùng run R3 làm finalHEAD evidence.
 

@@ -2,7 +2,7 @@
 
 ## Current R4 — owner-approved virtual experience freeze
 
-Schema3 separates survey baseline6×8.1×3.5 from owner virtual6.9×9.315×3.5m. No object scale1.15.36 historical chair IDs/34 placed A12B12C10/C09C10 unassigned. Outward2leaf door,3clear-glass cabinet bays,1.50m shelf alongY/depth.47m,vanilla#F5E6C8. Read [R4](../../docs/3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) and [asset handoff](../../docs/3d-production/P507-WEBXR-ASSET-HANDOFF.md).75tests;121evaluated placed proxies; occupied-use .15m pullback/circulation PARTIAL.16desktop+mobile hero screenshots include clusterA/B/C and exterior door open/closed; asset-manifest.json carries IDs/transforms/proxies/cameras. READY FOR WEBXR EXPERIMENT is asset freeze only, no runtime or owner visual approval.
+Schema3 separates survey baseline6×8.1×3.5 from owner virtual6.9×9.315×3.5m. No object scale1.15.36 historical chair IDs/34 placed A12B12C10/C09C10 unassigned. Outward2leaf door,3clear-glass cabinet bays,1.50m shelf alongY/depth.47m,vanilla#F5E6C8. Read [R4](../../docs/3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) and [asset handoff](../../docs/3d-production/P507-WEBXR-ASSET-HANDOFF.md).76tests;121evaluated placed proxies; occupied-use .15m pullback/circulation PARTIAL.16desktop+mobile hero screenshots include clusterA/B/C and exterior door open/closed; asset-manifest.json carries IDs/transforms/proxies/cameras. READY FOR WEBXR EXPERIMENT is asset freeze only, no runtime or owner visual approval.
 
 ## Historical R3 runbook (commands remain valid; data/status above supersedes counts)
 

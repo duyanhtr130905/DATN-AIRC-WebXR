@@ -32,7 +32,7 @@ Sàn visual prefix `P507_ARCH_FLOOR`, mặt đi surveyZ0 / glTFY0. Room width6.9
 
 `collision_proxies` gồm121 logical instances đã đặt. Desk proxies bảo thủ bao cả khung, không coi khoảng dưới bàn là lối người đi. Door leaf OUTWARD là ngoại lệ có kiểm soát bên ngoài X<0, có hinge/sweep/angle; không biến thành quyền cho mọi object ra ngoài room. Ngoại cảnh/hành lang ngoài UNKNOWN và chưa được dựng.
 
-`occupied_use`: full chair envelope kéo lùi.15m, không mô phỏng người/chân/tay. West route min static1.08m/use.93m, target đề xuất.80m. Centraluse.20/.30m và sau ghế phải.23m không là through-route; tủ thấp còn.475m khi kéo ghế. Không certified safety/PCCC/accessibility. Task mới phải quyết định locomotion/capsule/navigation policy và xử lý các khoảng này trước nghiệm thu trải nghiệm.
+`occupied_use`: full chair envelope kéo lùi.15m, không mô phỏng người/chân/tay. West route min static1.08m/use.93m, target đề xuất.80m. Centraluse.20/.15m và sau ghế phải.23m không là through-route; tủ thấp còn.475m khi kéo ghế. Không certified safety/PCCC/accessibility. Task mới phải quyết định locomotion/capsule/navigation policy và xử lý các khoảng này trước nghiệm thu trải nghiệm.
 
 ## Vật liệu, ánh sáng và performance
 

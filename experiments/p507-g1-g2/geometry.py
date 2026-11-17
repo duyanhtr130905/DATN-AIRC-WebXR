@@ -587,7 +587,35 @@ def occupied_use_report(data, proxies):
             widths.append(min(v[0] for p in active for v in p["polygon"]) - left)
         return round(min(widths), 3) if widths else None
 
+    w, l = [data["room"][k] for k in ("width_x", "length_y")]
+    occupied_chairs = [p for p in posed if p.get("kind") == "chair"]
+    bounds_errors = [
+        p["id"]
+        for p in occupied_chairs
+        if any(
+            not (
+                0.08 - EPS <= v[0] <= w - 0.05 + EPS
+                and 0.05 - EPS <= v[1] <= l - 0.05 + EPS
+            )
+            for v in p["polygon"]
+        )
+    ]
+    minimum_wall_gap = min(
+        (
+            min(
+                min(v[0] - 0.05, w - 0.05 - v[0], v[1] - 0.05, l - 0.05 - v[1])
+                for v in p["polygon"]
+            )
+            for p in occupied_chairs
+        ),
+        default=None,
+    )
     return {
+        "out_of_room_chairs": bounds_errors,
+        "room_bounds_status": "FAIL" if bounds_errors else "PASS",
+        "minimum_chair_to_inner_wall_m": round(minimum_wall_gap, 3)
+        if minimum_wall_gap is not None
+        else None,
         "chair_pullback_m": pull,
         "basis": data.get("occupied_use", {}).get(
             "basis", "PROPOSED occupied pose, not measured ergonomics"
@@ -1300,6 +1328,11 @@ def verify(data):
             errors.append(
                 "Occupied-use chair collision: " + str(occupied["collisions"])
             )
+    if data.get("layout_revision", 0) >= 4 and occupied["out_of_room_chairs"]:
+        errors.append(
+            "Occupied-use chair wall/bounds collision: "
+            + str(occupied["out_of_room_chairs"])
+        )
     warnings.extend(
         [
             "PROPOSED_LAYOUT only: these checks do not certify aisle width, accessibility or egress.",
