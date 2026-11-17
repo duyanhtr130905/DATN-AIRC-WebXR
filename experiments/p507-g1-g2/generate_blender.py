@@ -114,6 +114,13 @@ def procedural_wood():
     return mat
 
 
+def srgb_hex_to_linear(value):
+    channels = [int(value[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+    return tuple(
+        c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels
+    )
+
+
 def cube(name, center, size, mat, col, bevel=0.0, ident=None):
     bpy.ops.mesh.primitive_cube_add(size=1, location=center)
     o = bpy.context.object
@@ -160,6 +167,16 @@ def room_shell(data, col, mats):
         (w, length, 0.09),
         mats["tile"],
         col,
+    )
+    floor["room_dimensions_survey_axes"] = json.dumps(
+        {k: data["room"][k] for k in ("width_x", "length_y", "height_z")}
+    )
+    floor["survey_baseline"] = json.dumps(data.get("survey_baseline", data["room"]))
+    floor["approved_layout_chair_count"] = data["chairs"].get(
+        "approved_layout_count", data["chairs"]["count"]
+    )
+    floor["virtual_adaptation"] = (
+        data["room"].get("source") == "OWNER_APPROVED_VIRTUAL_ADAPTATION"
     )
     floor["chair_inventory_count"] = data["chairs"]["count"]
     floor["chair_placed_count"] = sum(
@@ -484,6 +501,19 @@ def room_shell(data, col, mats):
                 0.003,
             )
         )
+        # Meeting stile fills the conservative proxy margin at the centre join,
+        # while the hinge-side relief still clears the fixed jamb.
+        join_sign = 1 if leaf["id"].endswith("01") else -1
+        parts.append(
+            cube(
+                "P507_ARCH_DOOR_LEAF_MEETING_STILE",
+                (0, join_sign * (width / 2 + 0.015), 0),
+                (thickness, 0.03, lh),
+                mats["white_metal"],
+                col,
+                0.003,
+            )
+        )
         for yy in (width * 0.36,) if leaf["id"].endswith("01") else (-width * 0.36,):
             parts.append(
                 cube(
@@ -495,7 +525,7 @@ def room_shell(data, col, mats):
                     0.005,
                 )
             )
-        pose_asset(
+        assembly = pose_asset(
             parts,
             leaf,
             col,
@@ -503,6 +533,10 @@ def room_shell(data, col, mats):
             merge=True,
             prefix=leaf["id"].replace("-", "_") + "_ASSEMBLY",
         )
+        if leaf.get("swing") == "OUTWARD":
+            assembly["hinge_survey"] = leaf["hinge_survey"]
+            assembly["demo_open_angle_deg"] = leaf["orientation_deg"]
+            assembly["door_swing"] = "OUTWARD"
 
 
 def combine(objects, name, col, ident=None):
@@ -810,61 +844,71 @@ def utility_assets(data, col, mats):
             parts.append(obj)
 
         if kind == "file_cabinet":
+            # PHOTO-04 shows three vertical glazed bays. Three readable compartments,
+            # no private paperwork; opaque front plates must not occlude the glass.
             box(
-                "STEEL_CARCASS",
-                (0, 0, h / 2),
-                (w - 0.02, d - 0.02, h),
+                "REAR_PANEL",
+                (0, d / 2 - 0.012, h / 2),
+                (w - 0.02, 0.024, h),
                 "utility_steel",
-                0.012,
             )
-            box(
-                "DARK_INTERIOR",
-                (0, -d / 2 + 0.025, h * 0.69),
-                (w - 0.055, 0.018, h * 0.53),
-                "screen_frame",
-            )
-            for xx in (-w / 4, w / 4):
-                # Separate upper glazed and lower opaque leaves with actual borders.
-                for zz, hh in ((h * 0.215, h * 0.40), (h * 0.70, h * 0.55)):
+            for xx in (-w / 2 + 0.016, w / 2 - 0.016):
+                box("SIDE_WALL", (xx, 0, h / 2), (0.032, d, h), "utility_steel")
+            for zz in (0.035, h - 0.025):
+                box("TOP_OR_PLINTH", (0, 0, zz), (w - 0.03, d, 0.05), "utility_steel")
+            bay = (w - 0.05) / 3
+            for i in range(4):
+                xx = -1.5 * bay + i * bay
+                box(
+                    "BAY_DIVIDER_" + str(i),
+                    (xx, 0, h / 2),
+                    (0.022, d - 0.025, h - 0.09),
+                    "utility_steel",
+                )
+            for i in range(3):
+                xx = (i - 1) * bay
+                for zz in (0.075, h - 0.075):
                     box(
-                        "DOOR_BORDER",
-                        (xx, -d / 2 + 0.012, zz),
-                        (w / 2 - 0.014, 0.021, hh),
+                        "GLASS_FRAME_RAIL_" + str(i),
+                        (xx, -d / 2 + 0.008, zz),
+                        (bay - 0.025, 0.022, 0.035),
                         "utility_steel",
                     )
-                    if zz > h * 0.5:
-                        box(
-                            "GLAZED_UPPER_LEAF",
-                            (xx, -d / 2 - 0.001, zz),
-                            (w / 2 - 0.08, 0.005, hh - 0.075),
-                            "smoked_glass",
-                            0.002,
-                        )
+                for edge in (-1, 1):
+                    box(
+                        "GLASS_FRAME_STILE_" + str(i),
+                        (xx + edge * (bay / 2 - 0.021), -d / 2 + 0.008, h / 2),
+                        (0.025, 0.022, h - 0.15),
+                        "utility_steel",
+                    )
                 box(
-                    "PULL",
-                    (xx + (-1 if xx > 0 else 1) * w * 0.18, -d / 2 + 0.001, h * 0.51),
-                    (0.013, 0.017, 0.12),
+                    "CLEAR_GLASS_BAY_" + str(i + 1),
+                    (xx, -d / 2 + 0.001, h / 2),
+                    (bay - 0.07, 0.006, h - 0.19),
+                    "clear_glass",
+                    0.001,
+                )
+                box(
+                    "BAY_HANDLE_" + str(i),
+                    (xx + bay * 0.32, -d / 2 + 0.002, h * 0.48),
+                    (0.012, 0.012, 0.13),
                     "chrome",
-                    0.004,
+                    0.003,
                 )
-            for zz in (0.47, 0.77, 1.08, 1.4):
-                if zz < h - 0.1:
-                    box(
-                        "INNER_SHELF",
-                        (0, 0.015, zz),
-                        (w - 0.085, d - 0.09, 0.025),
-                        "utility_steel",
-                        0.002,
-                    )
-            # Anonymous books provide depth, no actual paperwork or readable content.
-            for i in range(7):
                 box(
-                    "NEUTRAL_BINDER",
-                    (-w * 0.34 + i * w * 0.085, -0.02, h * 0.61),
-                    (0.04, d * 0.45, h * 0.17),
-                    "abstract" + str(i % 3),
-                    0.002,
+                    "COMPARTMENT_BASE_" + str(i),
+                    (xx, 0.01, 0.10),
+                    (bay - 0.03, d - 0.065, 0.025),
+                    "utility_steel",
                 )
+                for j in range(3):
+                    box(
+                        "NEUTRAL_BINDER_BAY_" + str(i),
+                        (xx - 0.07 + j * 0.055, 0.015, 0.25 + j * 0.015),
+                        (0.037, d * 0.40, 0.27),
+                        "abstract" + str((i + j) % 3),
+                        0.003,
+                    )
         elif kind == "fridge":
             box(
                 "BODY",
@@ -1117,7 +1161,27 @@ def utility_assets(data, col, mats):
                         parts.append(card)
         else:
             box("PROVISIONAL_BODY", (0, 0, h / 2), (w, d, h), "cabinet", 0.008)
-        pose_asset(parts, item, col, (cx, cy, 0), angle)
+        if kind == "file_cabinet":
+            panes = [o for o in parts if "CLEAR_GLASS_BAY" in o.name]
+            frame = combine(
+                [o for o in parts if o not in panes],
+                item["id"] + "_FRAME",
+                col,
+                item["id"],
+            )
+            for i, pane in enumerate(panes):
+                pane["file_cabinet_bay"] = i + 1
+            result = pose_asset(
+                [frame] + panes, item, col, (cx, cy, 0), angle, merge=False
+            )
+        else:
+            result = pose_asset(parts, item, col, (cx, cy, 0), angle)
+        if kind == "file_cabinet":
+            result["compartment_count"] = 3
+            result["front_material"] = "clear_glass"
+        if kind == "storage_shelf":
+            result["front_width_m"] = w
+            result["depth_m"] = d
 
 
 def ceiling_items(data, col, mats):
@@ -1454,7 +1518,12 @@ def hero_assets(data, col, mats):
         parts,
         tv,
         col,
-        tuple(tv.get("center", [tv["center_x"], 7.59, tv["center_z"]])),
+        tuple(
+            tv.get(
+                "center",
+                [tv["center_x"], data["room"]["length_y"] - 0.51, tv["center_z"]],
+            )
+        ),
         merge=False,
     )
     # A real attachment to north-wall anchor, declared separately in inventory/proxies.
@@ -1466,7 +1535,7 @@ def hero_assets(data, col, mats):
         parts = [
             cube(
                 "P507_HERO_TV_WALL_ANCHOR",
-                (mx, 8.02, mz),
+                (mx, data["room"]["length_y"] - 0.08, mz),
                 (x1 - x0, 0.055, mount["height"]),
                 mats["utility_steel"],
                 col,
@@ -1477,8 +1546,8 @@ def hero_assets(data, col, mats):
             parts.append(
                 tube(
                     "P507_HERO_TV_ARTICULATED_BRACKET",
-                    (mx, 7.956, mz + dz),
-                    (mx, 8.02, mz + dz),
+                    (mx, data["room"]["length_y"] - 0.144, mz + dz),
+                    (mx, data["room"]["length_y"] - 0.08, mz + dz),
                     0.011,
                     mats["utility_steel"],
                     col,
@@ -1717,8 +1786,8 @@ def hero_assets(data, col, mats):
     pose_asset(parts, water, col, (px, py, 0), merge=False)
     cube(
         "P507_HERO_NORTH_SKIRTING",
-        (3, 8.025, 0.055),
-        (6, 0.026, 0.11),
+        (data["room"]["width_x"] / 2, data["room"]["length_y"] - 0.075, 0.055),
+        (data["room"]["width_x"], 0.026, 0.11),
         mats["white_metal"],
         col,
         0.005,
@@ -1816,7 +1885,7 @@ def photo_wall_assets(data, col, mats):
 
 def camera_and_lights(data, camera_col):
     length = data["room"]["length_y"]
-    bpy.ops.object.camera_add(location=(1.1, 5.15, 1.65))
+    bpy.ops.object.camera_add(location=(1.1, length - 2.95, 1.65))
     cam = bpy.context.object
     cam.name = "CAM_TV_ART_APPROX"
     move_to_collection(cam, camera_col)
@@ -1829,7 +1898,12 @@ def camera_and_lights(data, camera_col):
     bpy.context.scene.camera = cam
     # Blender lookdev lights are not exported as runtime GLB lights.
     for name, center, power, color in [
-        ("LOOKDEV_WINDOW_DAYLIGHT", (5.9, 4.2, 2.4), 550, (0.78, 0.88, 1)),
+        (
+            "LOOKDEV_WINDOW_DAYLIGHT",
+            (data["room"]["width_x"] - 0.1, length * 0.52, 2.4),
+            550,
+            (0.78, 0.88, 1),
+        ),
         ("LOOKDEV_LED_FILL", (2.5, 5.1, 3.2), 350, (1, 0.96, 0.86)),
     ]:
         lamp = bpy.data.lights.new(name, "AREA")
@@ -1935,6 +2009,36 @@ def validate_authored_bounds(data, collections):
     return measured, checks, poses
 
 
+def validate_structural_room_bounds(data, collections):
+    w, l, h = [data["room"][k] for k in ("width_x", "length_y", "height_z")]
+    checks = {}
+    for col in collections:
+        for obj in col.objects:
+            if obj.type != "MESH" or obj.get("survey_instance_id"):
+                continue
+            frame = obj.name.startswith(
+                ("P507_ARCH_DOOR_FRAME", "P507_ARCH_DOOR_REVEAL")
+            )
+            xmin = -0.181 if frame else -0.051
+            from mathutils import Vector
+
+            vertices = [obj.matrix_world @ Vector(v) for v in obj.bound_box]
+            if any(
+                not (
+                    xmin <= v.x <= w + 0.051
+                    and -0.051 <= v.y <= l + 0.051
+                    and -0.091 <= v.z <= h + 0.051
+                )
+                for v in vertices
+            ):
+                raise RuntimeError(
+                    "Structural mesh exceeds room envelope (only declared west door frames allow reveal depth): "
+                    + obj.name
+                )
+            checks[obj.name] = "PASS"
+    return checks
+
+
 def validate_ceiling_surface_visibility(data, mats):
     """Ray-test the real undersides that were previously occluded by their casings.
 
@@ -1990,6 +2094,100 @@ def validate_ceiling_surface_visibility(data, mats):
     return checks
 
 
+def write_asset_manifest(data, report, output_dir):
+    import hashlib
+    import struct
+
+    from geometry import occupancy, survey_to_three
+
+    blob = (output_dir / "P507_G1_G2_PROVISIONAL.glb").read_bytes()
+    doc = json.loads(blob[20 : 20 + struct.unpack_from("<I", blob, 12)[0]])
+    records = (
+        data["objects"]
+        + data["chairs"]["instances"]
+        + list(data["hero"].values())
+        + data["ceiling"]["instances"]
+        + data["photo_wall"]["frames"]
+        + data["openings"]["door"]["leaves"]
+        + [i for w in data["openings"]["windows"] for i in (w, w["blind"])]
+    )
+    instances = []
+    for item in records:
+        instances.append(
+            {
+                "id": item["id"],
+                "status": item.get("status", "PLACED_PROVISIONAL"),
+                "placement_allocation": item.get("placement_allocation"),
+                "survey_transform": {
+                    k: item[k]
+                    for k in (
+                        "center",
+                        "rect",
+                        "orientation_deg",
+                        "size",
+                        "height",
+                        "support_id",
+                        "source_kind",
+                        "position_source",
+                    )
+                    if k in item
+                },
+                "authored_bounds_survey": report["authored_bounds"].get(item["id"]),
+                "mesh_binding": "glTF node extras.survey_instance_id",
+            }
+        )
+    manifest = {
+        "schema_version": 1,
+        "state": "READY_FOR_WEBXR_EXPERIMENT",
+        "scope": "ASSET_HANDOFF_ONLY; no runtime, headset/session/camera activation",
+        "source_sha": report["source_sha"],
+        "checkout_sha": report["checkout_sha"],
+        "model": "P507_G1_G2_PROVISIONAL.glb",
+        "model_sha256": hashlib.sha256(blob).hexdigest(),
+        "model_bytes": len(blob),
+        "unit": "metre",
+        "axis_conversion": "Blender survey (x,y,z) -> glTF/Three (x,z,-y), export once; do not rotate loaded model again",
+        "survey_baseline": data.get("survey_baseline", data["room"]),
+        "virtual_dimensions": data["room"],
+        "historical_chair_inventory": 36,
+        "approved_chair_allocation": data["chairs"].get("approved_layout_count"),
+        "starting_pose": {
+            "status": "PROPOSED",
+            "feet_survey": data["handoff"]["starting_feet_survey"],
+            "feet_gltf": survey_to_three(data["handoff"]["starting_feet_survey"]),
+            "eye_height_m": data["handoff"]["eye_height_m"],
+            "view_direction_survey": data["handoff"]["view_direction_survey"],
+            "yaw_three_radians": -math.pi / 2,
+        },
+        "floor": {
+            "visual_mesh_prefix": "P507_ARCH_FLOOR",
+            "surface_z_survey": 0,
+            "walkable_rect_survey": [
+                0.05,
+                0.05,
+                data["room"]["width_x"] - 0.05,
+                data["room"]["length_y"] - 0.05,
+            ],
+        },
+        "collision_proxies": occupancy(data),
+        "occupied_use": report["occupied_use"],
+        "instances": instances,
+        "materials": doc.get("materials", []),
+        "images": doc.get("images", []),
+        "glTF_mesh_definitions": len(doc.get("meshes", [])),
+        "privacy": "Only original neutral procedural textures; no private AIRC images/logo/artwork",
+        "limitations": [
+            "Not survey 1:1; owner-approved horizontal +15% virtual adaptation",
+            "Central chair gaps and east chair backs are not through-routes",
+            "WebXR runtime and real-device performance NOT RUN",
+            "Visual quality remains pending owner approval",
+        ],
+    }
+    (output_dir / "asset-manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+
 def main():
     args = parse_args()
     data = read_inventory(args.inventory)
@@ -2008,7 +2206,13 @@ def main():
     scene.unit_settings.system = "METRIC"
     scene.unit_settings.scale_length = 1
     mats = {
-        "paint": material("P507_PBR_CREAM_PAINT", (0.74, 0.71, 0.64), 0.92),
+        "paint": material(
+            "P507_PBR_CREAM_PAINT",
+            srgb_hex_to_linear(
+                data.get("appearance", {}).get("wall_base_color_srgb", "#DFDBD1")
+            ),
+            0.92,
+        ),
         "tile": material("P507_PBR_WARM_TILE", (0.80, 0.80, 0.75), 0.31),
         "ceiling": material("P507_PBR_CEILING", (0.85, 0.85, 0.82), 0.93),
         "metal": material("P507_PBR_DARK_METAL", (0.18, 0.20, 0.22), 0.43, 0.86),
@@ -2075,6 +2279,16 @@ def main():
             ),
         }
     )
+    mats["clear_glass"] = material(
+        "P507_PBR_FILE_CABINET_CLEAR_GLASS", (0.78, 0.87, 0.89), 0.14, 0
+    )
+    clear = mats["clear_glass"].node_tree.nodes.get("Principled BSDF")
+    clear.inputs["Alpha"].default_value = 0.18
+    clear.inputs["IOR"].default_value = 1.45
+    if hasattr(mats["clear_glass"], "surface_render_method"):
+        mats["clear_glass"].surface_render_method = "DITHERED"
+    else:
+        mats["clear_glass"].blend_method = "BLEND"
     for i, mat in enumerate(mats["abstract"]):
         mats["abstract" + str(i)] = mat
     mats["chair"].node_tree.nodes.get("Principled BSDF").inputs[
@@ -2112,6 +2326,16 @@ def main():
     bottle.inputs["IOR"].default_value = 1.46
     room_shell(data, arch, mats)
     floor = bpy.data.objects.get("P507_ARCH_FLOOR")
+    floor["room_dimensions_survey_axes"] = json.dumps(
+        {k: data["room"][k] for k in ("width_x", "length_y", "height_z")}
+    )
+    floor["survey_baseline"] = json.dumps(data.get("survey_baseline", data["room"]))
+    floor["approved_layout_chair_count"] = data["chairs"].get(
+        "approved_layout_count", data["chairs"]["count"]
+    )
+    floor["virtual_adaptation"] = (
+        data["room"].get("source") == "OWNER_APPROVED_VIRTUAL_ADAPTATION"
+    )
     floor["chair_inventory_count"] = data["chairs"]["count"]
     floor["chair_placed_count"] = sum(
         c["status"] == "PLACED_PROVISIONAL" for c in data["chairs"]["instances"]
@@ -2139,6 +2363,9 @@ def main():
     scene.render.resolution_percentage = 100
     scene.world.color = (0.18, 0.18, 0.18)
     authored_bounds, authored_proxy_checks, authored_poses = validate_authored_bounds(
+        data, (arch, furniture, equipment, ceiling)
+    )
+    structural_bounds_checks = validate_structural_room_bounds(
         data, (arch, furniture, equipment, ceiling)
     )
     ceiling_surface_checks = validate_ceiling_surface_visibility(data, mats)
@@ -2197,6 +2424,7 @@ def main():
         "blender_version": bpy.app.version_string,
         "export_objects": export_count,
         "ceiling_surface_checks": ceiling_surface_checks,
+        "structural_bounds_checks": structural_bounds_checks,
         "authored_bounds": authored_bounds,
         "authored_proxy_checks": authored_proxy_checks,
         "authored_poses": authored_poses,
@@ -2211,6 +2439,7 @@ def main():
         "blend_path": str(blend_path),
         "notice": "PROVISIONAL dev only. Not AIRC-verified, not licensed real assets; no photos included.",
     }
+    write_asset_manifest(data, out, args.output_dir)
     (args.output_dir / "report.json").write_text(
         json.dumps(out, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
