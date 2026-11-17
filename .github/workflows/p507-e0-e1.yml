@@ -1,0 +1,79 @@
+name: P507 E0 E1 isolated experiment
+on:
+  pull_request:
+    paths:
+      - 'experiments/p507-webxr/**'
+      - 'apps/web/src/p507-e1/**'
+      - 'apps/web/src/p507-webxr-e1.ts'
+      - 'apps/web/p507-webxr-e1.html'
+      - 'apps/web/p507-e1-server.ts'
+      - 'apps/web/vite.config.ts'
+      - 'apps/web/tests/p507-e1.test.ts'
+      - '.github/workflows/p507-e0-e1.yml'
+      - 'docs/3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  logic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s experiments/p507-g1-g2 -p 'test_*.py' -v
+      - run: python -m unittest discover -s experiments/p507-webxr -p 'test_*.py' -v
+      - run: npm ci --ignore-scripts --no-fund --prefix apps/web
+      - run: npm run build --prefix apps/web
+      - run: npm test --prefix apps/web
+      - run: python tools/verify_repository.py
+      - run: git diff --check
+  frozen-asset-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CHROME_BIN: /usr/bin/google-chrome
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download and validate exact pinned R4 bundle (expiry blocks, never substitutes)
+        run: |
+          python experiments/p507-webxr/prepare_asset.py --download
+          python experiments/p507-webxr/validate_asset.py --prepare
+      - run: npm ci --ignore-scripts --no-fund --prefix apps/web
+      - run: node --experimental-strip-types experiments/p507-webxr/navigation-check.mjs
+      - name: E0 vertex and transform diagnostics (does not unlock E1)
+        continue-on-error: true
+        run: node experiments/p507-webxr/e0-inspect.mjs
+      - name: Actual Chrome E0 gate then E1 smoke (known TV bounds mismatch must remain red)
+        run: node experiments/p507-webxr/browser.mjs
+      - name: Upload neutral diagnostics and raw samples, no private profiles or survey photos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p507-e0-e1-neutral-evidence
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            .local/p507-e0-e1/*report*.json
+            .local/p507-e0-e1/download-provenance.json
+            .local/p507-e0-e1/*.png

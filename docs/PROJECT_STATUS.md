@@ -1,5 +1,17 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## E0/E1 experiment — 17/11/2026, IN REVIEW / BLOCKED BY E0
+
+Task owner đã duyệt E0 + desktop E1 ngày 17/11/2026; quyền này thay snapshot “chưa giao WebXR experiment” bên dưới, không phê duyệt roadmap/E2/E3/G3. Branch `feat/p507-webxr-e0-e1-experiment` từ PR #14 HEAD `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`, Draft PR mới base `feat/p507-g1-g2-blockout-hero`; không sửa PR #13/#14 hoặc production.
+
+**E0_FAIL:** artifact run44038653564/id14309207795 còn hạn, GLB10751036bytes/hash `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`, bundle/source/checkout/123records/121IDs/metres/axes/floor/windows/door đều kiểm được. Actual exported TV bounds khác manifest authored bounds tối đa8.3055mm; original browser report cũng có sai lệch. Zero oriented-proxy vertex violations ở1mm; không sửa R4 hoặc nới kiểm tra bounds3mm để PASS. Cần ChatGPT/owner nghiệm thu ý nghĩa authored-vs-exported bounds hoặc task sửa handoff riêng.
+
+**E1 PARTIAL source / BLOCKED_BY_E0 runtime:** standalone DEV page, WASD/pointerlock lifecycle, conservative swept collision, selection và instrumentation đã viết. Pure logic xác minh tuyến ngắn Tây tới survey[.95,5.2,0], chặn tiếp vềB/khe hẹp/cửa ngoài; không walkthrough browser hoặc FPS PASS. Actual Chrome dừng ởE0 trước renderer E1. Frontend/unit/build và76Python regression PASS; exact finalHEAD/CI/artifact được bàn giao trong Draft PR. CI browser gate phải giữ đỏ khi finding còn mở.
+
+Xem [báo cáo kỹ thuật E0/E1](3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md) và [runbook](../experiments/p507-webxr/README.md). R4 không đổi, G1_CIRCULATION PARTIAL, G2_VISUAL PENDING, GPUthật/Galaxy/VR72 NOT TESTED. Dừng Draft PR, chờ ChatGPT/chủ dự án nghiệm thu; không merge/deploy/E2/E3.
+
+---
+
 ## Bàn giao sang phiên chat mới — nghiệm thu kỹ thuật P507 R4 ngày 17/11/2026 (snapshot)
 
 **Mục đích:** duy trì tiến độ qua các cuộc trò chuyện. Đây là snapshot nghiệm thu **trên bản asset commit**, không phải trạng thái GitHub tự cập nhật; phiên mới **phải fetch GitHub live** theo [AGENTS](../AGENTS.md), sau đó mới báo/triển khai.
