@@ -45,6 +45,8 @@ jobs:
             exit 1
           fi
           echo "P507 raw photo/output paths not tracked"
+      - name: Repository links and limited secret scan
+        run: python tools/verify_repository.py
       - name: Upload provisional geometry report (no private assets)
         uses: actions/upload-artifact@v4
         with:
@@ -110,6 +112,19 @@ jobs:
           cp .local/p507-g1-g2/P507_G1_G2_PROVISIONAL.glb apps/web/public/p507-local-preview/
       - name: Real Chrome WebGL preview screenshots and frame evidence
         run: node experiments/p507-g1-g2/browser_preview.mjs
+      - name: Verify frozen asset handoff includes real captured camera presets
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('.local/p507-g1-g2')
+          m=json.loads((p/'asset-manifest.json').read_text())
+          b=json.loads((p/'browser-report.json').read_text())
+          assert m['model_sha256']==b['glbSha256']
+          assert len(m['preview_camera_presets'])==17
+          assert {c['shot'] for c in m['preview_camera_presets']} >= {'cluster_A','cluster_B','cluster_C','door_closed','door_outward','shelf','vanilla_wall'}
+          assert m['state']=='READY_FOR_WEBXR_EXPERIMENT'
+          print('Frozen asset/collision/camera handoff verified; no XR runtime started')
+          PY
       - name: Upload generated, synthetic-neutral artifacts only
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -1,5 +1,11 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## Cập nhật R4 ngày17/11/2026 — đóng băng asset, chờ nghiệm thu trước thử WebXR
+
+Theo quyết định mới của owner, [R4](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) tách survey6×8.1×3.5m USER_REPORTED khỏi virtual6.9×9.315×3.5m OWNER_APPROVED_VIRTUAL_ADAPTATION.17bàn giữ kích thước,36ID ghế lịch sử/34placed A12B12C10/C09C10UNPLACED. Cửa2cánh OUTWARD, tủ3khoang kính, kệ1.50m sâu.47m, sơnkemvani#F5E6C8.121placed vertex proxies; static/occupied-use report tách riêng, circulation PARTIAL; trụcTây1.08/.93m, centraluse.20/.30m. [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md) READY FOR WEBXR EXPERIMENT sau technical gates/exactHEAD CI trong PRhandoff, không runtime mới. G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; không merge/deploy/G3. R3 bên dưới là lịch sử.
+
+---
+
 ## Cập nhật ngày 17/11/2026 — R3 tổng hợp G1/G2, chờ review
 
 Tiếp tục Draft PR #14/base G0, không merge/deploy/G3. Đã mở13 ảnh thực và3 sơ đồ local; không công bố nguồn. [Báo cáo R3](3d-production/P507-G1-G2-COMPREHENSIVE-REVIEW.md) và [đối chiếu nguồn](3d-production/P507-G1-G2-SURVEY-COMPARISON.md) thay trạng thái hiện hành của snapshot cũ bên dưới.17 bàn/36 ID ghế,24 đặt/12 UNPLACED; B/C dịch+X, TV chéo25°, máy nước xoay90°, AI wall27 frame, utility đầy đủ, trần8đèn/4quạt/2AC/projector/camera và4rèm.111 instance đã đặt có vertex proof,56unit tests; circulation PARTIAL (.26m sát tường phải/.53m chỗ kệ giày), usable walkway UNKNOWN. PHOTO_MATCH PARTIAL định tính, survey PROVISIONAL; G2_VISUAL PENDING OWNER APPROVAL, thiết bị thật NOT RUN. Final exact-HEAD CI/artifacts được ghi trong PR handoff sau khi chạy; không lấy green775 làm chứng cứ R3. Dừng sau bàn giao.

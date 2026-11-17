@@ -1,7 +1,7 @@
 /** Development-only P507 review. No production scene or automatic XR access. */
 import {
   ACESFilmicToneMapping, AmbientLight, Box3, Color, DirectionalLight, HemisphereLight,
-  Material, Mesh, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, PMREMGenerator,
+  Material, Matrix4, Mesh, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, PMREMGenerator,
   RectAreaLight, Scene, SRGBColorSpace, Texture, Vector3, WebGLRenderer
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -47,7 +47,7 @@ async function run(element: HTMLCanvasElement) {
   scene.add(new HemisphereLight(0xe4efff, 0xc1b7a2, .34));
   const sun = new DirectionalLight(0xfff4e3, 2);
   // Source is just inside east glazing; window placeholders cannot block daylight.
-  sun.position.set(5.7, 3.1, -4.4);
+  sun.position.set(6.6, 3.1, -5);
   sun.target.position.set(1.4, .1, -6.1);
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024);
@@ -60,9 +60,9 @@ async function run(element: HTMLCanvasElement) {
   RectAreaLightUniformsLib.init();
   // Eight modelled panel diffusers remain in the GLB. Two broad area strips
   // approximate their aggregate indirect fill; this is realtime lookdev, not GI simulation.
-  for (const x of [1.25, 4.75]) {
+  for (const x of [1.4375, 5.4625]) {
     const panelFill = new RectAreaLight(0xfff2dc, .95, .65, 6.5);
-    panelFill.position.set(x, 3.40, -4.05); panelFill.lookAt(x, 0, -4.05);
+    panelFill.position.set(x, 3.40, -4.6575); panelFill.lookAt(x, 0, -4.6575);
     scene.add(panelFill);
   }
   const camera = new PerspectiveCamera(58, window.innerWidth / window.innerHeight, .04, 60);
@@ -72,21 +72,33 @@ async function run(element: HTMLCanvasElement) {
   controls.maxPolarAngle = Math.PI * .98;
   // Survey XYZ -> glTF (x,z,-y); exporter already performs this conversion.
   const presets = {
-    hero: { pos: [2.90, 1.65, -5.65], target: [1.45, 1.60, -7.65], fov: 78, cutaway: false, source: "PHOTO-13", confidence: "ESTIMATED, not calibrated" },
-    tv_corner: { pos: [2.60, 1.65, -6.15], target: [1.20, 1.65, -7.65], fov: 78, cutaway: false, source: "PHOTO-01/13", confidence: "ESTIMATED, not calibrated" },
-    entry: { pos: [.76, 1.72, -6.95], target: [3.55, .95, -3.2], fov: 84, cutaway: false, source: "SKETCH-FLOOR/PHOTO-12", confidence: "Geometric review camera" },
+    cluster_A: {pos:[4.05,4.8,-7],target:[4.05,.25,-7.001],fov:50,cutaway:true,source:"OWNER_34_LAYOUT",confidence:"Geometric review camera"},
+    cluster_B: {pos:[3.65,4.8,-4.2],target:[3.65,.25,-4.201],fov:50,cutaway:true,source:"OWNER_34_LAYOUT",confidence:"Geometric review camera"},
+    cluster_C: {pos:[4.1,4.8,-1.3],target:[4.1,.25,-1.301],fov:50,cutaway:true,source:"OWNER_34_LAYOUT",confidence:"Geometric review camera"},
+    door_outward: {pos:[-2.5,1.65,-7.415],target:[.1,1.3,-7.415],fov:78,cutaway:false,source:"OWNER_OUTWARD",confidence:"Exterior demonstration; outside corridor UNKNOWN"},
+    door_closed: {pos:[-2.5,1.65,-7.415],target:[.1,1.3,-7.415],fov:78,cutaway:false,source:"OWNER_OUTWARD",confidence:"Same GLB leaves closed about exported hinges for inspection"},
+    shelf: {pos:[2.1,1.65,-2.8],target:[.3,1.05,-2.8],fov:76,cutaway:false,source:"PHOTO-04/OWNER",confidence:"Proposed1.50m shelf, not measured"},
+    vanilla_wall: {pos:[4,1.65,-6.9],target:[3.8,2.2,-9.245],fov:75,cutaway:false,source:"PHOTO-04/05/OWNER",confidence:"Relative vanilla tone; no calibrated color claim"},
+    hero: { pos: [2.90, 1.65, -6.865], target: [1.45, 1.60, -8.865], fov: 78, cutaway: false, source: "PHOTO-13", confidence: "ESTIMATED, not calibrated" },
+    tv_corner: { pos: [2.60, 1.65, -7.365], target: [1.20, 1.65, -8.865], fov: 78, cutaway: false, source: "PHOTO-01/13", confidence: "ESTIMATED, not calibrated" },
+    entry: { pos: [.76, 1.72, -8.165], target: [3.55, .95, -3.2], fov: 84, cutaway: false, source: "SKETCH-FLOOR/PHOTO-12", confidence: "Geometric review camera" },
     wide: { pos: [.72, 1.68, -4.7], target: [3.15, 1.05, -7.45], fov: 74, cutaway: false, source: "PHOTO-06", confidence: "ESTIMATED" },
-    overview: { pos: [3, 10.7, -4.05], target: [3, 0, -4.051], fov: 52, cutaway: true, source: "SKETCH-FLOOR", confidence: "Geometric review camera" },
-    clusters: { pos: [7.9, 7.3, -4.2], target: [3, .35, -2.8], fov: 53, cutaway: true, source: "SKETCH-FLOOR/PHOTO-07", confidence: "Architectural cutaway" },
-    photo_wall: { pos: [3.70, 1.65, -5.35], target: [3.70, 2.35, -8.03], fov: 61, cutaway: false, source: "PHOTO-09", confidence: "ESTIMATED, not calibrated" },
-    utility: { pos: [3.50, 2.25, -2.65], target: [.30, 1.15, -2.65], fov: 76, cutaway: false, source: "PHOTO-04/05/11", confidence: "Elevated review camera, not source pose" },
-    ceiling: { pos: [3, 1.65, -4.05], target: [3, 3.50, -4.051], fov: 135, cutaway: false, source: "PHOTO-12/CEILING-DIGITAL", confidence: "Wide upward inspection, not source pose" },
-    windows: { pos: [1.10, 1.70, -4.05], target: [5.96, 1.95, -4.05], fov: 74, cutaway: false, source: "PHOTO-03/12", confidence: "ESTIMATED, not calibrated" },
-    logo: { pos: [3, 1.65, -3.50], target: [3, 1.90, -.08], fov: 70, cutaway: false, source: "PHOTO-10", confidence: "Neutral brand placeholder only" }
+    overview: { pos: [3.45, 12.5, -4.6575], target: [3.45, 0, -4.6585], fov: 52, cutaway: true, source: "SKETCH-FLOOR", confidence: "Geometric review camera" },
+    clusters: { pos: [8.9, 9, -4.7], target: [3.45, .35, -4.5], fov: 53, cutaway: true, source: "SKETCH-FLOOR/PHOTO-07", confidence: "Architectural cutaway" },
+    photo_wall: { pos: [4.15, 1.65, -6.565], target: [4.15, 2.35, -9.245], fov: 61, cutaway: false, source: "PHOTO-09", confidence: "ESTIMATED, not calibrated" },
+    utility: { pos: [3.50, 2.0, -2.9], target: [.30, 1.15, -2.9], fov: 76, cutaway: false, source: "PHOTO-04/05/11", confidence: "Elevated review camera, not source pose" },
+    ceiling: { pos: [3.45, 1.65, -4.6575], target: [3.45, 3.50, -4.6585], fov: 135, cutaway: false, source: "PHOTO-12/CEILING-DIGITAL", confidence: "Wide upward inspection, not source pose" },
+    windows: { pos: [1.10, 1.70, -4.05], target: [6.86, 1.95, -4.6575], fov: 74, cutaway: false, source: "PHOTO-03/12", confidence: "ESTIMATED, not calibrated" },
+    logo: { pos: [3.45, 1.65, -3.50], target: [3.45, 1.90, -.08], fov: 70, cutaway: false, source: "PHOTO-10", confidence: "Neutral brand placeholder only" }
   };
   type Preset = keyof typeof presets;
   let current: Preset = "hero";
   const overheadNodes: Object3D[] = [], eastWalls: Object3D[] = [];
+  const doorRoots: {node:Object3D; open:Matrix4; closed:Matrix4}[] = [];
+  function setDoorPose(closed:boolean) {
+    for (const leaf of doorRoots) (closed ? leaf.closed : leaf.open).decompose(leaf.node.position,leaf.node.quaternion,leaf.node.scale);
+    scene.updateMatrixWorld(true);
+  }
   const frameTimes: number[] = [];
   let paused = false;
   let prior: number | null = null;
@@ -96,13 +108,14 @@ async function run(element: HTMLCanvasElement) {
     paused = false; prior = null;
     gl.shadowMap.needsUpdate = true;
     const preset = presets[current];
+    setDoorPose(current === "door_closed");
     overheadNodes.forEach(node => { node.visible = !preset.cutaway; });
     // Explicit architectural cutaway only. All furniture stays visible in every shot.
-    eastWalls.forEach(node => { node.visible = current !== "clusters"; });
+    eastWalls.forEach(node => { node.visible = !(current === "clusters" || current.startsWith("cluster_")); });
     camera.position.fromArray(preset.pos); controls.target.fromArray(preset.target);
     camera.fov = current === "hero" && camera.aspect < .8 ? 94 : preset.fov;
     if (current === "hero" && camera.aspect < .8) {
-      camera.position.set(1.35, 1.62, -4.35); controls.target.set(1.35, 1.45, -7.70);
+      camera.position.set(1.35, 1.62, -5.565); controls.target.set(1.35, 1.45, -8.915);
     }
     if (current === "overview") camera.position.y = Math.max(camera.position.y, 3.35 / (Math.tan(camera.fov * Math.PI / 360) * camera.aspect)); camera.updateProjectionMatrix(); controls.update();
     frameTimes.length = 0;
@@ -126,10 +139,18 @@ async function run(element: HTMLCanvasElement) {
   const componentBounds: Record<string, number[]> = {};
   const assetMetadata: Record<string, Record<string, unknown>> = {};
   const blindNames = new Set<string>();
-  let inventoryTotal = 36;
+  let inventoryTotal = 36, approvedLayoutTotal = 34;
+  let roomDimensions={width_x:6.9,length_y:9.315,height_z:3.5};
+  let surveyBaseline:Record<string,unknown>={};
+  const chairBackCenters:Record<string,number[]>={};
+  const fileGlassBays:Record<string,number[]>={}; let fileGlassAlpha=1;
+  let wallBaseColorSrgb="";let wallMaterialUses=0;
   let unplacedIds: string[] = [];
   let unplacedReasons: Record<string,string> = {};
   loaded.traverse(node => {
+    if (typeof node.userData.room_dimensions_survey_axes === "string") roomDimensions=JSON.parse(node.userData.room_dimensions_survey_axes);
+    if (typeof node.userData.survey_baseline === "string") surveyBaseline=JSON.parse(node.userData.survey_baseline);
+    if (typeof node.userData.approved_layout_chair_count === "number") approvedLayoutTotal=node.userData.approved_layout_chair_count;
     if (typeof node.userData.unplaced_chair_reasons === "string") unplacedReasons = JSON.parse(node.userData.unplaced_chair_reasons);
     if (typeof node.userData.chair_inventory_count === "number") inventoryTotal = node.userData.chair_inventory_count;
     if (Array.isArray(node.userData.unplaced_chair_ids)) unplacedIds = node.userData.unplaced_chair_ids;
@@ -150,6 +171,8 @@ async function run(element: HTMLCanvasElement) {
     triangleCount += Math.floor((mesh.geometry.index?.count ?? mesh.geometry.attributes.position?.count ?? 0) / 3);
     for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       materials.add(mat);
+      if(mat.name==='P507_PBR_FILE_CABINET_CLEAR_GLASS') fileGlassAlpha=mat.opacity;
+      if (mat instanceof MeshStandardMaterial && mat.name === "P507_PBR_CREAM_PAINT") {wallBaseColorSrgb="#"+mat.color.getHexString().toUpperCase();wallMaterialUses++;}
       if (mat instanceof MeshStandardMaterial && mat.name.includes("OFF_SCREEN")) mat.envMapIntensity = .12;
       if (mat instanceof MeshStandardMaterial && mat.name.includes("TV_BEZEL")) mat.envMapIntensity = .35;
       for (const value of Object.values(mat)) if (value instanceof Texture) textures.add(value);
@@ -158,6 +181,26 @@ async function run(element: HTMLCanvasElement) {
     if (typeof id === "string") ids.add(id);
   });
   loaded.updateMatrixWorld(true);
+  loaded.traverse(node => {
+    let owner:Object3D|null=node;
+    while(owner && typeof owner.userData.survey_instance_id!=="string") owner=owner.parent;
+    const id=owner?.userData.survey_instance_id;
+    if (typeof id !== "string") return;
+    if (id.startsWith("P507-DOOR-LEAF-") && node.userData.door_swing === "OUTWARD" && node.parent?.userData.survey_instance_id !== id) {
+      const h=node.userData.hinge_survey as number[], angle=Number(node.userData.demo_open_angle_deg)*Math.PI/180;
+      const hinge=new Vector3(h[0],h[2],-h[1]);
+      const delta=new Matrix4().makeTranslation(hinge.x,hinge.y,hinge.z).multiply(new Matrix4().makeRotationY(-angle)).multiply(new Matrix4().makeTranslation(-hinge.x,-hinge.y,-hinge.z));
+      const parentInverse=node.parent ? node.parent.matrixWorld.clone().invert() : new Matrix4();
+      doorRoots.push({node,open:node.matrix.clone(),closed:parentInverse.multiply(delta).multiply(node.matrixWorld)});
+    }
+    if(Number.isInteger(node.userData.file_cabinet_bay)) {const b=new Box3().setFromObject(node);fileGlassBays[String(node.userData.file_cabinet_bay)]=[...b.min.toArray(),...b.max.toArray()];}
+    const mesh=node as Mesh;
+    if (id.startsWith("P507-CHAIR-") && mesh.isMesh) {
+      const positions=mesh.geometry.attributes.position;const sum=new Vector3();let count=0;
+      for(let i=0;i<positions.count;i++){const v=new Vector3().fromBufferAttribute(positions,i).applyMatrix4(mesh.matrixWorld);if(v.y>.85){sum.add(v);count++;}}
+      if(count) chairBackCenters[id]=sum.multiplyScalar(1/count).toArray();
+    }
+  });
   loaded.traverse(node => {
     if (node.name.startsWith("P507_ARCH_WINDOW_GLASS")) windowCenters.push(node.getWorldPosition(new Vector3()).toArray());
     if (node.name.includes("WATER_CONTROL") || (node.name.includes("WATER_BODY") || node.name.includes("WATER_GRAY_ENCLOSURE")) || node.name.includes("TV_BLACK_SCREEN") || node.name.includes("TV_REAR")) {
@@ -172,7 +215,7 @@ async function run(element: HTMLCanvasElement) {
   }
   const placedChairIds = [...ids].filter(id => id.startsWith("P507-CHAIR-"));
   scene.add(loaded); aim("hero");
-  show(`GLB PROVISIONAL đã tải: ${meshCount} meshes, ${triangleCount} triangles. Ghế đã đặt ${placedChairIds.length}/${inventoryTotal}; UNPLACED ${inventoryTotal - placedChairIds.length}. Cần chủ dự án duyệt hình.`);
+  show(`GLB PROVISIONAL đã tải: ${meshCount} meshes, ${triangleCount} triangles. Ghế lịch sử ${inventoryTotal}; bố cục chốt ${approvedLayoutTotal}; đã đặt ${placedChairIds.length}; chưa đặt ${unplacedIds.length}; UNPLACED ${inventoryTotal - placedChairIds.length}. Cần chủ dự án duyệt hình.`);
   const unplaced = document.querySelector("#unplaced");
   if (unplaced) unplaced.textContent = unplacedIds.length ? "Chưa đặt trong phương án này: " + unplacedIds.map(id => id + (unplacedReasons[id] ? " — " + unplacedReasons[id] : "")).join("; ") : `Inventory ${inventoryTotal}; số ghế chưa đặt ${inventoryTotal - placedChairIds.length}. Vị trí vẫn provisional.`;
   const quantile = (a: number[], q: number) => a.slice().sort((x, y) => x - y)[Math.max(0, Math.ceil(q * a.length) - 1)] ?? 0;
@@ -212,6 +255,9 @@ async function run(element: HTMLCanvasElement) {
     firstFrameCompletedMs,
     architecturalCutaway: presets[current].cutaway,
     visibility: visibilityEvidence(),
+    roomDimensions,surveyBaseline,approvedLayoutTotal,wallBaseColorSrgb,wallMaterialUses,chairBackCenters,fileGlassBays,fileGlassAlpha,
+    doorPose: current==="door_closed" ? "CLOSED_DEMONSTRATION" : "OUTWARD",
+    currentDoorBounds: Object.fromEntries(doorRoots.map(({node})=>{const b=new Box3().setFromObject(node);return [node.userData.survey_instance_id,[...b.min.toArray(),...b.max.toArray()]];})),
     viewport: { width: innerWidth, height: innerHeight, dpr: gl.getPixelRatio() },
     glbBytes: bytes.byteLength, meshCount, geometryCount: geometries.size, triangleCount,
     materialCount: materials.size, textureCount: textures.size, textureMemoryEstimateBytes: Math.round(textureMemoryBytes),

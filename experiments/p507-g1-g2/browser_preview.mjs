@@ -54,12 +54,31 @@ function inspectGeometry(metrics) {
   for (const [id,b] of Object.entries(bounds)) {
     if (!expected.some(o => o.id === id)) continue;
     assert(b.every(Number.isFinite), "Nonfinite actual GLB bounds: " + id);
-    assert(b[0] >= -.003 && b[3] <= 6.003 && b[2] >= -8.103 && b[5] <= .003 && b[1] >= -.005 && b[4] <= 3.505,
+    const leaf = inventory.openings.door.leaves.find(o=>o.id===id);
+    const exteriorLeaf = leaf?.swing === "OUTWARD" && inventory.openings.door.swing === "OUTWARD";
+    const width=inventory.room.width_x,length=inventory.room.length_y,height=inventory.room.height_z;
+    assert(b[0] >= (exteriorLeaf ? -.853 : -.003) && b[3] <= (exteriorLeaf ? .003 : width+.003) && b[2] >= -(exteriorLeaf ? inventory.openings.door.to_y+.04 : length+.003) && b[5] <= (exteriorLeaf ? -inventory.openings.door.from_y+.04 : .003) && b[1] >= -.005 && b[4] <= height+.005,
       `Actual authored geometry outside room: ${id} ${b}`);
   }
   assert(metrics.visibility.hiddenFurnitureIds.length===0, "Furniture hidden by review camera: "+metrics.visibility.hiddenFurnitureIds);
   if(metrics.architecturalCutaway) assert(metrics.visibility.enabledCeilingIds.length===0, "Ceiling device group not hidden in cutaway");
   else assert(metrics.visibility.enabledCeilingIds.length===inventory.ceiling.instances.length, "Ceiling unexpectedly hidden outside cutaway");
+  assert(metrics.approvedLayoutTotal===34 && expectedChairs.length===34 && unplaced.length===2,"Owner layout must place 34 of 36 historical chairs");
+  assert(metrics.roomDimensions.width_x===6.9 && metrics.roomDimensions.length_y===9.315 && metrics.surveyBaseline.width_x===6 && metrics.surveyBaseline.length_y===8.1,"Virtual/survey dimensions confused in exported metadata");
+  assert(metrics.wallBaseColorSrgb==="#F5E6C8" && metrics.wallMaterialUses>=4,"Vanilla wall material absent or inconsistent in actual GLB");
+  assert(Object.keys(metrics.fileGlassBays).length===3 && metrics.fileGlassAlpha>.05 && metrics.fileGlassAlpha<.4,"Actual three clear glass cabinet panes missing");
+  const shelf= bounds['P507-UTILITY-SHELF'],smallTv=bounds['P507-TV-SMALL'];
+  assert(shelf[5]-shelf[2]>1.45 && shelf[3]-shelf[0]<.49,"Actual shelf was not widened along wall");
+  assert(smallTv[1]>=shelf[4]-.005 && smallTv[0]>=shelf[0]-.005 && smallTv[3]<=shelf[3]+.005 && smallTv[2]>=shelf[2]-.005 && smallTv[5]<=shelf[5]+.005,"Small TV loses shelf support");
+  for(const chair of expectedChairs){
+    const back=metrics.chairBackCenters[chair.id];assert(back,"Actual chair back not found: "+chair.id);
+    const a=chair.orientation_deg*Math.PI/180,dx=back[0]-chair.center[0],dz=back[2]+chair.center[1];
+    assert(dx*Math.sin(a)+dz*Math.cos(a)>.06 && Math.abs(dx*Math.cos(a)-dz*Math.sin(a))<.10,"Actual chair back orientation differs from sitting direction: "+chair.id);
+  }
+  const currentLeaves=Object.values(metrics.currentDoorBounds);
+  assert(currentLeaves.length===2,"Exported hinge/leaf metadata missing");
+  if(metrics.doorPose==='OUTWARD')assert(currentLeaves.every(b=>b[3]<=.003 && b[0]<-.5),"Actual outward leaf remains inside room");
+  else assert(currentLeaves.every(b=>b[0]>-.10 && b[3]<.003),"Closed demonstration is not rigid hinge closure");
   const cabinet = bounds["P507-CABINET-LOW"];
   for (const expected of expectedChairs) {
     const b = bounds[expected.id];
@@ -67,7 +86,7 @@ function inspectGeometry(metrics) {
       Math.max(0, Math.min(b[5], cabinet[5]) - Math.max(b[2], cabinet[2]));
     assert(area < .000001, "Actual cabinet-chair overlap: " + expected.id);
   }
-  assert(metrics.windowCenters.length === 4 && metrics.windowCenters.every(p => p[0] > 5.9 && p[2] < 0), "Four windows must remain on east wall");
+  assert(metrics.windowCenters.length === 4 && metrics.windowCenters.every(p => Math.abs(p[0]-inventory.room.width_x)<.10 && p[2] < 0), "Four windows must remain on east wall");
   for (const prefix of ["P507-LIGHT-", "P507-FAN-", "P507-AC-", "P507-PROJECTOR-", "P507-CAMERA-"]) {
     const desired = inventory.ceiling.instances.filter(o => o.id.startsWith(prefix));
     assert(ids.filter(id => id.startsWith(prefix)).length === desired.length, "Actual ceiling device count: " + prefix);
@@ -120,7 +139,7 @@ async function main() {
       await page.waitForFunction(() => !!window.__P507_REVIEW__ || document.querySelector("#status")?.textContent?.startsWith("Không thể"), null, { timeout: 180000 });
       const text = (await page.locator("#status").innerText()).trim();
       assert(text.startsWith("GLB PROVISIONAL"), "GLB load failed: " + text);
-      const shots = process.env.P507_SHOTS ? process.env.P507_SHOTS.split(",").filter(Boolean) : label === "desktop" ? ["overview", "entry", "clusters", "tv_corner", "photo_wall", "utility", "ceiling", "windows", "hero", "logo"] : ["hero"];
+      const shots = process.env.P507_SHOTS ? process.env.P507_SHOTS.split(",").filter(Boolean) : label === "desktop" ? ["overview", "clusters", "cluster_A", "cluster_B", "cluster_C", "door_outward", "door_closed", "tv_corner", "utility", "shelf", "vanilla_wall", "ceiling", "hero", "photo_wall", "logo", "windows"] : ["hero"];
       for (const shot of shots) {
         await page.evaluate(key => window.__P507_REVIEW__.aim(key), shot);
         await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 12, null, { timeout: 240000 });
@@ -158,13 +177,22 @@ async function main() {
       notice: "PROVISIONAL. Sources inspected locally, cameras estimated; not calibrated photo matching, physical-device FPS, owner art approval or real source-to-render evidence.", evidence
     };
     await fs.writeFile(path.join(out, "browser-report.json"), JSON.stringify(report, null, 2), "utf8");
+    if(!baselineCapture){
+      const assetPath=path.join(out,'asset-manifest.json');
+      const asset=JSON.parse(await fs.readFile(assetPath,'utf8'));
+      assert(asset.model_sha256===report.glbSha256,'Browser/asset manifest GLB mismatch');
+      asset.preview_camera_presets=evidence.map(e=>({viewport:e.viewport,shot:e.shot,position_gltf:e.metrics.cameraPositionGltf,target_gltf:e.metrics.cameraTargetGltf,fov:e.metrics.verticalFovDegrees,cutaway:e.metrics.architecturalCutaway,doorPose:e.metrics.doorPose}));
+      asset.browser_performance_report='browser-report.json';
+      asset.renderer_geometry_metrics=Object.fromEntries(['meshCount','geometryCount','triangleCount','materialCount','textureMemoryEstimateBytes'].map(k=>[k,evidence[0].metrics[k]]));
+      await fs.writeFile(assetPath,JSON.stringify(asset,null,2)+'\n','utf8');
+    }
     const gallery = await browser.newPage({ viewport:{width:1340,height:200},deviceScaleFactor:1 });
     const tiles=[];
     for (const e of evidence) {
       const png=await fs.readFile(path.join(out,e.image.filename));
       tiles.push(`<article><strong>${e.viewport} · ${e.shot}</strong><img src="data:image/png;base64,${png.toString("base64")}"></article>`);
     }
-    await gallery.setContent(`<html><head><style>body{margin:24px;background:#eae8df;color:#26383e;font:15px Arial}h1{font-size:22px}main{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}article{background:#fff;padding:10px}strong{display:block;margin-bottom:6px}img{width:100%;height:225px;object-fit:contain;background:#d9dedc}</style></head><body><h1>P507 · actual GLB WebGL review · ${report.ciHeadSha || report.checkoutHeadSha}</h1><p>PROPOSED_LAYOUT · owner visual approval pending · original survey photographs are not included</p><main>${tiles.join("")}</main></body></html>`);
+    await gallery.setContent(`<html><head><style>body{margin:24px;background:#eae8df;color:#26383e;font:15px Arial}h1{font-size:22px}main{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}article{background:#fff;padding:10px}strong{display:block;margin-bottom:6px}img{width:100%;height:225px;object-fit:contain;background:#d9dedc}</style></head><body><h1>P507 · actual GLB WebGL review · ${report.ciHeadSha || report.checkoutHeadSha}</h1><p>OWNER-APPROVED VIRTUAL +15% · 34 placed / 36 historical chairs · owner visual approval pending · no survey photographs</p><main>${tiles.join("")}</main></body></html>`);
     await gallery.locator("img").evaluateAll(images=>Promise.all(images.map(img=>img.decode())));
     await gallery.screenshot({path:path.join(out,"contact-sheet.png"),fullPage:true});
     await gallery.close();

@@ -1,6 +1,11 @@
 # P507 G1/G2 — Implementation Evidence & Acceptance Status
 
-## Current revision 3 — 17/11/2026, chờ review
+## Current R4 — virtual adaptation và bố cục34ghế
+
+Xem [R4 acceptance/limits](P507-G1-G2-R4-VIRTUAL-FREEZE.md) và [WebXR asset handoff](P507-WEBXR-ASSET-HANDOFF.md). Survey baseline giữ6×8.1×3.5m; virtual6.9×9.315×3.5m do owner chốt. G1_LAYOUT_34_CHAIRS theo actualGLB/browser, historical36IDs giữ nguyên. G1_CIRCULATION PARTIAL; G2_VISUAL PENDING OWNER APPROVAL; PHOTO_MATCH PARTIAL về chi tiết/không room1:1; REAL_DEVICE_WEBXR NOT RUN. FinalHEAD/CI/artifacts theo PRhandoff. R3 bên dưới là lịch sử.
+
+
+## Historical revision 3 — 17/11/2026, chờ review
 
 Xem [báo cáo tổng hợp R3](P507-G1-G2-COMPREHENSIVE-REVIEW.md). G1_GEOMETRY PASS có giới hạn111 instance đặt/12ghế UNPLACED;36 ID được giữ. G1_SURVEY_ACCURACY PROVISIONAL; G1_CIRCULATION PARTIAL; PHOTO_MATCH PARTIAL sau khi mở16 nguồn thật, camera chưa calibrated. G2_PIPELINE theo exact-HEAD CI/handoff; G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; REAL_AIRC_DATA NOT VERIFIED; G3 NOT STARTED. Các mục36ghế đặt/PHOTO_MATCH BLOCKED bên dưới là lịch sử, không mô tả R3.
 
