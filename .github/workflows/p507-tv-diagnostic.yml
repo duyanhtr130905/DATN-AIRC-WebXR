@@ -27,9 +27,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
       - name: Download original pinned artifact and verify six hashes
         run: |
           python experiments/p507-webxr/prepare_asset.py --download
