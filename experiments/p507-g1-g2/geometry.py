@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import itertools
 import json
 import math
 from pathlib import Path
@@ -19,7 +20,7 @@ def migrate_inventory(data):
     """v1 had a chair count, no trusted instances. Preserve IDs, leave positions unknown."""
     data = copy.deepcopy(data)
     version = data.get("schema_version")
-    if version not in (1, 2):
+    if version not in (1, 2, 3):
         raise ValueError("Unsupported inventory schema_version")
     if version == 1:
         data["schema_version"] = 2
@@ -47,6 +48,18 @@ def migrate_inventory(data):
             ("water_dispenser", "P507-WATER-DISPENSER"),
         ]:
             data["hero"][key].setdefault("id", ident)
+    if version in (1, 2):
+        data["schema_migration"] = {
+            "from": version,
+            "to": 3,
+            "policy": "Preserve historical dimensions and IDs; no virtual approval or missing placement inferred",
+            "historical_metadata": data.get("schema_migration"),
+        }
+        data["schema_version"] = 3
+        data.setdefault("survey_baseline", copy.deepcopy(data["room"]))
+        data.setdefault(
+            "layout_mode", "HISTORICAL_PROVISIONAL_NO_VIRTUAL_APPROVAL_INFERRED"
+        )
     return data
 
 
@@ -299,6 +312,299 @@ def is_supported(child, parent):
     )
 
 
+def by_leaf(data, ident):
+    return next(
+        (
+            leaf
+            for leaf in data["openings"]["door"].get("leaves", [])
+            if leaf.get("id") == ident
+        ),
+        None,
+    )
+
+
+def outward_leaf_valid(leaf, door):
+    if not leaf or door.get("swing") != "OUTWARD" or leaf.get("swing") != "OUTWARD":
+        return False
+    ids = ["P507-DOOR-LEAF-01", "P507-DOOR-LEAF-02"]
+    if (
+        leaf.get("id") not in ids
+        or leaf.get("type") != "door_leaf"
+        or leaf.get("mount_support") != "P507-ARCH-WEST-DOOR-FRAME"
+    ):
+        return False
+    i = ids.index(leaf["id"])
+    sign = 1 if i == 0 else -1
+    angle = door.get("opening_angle_deg")
+    if (
+        not finite(angle)
+        or not 0 < angle <= 90
+        or leaf.get("orientation_deg") != sign * angle
+    ):
+        return False
+    half = (door["to_y"] - door["from_y"]) / 2
+    hinge = [-0.05, door["from_y"] if i == 0 else door["to_y"], 0]
+    if leaf.get("hinge_survey") != hinge or (
+        not isinstance(leaf.get("size"), list)
+        or len(leaf["size"]) != 3
+        or any(
+            abs(a - b) > EPS
+            for a, b in zip(leaf["size"], [0.035, half, door["height"]])
+        )
+    ):
+        return False
+    fp = leaf.get("footprint_size")
+    if (
+        not isinstance(fp, list)
+        or len(fp) != 2
+        or any(not finite(a) or abs(a - b) > EPS for a, b in zip(fp, [0.07, half]))
+    ):
+        return False
+    theta = math.radians(sign * angle)
+    center = [
+        hinge[0] - sign * half / 2 * math.sin(theta),
+        hinge[1] + sign * half / 2 * math.cos(theta),
+        door["height"] / 2,
+    ]
+    if (
+        not isinstance(leaf.get("center"), list)
+        or len(leaf["center"]) != 3
+        or any(
+            not finite(v) or abs(v - w) > 1e-6 for v, w in zip(leaf["center"], center)
+        )
+    ):
+        return False
+    return all(
+        -half - 0.10 <= v[0] <= EPS
+        and door["from_y"] - 0.04 <= v[1] <= door["to_y"] + 0.04
+        for v in box_proxy(leaf)["polygon"]
+    )
+
+
+def validate_outward_door(door):
+    errors = []
+    if door.get("swing") != "OUTWARD" or not all(
+        outward_leaf_valid(l, door) for l in door.get("leaves", [])
+    ):
+        errors.append(
+            "Outward door requires two bounded outward leaf poses and hinge mechanics"
+        )
+    sweep = door.get("swing_polygon", [])
+    expected = [
+        [-0.85, door["from_y"]],
+        [0, door["from_y"]],
+        [0, door["to_y"]],
+        [-0.85, door["to_y"]],
+    ]
+    if sweep != expected or len(door.get("sweep_polygons", [])) != 2:
+        errors.append("Outward door sweep must remain bounded outside only")
+    else:
+        for leaf, sector in zip(door["leaves"], door["sweep_polygons"]):
+            if (
+                not sector
+                or sector[0] != leaf["hinge_survey"][:2]
+                or any(v[0] > EPS or not point_in_polygon(v, sweep) for v in sector)
+            ):
+                errors.append("Invalid outward leaf sweep sector")
+            i = 0 if leaf["id"].endswith("01") else 1
+            sign = 1 if i == 0 else -1
+            hinge = leaf["hinge_survey"]
+            half = (door["to_y"] - door["from_y"]) / 2
+            expected_sector = [hinge[:2]] + [
+                [
+                    hinge[0]
+                    - sign
+                    * half
+                    * math.sin(math.radians(leaf["orientation_deg"] * j / 12)),
+                    hinge[1]
+                    + sign
+                    * half
+                    * math.cos(math.radians(leaf["orientation_deg"] * j / 12)),
+                ]
+                for j in range(13)
+            ]
+            if len(sector) != len(expected_sector) or any(
+                len(a) != 2
+                or any(not finite(x) or abs(x - y) > 1e-6 for x, y in zip(a, b))
+                for a, b in zip(sector, expected_sector)
+            ):
+                errors.append(
+                    "Outward sweep sector must cover the entire hinged demo arc"
+                )
+    return errors
+
+
+def validate_owner_chair_allocation(data):
+    errors = []
+    chairs = {c["id"]: c for c in data["chairs"]["instances"]}
+    if data["chairs"].get("approved_layout_count") != 34:
+        errors.append("Owner-approved layout count must remain 34")
+    for g, n in (("A", 12), ("B", 12), ("C", 12)):
+        for i in range(1, n + 1):
+            ident = f"P507-CHAIR-{g}-{i:02d}"
+            c = chairs.get(ident, {})
+            if g == "C" and i in (9, 10):
+                if (
+                    c.get("status") != "UNPLACED"
+                    or c.get("placement_allocation") is not None
+                    or "center" in c
+                ):
+                    errors.append("C09/C10 must remain historical UNPLACED/UNASSIGNED")
+                continue
+            role = (
+                ("row_lower" if i <= 6 else "row_upper")
+                if g == "A"
+                else (
+                    "row_lower"
+                    if i <= 4
+                    else "row_upper"
+                    if i <= 8
+                    else "left_end"
+                    if g == "B" and i >= 11
+                    else "right_end"
+                )
+            )
+            angle = {
+                "row_lower": 0,
+                "row_upper": 180,
+                "right_end": 90,
+                "left_end": 270,
+            }[role]
+            if (
+                c.get("status") != "PLACED_PROVISIONAL"
+                or c.get("placement_role") != role
+                or c.get("orientation_deg") != angle
+                or c.get("placement_allocation") != g
+            ):
+                errors.append("Owner chair allocation/pose mismatch: " + ident)
+            center = c.get("center")
+            if (
+                isinstance(center, list)
+                and len(center) == 2
+                and all(finite(v) for v in center)
+            ):
+                desks = [
+                    o
+                    for o in data["objects"]
+                    if o.get("type") in DESK_TYPES and o.get("cluster") == g
+                ]
+                core = [
+                    o
+                    for o in desks
+                    if g == "A" or o["id"][-2:] in ("01", "02", "03", "04")
+                ]
+                if core and all(valid_rect(o.get("rect")) for o in core):
+                    b = group_bbox(core)
+                    x, y = center
+                    valid_side = (
+                        (b[0] < x < b[2] and b[1] - 0.6 < y < b[1])
+                        if role == "row_lower"
+                        else (b[0] < x < b[2] and b[3] < y < b[3] + 0.6)
+                        if role == "row_upper"
+                        else True
+                    )
+                    if role == "left_end":
+                        desk = next(o for o in desks if o["id"] == "P507-DESK-B06")
+                        r = desk["rect"]
+                        valid_side = (
+                            r[0] - 0.6 < x < r[0]
+                            and r[1] < y < r[3]
+                            and c.get("desk_id") == desk["id"]
+                        )
+                    if not valid_side:
+                        errors.append(
+                            "Actual chair side must match owner row/end allocation: "
+                            + ident
+                        )
+            if c.get("footprint_size") != [0.46, 0.5] or c.get("height") != 1.02:
+                errors.append(
+                    "Historical full-size chair dimensions must not be scaled: " + ident
+                )
+    return errors
+
+
+def occupied_use_report(data, proxies):
+    pull = data.get("occupied_use", {}).get("chair_pullback_m", 0.15)
+    posed = copy.deepcopy(proxies)
+    for p in posed:
+        if p.get("kind") == "chair":
+            a = math.radians(p["orientation_deg"])
+            dx = pull * math.sin(a)
+            dy = -pull * math.cos(a)
+            p["polygon"] = [[x + dx, y + dy] for x, y in p["polygon"]]
+    collisions = []
+    for i, a in enumerate(posed):
+        for b in posed[i + 1 :]:
+            if (
+                "chair" in (a.get("kind"), b.get("kind"))
+                and overlaps(a["polygon"], b["polygon"])
+                and vertical_overlap(a, b) > EPS
+            ):
+                collisions.append([a["id"], b["id"]])
+
+    def gap_between(ps, upper, lower):
+        a = [p for p in ps if p.get("cluster") == upper]
+        b = [p for p in ps if p.get("cluster") == lower]
+        return (
+            round(
+                min(v[1] for p in a for v in p["polygon"])
+                - max(v[1] for p in b for v in p["polygon"]),
+                3,
+            )
+            if a and b
+            else None
+        )
+
+    def west_route(ps):
+        cluster = [p for p in ps if p.get("kind") in (*DESK_TYPES, "chair")]
+        utility = [
+            p
+            for p in ps
+            if p.get("kind")
+            in ("file_cabinet", "fridge", "storage_shelf", "shoe_rack", "waste_bin")
+        ]
+        levels = sorted({v[1] for p in cluster + utility for v in p["polygon"]})
+        widths = []
+        for lo, hi in itertools.pairwise(levels):
+            y = (lo + hi) / 2
+            active = [
+                p
+                for p in cluster
+                if min(v[1] for v in p["polygon"]) < y < max(v[1] for v in p["polygon"])
+            ]
+            if not active:
+                continue
+            left = max(
+                [0.05]
+                + [
+                    max(v[0] for v in p["polygon"])
+                    for p in utility
+                    if min(v[1] for v in p["polygon"])
+                    < y
+                    < max(v[1] for v in p["polygon"])
+                ]
+            )
+            widths.append(min(v[0] for p in active for v in p["polygon"]) - left)
+        return round(min(widths), 3) if widths else None
+
+    return {
+        "chair_pullback_m": pull,
+        "basis": data.get("occupied_use", {}).get(
+            "basis", "PROPOSED occupied pose, not measured ergonomics"
+        ),
+        "collision_count": len(collisions),
+        "collisions": collisions,
+        "intercluster_clearance_m": {
+            a + "-" + b: gap_between(posed, a, b) for a, b in [("A", "B"), ("B", "C")]
+        },
+        "west_main_route_static_min_m": west_route(proxies),
+        "west_main_route_occupied_min_m": west_route(posed),
+        "route_target_m": data.get("occupied_use", {}).get("main_route_target_m"),
+        "status": "PARTIAL",
+        "limitations": "Central gaps/right chair backs are not through-routes; no person/leg/door operation or legal egress certification.",
+    }
+
+
 def verify(data):
     data = migrate_inventory(data)
     errors = []
@@ -311,8 +617,8 @@ def verify(data):
     objects = data["objects"]
     chairs = data["chairs"].get("instances", [])
     ids = set()
-    if data.get("schema_version") != 2:
-        errors.append("Inventory must be migrated to schema v2")
+    if data.get("schema_version") != 3:
+        errors.append("Inventory must be migrated to schema v3")
     chairs = data["chairs"].get("instances", [])
     if data["chairs"].get("count") != len(chairs):
         errors.append("Chair inventory count does not match instance records")
@@ -341,6 +647,7 @@ def verify(data):
                     "PROPOSED_LAYOUT",
                     "UNKNOWN",
                     "SYNTHETIC",
+                    "OWNER_APPROVED_VIRTUAL_ADAPTATION",
                 ):
                     errors.append(f"Unsupported verified source claim: {key}={item}")
                 if (
@@ -355,7 +662,38 @@ def verify(data):
                 claims(item)
 
     if data.get("layout_revision", 0) >= 3:
-        if [width, length, height] != [6, 8.1, 3.5]:
+        if data.get("layout_revision", 0) >= 4:
+            baseline = data.get("survey_baseline", {})
+            if [baseline.get(k) for k in ("width_x", "length_y", "height_z")] != [
+                6,
+                8.1,
+                3.5,
+            ] or baseline.get("source") != "USER_REPORTED":
+                errors.append("Survey baseline must remain USER_REPORTED 6 x 8.1 x 3.5")
+            virtual = data.get("virtual_experience", {})
+            if (
+                [width, length, height] != [6.9, 9.315, 3.5]
+                or [virtual.get(k) for k in ("width_x", "length_y", "height_z")]
+                != [width, length, height]
+                or room.get("source") != "OWNER_APPROVED_VIRTUAL_ADAPTATION"
+                or virtual.get("source") != room.get("source")
+                or virtual.get("horizontal_expansion_factor") != 1.15
+            ):
+                errors.append(
+                    "Virtual room dimensions must be owner-approved 6.9 x 9.315 x 3.5"
+                )
+            if data.get("migrated_from") != 1:
+                errors.extend(validate_owner_chair_allocation(data))
+            errors.extend(validate_outward_door(data["openings"]["door"]))
+            file_cab = next(
+                (o for o in objects if o.get("id") == "P507-CABINET-FILES"), {}
+            )
+            if (
+                file_cab.get("compartment_count") != 3
+                or file_cab.get("front_material") != "clear_glass"
+            ):
+                errors.append("File cabinet requires three clear-glass compartments")
+        elif [width, length, height] != [6, 8.1, 3.5]:
             errors.append("Survey room dimensions must remain 6 x 8.1 x 3.5")
         for o in objects:
             if (
@@ -488,6 +826,7 @@ def verify(data):
             "PROPOSED_LAYOUT",
             "UNKNOWN",
             "SYNTHETIC",
+            "OWNER_APPROVED_VIRTUAL_ADAPTATION",
         ):
             errors.append(f"Unverified source claim: {ident}")
         if o.get("position_source") in ("MEASURED", "real_verified", "VERIFIED"):
@@ -564,6 +903,11 @@ def verify(data):
             if p.get("wall_mount") == "west"
             else 0.08
         )
+        if outward_leaf_valid(by_leaf(data, p["id"]), data["openings"]["door"]):
+            allowed.append(
+                [p["id"], "OUTWARD_DOOR_ONLY", "bounded exterior leaf exception"]
+            )
+            continue
         if any(
             not (
                 xmin - EPS
@@ -623,7 +967,8 @@ def verify(data):
             )
         if support == "P507-ARCH-WEST-DOOR-FRAME":
             door = data["openings"]["door"]
-            hinges = [(0.05, door["from_y"]), (0.05, door["to_y"])]
+            hinge_x = -0.05 if door.get("swing") == "OUTWARD" else 0.05
+            hinges = [(hinge_x, door["from_y"]), (hinge_x, door["to_y"])]
             return (
                 record.get("type") == "door_leaf"
                 and abs(proxy["bottom_z"]) < EPS
@@ -918,7 +1263,7 @@ def verify(data):
     static_clearances["west_utility_to_desks"] = {
         "static_gaps_m": gaps_by_utility,
         "usable_status": "UNKNOWN",
-        "note": "Minimum .53m choke point remains narrow; no accessibility/egress claim.",
+        "note": "Static gaps only; inspect occupied_use separately. No accessibility/egress claim.",
     }
     chair_aware_gaps = {}
     floor_groups = [p for p in proxies if p.get("kind") in (*DESK_TYPES, "chair")]
@@ -947,6 +1292,14 @@ def verify(data):
                 "DOOR_CLEAR_OPERABLE_WIDTH",
             ]
         )
+    occupied = occupied_use_report(data, proxies)
+    if data.get("layout_revision", 0) >= 4:
+        if data.get("occupied_use", {}).get("chair_pullback_m") != 0.15:
+            errors.append("Occupied-use proxy must retain proposed .15m pullback")
+        if occupied["collision_count"]:
+            errors.append(
+                "Occupied-use chair collision: " + str(occupied["collisions"])
+            )
     warnings.extend(
         [
             "PROPOSED_LAYOUT only: these checks do not certify aisle width, accessibility or egress.",
@@ -963,6 +1316,9 @@ def verify(data):
         "clusters": {g: {"count": len(groups[g]), "bbox": boxes[g]} for g in "ABC"},
         "desk_edge_gaps_m": gaps,
         "usable_walkways": walkways,
+        "occupied_use": occupied,
+        "survey_baseline": data.get("survey_baseline", room),
+        "virtual_experience": data.get("virtual_experience"),
         "chair_inventory": {
             "total": data["chairs"]["count"],
             "placed": sum(c.get("status") == "PLACED_PROVISIONAL" for c in chairs),

@@ -36,7 +36,7 @@ class P507GeometryTests(unittest.TestCase):
         self.assertEqual(r["desk_count"], 17)
         self.assertEqual([r["clusters"][g]["count"] for g in "ABC"], [6, 6, 5])
         self.assertEqual(
-            r["chair_inventory"], {"total": 36, "placed": 24, "unplaced": 12}
+            r["chair_inventory"], {"total": 36, "placed": 34, "unplaced": 2}
         )
         self.assertEqual(r["collision_count"], 0)
 
@@ -45,8 +45,8 @@ class P507GeometryTests(unittest.TestCase):
         self.assertEqual(
             [o["id"] for o in a], [f"P507-DESK-A{i:02d}" for i in range(1, 7)]
         )
-        self.assertEqual(a[0]["rect"], [1.35, 5.75, 2.85, 6.35])
-        self.assertEqual(a[-1]["rect"], [4.35, 6.35, 5.85, 6.95])
+        self.assertEqual(a[0]["rect"], [1.8, 6.4, 3.3, 7.0])
+        self.assertEqual(a[-1]["rect"], [4.8, 7.0, 6.3, 7.6])
 
     def test_core_and_longitudinal_constraints(self):
         for ident in ("P507-DESK-B02", "P507-DESK-C05", "P507-DESK-B06"):
@@ -102,7 +102,7 @@ class P507GeometryTests(unittest.TestCase):
 
     def test_water_door_entry_overlap_fails(self):
         d = copy.deepcopy(self.data)
-        d["hero"]["water_dispenser"]["occupancy_rect"] = [0.2, 6, 0.6, 6.5]
+        d["hero"]["water_dispenser"]["occupancy_rect"] = [0.2, 7, 0.6, 7.5]
         self.assertFails(d, "door entry collision")
 
     def test_water_wall_overlap_fails(self):
@@ -127,7 +127,7 @@ class P507GeometryTests(unittest.TestCase):
             {
                 "id": "P507-NEW-0001",
                 "type": "furniture",
-                "rect": [0.15, 5.15, 0.40, 5.35],
+                "rect": [0.75, 0.15, 1.0, 0.35],
                 "height": 0.5,
                 "position_source": "PROPOSED_LAYOUT",
             }
@@ -142,7 +142,7 @@ class P507GeometryTests(unittest.TestCase):
 
     def test_invalid_door_opening_fails(self):
         d = copy.deepcopy(self.data)
-        d["openings"]["door"]["to_y"] = 8.2
+        d["openings"]["door"]["to_y"] = 9.4
         self.assertFails(d, "door opening")
 
     def test_door_provisional_size_and_no_swing_claim(self):
@@ -158,9 +158,9 @@ class P507GeometryTests(unittest.TestCase):
         r = verify(self.data)
         self.assertTrue(r["unknown"])
         self.assertEqual(r["usable_walkways"]["A-B"]["clearance_status"], "UNKNOWN")
-        self.assertAlmostEqual(r["desk_edge_gaps_m"]["A-B"], 1.10)
+        self.assertAlmostEqual(r["desk_edge_gaps_m"]["A-B"], 1.45)
         self.assertAlmostEqual(
-            r["usable_walkways"]["A-B"]["provisional_envelope_gap_m"], 0.51
+            r["usable_walkways"]["A-B"]["provisional_envelope_gap_m"], 0.50
         )
 
     def test_orientation_and_coordinate_conversion(self):
@@ -186,7 +186,7 @@ class P507GeometryTests(unittest.TestCase):
         d["schema_version"] = 1
         d["chairs"] = {"count": 36}
         out = migrate_inventory(d)
-        self.assertEqual(out["schema_version"], 2)
+        self.assertEqual(out["schema_version"], 3)
         self.assertEqual(len(out["chairs"]["instances"]), 36)
         self.assertTrue(
             all(
@@ -200,7 +200,8 @@ class P507GeometryTests(unittest.TestCase):
         self.assertTrue(verify(out)["ok"], verify(out)["errors"])
 
     def test_unknown_chair_pose_is_not_renderable(self):
-        d = copy.deepcopy(self.data)
+        # Historical R3 allowed withdrawing poses; the owner-approved R4 allocation is stricter.
+        d = read_inventory(HERE / "fixtures/schema-v2-r3-baseline.json")
         c = d["chairs"]["instances"][0]
         c["status"] = "UNPLACED"
         c["placement_reason"] = "Pose withdrawn pending survey"
@@ -257,7 +258,7 @@ class P507GeometryTests(unittest.TestCase):
             {
                 "id": "P507-DECOR-TEST",
                 "type": "decor",
-                "rect": [1.5, 5.9, 1.8, 6.1],
+                "rect": [2.0, 6.6, 2.3, 6.9],
                 "height": 0.1,
                 "bottom_z": 0.9,
                 "support_id": "P507-DESK-A01",
@@ -322,8 +323,8 @@ class P507GeometryTests(unittest.TestCase):
             d = copy.deepcopy(self.data)
             for o in d["objects"]:
                 if o.get("cluster") == group:
-                    o["rect"][0] -= 0.08
-                    o["rect"][2] -= 0.08
+                    o["rect"][0] -= 0.90
+                    o["rect"][2] -= 0.90
             self.assertFails(d, "must move towards windows")
 
     def test_all_utility_categories_have_real_provisional_records(self):
@@ -514,24 +515,24 @@ class P507GeometryTests(unittest.TestCase):
         )
         self.assertAlmostEqual(
             r["static_clearances"]["B_right_chair_to_window_wall"]["inner_wall_gap_m"],
-            0.26,
+            0.38,
         )
         self.assertAlmostEqual(
             r["static_clearances"]["west_utility_to_desks"]["static_gaps_m"][
                 "P507-SHOE-RACK"
             ],
-            0.53,
+            1.35,
         )
 
     def test_asymmetric_chair_proxy_offset_is_rotated_once(self):
         c = next(
             c for c in self.data["chairs"]["instances"] if c["id"] == "P507-CHAIR-B-09"
         )
-        self.assertAlmostEqual(footprint_center(c)[0], 5.44)
+        self.assertAlmostEqual(footprint_center(c)[0], 6.22)
         r = verify(self.data)
         p = next(p for p in r["occupancy"] if p["id"] == c["id"])
-        self.assertAlmostEqual(min(v[0] for v in p["polygon"]), 5.19)
-        self.assertAlmostEqual(max(v[0] for v in p["polygon"]), 5.69)
+        self.assertAlmostEqual(min(v[0] for v in p["polygon"]), 5.97)
+        self.assertAlmostEqual(max(v[0] for v in p["polygon"]), 6.47)
         self.assertEqual(c["footprint_size"], [0.46, 0.50])
 
     def test_false_verification_level_is_rejected(self):
