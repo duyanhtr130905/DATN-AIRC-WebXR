@@ -67,6 +67,7 @@ def main():
             'blender_modifiers': c['modifiers'], 'matrix_world_survey': c['matrix_world_survey'],
             'matrix_local_survey': c['matrix_local_survey'], 'blender_scale': c['scale'],
             'original_vertices': c['original']['vertex_count'], 'evaluated_vertices': c['evaluated']['vertex_count'],
+            'original_polygons': c['original']['polygon_count'], 'evaluated_polygons': c['evaluated']['polygon_count'],
             'glb_position_vertices': len(actual), 'original_bounds_gltf': bounds(raw),
             'evaluated_bounds_gltf': bounds(eval_), 'frozen_bounds_gltf': bounds(actual),
             'local_positions_raw_vs_frozen_hausdorff_m': hausdorff(
@@ -138,6 +139,8 @@ def main():
         raise ValueError('Expected 121 actual logical geometries in containment audit')
     tests = {c['case']:c for c in cases}
     proven = (maximum_raw_hd < EPS and manifest_eval_delta < EPS
+        and all(c['local_positions_raw_vs_frozen_hausdorff_m'] < EPS for c in components)
+        and all(c['max_matrix_entry_delta_vs_frozen'] < 1e-9 for c in cases)
         and max(weighted_delta) < EPS and max(bevel_raw_delta) < EPS
         and b['operator_defaults']['export_apply'] is False
         and all(tests[k]['max_component_hausdorff_frozen_m'] < EPS for k in ('omitted_apply','apply_false','apply_true_without_bevel','apply_false_without_bevel'))
@@ -145,7 +148,7 @@ def main():
     matching_version = b['blender_version']=='4.0.2' and b['exporter_version']==[4,0,44] and doc['asset']['generator']=='Khronos glTF Blender I/O v4.0.44'
     report = {'conclusion':'ROOT_CAUSE_CONFIRMED' if proven and matching_version else 'ROOT_CAUSE_PARTIAL' if proven else 'ROOT_CAUSE_UNRESOLVED',
         'label':'READ_ONLY_DIAGNOSTIC; no contract correction authorized',
-        'root_cause': 'Evaluated pre-export BEVEL geometry was measured for authored bounds, but uncombined TV components were exported from original meshes: export_apply omitted defaults false. Weighted normals do not change positions.',
+        'root_cause': ('Evaluated pre-export BEVEL geometry was measured for authored bounds, but uncombined TV components were exported from original meshes: export_apply omitted defaults false. Weighted normals do not change positions.' if proven else 'UNRESOLVED: controlled comparisons did not establish a cause.'),
         'controlled_tests_support_cause':proven,'matching_original_blender_version':matching_version,
         'experiment_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'work_tree_dirty':bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip()),

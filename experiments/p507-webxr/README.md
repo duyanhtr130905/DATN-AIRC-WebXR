@@ -48,3 +48,12 @@ Selection resolves a child mesh's ancestor `survey_instance_id` and displays man
 Ignored `.local/p507-e0-e1/` contains exact downloaded inputs, provenance, bundle report, scene report, navigation report, failure screenshot, browser report and local test logs. Only sanitized text summaries go to Git. GitHub E0/E1 workflow uploads neutral reports/PNGs for seven days, including failures.
 
 After a separately accepted E0 resolution, the existing E1 smoke harness is intended to run 2s warmup + 3x10s software-rendered samples along the verified west segment, fixed yaw, full quality, rAF delta clamp .05s. This is **NOT RUN** now. `P507_WARMUP_MS`/`P507_SAMPLE_MS` change the protocol and are recorded in reports. It is not the proposed physical-GPU 30s+3x120s protocol. FPS uses `1000*n/sum(intervals)`, nearest-rank p50/p95, all slow samples retained, >33.33ms counts, browser/GPU/resolution/load timings. Cold parsed and first-render timings are separate. No physical GPU, Galaxy or VR 72 FPS result is claimed.
+
+
+## Read-only TV bounds diagnostic follow-up
+
+[Root cause report](../../docs/3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md) now confirms the evaluated-bevel vs original-mesh export mismatch using Blender4.0.2/exporter4.0.44. Original R4, lock, manifest, E0 3mm gate and navigation remain unchanged. E0 still FAIL, E1 still BLOCKED.
+
+`diagnose_tv_blender.py` opens the original .blend read-only, snapshots five original/evaluated component meshes, reloads it for six isolated modifier/export cases and labels every generated GLB DIAGNOSTIC_EXPORT_ONLY under .local. `diagnose_tv_bounds.py` independently decodes actual frozen positions and oriented proxy containment; `diagnose_tv_bounds.mjs` compares actual GLTFLoader vertices with precise Box3 without enabling E1. Use the exact-version commands in the linked report. A different Blender version is only PARTIAL corroboration; `--require-original-version` refuses to call it same-version evidence.
+
+The separate TV diagnostic CI job uploads numeric JSON only. Diagnostic SUCCESS is not E0_PASS, and the existing E0 browser failure is retained. Neither proposed correction option is authorized by this follow-up.

@@ -107,6 +107,7 @@ def glb_components(path, ident=None):
                 found.append({'id': own, 'node_index': index, 'node': n.get('name'), 'parent_index': parent,
                               'mesh_index': n['mesh'], 'primitive_index': primitive_index, 'position_accessor': a,
                               'mode': primitive.get('mode', 4), 'vertex_count': len(vertices),
+                              'index_count': doc['accessors'][primitive['indices']]['count'] if 'indices' in primitive else None,
                               'world_matrix_gltf': world, 'bounds_gltf': bounds(vertices),
                               'extrema_gltf': extrema(vertices), 'positions_gltf': vertices,
                               'positions_local_gltf': local, 'extras': n.get('extras', {})})

@@ -6,6 +6,14 @@
 
 Base: PR #14 HEAD `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`, branch `feat/p507-g1-g2-blockout-hero`; new branch `feat/p507-webxr-e0-e1-experiment`. PR #14 remains stacked on PR #13. R4 asset checkpoint `3a11ec757168a59625a087ac83f28c433751a1f5`; the diff from checkpoint to base changes only PROJECT_STATUS. The experiment final HEAD and exact CI results are published in the Draft PR; this document does not mislabel the base SHA as the experiment SHA. Each runtime JSON records checkout HEAD and dirty state.
 
+## E0 TV Bounds Root Cause Investigation — diagnostic follow-up
+
+Owner-approved follow-up17/11/2026: **ROOT_CAUSE_CONFIRMED** on Blender4.0.2/exporter4.0.44. [Full diagnostic report](P507-E0-TV-BOUNDS-DIAGNOSTIC.md) provides original/evaluated/frozen per-component bounds, exact vertex witnesses, six controlled export cases, Three/Python cross-check and actual oriented-proxy audit. [Verified same-version run44065711842](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44065711842) applies to clean commit `6ae02b0397c88970c46618bbe5b4ba3d501edfcf`; final follow-up HEAD/checks are in Draft PR15.
+
+Frozen authored bounds measured evaluated bevel geometry; actual export omitted `export_apply` (defaultfalse), exporting the TV's original uncombined meshes. Raw xmin comes from REAR_CASING accessor555/vertex6; evaluated xmin comes from BEZEL vertex30, explaining8.3055mm including a change of extremum owner. Weighted normals, matrix/axis/grouping/rounding and Box3 are not the cause of this bounds discrepancy. Independent containment checks402482POSITION samples/121IDs: zero violations at1mm.
+
+**E0_FAIL remains; E1 remains BLOCKED.** No asset/lock/manifest/validator/tolerance/navigation changes or OptionA/B implementation. The new report recommends conditional review of OptionA (separate pre-export authoring diagnostic from actual-export operational gates), with OptionB for a separately approved corrected export/handoff revision. Initial investigation text below is preserved as history and superseded only on root cause, not on acceptance status.
+
 ## Asset provenance
 
 Original [run 44038653564](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44038653564), [artifact 14309207795](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44038653564/artifacts/14309207795), name `p507-g1-g2-neutral-blender-chrome`, available at download. Created 17/11/2026 07:46:38 UTC, expires 24/11/2026 07:46:36 UTC. Downloaded with existing authenticated gh; no token in source/evidence. **Not a regenerated asset.**
@@ -44,7 +52,7 @@ Coordinates below are actual Three world axes `[xmin,ymin,zmin,xmax,ymax,zmax]`:
 
 The original artifact's browser-report already records these actual GLB bounds. Therefore this is not an E1 transform or mixed-download defect. All TV vertices remain inside the frozen collision proxy. The **3mm bounds agreement threshold is an E0 experiment validation choice, not a newly approved asset/KPI standard**; it is larger than the source's 1mm proxy containment tolerance, yet the 8.31mm discrepancy still exceeds it. No tolerance was increased to pass this finding.
 
-Source inspection shows authored bounds are measured from evaluated Blender vertices before export; export does not explicitly set export_apply. An evaluated-vs-export bevel difference is a hypothesis, **not a proven root cause**. Resolution needs independent review: clarify whether `authored_bounds_survey` is an exact exported-geometry contract, or approve a separate asset/handoff correction. This task neither repairs the frozen exporter/manifest nor accepts that discrepancy on the owner's behalf. The implementation keeps the stricter gate and stops dependent runtime work.
+Initial handoff hypothesis (superseded by the confirmed diagnostic above): source inspection shows authored bounds are measured from evaluated Blender vertices before export; export does not explicitly set export_apply. An evaluated-vs-export bevel difference is a hypothesis, **not a proven root cause**. Resolution needs independent review: clarify whether `authored_bounds_survey` is an exact exported-geometry contract, or approve a separate asset/handoff correction. This task neither repairs the frozen exporter/manifest nor accepts that discrepancy on the owner's behalf. The implementation keeps the stricter gate and stops dependent runtime work.
 
 ## E1 matrix and route
 

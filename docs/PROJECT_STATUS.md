@@ -1,5 +1,13 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## E0 diagnostic follow-up — 17/11/2026, IN REVIEW; E0 vẫn FAIL
+
+[TV bounds investigation](3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md): ROOT_CAUSE_CONFIRMED bằng Blender4.0.2/exporter4.0.44, sáu controlled exports diagnostic-only, vertex/transform đối chiếu độc lập. Manifest đo evaluated bevel; export R4 bỏ export_apply nên dùng original mesh. xmin GLB từ rear casing, xmin evaluated từ bezel, chênh8.3055mm.402482POSITION samples/121IDs không vượt oriented proxy ở1mm. Evidence run44065711842 thuộc commit6ae02b0; finalHEAD/CI được cập nhật trong Draft PR15.
+
+Không sửa R4/manifest/asset-lock/validator hoặc ngưỡng3mm; không chọn/áp dụng OptionA/B, không unlockE1. Chờ ChatGPT/chủ dự án nghiệm thu diagnostic và duyệt task correction riêng. G2_VISUAL PENDING, merge/deploy/E2/E3 không thực hiện.
+
+---
+
 ## E0/E1 experiment — 17/11/2026, IN REVIEW / BLOCKED BY E0
 
 Task owner đã duyệt E0 + desktop E1 ngày 17/11/2026; quyền này thay snapshot “chưa giao WebXR experiment” bên dưới, không phê duyệt roadmap/E2/E3/G3. Branch `feat/p507-webxr-e0-e1-experiment` từ PR #14 HEAD `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`, Draft PR mới base `feat/p507-g1-g2-blockout-hero`; không sửa PR #13/#14 hoặc production.
