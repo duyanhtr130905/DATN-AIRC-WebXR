@@ -1,5 +1,27 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## Bàn giao sang phiên chat mới — nghiệm thu kỹ thuật P507 R4 ngày 17/11/2026 (snapshot)
+
+**Mục đích:** duy trì tiến độ qua các cuộc trò chuyện. Đây là snapshot nghiệm thu **trên bản asset commit**, không phải trạng thái GitHub tự cập nhật; phiên mới **phải fetch GitHub live** theo [AGENTS](../AGENTS.md), sau đó mới báo/triển khai.
+
+**GitHub đã xác minh (17/11/2026):**
+- `main` tại `e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`: M0-A/B1/B2 và M1-A/B/C đã **MERGED** (đây chỉ là prototype synthetic, không phải P507 thật hoặc nghiệm thu KPI).
+- [PR #13 — G0](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13): **OPEN, chưa merge**, head `c0eff0755d2d058b38944de60f40fb17387f2a91`, base `main`.
+- [PR #14 — P507 G1/G2](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14): **OPEN/DRAFT, chưa merge**, base `docs/g0-p507-3d-production-spec`. **Asset R4 được nghiệm thu tại commit `3a11ec757168a59625a087ac83f28c433751a1f5`**, [CI run 44009648703](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44009648703) **SUCCESS, 2/2 jobs trên chính asset SHA**; [artifact](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44009648703/artifacts/14296828070) có `.blend`, `.glb`, `asset-manifest.json`, báo cáo và 17 ảnh Chrome (artifact GitHub chỉ lưu 7 ngày). **Nếu có commit tài liệu sau `3a11ec7`, CI ở trên không phải kết quả của HEAD mới; không được gán sai SHA.**
+
+**Kết luận nghiệm thu kỹ thuật của ChatGPT sau khi kiểm tra mã, dữ liệu, logs, GLB/ảnh và 121 vùng hình học:**
+- `G1_GEOMETRY = PASS` trong phạm vi provisional đã đặt; `G1_LAYOUT_34_CHAIRS = PASS`. Phòng khảo sát **6.00×8.10×3.50m** (`USER_REPORTED`); bản **trải nghiệm ảo** **6.90×9.315×3.50m** (chủ dự án phê duyệt mở rộng X/Y **15%**, tăng diện tích **32.25%**, **không còn tỷ lệ phòng 1:1**). Vật thể giữ kích thước gốc trừ kệ được phép tăng chiều ngang.
+- **17 bàn** A6/B6/C5; **36 ID ghế lịch sử**, **34 ghế có mesh** A12/B12/C10; C09/C10 **UNPLACED/UNASSIGNED** (không tự xóa). Cửa hai cánh **mở ra ngoài**, tủ tài liệu **ba khoang kính**, kệ đồ rộng **1.50m** và TV nhỏ có support, tường **kem vani sRGB `#F5E6C8`**. Giữ TV chéo, rèm, trần và khu tiện ích.
+- `G2_PIPELINE = PASS` trên asset SHA: **76 Python tests**, **25 frontend tests**, Blender `.blend`→GLB, Khronos glTF Validator **0 errors/0 warnings**, Chrome 17 ảnh/không ghi nhận lỗi console; GLB **10,751,036 bytes**. **Đây là nghiệm thu kỹ thuật, không phải G2 visual sign-off của chủ dự án**.
+- `G1_CIRCULATION = PARTIAL`: lối Tây static/use **1.08/0.93m**, giữa cụm khi kéo ghế **0.20/0.15m**, hàng C tới tường **0.10m**; không gọi các khe hẹp là lối đi, không xác nhận ergonomics/PCCC/accessibility.
+- `G2_VISUAL = PENDING OWNER APPROVAL`, `PHOTO_MATCH = PARTIAL` (kích thước phòng ảo không 1:1), `REAL_DEVICE_WEBXR = NOT RUN`, `REAL_AIRC_DATA = NOT VERIFIED`, `G3 = NOT STARTED`. Các số frame-time của SwiftShader CI **không phải FPS GPU/VR vật lý**. Chưa có bằng chứng về quyền công bố ảnh, logo/nội dung gốc hay nguồn trạng thái thiết bị thật.
+
+**Quyết định/điểm dừng:** **đóng băng asset P507 R4 ở mức `READY FOR WEBXR EXPERIMENT`**, *không* phê duyệt độ chân thực cuối cùng; tạm dừng sửa hình 3D/G3. **WebXR experiment là bước tiếp theo dự kiến, chưa có nhiệm vụ Codex triển khai hoặc kết quả chạy headset**. Không tự merge PR #13/#14, retarget, deploy, sửa app M1-C production, KPI, API hoặc database. Đề xuất vòng sau: người dùng giao nhiệm vụ cụ thể → ChatGPT lập **một prompt** cho Codex → Codex mở nhánh/PR thí nghiệm WebXR riêng, tải đúng GLB/manifest và kiểm tra scale/trục/ID, camera/locomotion/collision/hiệu năng → ChatGPT nghiệm thu. Thử đi lại cần tránh vùng hẹp; mọi WebXR session phải do hành động người dùng kích hoạt. Không tự động bắt đầu code khi chỉ được yêu cầu báo tiến độ.
+
+**Nguồn đọc bắt buộc cho chat mới:** [ROADMAP](ROADMAP.md) (sáu nhóm vẫn **PROPOSED**, không ngầm được duyệt), [R4 frozen layout](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md), [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md), [G0 production spec](3d-production/P507-G0-PRODUCTION-SPEC.md) và [PR #14/CI live](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14). **Quy trình đã chốt:** ChatGPT lập kế hoạch/viết prompt → **Codex triển khai** → ChatGPT đọc code/PR, chạy hoặc xem CI/ảnh để **nghiệm thu**; ChatGPT không tự ý viết code hoặc merge.
+
+---
+
 ## Cập nhật R4 ngày17/11/2026 — đóng băng asset, chờ nghiệm thu trước thử WebXR
 
 Theo quyết định mới của owner, [R4](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) tách survey6×8.1×3.5m USER_REPORTED khỏi virtual6.9×9.315×3.5m OWNER_APPROVED_VIRTUAL_ADAPTATION.17bàn giữ kích thước,36ID ghế lịch sử/34placed A12B12C10/C09C10UNPLACED. Cửa2cánh OUTWARD, tủ3khoang kính, kệ1.50m sâu.47m, sơnkemvani#F5E6C8.121placed vertex proxies; static/occupied-use report tách riêng, circulation PARTIAL; trụcTây1.08/.93m, centraluse.20/.15m. [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md) READY FOR WEBXR EXPERIMENT sau technical gates/exactHEAD CI trong PRhandoff, không runtime mới. G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; không merge/deploy/G3. R3 bên dưới là lịch sử.
