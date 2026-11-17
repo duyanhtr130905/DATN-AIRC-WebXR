@@ -1,0 +1,29 @@
+{
+  "source_head": "2c23fd142331349001c7ec0e3a0fd0bed56abb73",
+  "description": "Actual previous generator A north row second chair: x=.75+1.5/6*4.5=1.875, y=min(7.45+.36,7.75)=7.75. Seat radius .225; back at y+.22 with thickness .05. Cabinet original body plus counter/handles.",
+  "cabinet": {
+    "center": [
+      2.05,
+      7.86,
+      0.38
+    ],
+    "occupancy_rect": [
+      1.29,
+      7.64,
+      2.81,
+      8.06
+    ]
+  },
+  "chair": {
+    "id": "P507-CHAIR-A-08",
+    "center": [
+      1.875,
+      7.75
+    ],
+    "orientation_deg": 180,
+    "footprint_size": [
+      0.45,
+      0.49
+    ]
+  }
+}

@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "label": "P507 PROVISIONAL DEVELOPMENT FIXTURE — NOT AIRC VERIFIED",
+  "room": {
+    "code": "P507",
+    "unit": "m",
+    "width_x": 6,
+    "length_y": 8.1,
+    "height_z": 3.5,
+    "source": "USER_REPORTED",
+    "rights": "PENDING"
+  },
+  "coordinates": {
+    "basis": "SURVEY_X_EAST_Y_TV_Z_UP",
+    "origin": "intersection of logo wall and entrance wall",
+    "three_conversion": "(x,z,-y)"
+  },
+  "rights": {
+    "photo_and_brand": "PENDING",
+    "can_publish": true,
+    "scope": "neutral geometric preview only, NO authentic visual assets or personal data"
+  },
+  "objects": [
+    {
+      "id": "P507-DESK-A01",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        0.75,
+        6.25,
+        2.25,
+        6.85
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-A02",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        2.25,
+        6.25,
+        3.75,
+        6.85
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-A03",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        3.75,
+        6.25,
+        5.25,
+        6.85
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-A04",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        0.75,
+        6.85,
+        2.25,
+        7.449999999999999
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-A05",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        2.25,
+        6.85,
+        3.75,
+        7.449999999999999
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-A06",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        3.75,
+        6.85,
+        5.25,
+        7.449999999999999
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-B01",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        1.5,
+        3.65,
+        3,
+        4.25
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-B02",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        3,
+        3.65,
+        4.5,
+        4.25
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-B03",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        1.5,
+        4.25,
+        3,
+        4.85
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-B04",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        3,
+        4.25,
+        4.5,
+        4.85
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-B05",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        4.5,
+        3.5,
+        5.1,
+        5
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-B06",
+      "type": "table_small",
+      "cluster": "B",
+      "rect": [
+        0.9,
+        3.65,
+        1.5,
+        4.85
+      ],
+      "height": 0.9,
+      "size_source": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-C01",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        1.5,
+        0.85,
+        3,
+        1.45
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-C02",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        3,
+        0.85,
+        4.5,
+        1.45
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-C03",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        1.5,
+        1.45,
+        3,
+        2.05
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-C04",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        3,
+        1.45,
+        4.5,
+        2.05
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    },
+    {
+      "id": "P507-DESK-C05",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        4.5,
+        0.7,
+        5.1,
+        2.2
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "PROPOSED_LAYOUT",
+      "interactive": false
+    }
+  ],
+  "chairs": {
+    "count": 36,
+    "model": "generic dark chair placeholder",
+    "positions": "PROPOSED_LAYOUT",
+    "warning": "No claim of measured positions or safe clearance"
+  },
+  "openings": {
+    "door": {
+      "wall": "west",
+      "from_y": 6.35,
+      "to_y": 7.85,
+      "height": 2.5,
+      "source": "PROPOSED_LAYOUT"
+    },
+    "windows": [
+      {
+        "wall": "east",
+        "from_y": 0.32,
+        "to_y": 1.82,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT"
+      },
+      {
+        "wall": "east",
+        "from_y": 2.27,
+        "to_y": 3.77,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT"
+      },
+      {
+        "wall": "east",
+        "from_y": 4.22,
+        "to_y": 5.72,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT"
+      },
+      {
+        "wall": "east",
+        "from_y": 6.17,
+        "to_y": 7.67,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT"
+      }
+    ]
+  },
+  "hero": {
+    "tv": {
+      "wall": "north",
+      "center_x": 1.06,
+      "center_z": 2.28,
+      "width": 1.77,
+      "height": 1,
+      "source": "PROPOSED_LAYOUT"
+    },
+    "cabinet": {
+      "center": [
+        2.05,
+        7.86,
+        0.38
+      ],
+      "size": [
+        1.5,
+        0.38,
+        0.76
+      ],
+      "source": "PROPOSED_LAYOUT"
+    },
+    "water_dispenser": {
+      "center": [
+        0.48,
+        7.37,
+        0.55
+      ],
+      "radius": 0.22,
+      "height": 1.1,
+      "source": "PROPOSED_LAYOUT"
+    }
+  },
+  "ceiling": {
+    "lights": {
+      "count": 8,
+      "pattern": "2x4",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "fans": {
+      "count": 4,
+      "pattern": "2x2",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "ac": {
+      "count": 2,
+      "type": "cassette",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "projector": {
+      "count": 1,
+      "location": "near_center",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    }
+  },
+  "source_notes": [
+    "User images are only in ChatGPT conversation; do not pretend they are committed.",
+    "Room dimensions and quantities are user-reported, not AIRC-verified.",
+    "Proposed desk coordinates intentionally ignore chair pullout, cabinets and door swing: only table-table overlap can be certified."
+  ]
+}
