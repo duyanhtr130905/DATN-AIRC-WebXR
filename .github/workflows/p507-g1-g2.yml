@@ -33,7 +33,7 @@ jobs:
       - name: Geometry verifier and source provenance
         run: python experiments/p507-g1-g2/geometry.py --report /tmp/p507-g1-report.json
       - name: Geometry and extensibility tests
-        run: python -m unittest discover -s experiments/p507-g1-g2 -p "test_geometry.py" -v
+        run: python -m unittest discover -s experiments/p507-g1-g2 -p "test_*.py" -v
       - name: Compile Blender generator source without pretending Blender ran
         run: python -m py_compile experiments/p507-g1-g2/geometry.py experiments/p507-g1-g2/generate_blender.py
       - name: Ensure raw photo/export folders were not committed
@@ -56,7 +56,7 @@ jobs:
     name: Actual Blender GLB export and Three.js Chrome preview (software GPU)
     needs: provisional-source-checks
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       CHROME_BIN: /usr/bin/google-chrome
@@ -103,6 +103,7 @@ jobs:
         run: |
           npm ci --ignore-scripts --no-fund --prefix apps/web
           npm run build --prefix apps/web
+          npm test --prefix apps/web
       - name: Copy only synthetic-neutral procedural GLB into ignored dev preview
         run: |
           mkdir -p apps/web/public/p507-local-preview

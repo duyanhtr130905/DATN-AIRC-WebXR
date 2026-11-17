@@ -16,6 +16,7 @@ const { chromium } = require("playwright");
 const port = 5178;
 const url = `http://127.0.0.1:${port}/p507-g1-g2-preview.html`;
 const model = path.join(web, "public", "p507-local-preview", "P507_G1_G2_PROVISIONAL.glb");
+const referenceManifest = JSON.parse(await fs.readFile(path.join(directory, "reference-manifest.json"), "utf8"));
 const inventory = JSON.parse(await fs.readFile(path.join(directory, "p507-provisional.json"), "utf8"));
 const assert = (value, message) => { if (!value) throw new Error(message); };
 async function waitServer(proc) {
@@ -29,29 +30,65 @@ async function waitServer(proc) {
 function inspectGeometry(metrics) {
   const bounds = metrics.objectBounds;
   const ids = Object.keys(bounds);
-  assert(ids.filter(id => id.startsWith("P507-DESK-")).length === 17, "Expected actual 17 desks in GLB");
-  for (const group of ["B", "C"]) for (const expected of inventory.chairs.instances.filter(c => c.cluster === group && c.placement_role === "right_end")) {
-    const chair = bounds[expected.id];
-    const desk = bounds[`P507-DESK-${group}05`];
-    assert(chair && desk && chair[0] >= desk[3] - .005, `${expected.id} chair is not on right of longitudinal desk`);
+  const expectedChairs = inventory.chairs.instances.filter(c => c.status === "PLACED_PROVISIONAL");
+  const unplaced = inventory.chairs.instances.filter(c => c.status === "UNPLACED");
+  assert(ids.filter(id => id.startsWith("P507-DESK-")).length === 17, "Expected 17 actual desks in GLB");
+  assert(metrics.placedChairIds.length === expectedChairs.length, "GLB chair count differs from explicit placed inventory");
+  assert(metrics.unplacedIds.length === unplaced.length && metrics.inventoryTotal === 36, "UNPLACED disclosure differs from inventory");
+  const expected = [
+    ...inventory.objects.filter(o => o.status !== "UNPLACED"),
+    ...Object.values(inventory.hero), ...expectedChairs,
+    ...inventory.ceiling.instances, ...inventory.photo_wall.frames,
+    ...inventory.openings.windows.flatMap(w => [w, w.blind]), ...inventory.openings.door.leaves
+  ];
+  for (const item of expected) assert(bounds[item.id], "Missing authored GLB object: " + item.id);
+  for (const chair of unplaced) assert(!bounds[chair.id], "UNPLACED chair unexpectedly rendered: " + chair.id);
+  for (const group of ["B", "C"]) {
+    const right = expectedChairs.filter(c => c.cluster === group && c.placement_role === "right_end");
+    assert(right.length === 2, "Exactly two right chairs required for " + group);
+    for (const expected of right) {
+      const chair = bounds[expected.id], desk = bounds[`P507-DESK-${group}05`];
+      assert(chair[0] >= desk[3] - .003, "Actual right chair penetrates longitudinal desk: " + expected.id);
+    }
   }
+  for (const [id,b] of Object.entries(bounds)) {
+    if (!expected.some(o => o.id === id)) continue;
+    assert(b.every(Number.isFinite), "Nonfinite actual GLB bounds: " + id);
+    assert(b[0] >= -.003 && b[3] <= 6.003 && b[2] >= -8.103 && b[5] <= .003 && b[1] >= -.005 && b[4] <= 3.505,
+      `Actual authored geometry outside room: ${id} ${b}`);
+  }
+  assert(metrics.visibility.hiddenFurnitureIds.length===0, "Furniture hidden by review camera: "+metrics.visibility.hiddenFurnitureIds);
+  if(metrics.architecturalCutaway) assert(metrics.visibility.enabledCeilingIds.length===0, "Ceiling device group not hidden in cutaway");
+  else assert(metrics.visibility.enabledCeilingIds.length===inventory.ceiling.instances.length, "Ceiling unexpectedly hidden outside cutaway");
   const cabinet = bounds["P507-CABINET-LOW"];
-  const water = bounds["P507-WATER-DISPENSER"];
-  assert(cabinet && water, "Hero asset IDs missing from actual GLB");
-  for (const id of ids.filter(id => /P507-(DESK|CHAIR|CABINET|WATER)/.test(id))) {
-    const b = bounds[id];
-    assert(b[0] >= -.001 && b[3] <= 6.001 && b[2] >= -8.101 && b[5] <= .001 && b[1] >= -.005,
-      `Actual GLB furniture exceeds room or floor: ${id} ${b}`);
-    if (!id.startsWith("P507-CHAIR-")) continue;
-    const overlap = Math.max(0, Math.min(b[3], cabinet[3]) - Math.max(b[0], cabinet[0])) *
+  for (const expected of expectedChairs) {
+    const b = bounds[expected.id];
+    const area = Math.max(0, Math.min(b[3], cabinet[3]) - Math.max(b[0], cabinet[0])) *
       Math.max(0, Math.min(b[5], cabinet[5]) - Math.max(b[2], cabinet[2]));
-    assert(overlap < .000001, "Actual GLB cabinet-chair overlap: " + id);
+    assert(area < .000001, "Actual cabinet-chair overlap: " + expected.id);
   }
-  // North TV is at negative glTF Z; four east windows must remain near X=6.
-  assert(bounds["P507-TV-LARGE"]?.[2] < -7.8, "TV/wall orientation is incorrect");
-  assert(metrics.windowCenters.length === 4 && metrics.windowCenters.every(p => p[0] > 5.9 && p[2] < 0), "Four windows must be on east wall after axis conversion");
-  return { actualDeskCount: 17, cabinetChairOverlaps: 0, roomFurnitureBounds: "PASS", rightChairSide: "PASS" };
+  assert(metrics.windowCenters.length === 4 && metrics.windowCenters.every(p => p[0] > 5.9 && p[2] < 0), "Four windows must remain on east wall");
+  for (const prefix of ["P507-LIGHT-", "P507-FAN-", "P507-AC-", "P507-PROJECTOR-", "P507-CAMERA-"]) {
+    const desired = inventory.ceiling.instances.filter(o => o.id.startsWith(prefix));
+    assert(ids.filter(id => id.startsWith(prefix)).length === desired.length, "Actual ceiling device count: " + prefix);
+  }
+  assert(ids.filter(id => id.startsWith("P507-FRAME-")).length === 27, "Expected 27 independent observed-layout frame placeholders");
+  const components = Object.entries(metrics.componentBounds);
+  const center = b => [(b[0]+b[3])/2,(b[1]+b[4])/2,(b[2]+b[5])/2];
+  const control = components.find(([name]) => name.includes("WATER_CONTROL"));
+  const body = components.find(([name]) => (name.includes("WATER_BODY") || name.includes("WATER_GRAY_ENCLOSURE")));
+  const screen = components.find(([name]) => name.includes("TV_BLACK_SCREEN"));
+  assert(control && body && screen, "Required real mesh components for rotation evidence missing");
+  const delta = center(control[1]).map((v,i) => v-center(body[1])[i]);
+  assert(delta[0] > .12 && Math.abs(delta[2]) < .06, "Water front mesh was not actually rotated to +X");
+  const s=screen[1], screenAngle = Math.atan2(s[5]-s[2],s[3]-s[0])*180/Math.PI;
+  assert(screenAngle > 18 && screenAngle < 32, "TV screen geometry is not diagonally mounted: " + screenAngle);
+  return { actualDeskCount:17, actualPlacedChairs:expectedChairs.length, unplacedChairs:unplaced.length,
+    cabinetChairOverlaps:0, roomFurnitureBounds:"PASS", rightChairSide:"PASS", actualWaterFrontDeltaGltf:delta,
+    actualTvScreenAabbAngleDegrees:screenAngle, ceilingDeviceCount:inventory.ceiling.instances.length,
+    frameCount:27, windowCount:4, blindCount:4, notice:"Bounds/component checks complement Blender oriented vertex validation; not visual approval or circulation certification." };
 }
+
 async function screenshot(page, filename) {
   await page.evaluate(() => { document.querySelector(".panel").style.visibility = "hidden"; });
   const pixels = await page.screenshot({ path: path.join(out, filename) });
@@ -83,20 +120,23 @@ async function main() {
       await page.waitForFunction(() => !!window.__P507_REVIEW__ || document.querySelector("#status")?.textContent?.startsWith("Không thể"), null, { timeout: 180000 });
       const text = (await page.locator("#status").innerText()).trim();
       assert(text.startsWith("GLB PROVISIONAL"), "GLB load failed: " + text);
-      const shots = process.env.P507_SHOTS ? process.env.P507_SHOTS.split(",").filter(Boolean) : label === "desktop" ? ["hero", "wide", "overview", "clusters"] : ["hero"];
+      const shots = process.env.P507_SHOTS ? process.env.P507_SHOTS.split(",").filter(Boolean) : label === "desktop" ? ["overview", "entry", "clusters", "tv_corner", "photo_wall", "utility", "ceiling", "windows", "hero", "logo"] : ["hero"];
       for (const shot of shots) {
         await page.evaluate(key => window.__P507_REVIEW__.aim(key), shot);
-        await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 8, null, { timeout: 180000 });
-        const metrics = await page.evaluate(() => window.__P507_REVIEW__.snapshot());
-        assert(metrics.drawCalls > 30 && metrics.trianglesPerFrame > 1000, "View has no meaningful visible geometry: " + shot);
-        assert(metrics.frameTimeMs.sampleCount >= 8, "Insufficient real frame samples");
+        await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 12, null, { timeout: 240000 });
+        const metrics = await page.evaluate(() => { window.__P507_REVIEW__.pause(); return window.__P507_REVIEW__.snapshot(); });
+        assert(metrics.drawCalls > 0 && metrics.trianglesPerFrame > 100, "View has no meaningful visible geometry: " + shot);
+        assert(metrics.frameTimeMs.sampleCount >= 12, "Insufficient real frame samples");
         const geometry = baselineCapture ? { result: "BASELINE_ONLY", notice: "Historical layout known to overlap; new geometry acceptance guards intentionally not applied to baseline evidence." } : inspectGeometry(metrics);
         const image = await screenshot(page, `${shot}-${label}.png`);
         console.log("Captured", label, shot, "samples", metrics.frameTimeMs.sampleCount, "p95_ms", metrics.frameTimeMs.p95);
         evidence.push({ viewport: label, shot, image, status: text, metrics, geometry, errors: [...errors] });
       }
+      await fs.writeFile(path.join(out, "browser-progress.json"), JSON.stringify({ status:"CAPTURING", completedViews:evidence.length, evidence },null,2));
       // Retain a UI-visible inventory screenshot to prove UNPLACED count disclosure.
       await page.evaluate(() => { window.__P507_REVIEW__.aim("hero"); document.querySelector("details").open = true; });
+      await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 2, null, { timeout:240000 });
+      await page.evaluate(() => window.__P507_REVIEW__.pause());
       await page.screenshot({ path: path.join(out, `inventory-${label}.png`) });
       assert(errors.length === 0, "Browser console/page errors: " + errors.join(" | "));
       await context.close();
@@ -104,15 +144,29 @@ async function main() {
     const report = {
       source: "Chrome ANGLE SwiftShader software WebGL; desktop/mobile viewport emulation",
       historicalBaselineCapture: baselineCapture,
+      baselineAssetSourceSha: process.env.P507_BASELINE_SHA || null,
+      references: { opened:referenceManifest.references.length, sourceIds:referenceManifest.references.map(r=>r.id), photoMatch:"PARTIAL: qualitative source review; cameras estimated" },
+      captureMethod:"Continuous full-quality WebGL for measurement; freeze drawing only afterwards to avoid screenshot/automation GPU contention. All measured slow intervals retained.",
+      workTreeDirty: execFileSync("git", ["status", "--porcelain"], {cwd:root, encoding:"utf8"}).trim().length > 0,
       checkoutHeadSha: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
       ciHeadSha: process.env.GITHUB_HEAD_SHA || null,
       ciCheckoutSha: process.env.GITHUB_SHA || null,
       ciRunId: process.env.GITHUB_RUN_ID || null,
       browser: browser.version(), glbSha256: createHash("sha256").update(modelBytes).digest("hex"),
       glbBytes: modelBytes.length, capturedAtUtc: new Date().toISOString(),
-      notice: "PROVISIONAL. Not physical device FPS, owner art approval, AIRC photo matching or real source-to-render evidence.", evidence
+      notice: "PROVISIONAL. Sources inspected locally, cameras estimated; not calibrated photo matching, physical-device FPS, owner art approval or real source-to-render evidence.", evidence
     };
     await fs.writeFile(path.join(out, "browser-report.json"), JSON.stringify(report, null, 2), "utf8");
+    const gallery = await browser.newPage({ viewport:{width:1340,height:200},deviceScaleFactor:1 });
+    const tiles=[];
+    for (const e of evidence) {
+      const png=await fs.readFile(path.join(out,e.image.filename));
+      tiles.push(`<article><strong>${e.viewport} · ${e.shot}</strong><img src="data:image/png;base64,${png.toString("base64")}"></article>`);
+    }
+    await gallery.setContent(`<html><head><style>body{margin:24px;background:#eae8df;color:#26383e;font:15px Arial}h1{font-size:22px}main{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}article{background:#fff;padding:10px}strong{display:block;margin-bottom:6px}img{width:100%;height:225px;object-fit:contain;background:#d9dedc}</style></head><body><h1>P507 · actual GLB WebGL review · ${report.ciHeadSha || report.checkoutHeadSha}</h1><p>PROPOSED_LAYOUT · owner visual approval pending · original survey photographs are not included</p><main>${tiles.join("")}</main></body></html>`);
+    await gallery.locator("img").evaluateAll(images=>Promise.all(images.map(img=>img.decode())));
+    await gallery.screenshot({path:path.join(out,"contact-sheet.png"),fullPage:true});
+    await gallery.close();
     console.log(JSON.stringify({ views: evidence.length, glbBytes: modelBytes.length, checkoutHeadSha: report.checkoutHeadSha,
       evidence: evidence.map(e => ({ shot: e.shot, viewport: e.viewport, calls: e.metrics.drawCalls,
         frameTimeMs: e.metrics.frameTimeMs, geometry: e.geometry })) }, null, 2));

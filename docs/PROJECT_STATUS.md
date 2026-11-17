@@ -1,5 +1,11 @@
 # Trạng thái dự án — nguồn tiếp tục hiện hành
 
+## Cập nhật ngày 17/11/2026 — R3 tổng hợp G1/G2, chờ review
+
+Tiếp tục Draft PR #14/base G0, không merge/deploy/G3. Đã mở13 ảnh thực và3 sơ đồ local; không công bố nguồn. [Báo cáo R3](3d-production/P507-G1-G2-COMPREHENSIVE-REVIEW.md) và [đối chiếu nguồn](3d-production/P507-G1-G2-SURVEY-COMPARISON.md) thay trạng thái hiện hành của snapshot cũ bên dưới.17 bàn/36 ID ghế,24 đặt/12 UNPLACED; B/C dịch+X, TV chéo25°, máy nước xoay90°, AI wall27 frame, utility đầy đủ, trần8đèn/4quạt/2AC/projector/camera và4rèm.111 instance đã đặt có vertex proof,56unit tests; circulation PARTIAL (.26m sát tường phải/.53m chỗ kệ giày), usable walkway UNKNOWN. PHOTO_MATCH PARTIAL định tính, survey PROVISIONAL; G2_VISUAL PENDING OWNER APPROVAL, thiết bị thật NOT RUN. Final exact-HEAD CI/artifacts được ghi trong PR handoff sau khi chạy; không lấy green775 làm chứng cứ R3. Dừng sau bàn giao.
+
+---
+
 ## Cập nhật 16/11/2026 — tiếp tục PR #14 sửa layout/hero G1/G2
 
 Task hiện hành được chủ dự án giao: sửa A, ghế phải B/C, tủ/bình nước/cửa, inventory v2 và góc hero; **không merge/deploy/G3**. Root `D:\Code\DATN`, branch `feat/p507-g1-g2-blockout-hero`; [PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) giữ Draft/base `docs/g0-p507-3d-production-spec`. PR #13 vẫn open lúc kiểm tra đầu task; không retarget/sửa G0.

@@ -1,6 +1,10 @@
 # P507 G1/G2 — Implementation Evidence & Acceptance Status
 
-## Current revision — 16/11/2026 layout correction (PR #14)
+## Current revision 3 — 17/11/2026, chờ review
+
+Xem [báo cáo tổng hợp R3](P507-G1-G2-COMPREHENSIVE-REVIEW.md). G1_GEOMETRY PASS có giới hạn111 instance đặt/12ghế UNPLACED;36 ID được giữ. G1_SURVEY_ACCURACY PROVISIONAL; G1_CIRCULATION PARTIAL; PHOTO_MATCH PARTIAL sau khi mở16 nguồn thật, camera chưa calibrated. G2_PIPELINE theo exact-HEAD CI/handoff; G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; REAL_AIRC_DATA NOT VERIFIED; G3 NOT STARTED. Các mục36ghế đặt/PHOTO_MATCH BLOCKED bên dưới là lịch sử, không mô tả R3.
+
+## Historical revision 2 — 16/11/2026 layout correction (PR #14)
 
 See [layout/lookdev revision and exact coordinates](P507-G1-G2-LAYOUT-LOOKDEV-REVISION.md), [before/after occupancy](../evidence/p507-layout-before-after.svg) and final PR handoff for exact HEAD/CI artifacts. This section supersedes the desk-only verdict in the historical snapshot below.
 
