@@ -125,6 +125,7 @@ async function main() {
         await page.evaluate(key => window.__P507_REVIEW__.aim(key), shot);
         await page.waitForFunction(() => window.__P507_REVIEW__.snapshot().frameTimeMs.sampleCount >= 12, null, { timeout: 240000 });
         const metrics = await page.evaluate(() => { window.__P507_REVIEW__.pause(); return window.__P507_REVIEW__.snapshot(); });
+        assert(metrics.frameTimeMs.raw.length >= 12 && metrics.frameTimeMs.raw.every(value => Number.isFinite(value) && value > 0), "Invalid rAF interval measurement");
         assert(metrics.drawCalls > 0 && metrics.trianglesPerFrame > 100, "View has no meaningful visible geometry: " + shot);
         assert(metrics.frameTimeMs.sampleCount >= 12, "Insufficient real frame samples");
         const geometry = baselineCapture ? { result: "BASELINE_ONLY", notice: "Historical layout known to overlap; new geometry acceptance guards intentionally not applied to baseline evidence." } : inspectGeometry(metrics);

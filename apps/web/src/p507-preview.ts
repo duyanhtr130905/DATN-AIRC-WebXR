@@ -88,11 +88,12 @@ async function run(element: HTMLCanvasElement) {
   let current: Preset = "hero";
   const overheadNodes: Object3D[] = [], eastWalls: Object3D[] = [];
   const frameTimes: number[] = [];
-  let paused = false, prior = performance.now();
+  let paused = false;
+  let prior: number | null = null;
   function aim(key: string) {
     if (!(key in presets)) throw new Error("Unknown review camera: " + key);
     current = key as Preset;
-    paused = false; prior = performance.now();
+    paused = false; prior = null;
     gl.shadowMap.needsUpdate = true;
     const preset = presets[current];
     overheadNodes.forEach(node => { node.visible = !preset.cutaway; });
@@ -228,7 +229,9 @@ async function run(element: HTMLCanvasElement) {
   function render(now: number) {
     if (stopped) return;
     if (paused) { requestAnimationFrame(render); return; }
-    frameTimes.push(now - prior); prior = now;
+    // Establish the first rAF timestamp; never subtract a newer performance.now().
+    if (prior !== null) frameTimes.push(now - prior);
+    prior = now;
     if (frameTimes.length > 600) frameTimes.shift();
     controls.update(); gl.render(scene, camera); frames++;
     if (firstFrameCompletedMs === null) firstFrameCompletedMs = performance.now() - loadStart;
