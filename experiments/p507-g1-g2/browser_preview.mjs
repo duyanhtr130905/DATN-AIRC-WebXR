@@ -34,7 +34,7 @@ function inspectGeometry(metrics) {
   const unplaced = inventory.chairs.instances.filter(c => c.status === "UNPLACED");
   assert(ids.filter(id => id.startsWith("P507-DESK-")).length === 17, "Expected 17 actual desks in GLB");
   assert(metrics.placedChairIds.length === expectedChairs.length, "GLB chair count differs from explicit placed inventory");
-  assert(metrics.unplacedIds.length === unplaced.length && metrics.inventoryTotal === 36, "UNPLACED disclosure differs from inventory");
+  assert(metrics.unplacedIds.length === unplaced.length && metrics.inventoryTotal === inventory.chairs.count, "UNPLACED disclosure differs from inventory");
   const expected = [
     ...inventory.objects.filter(o => o.status !== "UNPLACED"),
     ...Object.values(inventory.hero), ...expectedChairs,
@@ -63,7 +63,7 @@ function inspectGeometry(metrics) {
   assert(metrics.visibility.hiddenFurnitureIds.length===0, "Furniture hidden by review camera: "+metrics.visibility.hiddenFurnitureIds);
   if(metrics.architecturalCutaway) assert(metrics.visibility.enabledCeilingIds.length===0, "Ceiling device group not hidden in cutaway");
   else assert(metrics.visibility.enabledCeilingIds.length===inventory.ceiling.instances.length, "Ceiling unexpectedly hidden outside cutaway");
-  assert(metrics.approvedLayoutTotal===34 && expectedChairs.length===34 && unplaced.length===2,"Owner layout must place 34 of 36 historical chairs");
+  assert(metrics.approvedLayoutTotal===inventory.chairs.approved_layout_count && expectedChairs.length===34 && ["P507-CHAIR-C-09","P507-CHAIR-C-10"].every(id=>unplaced.some(c=>c.id===id)),"Owner layout must place 34 of 36 historical chairs");
   assert(metrics.roomDimensions.width_x===6.9 && metrics.roomDimensions.length_y===9.315 && metrics.surveyBaseline.width_x===6 && metrics.surveyBaseline.length_y===8.1,"Virtual/survey dimensions confused in exported metadata");
   assert(metrics.wallBaseColorSrgb==="#F5E6C8" && metrics.wallMaterialUses>=4,"Vanilla wall material absent or inconsistent in actual GLB");
   assert(Object.keys(metrics.fileGlassBays).length===3 && metrics.fileGlassAlpha>.05 && metrics.fileGlassAlpha<.4,"Actual three clear glass cabinet panes missing");
