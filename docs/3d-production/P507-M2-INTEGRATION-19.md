@@ -1,6 +1,6 @@
 # Current preservation follow-up — 18/11/2026
 
-Owner-approved private preservation now implemented: see [R4 preservation and restore evidence](P507-R4-PRESERVATION.md). Original ZIP and all member bytes preserved in PRIVATE vault; independent restore/final regression pending. CI cross-repo still BLOCKED without separately approved access. This supersedes earlier missing-storage decision statements below; M2 IN_PROGRESS, #20 DEFERRED, visual pending/circulation partial. Same Draft PR21, no merge/M3.
+Owner-approved private preservation now implemented: see [R4 preservation and restore evidence](P507-R4-PRESERVATION.md). Original ZIP and all member bytes preserved in PRIVATE vault; independent owner remote restore PASS on clean `193720b`, E0/E1 15/15, final documentation HEAD regression/CI linked from PR21. CI cross-repo still BLOCKED without separately approved access. This supersedes earlier missing-storage decision statements below; M2 IN_PROGRESS, #20 DEFERRED, visual pending/circulation partial. Same Draft PR21, no merge/M3.
 
 ## AS-OF integration evidence before preservation
 

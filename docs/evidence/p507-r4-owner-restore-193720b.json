@@ -1,0 +1,231 @@
+{
+  "result": "OWNER_REMOTE_RESTORE_PASS",
+  "tested_head": "193720b1770de119d5f87e732d5594a0f10b8b62",
+  "dirty": false,
+  "restore": {
+    "result": "RESTORE_BUNDLE_PASS",
+    "timestamp_utc": "2026-11-18T08:29:00.914179+00:00",
+    "head": "193720b1770de119d5f87e732d5594a0f10b8b62",
+    "dirty": false,
+    "vault_commit": "908a5cbb1f77b75b28666fd424cbd85f2aba4c1f",
+    "archive_sha256": "4255b199c6892c53b6709b1c66ce873cbcb4088dfa8ecef679a8e3e4713249f8",
+    "archive_bytes": 11369216,
+    "privacy_before": {
+      "repository": "duyanhtr130905/DATN-AIRC-WebXR-asset-vault",
+      "private": true,
+      "authenticated_owner": "duyanhtr130905"
+    },
+    "privacy_after": {
+      "repository": "duyanhtr130905/DATN-AIRC-WebXR-asset-vault",
+      "private": true,
+      "authenticated_owner": "duyanhtr130905"
+    },
+    "member_count": 28,
+    "origin_actions_downloads": 0,
+    "existing_local_bundle_used": false,
+    "bundle": {
+      "result": "E0_BUNDLE_PASS",
+      "sourceSha": "acd21c62c24b94d7dda4bbf25c80fe0b4224cc31",
+      "checkoutSha": "9764b90f86317446bb585bf668171f81e1c57edb",
+      "modelSha256": "8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49",
+      "modelBytes": 10751036,
+      "stableRecords": 123,
+      "placedIDs": 121,
+      "notice": "Runtime world-geometry, identity transform and capsule spawn checks also required for E0_PASS."
+    },
+    "notice": "E0 actual geometry/reference and E1 Chrome must run separately; no CI cross-repo credentials granted."
+  },
+  "reference": {
+    "result": "PASS",
+    "method": "independent Python POSITION/hierarchy decoder",
+    "maxReferenceDeltaM": 0,
+    "vertexSamples": 402482,
+    "assetHash": "8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49"
+  },
+  "e0": {
+    "result": "E0_PASS",
+    "geometry": {
+      "result": "E0_SCENE_PASS",
+      "referenceVersion": 1,
+      "maxReferenceDeltaM": 4.440892098500626e-16,
+      "authoringDrift": [
+        {
+          "id": "P507-TV-LARGE",
+          "authoredEvaluated": [
+            0.16149479150772095,
+            1.7799999713897705,
+            -9.231895446777344,
+            1.768088459968567,
+            2.7799999713897705,
+            -8.38965129852295
+          ],
+          "actualExport": [
+            0.15318928186664493,
+            1.7799999713897705,
+            -9.23355851477398,
+            1.7725793546925521,
+            2.7799999713897705,
+            -8.387026920885576
+          ],
+          "maxDeltaM": 0.008305509641076014
+        }
+      ],
+      "vertexSamples": 402482,
+      "proxyToleranceM": 0.001,
+      "exportBoundsToleranceM": 0.003,
+      "placedIDs": 121,
+      "meshCount": 489,
+      "geometryCount": 270,
+      "triangleCount": 305372,
+      "materialCount": 36,
+      "textureCount": 2,
+      "identityTransform": true,
+      "floorY": 0,
+      "windows": 4,
+      "worldBoundsMatched": 121
+    },
+    "negative_tests": [
+      {
+        "mode": "double-scale",
+        "result": "PASS",
+        "error": "Error: Model must load with identity transform"
+      },
+      {
+        "mode": "double-rotate",
+        "result": "PASS",
+        "error": "Error: Model must load with identity transform"
+      },
+      {
+        "mode": "reference bounds wrong",
+        "result": "PASS",
+        "error": "Error: E0_EXPORT_BOUNDS: independent actual-export reference differs from GLB vertices: [{\"id\":\"P507-AC-01\",\"actual\":[3.0800000429153442,3.3599999397993088,-2.4399999380111694,3.8200000524520874,3.4999999329447746,-1.6999999284744263],\"expected\":[3.1800000429153443,3.3599999397993088,-2.4399999380111694,3.8200000524520874,3.4999999329447746,-1.6999999284744263],\"maxDelta\":0.10000000000000009}]"
+      },
+      {
+        "mode": "reference missing",
+        "result": "PASS",
+        "error": "Error: E0_REFERENCE_RECORDS: missing/duplicate/invalid ID or bounds"
+      },
+      {
+        "mode": "reference duplicate",
+        "result": "PASS",
+        "error": "Error: E0_REFERENCE_RECORDS: missing/duplicate/invalid ID or bounds"
+      },
+      {
+        "mode": "reference asset hash",
+        "result": "PASS",
+        "error": "Error: E0_REFERENCE_ASSET: frozen SHA/bytes mismatch"
+      },
+      {
+        "mode": "manifest missing",
+        "result": "PASS",
+        "error": "Error: Duplicate/missing logical IDs"
+      },
+      {
+        "mode": "manifest duplicate",
+        "result": "PASS",
+        "error": "Error: Duplicate/missing logical IDs"
+      },
+      {
+        "mode": "wrong logical ID",
+        "result": "PASS",
+        "error": "Error: Unknown/unplaced GLB ID INVALID-ID"
+      },
+      {
+        "mode": "wrong child transform",
+        "result": "PASS",
+        "error": "Error: E0_PROXY_CONTAINMENT: P507-DESK-A01 node Cube311 vertex 192"
+      },
+      {
+        "mode": "vertex outside proxy",
+        "result": "PASS",
+        "error": "Error: E0_PROXY_CONTAINMENT: P507-DESK-A01 node Cube311 vertex 0"
+      }
+    ],
+    "proxy_violations": []
+  },
+  "e1": {
+    "result": "PASS",
+    "browser": "158.0.8127.36",
+    "environment": "Headless actual Chrome, default GPU selection; inspect renderer, short smoke only",
+    "physicalGPU": "Default backend observed: ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 6GB Laptop GPU (0x000025EC) Direct3D11 vs_5_0 ps_5_0, D3D11); physical-GPU KPI protocol NOT RUN",
+    "scenarios": [
+      {
+        "name": "actual R4 load, scene contract and spawn",
+        "result": "PASS"
+      },
+      {
+        "name": "actual raycast child/group to logical record and provisional panel",
+        "result": "PASS"
+      },
+      {
+        "name": "WASD gated until pointer lock",
+        "result": "PASS"
+      },
+      {
+        "name": "user gesture lock, WASD, mouse look, ESC and reset",
+        "result": "PASS"
+      },
+      {
+        "name": "all WASD key events reach active controller",
+        "result": "PASS"
+      },
+      {
+        "name": "blur clears held movement",
+        "result": "PASS"
+      },
+      {
+        "name": "pagehide clears held movement",
+        "result": "PASS"
+      },
+      {
+        "name": "loading state precedes asset response",
+        "result": "PASS"
+      },
+      {
+        "name": "reload restores spawn with inactive controls",
+        "result": "PASS"
+      },
+      {
+        "name": "actual browser route segments and blocked continuation",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: missing",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: hash",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: schema",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: corrupt",
+        "result": "PASS"
+      },
+      {
+        "name": "unsupported WebGL state",
+        "result": "PASS"
+      }
+    ],
+    "api_ws_xr_media_calls": "NONE asserted by original unchanged harness",
+    "pagehide_scope": "event-injected simulation",
+    "asset_hash": "8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49",
+    "render_resolution": [
+      1280,
+      720
+    ]
+  },
+  "raw_report_sha256": {
+    "vault-restore-report.json": "e845a330c5f2aa8868ccb7a95d6c467f9a0941efec57f9680143963435c8e2ac",
+    "e0-scene-report.json": "a6f746e2a5d66f13f291a318dd92f97327ce4469115eac14218a3d613996441a",
+    "browser-report-e1.json": "00e7b2b1438ed850c5814d21752a809856425d529812d01385e9857a28509638"
+  },
+  "limitations": [
+    "Not physical-GPU KPI30/VR72/mobile acceptance",
+    "CI cross-repository vault access BLOCKED; no credentials granted",
+    "Issue20 DEFERRED; G1_CIRCULATION PARTIAL; G2_VISUAL PENDING_OWNER_APPROVAL"
+  ]
+}
