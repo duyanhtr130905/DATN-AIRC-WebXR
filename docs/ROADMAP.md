@@ -6,7 +6,7 @@
 - Người phê duyệt: **chủ dự án, qua trao đổi ChatGPT** trong yêu cầu Roadmap 2.0 ngày 18/11/2026. Không có URL quyết định chat được cung cấp; không dựng permalink.
 - Phạm vi phê duyệt: kế hoạch tám milestone M0–M7 và quy tắc quản lý tiến độ. **Không cấp quyền tự triển khai tất cả feature hoặc tự bắt đầu milestone.**
 - GitHub last verified: **2026-11-18 09:57 +07:00 (Asia/Saigon)**; main `e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`; PR #13–#15 và Issues #1–#5 khớp baseline chủ dự án cung cấp.
-- Bản 2.0 trên branch `docs/approved-m0-m7-roadmap-v2` đang chờ nghiệm thu/merge qua Draft PR; chưa nằm trên main. Phê duyệt kế hoạch của owner đã có; nghiệm thu bản cập nhật tài liệu này chưa có.
+- Bằng chứng đồng bộ Roadmap 2.0 được theo dõi tại [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16). Trạng thái merge/HEAD là dữ liệu thay đổi theo thời gian: phải kiểm tra GitHub live trước khi kết luận nội dung đã nằm trên `main`; không dùng snapshot trước merge làm trạng thái hiện hành.
 
 ## Source of truth và thứ tự ưu tiên
 
@@ -144,8 +144,9 @@ Không giả định M3/M4/M5 phải code tuần tự tuyệt đối; chuẩn b�
 | 2026-11-18 | TV root cause ACCEPTED theo nghiệm thu ChatGPT được owner thuật lại | Diagnostic không thay E0 FAIL/E1 BLOCKED; Option A/B chưa triển khai, không có permalink chat được cung cấp |
 | 2026-11-18 | Post-review progress synchronization bắt buộc | Kể cả PASS/PARTIAL/FAIL/BLOCKED đều cập nhật ROADMAP/STATUS, commit, đọc lại diff/HEAD; phân biệt branch/main |
 | 2026-11-18 | Roadmap deviation warning trước phần lệch phạm vi | Theo guard và mẫu trong AGENTS; ngoại lệ được duyệt phải ghi decision log/ROADMAP/STATUS trước triển khai |
+| 2026-11-18 | Ủy quyền merge trong lượt nghiệm thu PR hiện tại | Chủ dự án cho phép ChatGPT merge trực tiếp các PR **đủ điều kiện** sau review độc lập, xác minh CI/HEAD/mergeability và không còn blocker; quyền này không cấp cho Codex, không áp dụng vô hạn cho mọi PR tương lai |
 
-Điểm dừng lần này: một Draft PR tài liệu vào main, chờ ChatGPT nghiệm thu độc lập và đồng bộ. Sau đó công việc phát triển tiếp theo vẫn là **M2 — chốt E0 validation contract correction có kiểm soát, rồi browser walkthrough E1 trên frozen R4**. Không triển khai correction trong PR tài liệu, không tạo milestone mới. Owner quyết định merge/bước tiếp; không merge tự động.
+Điểm kiểm soát: [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) dành riêng cho đồng bộ roadmap; phải kiểm tra trạng thái merge thực tế trên GitHub. ChatGPT chỉ được merge PR khi chủ dự án ủy quyền rõ, đã review phạm vi/CI đúng HEAD, giải quyết blocker và xác nhận không làm mất governance; Codex không tự merge. Công việc phát triển tiếp theo vẫn thuộc **M2 — chốt E0 validation contract correction có kiểm soát, rồi browser walkthrough E1 trên frozen R4**, theo task feature được phê duyệt riêng; không tạo milestone mới.
 
 ## Lịch sử M0/M1 — giữ nguyên checkpoint và evidence
 

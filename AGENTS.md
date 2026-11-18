@@ -5,13 +5,13 @@
 - Root duy nhất: `D:\Code\DATN`. Remote duy nhất được phép ghi: `https://github.com/duyanhtr130905/DATN-AIRC-WebXR.git`.
 - Không truy cập, đọc, chỉnh sửa, sao chép, fork hay dùng dữ liệu/mã/tài liệu của KLTN-Factory-Agentic-DT. Không dùng repository cũ làm template.
 - Trước mọi thao tác ghi GitHub: kiểm tra `Get-Location`, `git rev-parse --show-toplevel`, `git remote -v`, `git branch --show-current`, `git status --short`, diff và secret. Sai root/remote thì dừng.
-- Không force push, merge PR, xóa nhánh/repo, thay visibility, deploy hoặc bắt đầu milestone/feature chưa được giao. Không sửa Git global config; không cài công cụ hệ thống nếu không cần.
+- Không force push, xóa nhánh/repo, thay visibility, deploy hoặc bắt đầu milestone/feature chưa được giao. **Codex không được tự merge PR.** ChatGPT chỉ được merge khi có ủy quyền cụ thể từ chủ dự án, review độc lập PASS, kiểm đúng HEAD/CI, không còn blocker và GitHub cho phép merge; ủy quyền của chủ dự án ngày 18/11/2026 áp dụng các PR đủ điều kiện trong lượt nghiệm thu hiện tại, không mặc nhiên cấp quyền vô thời hạn. Không sửa Git global config; không cài công cụ hệ thống nếu không cần.
 - Lịch sử: M0-A chỉ tài liệu và checker; task M0-B1 ngày 14/11/2026 cho phép hai PoC cô lập trong experiments/ và test tooling dùng dữ liệu synthetic. Giới hạn lịch sử M0-B1; task M0-B2 ngày 14/11/2026 đã duyệt nền tảng chính thức apps/web, apps/api, infra. Stack/Modular Monolith/UI theo ADR-0001 ACCEPTED. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/nghiệm thu VR vẫn chưa duyệt; không thay KPI hoặc tự triển khai feature chưa được giao/AI/RAG. Các giới hạn chưa M1 trong task cũ là lịch sử, không phủ nhận M1 đã merge.
 
 ## Nguồn thông tin và quyền tiếp tục hiện hành
 
 - [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **2.0 APPROVED ngày 18/11/2026**, duy nhất tám milestone M0–M7. Phê duyệt kế hoạch không cấp quyền tự triển khai mọi feature. Current milestone M2 IN_PROGRESS; M0/M1 DONE/MERGED; xem STATUS để tách branch/main.
-- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. Không tự bắt đầu M2/M3 hoặc milestone tiếp theo sau khi PR trước merge.
+- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. **M2 đang IN_PROGRESS** nhưng không được tự bắt đầu work item M2/M3 mới hoặc milestone tiếp theo chỉ vì PR trước đã merge.
 - Không tự đổi tên, thứ tự hoặc nội dung milestone đã duyệt. Đề xuất thay đổi phải ghi riêng và chờ phê duyệt, không sửa KPI hoặc chia P507 thành ba phòng.
 - Sau mỗi lượt/review, áp dụng Post-Acceptance Synchronization bên dưới kể cả khi thất bại; chưa nghiệm thu ghi IN_REVIEW. Merge kỹ thuật không đồng nghĩa KPI đạt.
 - Nếu tài liệu mâu thuẫn, báo chủ dự án kèm nguồn, thời điểm và tác động; không tự chọn một cách hiểu, sửa quyết định hoặc dùng kế hoạch lịch sử làm quyền triển khai. Giữ nguyên acceptance/evidence lịch sử và dẫn trạng thái hiện tại.
@@ -53,9 +53,9 @@ Sau mỗi lượt Codex:
 4. Commit tài liệu đồng bộ.
 5. ChatGPT đọc lại diff và HEAD cập nhật; nếu còn sai, ghi và sửa theo phạm vi.
 6. Nếu docs trên branch chưa merge, ghi rõ trạng thái branch so với main, PR/head/base và CI tương ứng; không tuyên bố đã đồng bộ main chỉ vì Draft PR xanh.
-7. Chủ dự án quyết định merge/triển khai bước tiếp theo. Không tự merge hoặc coi review AI thay nghiệm thu học thuật/quyền AIRC.
+7. Chủ dự án quyết định merge/triển khai bước tiếp theo hoặc **ủy quyền có phạm vi cho ChatGPT merge các PR đủ điều kiện** sau review và kiểm tra live. Codex không được merge. Không coi review AI thay nghiệm thu học thuật/quyền AIRC.
 
-Quy trình áp dụng sau mọi kết luận, không đợi PASS. Lượt Roadmap 2.0 dừng tại Draft PR chờ ChatGPT; E0/E1 correction thuộc task feature tiếp theo của M2 sau nghiệm thu/đồng bộ. Không tự bắt đầu M3–M7.
+Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 được bàn giao qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16); trạng thái nghiệm thu/merge phải xác minh GitHub live, không suy từ lời bàn giao cũ. E0/E1 correction là task feature tiếp theo của M2, cần quyền riêng sau đồng bộ. Không tự bắt đầu M3–M7.
 
 ## Quy tắc M2 P507 hiện hành
 

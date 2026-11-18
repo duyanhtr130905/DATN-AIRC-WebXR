@@ -6,7 +6,7 @@ Repository `duyanhtr130905/DATN-AIRC-WebXR`; root `D:\Code\DATN`; default branch
 
 **Roadmap 2.0 APPROVED ngày 18/11/2026 bởi chủ dự án qua ChatGPT. M0/M1 DONE / MERGED. Current milestone: M2 IN_PROGRESS, dependency_status PARTIAL.** [ROADMAP](ROADMAP.md) duy nhất quản lý DoD M0–M7; [AGENTS](../AGENTS.md) quản lý quyền và guard. Phê duyệt kế hoạch không cấp quyền tự làm mọi feature. MT1–MT3 chưa nghiệm thu trên sản phẩm thật.
 
-**Branch vs main:** bản cập nhật này trên `docs/approved-m0-m7-roadmap-v2`, từ main HEAD trên; đang bàn giao Draft PR và chờ ChatGPT nghiệm thu độc lập. Nội dung 2.0 chưa merge vào main. Final HEAD/checks/PR URL ở PR bàn giao để tránh tự tham chiếu SHA. Không tự gọi task tài liệu ACCEPTED hoặc roadmap đã đồng bộ với main.
+**Branch vs main — snapshot tại 09:57 ngày 18/11/2026:** bản cập nhật được soạn trên `docs/approved-m0-m7-roadmap-v2` từ main HEAD nêu trên, lúc đó chưa merge. [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) là nguồn để xác minh HEAD/checks/merge **mới nhất**; sau khi review và merge, không được dùng snapshot này để nói nội dung vẫn chưa có trên `main`. Chủ dự án đã ủy quyền trong lượt nghiệm thu này cho ChatGPT merge trực tiếp các PR đủ điều kiện sau review/CI/mergeability; Codex không được tự merge.
 
 ### PR hiện hành — truy vấn GitHub live
 
