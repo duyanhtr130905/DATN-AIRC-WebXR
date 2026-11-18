@@ -31,6 +31,7 @@ def main():
             '--artifact-dir', str(args.artifact_dir), '--blender-dir', str(args.blender_dir),
             '--three-report', str(injected), '--output', str(output), '--require-original-version'],
             capture_output=True, text=True)
+        assert output.is_file(), (mode, proc.returncode, proc.stdout, proc.stderr)
         report = json.loads(output.read_text(encoding='utf-8'))
         expected = 'ROOT_CAUSE_CONFIRMED' if mode == 'matching' else 'ROOT_CAUSE_UNRESOLVED'
         assert report['conclusion'] == expected, (mode, report['conclusion'], proc.stderr)

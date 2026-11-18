@@ -1,6 +1,6 @@
 # M2 Issue #19 — integration acceptance evidence (18/11/2026)
 
-Status: IN_REVIEW / PARTIAL pending exact final HEAD checks and independent ChatGPT acceptance. Main baseline `458569026edc917fa38d945ecd190bd4574b925f`; branch `integrate/m2-p507-issue-19`. Authorized [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19); [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) deferred owner findings.
+Draft PR: [#21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21). Status: IN_REVIEW / PARTIAL pending exact final HEAD checks and independent ChatGPT acceptance. Main baseline `458569026edc917fa38d945ecd190bd4574b925f`; branch `integrate/m2-p507-issue-19`. Authorized [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19); [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) deferred owner findings.
 
 ## Provenance and reconciliation
 
@@ -27,13 +27,23 @@ Initial local: 76 G1/G2 Python and 18 E0/reference/diagnostic Python PASS; six b
 | Roadmap M2 DoD | Integration assessment |
 | --- | --- |
 | 1 Frozen source/GLB/provenance | Hash PASS; durable new-machine access BLOCKED after artifact expiry without approved storage |
-| 2 E0 actual geometry and contract | Source #15 accepted TECHNICAL_PASS; final integration regression pending |
-| 3 E1 Chrome controls/collision | Source #15 15/15 accepted; final integration regression pending; full circulation PARTIAL |
-| 4 Logical ID/panel provenance | Source implementation retained; final Chrome regression pending; provisional USER_REPORTED metadata |
-| 5 Error/retry/recovery | Source scenarios retained; final Chrome regression pending |
-| 6 Browser evidence/performance | Functional smoke pending; no physical-GPU KPI30/VR72/mobile/XR certification |
+| 2 E0 actual geometry and contract | Source #15 accepted TECHNICAL_PASS; clean `ff4ac96` local actual Chrome PASS; final HEAD CI in #21 |
+| 3 E1 Chrome controls/collision | Source #15 15/15 accepted; clean `ff4ac96` local actual Chrome PASS; final HEAD CI in #21; full circulation PARTIAL |
+| 4 Logical ID/panel provenance | Source implementation retained; clean `ff4ac96` actual Chrome PASS; final HEAD CI in #21; provisional USER_REPORTED metadata |
+| 5 Error/retry/recovery | Source scenarios retained; clean `ff4ac96` actual Chrome PASS; final HEAD CI in #21 |
+| 6 Browser evidence/performance | Functional smoke PASS on clean `ff4ac96`; no physical-GPU KPI30/VR72/mobile/XR certification |
 | 7 Runbook/limitations/review | Current runbook supplied; independent ChatGPT acceptance pending; M2 IN_PROGRESS |
 
 G1_CIRCULATION=PARTIAL, G2_VISUAL=PENDING_OWNER_APPROVAL. Owner deferred chair-row accessibility and inaccurate furniture sizes/positions under #20; no resolution or PASS claimed. Virtual 6.90×9.315×3.50m is owner-approved +15% adaptation of USER_REPORTED 6×8.1×3.5m, not 1:1. AIRC rights/fidelity, mobile/physical devices, G3, M3–M7 remain outside this task.
 
 Next: finish final exact-HEAD checks; independent ChatGPT review of one Draft PR; owner decides archival mechanism and later #20 resumption. Codex does not merge or begin M3.
+
+## Clean integration checkpoint and final verification protocol
+
+Clean `ff4ac9677a029cd02b50285793704c86db6890fc`: E0_PASS; all actual geometry/reference negatives PASS; E1 15/15 scenario groups PASS in Chrome 158.0.8127.36 on Windows, P507_GPU=default (inspect renderer in raw JSON; no performance certification). Three short frame runs preserved. 45 frontend units/build/typecheck, 10 capability-checker units, Python reference decoder (402482 positions, delta0), navigation exact blockers PASS. No API/DB/XR/media requests in E1 harness. Historical raw ff4ac96 files retained locally before final rerun.
+
+Checkpoint workflows (not final-HEAD certification): E0/E1 [44247427593](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247427593), G1/G2 [44247427630](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247427630), diagnostic [44247427636](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247427636). Final doc commit reruns all six workflows; workflow path filters include integration status/report so documentation synchronization cannot silently skip E0/diagnostic gates. Final actual branch HEAD, workflow run IDs/conclusions and artifact links are recorded in Draft PR #21 after completion, avoiding a self-referential commit hash. Checkout HEAD/dirty fields in raw E0/E1/diagnostic reports must agree with final PR HEAD, dirty=false.
+
+Local same-version diagnostic replay could not run from old numeric-only CI artifact: isolated DIAGNOSTIC_EXPORT_ONLY GLBs are absent. This is NOT a PASS; full Blender4.0.2/exporter4.0.44 diagnostic and real CLI matching/manual/Box3 negative regression run fresh in CI. No old evidence is relabeled. Diagnostic helper reports stderr when inputs are missing.
+
+Final checks also compare AGENTS to main and frozen/runtime/reference/evidence paths to c3c8002, verify source ancestor chain and all six lock hashes, run repository verifier/links/limited secret scan, inspect tracked binary/private paths and diff --check. Actual final results are in #21. Privacy scan is limited pattern checking, not a comprehensive security audit. No source photos/private data/generated GLB/.blend/node_modules/.env are newly tracked.

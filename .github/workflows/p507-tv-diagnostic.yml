@@ -8,6 +8,9 @@ on:
       - 'experiments/p507-webxr/verify_diagnostic_exit.py'
       - 'docs/3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md'
       - '.github/workflows/p507-tv-diagnostic.yml'
+      - 'docs/3d-production/P507-M2-INTEGRATION-19.md'
+      - 'docs/ROADMAP.md'
+      - 'docs/PROJECT_STATUS.md'
   workflow_dispatch:
 permissions:
   contents: read

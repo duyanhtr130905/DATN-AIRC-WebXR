@@ -11,6 +11,9 @@ on:
       - 'apps/web/tests/p507-e1.test.ts'
       - '.github/workflows/p507-e0-e1.yml'
       - 'docs/3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md'
+      - 'docs/3d-production/P507-M2-INTEGRATION-19.md'
+      - 'docs/ROADMAP.md'
+      - 'docs/PROJECT_STATUS.md'
   workflow_dispatch:
 permissions:
   contents: read
