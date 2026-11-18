@@ -112,7 +112,7 @@ Luận văn/sơ đồ/phương pháp/benchmark/phân tích kết quả truy ngư
 | Đích | Phụ thuộc / điều kiện |
 | --- | --- |
 | M1 | M0 → M1 |
-| M2 | Prototype 3D tương tác phòng P507 | APPROVED | IN_PROGRESS | PARTIAL | M0 → M1; frozen R4; E0 contract trước E1 | E0 actual checks PASS và browser walkthrough chức năng được nghiệm thu | [#21 Draft integration](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21), sources #14/#15; [evidence](3d-production/P507-M2-INTEGRATION-19.md) | Branch integration IN_REVIEW; durable archive BLOCKED, #20 deferred; G2_VISUAL PENDING, circulation PARTIAL | ChatGPT review exact final HEAD/CI; owner archival decision; no M3 | 2026-11-18 |
+| M2 | M0 → M1 → M2; E0 đạt trước E1 runtime; E0/E1 smoke được review theo PR #21 nhưng M2 còn PARTIAL vì archive/fidelity/other DoD |
 | M3 | M1 + prototype chức năng M2 + quyết định nguồn/quyền (#2/#3) |
 | M4 | M1 + luồng tương tác đã có + event contract/chính sách dữ liệu; có thể chuẩn bị song song khi dependency liên quan sẵn sàng và được giao |
 | M5 | Asset/trải nghiệm M2 + quyết định thiết bị/XR protocol (#4/#5) |
@@ -157,6 +157,8 @@ Không giả định M3/M4/M5 phải code tuần tự tuyệt đối; chuẩn b�
 | 2026-11-18 | ChatGPT nghiệm thu kỹ thuật E0/E1 trên PR #15 HEAD `c3c8002` | E0 reference frozen SHA-bound / 1mm proxy, 3mm bounds PASS; 15 nhóm Chrome smoke E1 PASS; 5/5 checks CI PASS. Draft PR #15 chưa merge, PR #14 vẫn Draft. Ghi lỗi phụ diagnostic runner có thể exit 0 khi Three mismatch, cần sửa/test trước khi chứng nhận pipeline toàn diện. Tiếp theo: review demo/visual và reconciliation không ghi đè roadmap |
 
 Điểm kiểm soát: [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) đã merge governance. M2 E0/E1 đã qua **scoped technical review trên Draft PR #15** nhưng chưa tích hợp vào main. Bước cần quyết định là nghiệm thu demo chức năng/giới hạn visual provisional và reconciliation các PR xếp chồng #14/#15, kèm sửa diagnostic exit-code defect; không tự mở G3/M3/M5. ChatGPT chỉ merge khi có ủy quyền, review toàn phạm vi đúng HEAD/CI và không còn blocker; Codex không tự merge.
+
+| 2026-11-18 | ChatGPT review kỹ thuật PR #21 tại `a0b91a8` | 12/12 exact-head CI SUCCESS; R4 lock, G1/G2 source và E0/E1 runtime giữ nguyên; diagnostic exit lỗi âm tính đã sửa, Chrome E1 15/15 PASS. **Kết luận: TECHNICAL_PASS phạm vi tích hợp, PR tổng thể PARTIAL/IN_REVIEW, chưa MERGE_READY** do bảng phụ thuộc M2 đã cần chỉnh và durable asset archive chưa được owner quyết định. Issue #20 deferred, G2_VISUAL PENDING/G1_CIRCULATION PARTIAL, M2 IN_PROGRESS |
 
 Decision 18/11/2026 — owner approved integration #19 and explicitly deferred #20 visual/circulation/fidelity corrections. Implementation is on Draft PR #21 only; no frozen changes, no M2 DONE and no new milestone. Prior next-action wording above about planning reconciliation is AS-OF before #19 and is superseded by this approved integration task. Current next gate is independent ChatGPT review, followed by owner archival decision.
 

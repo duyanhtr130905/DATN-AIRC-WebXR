@@ -12,6 +12,15 @@ Next: final integration regression and Draft PR → independent ChatGPT review �
 
 ---
 
+## Review bổ sung — PR #21, 18/11/2026 (snapshot theo HEAD trước chỉnh tài liệu)
+
+- **Nguồn review độc lập:** [PR #21 review comment](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21#issuecomment-6972847975), HEAD được kiểm `a0b91a8ab61d47a88ff9eb991631a561a62f2a08`; **12/12 CI checks SUCCESS** tại HEAD đó, bao gồm E0 frozen-asset Chrome và E1 15/15 smoke, Blender/Khronos/Chrome, API/PostgreSQL, PoC và diagnostic. Không được gán CI này cho commit cập nhật tài liệu mới cho đến khi chạy lại.
+- **Verdict:** `TECHNICAL_PASS` cho phạm vi mã tích hợp Issue #19; **PR #21 PARTIAL / IN_REVIEW, chưa merge**. `main` tại thời điểm review vẫn `458569026edc917fa38d945ecd190bd4574b925f`.
+- **Đã sửa trong commit cập nhật tài liệu tiếp theo:** lỗi cấu trúc bảng hai cột `Ma trận phụ thuộc` tại hàng M2 (trước đó chứa cả dòng 11 cột), không thay DoD/KPI.
+- **Blocker còn mở:** nguồn original artifact ID `14309207795` hết hạn **24/11/2026 07:46:36 UTC (14:46:36 ICT)**; chưa có kho lưu trữ byte-preserving độc lập được owner cấp quyền, nên durable fresh-machine restore/CI lâu dài là `BLOCKED`. Hiện artifact còn truy cập được, bản local được kiểm chứng nhưng không phải backup riêng.
+- **Backlog owner hoãn:** [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) lối đi giữa hàng ghế, sai kích thước/vị trí vật thể. `G1_CIRCULATION=PARTIAL`, `G2_VISUAL=PENDING_OWNER_APPROVAL`; E1 smoke kỹ thuật không chứng nhận độ chân thực/đi lại toàn phòng, 30FPS, VR72, AR/VR hoặc KPI cuối.
+- **Next action:** chủ dự án phê duyệt phương án lưu trữ riêng có hạn chế quyền + hash/restore; khi có đường dẫn hợp lệ, triển khai và kiểm chứng khôi phục; sau đó review chính xác HEAD mới và xét merge PR #21. Chưa bắt đầu M3; #14/#15 giữ Draft. Roadmap M0–M7 không đổi.
+
 ## AS-OF historical snapshots — retained main documentation before Issue #19
 
 # Trạng thái dự án — snapshot hiện hành
