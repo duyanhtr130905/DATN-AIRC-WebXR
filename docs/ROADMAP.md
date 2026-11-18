@@ -5,8 +5,8 @@
 - Ngày phê duyệt: `2026-11-18`.
 - Người phê duyệt: **chủ dự án, qua trao đổi ChatGPT** trong yêu cầu Roadmap 2.0 ngày 18/11/2026. Không có URL quyết định chat được cung cấp; không dựng permalink.
 - Phạm vi phê duyệt: kế hoạch tám milestone M0–M7 và quy tắc quản lý tiến độ. **Không cấp quyền tự triển khai tất cả feature hoặc tự bắt đầu milestone.**
-- GitHub last verified: **2026-11-18 09:57 +07:00 (Asia/Saigon)**; main `e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`; PR #13–#15 và Issues #1–#5 khớp baseline chủ dự án cung cấp.
-- Bằng chứng đồng bộ Roadmap 2.0 được theo dõi tại [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16). Trạng thái merge/HEAD là dữ liệu thay đổi theo thời gian: phải kiểm tra GitHub live trước khi kết luận nội dung đã nằm trên `main`; không dùng snapshot trước merge làm trạng thái hiện hành.
+- GitHub last verified: **2026-11-18, sau nghiệm thu/merge PR #16 và #13**; main `cce30c06baa3dd2254a8b75c5c982f0900ef29f2`. PR #16 Roadmap 2.0 và PR #13 G0 đã MERGED; PR #14/#15 còn OPEN/DRAFT. Mỗi phiên vẫn phải kiểm tra GitHub live; commit này chỉ là snapshot.
+- Roadmap 2.0 đã được nghiệm thu/merge qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) tại `0efaf50a845091d3e6ac14bb0d7cf5f7963d701c`; G0 specification đã merge qua [PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) tại `cce30c06baa3dd2254a8b75c5c982f0900ef29f2`. Trạng thái branch/main vẫn phải xác minh GitHub live trước mỗi nhiệm vụ.
 
 ## Source of truth và thứ tự ưu tiên
 
@@ -117,7 +117,7 @@ Không giả định M3/M4/M5 phải code tuần tự tuyệt đối; chuẩn b�
 
 | Checkpoint/work item lịch sử | Milestone chịu trách nhiệm | Quyền và giới hạn |
 | --- | --- | --- |
-| G0 Production specification | M2 | Phương pháp đã chốt; PR #13 OPEN, chưa merge |
+| G0 Production specification | M2 | Phương pháp đã chốt; PR #13 MERGED, `cce30c06` (không phải G2_VISUAL PASS) |
 | G1 Geometry; G2 Hero lookdev | M2 | Technical geometry/pipeline tách visual approval |
 | R1–R4 revisions của G1/G2 | M2 | Giữ nguyên tên/lịch sử; R4 frozen provisional dùng thử chức năng |
 | E0 Asset validation; E1 Desktop Web 3D walkthrough | M2 | E0 FAIL, E1 source PARTIAL/runtime BLOCKED; chờ correction task sau nghiệm thu tài liệu |
@@ -145,6 +145,7 @@ Không giả định M3/M4/M5 phải code tuần tự tuyệt đối; chuẩn b�
 | 2026-11-18 | Post-review progress synchronization bắt buộc | Kể cả PASS/PARTIAL/FAIL/BLOCKED đều cập nhật ROADMAP/STATUS, commit, đọc lại diff/HEAD; phân biệt branch/main |
 | 2026-11-18 | Roadmap deviation warning trước phần lệch phạm vi | Theo guard và mẫu trong AGENTS; ngoại lệ được duyệt phải ghi decision log/ROADMAP/STATUS trước triển khai |
 | 2026-11-18 | Ủy quyền merge trong lượt nghiệm thu PR hiện tại | Chủ dự án cho phép ChatGPT merge trực tiếp các PR **đủ điều kiện** sau review độc lập, xác minh CI/HEAD/mergeability và không còn blocker; quyền này không cấp cho Codex, không áp dụng vô hạn cho mọi PR tương lai |
+| 2026-11-18 | ChatGPT nghiệm thu và merge PR #16, PR #13 | Roadmap 2.0 MERGED `0efaf50a`; G0 spec MERGED `cce30c06`. Giữ G2_VISUAL PENDING; PR #14/#15 vẫn Draft, E0_FAIL/E1_BLOCKED; không gọi M2 DONE |
 
 Điểm kiểm soát: [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) dành riêng cho đồng bộ roadmap; phải kiểm tra trạng thái merge thực tế trên GitHub. ChatGPT chỉ được merge PR khi chủ dự án ủy quyền rõ, đã review phạm vi/CI đúng HEAD, giải quyết blocker và xác nhận không làm mất governance; Codex không tự merge. Công việc phát triển tiếp theo vẫn thuộc **M2 — chốt E0 validation contract correction có kiểm soát, rồi browser walkthrough E1 trên frozen R4**, theo task feature được phê duyệt riêng; không tạo milestone mới.
 
