@@ -1,3 +1,11 @@
+# Issue22 — current secure CI status (18/11/2026)
+
+[App CI security/setup and functional report](../../docs/3d-production/P507-ISSUE22-SECURE-CI.md). Explicit --restore-vault-ci is installation-token-only and trusted-main-only, no legacy artifact/generated fallback; --restore-vault remains unchanged owner-only local restore. App/secret/environment setup NOT authorized/performed, actual App proof BLOCKED / SECURITY_APPROVAL_REQUIRED. PR jobs have no App secrets, retain legacy compatibility checks while original artifact exists; green legacy/skip does not certify post-expiry App access.
+
+Responsive rendering emulation: `node experiments/p507-webxr/browser-responsive.mjs` after verified bundle prep; not phone/touch locomotion acceptance. Original desktop15groups remain `browser.mjs`. Current setup/run commands below remain owner-only; do not pass owner PAT to CI path.
+
+## AS-OF earlier owner-preservation runbook
+
 # Owner-approved private restore — current 18/11/2026
 
 Original ZIP preserved byte-identical in owner-controlled PRIVATE vault. [Preservation/restore runbook](../../docs/3d-production/P507-R4-PRESERVATION.md) supersedes the prior missing-storage statement below. Explicit owner-only restore in a clean checkout: `python experiments/p507-webxr/prepare_asset.py --restore-vault`, then validator --prepare and export-reference checks before Vite/browser. No original-artifact fallback; existing destination is refused. Owner remote restore proof and exact final HEAD results are recorded in that report and Draft PR21. CI cross-repo access remains BLOCKED, no PAT/secret or grant added. Historical --download remains pinned to original artifact, still expiry-dependent.

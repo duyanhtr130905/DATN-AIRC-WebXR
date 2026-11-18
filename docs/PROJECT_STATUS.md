@@ -1,4 +1,36 @@
-# Current M2 preservation snapshot — 18/11/2026, PR21 IN_REVIEW
+# Current Issue22 snapshot — 18/11/2026, implementation IN_REVIEW
+
+Main `42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`: PR21 MERGED, Issue19 CLOSED, P507 provisional + owner-private restore present. New branch `feat/m2-secure-vault-ci-22` implements authorized Issue22; App CI **BLOCKED / SECURITY_APPROVAL_REQUIRED** (no App/key/installation/environment/activation created). Exact final HEAD/checks/run/evidence are in the new Draft PR and [security/functional report](3d-production/P507-ISSUE22-SECURE-CI.md). Legacy original-artifact checks are separate from blocked App proof; skipped privileged jobs never count as E0/E1 PASS.
+
+PR23 is OPEN/DRAFT at `0f63a671cbea5f3160330d7a954761ff780d18bb` at intake; preserved its reviewed five-file synchronization on this branch, with current Issue22 extension, without merging/modifying PR23 or claiming those docs already main. Correct two-column M2 dependency table retained. See AS-OF PR23 snapshot below.
+
+Separate CI App/JWT identity/installation/read-only token scope and explicit pinned-vault restore implemented; owner restore_asset.py unchanged. Privileged main-only environment jobs never checkout PR SHA; secure setup runbook requires owner approval, environment-only key, protection entitlement and full installation selection audit. Current API found protected environment/activation absent. Frozen ZIP/GLB/lock/IDs/provenance/collision/tolerances unchanged. Precommit30Python+13Node security/identity and76geometry PASS; actual responsive emulation390/768 PASS. Final exact-HEAD owner restore/Chrome/regression pending. Read-only npm triage:4HIGH from one picomatch ReDoS chain, all dev; production-only audit0; no dependency changes.
+
+M0/M1 DONE,M2 IN_PROGRESS,M3 PLANNED/DEPENDENCY_BLOCKED. #20 DEFERRED,G1_CIRCULATION=PARTIAL,G2_VISUAL=PENDING_OWNER_APPROVAL; no mobile-device/touch navigation/KPI30/VR72 acceptance. Next: final checks and independent ChatGPT security review; owner separately approves App/protected environment/secrets and real trusted-main CI proof. No merge/deploy/M3.
+
+---
+
+## AS-OF PR23 documentation synchronization (unmerged source snapshot)
+
+# Trạng thái hiện hành — M2 P507 đã tích hợp, 18/11/2026
+
+**Main HEAD tại lần nghiệm thu:** [`42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/42a34979d5f48b31f3e58f17f59b7b7f6010bfe8). Đây là snapshot đã kiểm tra live; lần tiếp theo phải fetch GitHub để xác nhận SHA mới. [PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) **MERGED** sau independent ChatGPT review tại head `27ab5838db5f27c3a6694916b9bdbada4edb72ea`, **12/12 CI checks SUCCESS** (6 workflows) trên đúng head; GitHub xác nhận merge commit `42a34979`. PR #14/#15 là nhánh nguồn Draft lịch sử, **không cần và không được tự merge lại**.
+
+**Accepted scope:** tích hợp P507 frozen R4 (provisional), E0 actual geometry/reference 121 IDs/402.482 vertices với tolerance 3mm/1mm, Chrome E1 15/15 smoke PASS, diagnostic root-cause exit0/negative exit1; 76 geometry, 23 E0/restore/diagnostic và 45 frontend unit tests theo evidence. Không gọi E1 smoke là 30FPS physical GPU, VR72, mobile/full-room circulation hay XR. Backend M1 synthetic không bị thay.
+
+**Private archive:** [vault riêng](https://github.com/duyanhtr130905/DATN-AIRC-WebXR-asset-vault) đã được GitHub connector xác minh PRIVATE và owner admin. Commit `908a5cbb1f77b75b28666fd424cbd85f2aba4c1f` chứa Git blob ZIP 11.369.216 bytes, manifest và lock; SHA256 ZIP `4255b199c6892c53b6709b1c66ce873cbcb4088dfa8ecef679a8e3e4713249f8`; GLB 10.751.036 bytes / SHA256 `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`. Clean remote owner restore PASS theo báo cáo Codex/committed numerical evidence `193720b`; reviewer không trực tiếp chạy local Windows restore hay tải lại binary ZIP để tự tính SHA256. Private visibility + Git object verified; danh sách collaborators owner-only là báo cáo Codex, không được kiểm chứng độc lập bằng API. [Runbook](3d-production/P507-R4-PRESERVATION.md).
+
+**Open CI blocker:** [Issue #22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) ghi lại `CI_CROSS_REPO_RESTORE=BLOCKED`: E0/E1 và TV diagnostic workflows còn gọi old Actions artifact ID 14309207795 (expires **2026-11-24 14:46:36 +07**). Current CI 12/12 PASS ở head trước hạn, nhưng **không chứng nhận CI sau hạn**; token/cross-repo quyền chưa được chủ dự án cấp, không tự phát hành PAT/secret. Cần owner chốt phương án đọc PRIVATE vault trong CI và kiểm thử không fallback trước hạn.
+
+**Deferred/other risks:** [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) lưu lỗi giữa hàng ghế, sai kích thước/vị trí; `G1_CIRCULATION=PARTIAL`, `G2_VISUAL=PENDING_OWNER_APPROVAL`. Bốn HIGH npm audit từ frontend tooling hiện có cần triage riêng, chưa sửa trong PR #21; không có public deployment. M0/M1 DONE, **M2 IN_PROGRESS**, M3–M7 PLANNED, MT1–MT3 chưa nghiệm thu; ≥3 phòng thuộc M6. User approval of roadmap/merge not permission to begin M3 feature.
+
+**Next action M2:** ưu tiên xử lý #22 trước 24/11 theo quyền owner, tiếp tục nghiệm thu phần desktop/mobile/fallback còn thiếu; giữ #20 deferred. Báo cáo khác biệt Roadmap nếu yêu cầu mới vượt phạm vi; không tự deploy, mở G3 hoặc M3.
+
+---
+
+## AS-OF trước merge PR #21 — lịch sử
+
+# Snapshot M2 private preservation trước merge — 18/11/2026 (AS-OF)
 
 Owner explicitly approved private original-R4 archival and independent restore in [PR21 decision](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21#issuecomment-6973024761). Source branch `integrate/m2-p507-issue-19`, starting HEAD `faa12d20a55a5d0dbf8e4b81cd0b1289d61f04bf`; ChatGPT's two-column M2 dependency fix retained. Main still `458569026edc917fa38d945ecd190bd4574b925f`; changes remain on Draft PR21, not merged.
 
