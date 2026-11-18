@@ -1,4 +1,85 @@
-# Trạng thái dự án — nguồn tiếp tục hiện hành
+# Trạng thái dự án — snapshot hiện hành
+
+## Snapshot xác minh 2026-11-18 09:57 +07:00 (Asia/Saigon)
+
+Repository `duyanhtr130905/DATN-AIRC-WebXR`; root `D:\Code\DATN`; default branch `main`; live main HEAD **`e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`** ([commit](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/e9a72caa084d9f2cbc4af2656b73509ea57b6d4b)). Snapshot GitHub khớp baseline yêu cầu 18/11/2026. [PR #12](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/12) đã MERGED tại main HEAD ngày 15/11/2026; câu IN REVIEW phía lịch sử không còn là trạng thái hiện hành.
+
+**Roadmap 2.0 APPROVED ngày 18/11/2026 bởi chủ dự án qua ChatGPT. M0/M1 DONE / MERGED. Current milestone: M2 IN_PROGRESS, dependency_status PARTIAL.** [ROADMAP](ROADMAP.md) duy nhất quản lý DoD M0–M7; [AGENTS](../AGENTS.md) quản lý quyền và guard. Phê duyệt kế hoạch không cấp quyền tự làm mọi feature. MT1–MT3 chưa nghiệm thu trên sản phẩm thật.
+
+**Branch vs main:** bản cập nhật này trên `docs/approved-m0-m7-roadmap-v2`, từ main HEAD trên; đang bàn giao Draft PR và chờ ChatGPT nghiệm thu độc lập. Nội dung 2.0 chưa merge vào main. Final HEAD/checks/PR URL ở PR bàn giao để tránh tự tham chiếu SHA. Không tự gọi task tài liệu ACCEPTED hoặc roadmap đã đồng bộ với main.
+
+### PR hiện hành — truy vấn GitHub live
+
+| PR | Phạm vi | HEAD | Base branch | Draft | State / merge |
+| --- | --- | --- | --- | --- | --- |
+| [#13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) | G0 specification, work item M2 | `c0eff0755d2d058b38944de60f40fb17387f2a91` | `main` | false | OPEN / NOT MERGED |
+| [#14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) | G1/G2 R4 asset, work items M2 | `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` | `docs/g0-p507-3d-production-spec` (#13) | true | OPEN / NOT MERGED |
+| [#15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15) | E0/E1 + TV diagnostic, work items M2 | `43a3828654ca90a8a1d1a05750c4f06e36f6bba6` | `feat/p507-g1-g2-blockout-hero` (#14) | true | OPEN / NOT MERGED |
+
+Base heads xác minh tương ứng: #13 base main `e9a72caa…`; #14 base #13 `c0eff075…`; #15 base #14 `acd21c62…`. Không chỉnh sửa/retarget/rebase/merge các PR này. File 3D/E0/E1 không có trên main; dùng GitHub commit links bên dưới, không relative link tới file vắng mặt.
+
+### M2 — asset, nghiệm thu và giới hạn
+
+| Thành phần | Trạng thái hiện hành / bằng chứng |
+| --- | --- |
+| Frozen R4 | Provisional functional trial được owner cho phép; [freeze tại acd21c62](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/acd21c62c24b94d7dda4bbf25c80fe0b4224cc31/docs/3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md), [handoff](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/acd21c62c24b94d7dda4bbf25c80fe0b4224cc31/docs/3d-production/P507-WEBXR-ASSET-HANDOFF.md) |
+| Survey / virtual | Survey **6.00 × 8.10 × 3.50 m USER_REPORTED**; virtual **6.90 × 9.315 × 3.50 m OWNER_APPROVED_VIRTUAL_ADAPTATION**; X/Y +15%, không 1:1, chưa AIRC xác nhận fidelity/quyền |
+| G1 geometry | Technical PASS cho phạm vi provisional: 121 placed IDs / 123 records, 17 bàn, 34 ghế đặt / 36 ID lịch sử; circulation PARTIAL, không chứng nhận navigation/PCCC/accessibility |
+| G2 | PIPELINE PASS theo CI dưới; **G2_VISUAL=PENDING_OWNER_APPROVAL**. Không photorealistic/final-art PASS; không cần visual PASS trước desktop E1 |
+| TV diagnostic | ROOT_CAUSE_CONFIRMED; **ACCEPTED** theo nghiệm thu ChatGPT được chủ dự án xác nhận trong yêu cầu 18/11; không có URL quyết định chat được cung cấp |
+| E0 | **Aggregate FAIL**; [report tại 43a38286](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/43a3828654ca90a8a1d1a05750c4f06e36f6bba6/docs/3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md); chưa correction Option A/B |
+| E1 | Source **PARTIAL**, runtime **BLOCKED_BY_E0**; chưa browser walkthrough/render/performance E1; unit/input/navigation logic không thay runtime acceptance |
+| Sau M2 | G3 NOT STARTED; M3–M7 PLANNED/chưa triển khai trong phạm vi tương ứng. M1 synthetic không là M3 real P507; M1 state history không là M4 visitor persistence |
+
+Frozen GLB 10,751,036 bytes, SHA-256 `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`; source `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`, original CI checkout merge `9764b90f86317446bb585bf668171f81e1c57edb`, R4 checkpoint `3a11ec757168a59625a087ac83f28c433751a1f5`. [Original run/artifact 14309207795](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44038653564/artifacts/14309207795) được ghi trong handoff là hết hạn 24/11/2026 07:46:36 UTC; lần này không tải lại binary hoặc kiểm lại hash/retention. Nếu mất artifact thì ghi BLOCKED, không tự thay bằng re-export. Quyền ảnh/nhãn và final fidelity/visual sign-off cần đánh giá riêng trước demo/nghiệm thu cuối.
+
+### CI trên đúng HEAD PR #15
+
+Ba run sau đều được truy vấn live với `headSha=43a3828654ca90a8a1d1a05750c4f06e36f6bba6`:
+
+| Run | Conclusion | Ý nghĩa |
+| --- | --- | --- |
+| [G1/G2 44066707478](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44066707478) | SUCCESS | Regression geometry/Blender/Chrome pipeline; không dùng export mới thay frozen R4 hoặc suy E1 PASS |
+| [TV diagnostic 44066707650](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44066707650) | SUCCESS | Chẩn đoán root cause; không đổi aggregate E0 |
+| [E0/E1 44066707535](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44066707535) | FAILURE | Logic SUCCESS; browser FAILURE tại E0 gate TV, E1 chưa mở |
+
+Khác biệt với phần thân PR #15 AS-OF 17/11: G1/G2 run trước ghi IN_PROGRESS, nay live SUCCESS; đây là cập nhật trạng thái run, không phê duyệt visual/E1. Không chạy lại các workflow trong task tài liệu.
+
+**TV root cause:** Blender **4.0.2** / exporter **4.0.44**; `authored_bounds_survey` lấy evaluated bevel geometry, frozen GLB export có `export_apply=false` nên dùng original positions. Max union bounds delta khoảng **8.3055 mm**; các extremum owners khác nhau. Independent oriented proxy audit: **402,482 POSITION samples / 121 IDs, 0 violations vượt tolerance 1 mm**. Đây là containment evidence, không chứng nhận an toàn/tuyến đi/fidelity. [Báo cáo chẩn đoán tại HEAD #15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/43a3828654ca90a8a1d1a05750c4f06e36f6bba6/docs/3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md) giữ numeric snapshot source `6ae02b0397c88970c46618bbe5b4ba3d501edfcf`; không gán snapshot cũ cho HEAD mới. **Option A/B chưa được triển khai**; diagnostic ACCEPTED không là E0 contract correction hoặc E0 PASS.
+
+### Issues và milestone chịu trách nhiệm
+
+Tất cả #1–#5 xác minh vẫn **OPEN**; bảng sau là phân công trách nhiệm trong roadmap, không phải thay GitHub Milestone metadata hoặc đóng issue.
+
+| Issue | Phạm vi chịu trách nhiệm / ảnh hưởng |
+| --- | --- |
+| [#1 Phòng](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/1) | **DEFERRED_FOR_M2; REQUIRED_FOR_M6**. Không chặn E0/E1/nghiệm thu chức năng một phòng P507; MT1-01 ≥3 phòng vẫn bắt buộc M6 |
+| [#2 Survey/inventory](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/2) | M3 mapping/xác thực, M6 inventory/KPI; đã có nguồn USER_REPORTED/provisional cho M2, chưa bộ survey AIRC verified hoàn chỉnh |
+| [#3 Nguồn/quyền](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/3) | M3 nguồn ba trạng thái; M6 nghiệm thu; quyền ảnh/nhãn/demo vẫn riêng; neutral R4 không cấp quyền raw photos hoặc real_verified |
+| [#4 Galaxy AR](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/4) | M5 thiết bị AR thực, M6 KPI; chưa có evidence vật lý |
+| [#5 VR](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/5) | M5 kính/protocol và M6 VR72; emulator không thay thiết bị |
+
+Scope ba phòng/KPI, quyền AIRC, nguồn trạng thái, consent/retention/auth/quyền ghi và protocol học thuật chưa được giải quyết chỉ bằng roadmap. Không giả định có AIRC API, không tự tạo dữ liệu thật.
+
+### Quyết định gần nhất và next action
+
+Owner đã duyệt 2.0/P507-only/defer ba phòng tới M6/R4 functional trial; xem decision log và DoD trong ROADMAP. Guard bắt buộc báo sai lệch trước phần ngoài phạm vi; sau mỗi review PASS/PARTIAL/FAIL/BLOCKED đều commit đồng bộ ROADMAP/STATUS, đọc lại diff/HEAD và phân biệt branch/main.
+
+1. Bàn giao **một Draft PR tài liệu**, dừng cho ChatGPT nghiệm thu độc lập. Hiện bản cập nhật tài liệu chưa ACCEPTED/chưa MERGED; không tự ghi review PASS.
+2. Sau nghiệm thu, cập nhật kết luận/evidence/HEAD vào ROADMAP/STATUS, commit và ChatGPT đọc lại; owner quyết định merge/bước tiếp. Không sửa hoặc merge PR #13–#15 trong lượt này.
+3. Task phát triển tiếp theo vẫn **M2: quyết định/chốt E0 validation contract correction có kiểm soát, rồi browser walkthrough E1 trên frozen R4**. Không tự tuyên bố E0 PASS, không trộn correction/runtime vào PR tài liệu, không khởi tạo milestone mới.
+
+### Kiểm tra task tài liệu và integration
+
+Kiểm tra local lần này: `python tools/verify_repository.py` PASS (171 files/171 local Markdown links, UTF-8/limited secret patterns/resources); `git diff --check` PASS; checker syntax và 10 Node tests PASS; 8 Python runner tests và compileall tools PASS. Kiểm bổ sung tạm ngoài repository PASS: đúng 8 file được phép/8 milestone và DoD, M0/M1 links, M2/E0/E1/visual/guard, body KPI và history không đổi, cấu trúc bảng Markdown; PyYAML 6.0.3 safe_load, giữ nguyên key set/path; 6 GitHub commit-file links tồn tại tại đúng SHA qua Git tree API. PyYAML chỉ ở `.local` ignored, không đổi dependencies. Không phát hiện schema/enum/parser consumer của project.yaml trong source/config repository; consumer ngoài repo chưa xác minh. Final HEAD/clean status/CI được chốt trong PR bàn giao; pattern scan không là security audit toàn diện, không crawl mọi external URL. Phạm vi chỉ Markdown và metadata YAML; không thay feature/CI/dependencies/frozen asset. Không chạy ứng dụng E0/E1/KPI/thiết bị trong task này; checker regression là kiểm công cụ M0, không là evidence E1. Working tree ban đầu sạch trên branch E0/E1; sau switch main, GLB local vốn ignored ở branch #15 hiện untracked. Đã giữ nguyên file và thêm exclude **chỉ local `.git/info/exclude`**, không sửa asset/.gitignore hoặc đưa binary vào commit.
+
+PR #13 sửa chung AGENTS/README/STATUS, #14/#15 bổ sung STATUS; nguy cơ conflict/khôi phục snapshot cũ. Branch Roadmap 2.0 này là nguồn thay đổi chính sách đã duyệt. Sau merge docs, reconcile #13 rồi #14 rồi #15, giữ guard, metadata M2 và snapshot mới; chỉ đưa nội dung lịch sử/gate-specific vào đúng phần, không khôi phục PROPOSED/M0-B1 current. Đây là đề xuất cho owner khi nghiệm thu, không tự rebase/retarget/merge.
+
+## AS-OF / HISTORICAL — snapshot 15/11/2026
+
+Phần nguyên văn dưới đây được giữ để bảo toàn kết luận/SHA/evidence cũ. Các câu PROPOSED/chưa phê duyệt/chưa survey/PR #12 IN REVIEW là **lịch sử**, không điều khiển task hiện hành; snapshot 18/11 và Roadmap 2.0 ở trên thay cho hiện trạng cũ.
+
+### Bản lưu 15/11 — nguồn tiếp tục tại thời điểm đó
 
 Cập nhật 15/11/2026 bởi Codex trong task chuẩn hóa tài liệu. Root `D:\Code\DATN`; remote `https://github.com/duyanhtr130905/DATN-AIRC-WebXR.git`; base `main`. [ROADMAP](ROADMAP.md) là nguồn roadmap duy nhất, **PROPOSED — chờ chủ dự án duyệt**. [KPI](02-requirements-kpi.md) giữ nguyên; [ADR-0001](decisions/0001-technology-options.md) giữ nguyên các quyết định ACCEPTED.
 

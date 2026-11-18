@@ -1,5 +1,7 @@
 # 02 — Requirements và KPI
 
+> Chú thích phạm vi 18/11/2026: theo [Roadmap 2.0 APPROVED](ROADMAP.md), M2 chỉ prototype một phòng P507. MT1-01 **≥3 phòng giữ nguyên**, là điều kiện nghiệm thu **M6**; Issue #1 vẫn OPEN, `DEFERRED_FOR_M2; REQUIRED_FOR_M6`, không chặn E0/E1/nghiệm thu chức năng prototype M2. Các KPI khác giữ nguyên con số và phương pháp kiểm chứng; bảng trạng thái/thiếu survey ngày 14/11 bên dưới là AS-OF lịch sử, xem [PROJECT_STATUS](PROJECT_STATUS.md) cho hiện trạng. Không KPI nào được tự gán PASS.
+
 Các ngưỡng do đề bài quy định; phương pháp đo dưới đây là PROPOSED, cần giảng viên duyệt trước thử nghiệm. Ngày 14/11/2026, **không KPI sản phẩm nào đã PASS**. Có thể VERIFIED độ đầy đủ của kế hoạch M0, chưa thể xác minh kết quả MT1–MT3.
 
 | ID | Yêu cầu giữ nguyên | Tiêu chí và bằng chứng dự kiến | Trạng thái hiện tại |
