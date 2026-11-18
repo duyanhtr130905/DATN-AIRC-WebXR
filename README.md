@@ -2,17 +2,17 @@
 
 Xây dựng bản sao số không gian AIRC trên nền tảng WebXR hỗ trợ tham quan tương tác và lưu vết trải nghiệm.
 
-**Nguồn tiếp tục qua các phiên:** [ROADMAP — PROPOSED, chờ chủ dự án phê duyệt](docs/ROADMAP.md) và [PROJECT_STATUS — trạng thái hiện hành](docs/PROJECT_STATUS.md). Roadmap chỉ được quản lý tại ROADMAP; README không duy trì một kế hoạch riêng.
+**Nguồn tiếp tục qua các phiên:** [ROADMAP 2.0 — kế hoạch chính thức APPROVED 18/11/2026](docs/ROADMAP.md) và [PROJECT_STATUS — trạng thái hiện hành](docs/PROJECT_STATUS.md). Roadmap chỉ được quản lý tại ROADMAP; README không duy trì một kế hoạch riêng.
 
-M0-A/B1/B2 và M1-A/B/C đã DONE/merge. [PR #11](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/11) merged tại `33ba38b00e2d6c218c1ab97ba1cc7201d1e92a58`. **M1 chỉ hoàn thành prototype synthetic** nối PostgreSQL → FastAPI REST/WebSocket → React/R3F primitives + Information Panel. Khảo sát P507 chưa được xác nhận hoàn thành; MT1–MT3 chưa được nghiệm thu trên sản phẩm thật; milestone tiếp theo chưa được phê duyệt.
+M0-A/B1/B2 và M1-A/B/C đã DONE/merge. [PR #11](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/11) merged tại `33ba38b00e2d6c218c1ab97ba1cc7201d1e92a58`. **M1 chỉ hoàn thành prototype synthetic** nối PostgreSQL → FastAPI REST/WebSocket → React/R3F primitives + Information Panel. Hiện M2 IN_PROGRESS: prototype một phòng P507 trên frozen R4 provisional; E0 FAIL, E1 runtime BLOCKED. Survey USER_REPORTED, virtual adaptation X/Y +15% không 1:1; G2 visual pending. MT1–MT3 chưa nghiệm thu; ≥3 phòng vẫn thuộc M6. Xem PROJECT_STATUS để phân biệt branch/main và PR chưa merge.
 
-Trước task mới, đọc [AGENTS](AGENTS.md), ROADMAP, PROJECT_STATUS, [requirements/KPI](docs/02-requirements-kpi.md) và [ADR liên quan](docs/decisions/0001-technology-options.md). Không suy ra quyền triển khai từ roadmap PROPOSED hoặc PR đã merge. Giữ KPI gốc; không chia P507 thành ba phòng.
+Trước task mới, đọc [AGENTS](AGENTS.md), ROADMAP, PROJECT_STATUS, [requirements/KPI](docs/02-requirements-kpi.md) và [ADR liên quan](docs/decisions/0001-technology-options.md). AGENTS là quy tắc thực thi và chống lệch roadmap; PROJECT_STATUS là snapshot/nghiệm thu. Không suy ra quyền tự triển khai feature từ kế hoạch APPROVED hoặc PR đã merge. Giữ KPI gốc; không chia P507 thành ba phòng.
 
 ## Kiểm tra tiến độ trong chat mới
 
 Có thể chỉ yêu cầu: `Kiểm tra tiến độ mới nhất của dự án tại repo duyanhtr130905/DATN-AIRC-WebXR`.
 
-AI cần đọc tài liệu trên default branch và truy vấn GitHub live theo [AGENTS](AGENTS.md), báo main HEAD, PR OPEN/MERGED mới nhất, milestone, CI đúng SHA, blockers, lệch tài liệu và task tiếp theo đã được duyệt nếu có. PROJECT_STATUS là snapshot theo ngày, kể cả sau merge; không lấy cache/roadmap PROPOSED làm tiến độ mới nhất. Chỉ đọc/báo cáo không cần duyệt task triển khai. Thiếu quyền private repo/connector thì báo giới hạn và yêu cầu cấp quyền, không nhận đã kiểm tra.
+AI cần đọc tài liệu trên default branch và truy vấn GitHub live theo [AGENTS](AGENTS.md), báo main HEAD, PR OPEN/MERGED mới nhất, milestone, CI đúng SHA, blockers, lệch tài liệu và task tiếp theo đã được duyệt nếu có. PROJECT_STATUS là snapshot theo ngày, kể cả sau merge; không lấy cache hoặc kế hoạch làm tiến độ mới nhất. Chỉ đọc/báo cáo không cần duyệt task triển khai. Thiếu quyền private repo/connector thì báo giới hạn và yêu cầu cấp quyền, không nhận đã kiểm tra.
 
 ## Chạy và tìm tài liệu
 

@@ -1,5 +1,7 @@
 # 01 — Project Charter
 
+> Chú thích quản lý 18/11/2026: bảng M0–M4 và các phát biểu PROPOSED/chưa triển khai bên dưới là kế hoạch lịch sử. [Roadmap 2.0 M0–M7 APPROVED 18/11/2026](ROADMAP.md) là bản quản lý hiện hành; xem [snapshot/nghiệm thu](PROJECT_STATUS.md). Giữ nguyên quyết định lịch sử, không sửa hồi tố.
+
 > Cập nhật M0-B2 ngày 14/11/2026: stack/kiến trúc/UI đã được chủ dự án phê duyệt theo [ADR-0001 ACCEPTED](decisions/0001-technology-options.md). Phần M0-A/M0-B1 bên dưới là lịch sử; dữ liệu thực, quyền sử dụng và KPI cuối vẫn BLOCKED. Xem [trạng thái hiện tại](PROJECT_STATUS.md) và [acceptance foundation](15-m0-b2-acceptance.md).
 
 
