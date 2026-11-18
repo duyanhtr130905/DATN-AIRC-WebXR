@@ -79,6 +79,13 @@ Yêu cầu chỉ đọc để báo cáo tiến độ không cần phê duyệt t
 
 Quy trình này áp dụng cả sau khi PR #12 merge. Một yêu cầu triển khai mới vẫn cần phạm vi được chủ dự án phê duyệt; việc đọc/báo cáo không tự cấp quyền ghi, merge, deploy, sửa KPI hoặc triển khai roadmap.
 
+## Chuẩn sản xuất mô hình P507 sau khi chốt G0
+
+- Với mọi nhiệm vụ liên quan dựng Blender, GLB, camera matching, material/lighting, WebXR asset hoặc survey P507: **phải đọc [P507 G0 Production Specification v1.0](docs/3d-production/P507-G0-PRODUCTION-SPEC.md)** trước khi đặt giả định/viết code. Đây là chuẩn art & quality đã được chủ dự án chốt ngày 16/11/2026; không lặp lại vòng G0-fix chỉ vì có thêm đồ vật hoặc số đo.
+- Dữ liệu khảo sát P507 ngày 16/11/2026 do người dùng cung cấp vẫn ở mức USER_REPORTED/PROVISIONAL; **chưa có AIRC quyền lưu/công bố**. File G0 không cấp phép commit raw images chứa người, màn hình, bảng công tác, logo/ảnh bản quyền hoặc chuyển data sang real_verified.
+- Inventory là mở. New measurements/objects update survey revision, preserve stable IDs; never rewrite art direction from scratch. Camera matches/Blender exports/software GLB tests don't by themselves satisfy MT1–MT3.
+- Đã chốt phương pháp G0 **không** đồng nghĩa toàn bộ ĐX-P507/ĐX-UX/ĐX-XR trong ROADMAP được phê duyệt. G1/G2 chỉ bắt đầu trong phạm vi user giao và G2 phải có visual sign-off trước G3; không tự merge hoặc deploy.
+
 ## Quy trình
 
 1. Trước mọi task, đọc `docs/ROADMAP.md`, `docs/PROJECT_STATUS.md`, `docs/02-requirements-kpi.md`, task hiện hành và các ADR liên quan; đọc README để tìm runbook, giữ thay đổi người dùng.
