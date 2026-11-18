@@ -1,6 +1,20 @@
 # Trạng thái dự án — snapshot hiện hành
 
-## Snapshot xác minh 2026-11-18 09:57 +07:00 (Asia/Saigon)
+## Snapshot hậu nghiệm thu — 18/11/2026 (GitHub live sau merge)
+
+- **Main HEAD:** [cce30c06baa3dd2254a8b75c5c982f0900ef29f2](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/cce30c06baa3dd2254a8b75c5c982f0900ef29f2).
+- **Roadmap 2.0 APPROVED / MERGED:** [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16), reviewed head `9117e452f6f691d3c0ebd5cbcb89a8521b91f36e`, merge commit `0efaf50a845091d3e6ac14bb0d7cf5f7963d701c`, final HEAD 7/7 CI PASS. Quy tắc deviation guard và review/sync đã có trên main; ủy quyền merge chỉ trong phạm vi owner cho phép.
+- **G0 P507 đặc tả MERGED:** [PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13), reviewed head `c0eff0755d2d058b38944de60f40fb17387f2a91`, merge commit `cce30c06baa3dd2254a8b75c5c982f0900ef29f2`, 7/7 CI PASS ở head. Không đồng nghĩa G2 visual được duyệt.
+- **Còn OPEN/DRAFT:** [PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) head `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` (G1/G2 R4; technical PASS nhưng G2_VISUAL PENDING, G1_CIRCULATION PARTIAL); [PR #15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15) head `43a3828654ca90a8a1d1a05750c4f06e36f6bba6` (root cause TV ACCEPTED, **E0 aggregate FAIL / E1 runtime BLOCKED**). Không merge hoặc tự retarget #14/#15.
+- **Milestone:** M0/M1 DONE/MERGED; **M2 IN_PROGRESS**, P507-only provisional; M3–M7 PLANNED. ≥3 phòng là yêu cầu MT1-01 của M6, không chặn prototype M2. Issues #1–#5 vẫn chưa được xác nhận giải quyết.
+- **Bước tiếp theo:** M2 E0 contract correction có kiểm soát trên frozen R4 theo task được duyệt riêng, tiếp đó Chrome E1 walkthrough và nghiệm thu. Giữ PR #14/#15 Draft đến khi đạt các gate riêng; bảo toàn Roadmap 2.0 khi reconcile nhánh M2.
+
+**Snapshot này là bằng chứng tại thời điểm ghi; mọi lần tiếp tục phải kiểm tra GitHub live và không gán CI của head cũ cho commit mới.**
+
+---
+
+
+## Lịch sử — snapshot trước merge 2026-11-18 09:57 +07:00 (Asia/Saigon)
 
 Repository `duyanhtr130905/DATN-AIRC-WebXR`; root `D:\Code\DATN`; default branch `main`; live main HEAD **`e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`** ([commit](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/e9a72caa084d9f2cbc4af2656b73509ea57b6d4b)). Snapshot GitHub khớp baseline yêu cầu 18/11/2026. [PR #12](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/12) đã MERGED tại main HEAD ngày 15/11/2026; câu IN REVIEW phía lịch sử không còn là trạng thái hiện hành.
 

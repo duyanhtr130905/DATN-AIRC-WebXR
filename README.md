@@ -12,7 +12,7 @@ Trước task mới, đọc [AGENTS](AGENTS.md), ROADMAP, PROJECT_STATUS, [requi
 
 Chủ dự án đã chốt **hướng Hybrid Photorealistic Digital Twin** và quy chuẩn G0 để tránh sửa đi sửa lại: [P507 Art Direction & Production Specification v1.0](docs/3d-production/P507-G0-PRODUCTION-SPEC.md). Đây là chuẩn kỹ thuật cho blockout G1, hero lookdev G2 và đánh giá trên Three.js. **Đặc tả không chứng minh đã dựng GLB hoặc P507 đạt KPI; dữ liệu khảo sát/ảnh AIRC còn provisional và quyền chưa xác minh.**
 
-Đã nhận khảo sát P507 từ người dùng ngày 16/11/2026 (ảnh, sơ đồ sàn/trần và danh mục có thể bổ sung); chưa có AIRC sign-off. G0 là task chuẩn hóa thiết kế được chủ dự án yêu cầu, **không phê duyệt toàn bộ roadmap M2/M3**. Theo GitHub live, trạng thái G0 PR mới nhất cần xem tại PROJECT_STATUS và PR.
+Đã nhận khảo sát P507 từ người dùng ngày 16/11/2026 (ảnh, sơ đồ sàn/trần và danh mục có thể bổ sung); chưa có AIRC sign-off. G0 là task chuẩn hóa thiết kế lịch sử, **không phải quyền tự triển khai M2/M3**; Roadmap 2.0 M0–M7 sau đó đã được owner phê duyệt độc lập. [PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) đã merge đặc tả G0; trạng thái mới nhất cần kiểm GitHub live/PROJECT_STATUS.
 
 ## Kiểm tra tiến độ trong chat mới
 
