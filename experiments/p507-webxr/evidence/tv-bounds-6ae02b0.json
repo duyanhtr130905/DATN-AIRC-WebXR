@@ -1,0 +1,3172 @@
+{
+  "conclusion": "ROOT_CAUSE_CONFIRMED",
+  "label": "READ_ONLY_DIAGNOSTIC; no contract correction authorized",
+  "root_cause": "Evaluated pre-export BEVEL geometry was measured for authored bounds, but uncombined TV components were exported from original meshes: export_apply omitted defaults false. Weighted normals do not change positions.",
+  "controlled_tests_support_cause": true,
+  "matching_original_blender_version": true,
+  "experiment_head": "6ae02b0397c88970c46618bbe5b4ba3d501edfcf",
+  "work_tree_dirty": false,
+  "bundle": {
+    "result": "E0_BUNDLE_PASS",
+    "sourceSha": "acd21c62c24b94d7dda4bbf25c80fe0b4224cc31",
+    "checkoutSha": "9764b90f86317446bb585bf668171f81e1c57edb",
+    "modelSha256": "8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49",
+    "modelBytes": 10751036,
+    "stableRecords": 123,
+    "placedIDs": 121,
+    "notice": "Runtime world-geometry, identity transform and capsule spawn checks also required for E0_PASS."
+  },
+  "frozen_blend": {
+    "bytes": 10503972,
+    "sha256": "3c092018ce2ed7ebd1c3065cf0e4aa7ef1ab5750aa109ffd771e72f8805689e2"
+  },
+  "blender_version": "4.0.2",
+  "blend_file_version": [
+    4,
+    0,
+    36
+  ],
+  "original_exporter": "Khronos glTF Blender I/O v4.0.44",
+  "diagnostic_exporter_version": [
+    4,
+    0,
+    44
+  ],
+  "diagnostic_exporter_module_sha256": "f49037c475266b7889a23e69410991fe2314e5b62c7acafdde9cb8d954c1d5ee",
+  "operator_defaults": {
+    "export_apply": false,
+    "export_yup": true,
+    "export_extras": false,
+    "use_selection": false
+  },
+  "evidence_comparison_epsilon_m": 2e-06,
+  "e0_gate_tolerance_m_unchanged": 0.003,
+  "e0": "E0_FAIL_UNCHANGED",
+  "e1": "BLOCKED_UNCHANGED",
+  "union_bounds_gltf": {
+    "original_blender": [
+      0.1531892716884613,
+      1.7799999713897705,
+      -9.233558654785156,
+      1.772579312324524,
+      2.7799999713897705,
+      -8.3870267868042
+    ],
+    "evaluated_blender": [
+      0.16149479150772095,
+      1.7799999713897705,
+      -9.231895446777344,
+      1.768088459968567,
+      2.7799999713897705,
+      -8.38965129852295
+    ],
+    "frozen_glb": [
+      0.153189281866645,
+      1.7799999713897705,
+      -9.23355851477398,
+      1.7725793546925521,
+      2.7799999713897705,
+      -8.387026920885576
+    ],
+    "manifest": [
+      0.16149479150772095,
+      1.7799999713897705,
+      -9.231895446777344,
+      1.768088459968567,
+      2.7799999713897705,
+      -8.38965129852295
+    ]
+  },
+  "manifest_vs_evaluated_max_delta_m": 0.0,
+  "frozen_minus_manifest_m": [
+    -0.008305509641075959,
+    0.0,
+    -0.0016630679966365136,
+    0.004490894723985228,
+    0.0,
+    0.0026243776373728878
+  ],
+  "actual_glb_extrema": [
+    {
+      "axis": "xmin",
+      "vertex": 6,
+      "point": [
+        0.153189281866645,
+        1.8074999749660492,
+        -8.484748502690783
+      ],
+      "value": 0.153189281866645,
+      "node": "P507_HERO_TV_REAR_CASING",
+      "node_index": 130,
+      "primitive_index": 0,
+      "accessor": 555,
+      "accessor_vertex": 6
+    },
+    {
+      "axis": "ymin",
+      "vertex": 24,
+      "point": [
+        0.16841452918962604,
+        1.7799999713897705,
+        -8.387026920885576
+      ],
+      "value": 1.7799999713897705,
+      "node": "P507_HERO_TV_BEZEL",
+      "node_index": 131,
+      "primitive_index": 0,
+      "accessor": 558,
+      "accessor_vertex": 0
+    },
+    {
+      "axis": "zmin",
+      "vertex": 90,
+      "point": [
+        1.688031328608681,
+        2.2299999706447124,
+        -9.23355851477398
+      ],
+      "value": -9.23355851477398,
+      "node": "P507_HERO_TV_REAR_MOUNT_RAIL",
+      "node_index": 133,
+      "primitive_index": 0,
+      "accessor": 564,
+      "accessor_vertex": 18
+    },
+    {
+      "axis": "xmax",
+      "vertex": 36,
+      "point": [
+        1.7725793546925521,
+        1.7799999713897705,
+        -9.135061147445445
+      ],
+      "value": 1.7725793546925521,
+      "node": "P507_HERO_TV_BEZEL",
+      "node_index": 131,
+      "primitive_index": 0,
+      "accessor": 558,
+      "accessor_vertex": 12
+    },
+    {
+      "axis": "ymax",
+      "vertex": 27,
+      "point": [
+        0.16841452918962604,
+        2.7799999713897705,
+        -8.387026920885576
+      ],
+      "value": 2.7799999713897705,
+      "node": "P507_HERO_TV_BEZEL",
+      "node_index": 131,
+      "primitive_index": 0,
+      "accessor": 558,
+      "accessor_vertex": 3
+    },
+    {
+      "axis": "zmax",
+      "vertex": 24,
+      "point": [
+        0.16841452918962604,
+        1.7799999713897705,
+        -8.387026920885576
+      ],
+      "value": -8.387026920885576,
+      "node": "P507_HERO_TV_BEZEL",
+      "node_index": 131,
+      "primitive_index": 0,
+      "accessor": 558,
+      "accessor_vertex": 0
+    }
+  ],
+  "evaluated_blender_extrema": [
+    {
+      "axis": "xmin",
+      "vertex": 30,
+      "point": [
+        0.16149479150772095,
+        1.7934999465942383,
+        -8.406133651733398
+      ],
+      "value": 0.16149479150772095,
+      "object": "P507_HERO_TV_BEZEL",
+      "evaluated_vertex": 30
+    },
+    {
+      "axis": "ymin",
+      "vertex": 0,
+      "point": [
+        0.17494434118270874,
+        1.7799999713897705,
+        -8.404967308044434
+      ],
+      "value": 1.7799999713897705,
+      "object": "P507_HERO_TV_BEZEL",
+      "evaluated_vertex": 0
+    },
+    {
+      "axis": "zmin",
+      "vertex": 366,
+      "point": [
+        1.6860449314117432,
+        2.234999895095825,
+        -9.231895446777344
+      ],
+      "value": -9.231895446777344,
+      "object": "P507_HERO_TV_REAR_MOUNT_RAIL",
+      "evaluated_vertex": 78
+    },
+    {
+      "axis": "xmax",
+      "vertex": 54,
+      "point": [
+        1.768088459968567,
+        1.7934999465942383,
+        -9.140424728393555
+      ],
+      "value": 1.768088459968567,
+      "object": "P507_HERO_TV_BEZEL",
+      "evaluated_vertex": 54
+    },
+    {
+      "axis": "ymax",
+      "vertex": 13,
+      "point": [
+        0.17494434118270874,
+        2.7799999713897705,
+        -8.404967308044434
+      ],
+      "value": 2.7799999713897705,
+      "object": "P507_HERO_TV_BEZEL",
+      "evaluated_vertex": 13
+    },
+    {
+      "axis": "zmax",
+      "vertex": 102,
+      "point": [
+        0.18815800547599792,
+        1.812000036239624,
+        -8.38965129852295
+      ],
+      "value": -8.38965129852295,
+      "object": "P507_HERO_TV_BLACK_SCREEN",
+      "evaluated_vertex": 6
+    }
+  ],
+  "components": [
+    {
+      "name": "P507_HERO_TV_BEZEL",
+      "blender_id": "P507-TV-LARGE",
+      "blender_parent": null,
+      "blender_modifiers": [
+        {
+          "name": "Edge relief",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width": 0.01600000075995922,
+          "segments": 3,
+          "affect": "EDGES",
+          "limit_method": "ANGLE",
+          "angle_limit": 0.5235987901687622,
+          "offset_type": "OFFSET",
+          "use_clamp_overlap": true,
+          "loop_slide": true,
+          "harden_normals": false
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true,
+          "weight": 50,
+          "mode": "FACE_AREA",
+          "keep_sharp": false,
+          "thresh": 0.009999999776482582
+        }
+      ],
+      "matrix_world_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          0.9647915959358215
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.773279190063477
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2799999713897705
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "matrix_local_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          0.9647915959358215
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.773279190063477
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2799999713897705
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "blender_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "original_vertices": 8,
+      "evaluated_vertices": 96,
+      "glb_position_vertices": 24,
+      "original_bounds_gltf": [
+        0.15700383484363556,
+        1.7799999713897705,
+        -9.159531593322754,
+        1.772579312324524,
+        2.7799999713897705,
+        -8.3870267868042
+      ],
+      "evaluated_bounds_gltf": [
+        0.16149479150772095,
+        1.7799999713897705,
+        -9.155040740966797,
+        1.768088459968567,
+        2.7799999713897705,
+        -8.391517639160156
+      ],
+      "frozen_bounds_gltf": [
+        0.15700383717909086,
+        1.7799999713897705,
+        -9.159531459241377,
+        1.7725793546925521,
+        2.7799999713897705,
+        -8.387026920885576
+      ],
+      "local_positions_raw_vs_frozen_hausdorff_m": 0.0,
+      "frozen_minus_evaluated_m": [
+        -0.004490954328630087,
+        0.0,
+        -0.004490718274579919,
+        0.004490894723985228,
+        0.0,
+        0.004490718274579919
+      ],
+      "frozen_minus_evaluated_mm": [
+        -4.490954328630087,
+        0.0,
+        -4.490718274579919,
+        4.490894723985228,
+        0.0,
+        4.490718274579919
+      ],
+      "raw_vs_frozen_hausdorff_m": 1.4517370813417616e-07,
+      "evaluated_vs_frozen_hausdorff_m": 0.01909200947500039,
+      "weighted_normals_disabled_hausdorff_m": 0.0,
+      "bevel_disabled_vs_raw_hausdorff_m": 0.0,
+      "original_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 2,
+          "point": [
+            0.15700383484363556,
+            8.411497116088867,
+            1.7799999713897705
+          ],
+          "value": 0.15700383484363556
+        },
+        {
+          "axis": "ymin",
+          "vertex": 0,
+          "point": [
+            0.16841451823711395,
+            8.3870267868042,
+            1.7799999713897705
+          ],
+          "value": 8.3870267868042
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.16841451823711395,
+            8.3870267868042,
+            1.7799999713897705
+          ],
+          "value": 1.7799999713897705
+        },
+        {
+          "axis": "xmax",
+          "vertex": 4,
+          "point": [
+            1.772579312324524,
+            9.135061264038086,
+            1.7799999713897705
+          ],
+          "value": 1.772579312324524
+        },
+        {
+          "axis": "ymax",
+          "vertex": 6,
+          "point": [
+            1.7611687183380127,
+            9.159531593322754,
+            1.7799999713897705
+          ],
+          "value": 9.159531593322754
+        },
+        {
+          "axis": "zmax",
+          "vertex": 1,
+          "point": [
+            0.16841451823711395,
+            8.3870267868042,
+            2.7799999713897705
+          ],
+          "value": 2.7799999713897705
+        }
+      ],
+      "evaluated_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 30,
+          "point": [
+            0.16149479150772095,
+            8.406133651733398,
+            1.7934999465942383
+          ],
+          "value": 0.16149479150772095
+        },
+        {
+          "axis": "ymin",
+          "vertex": 6,
+          "point": [
+            0.17377793788909912,
+            8.391517639160156,
+            1.7934999465942383
+          ],
+          "value": 8.391517639160156
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.17494434118270874,
+            8.404967308044434,
+            1.7799999713897705
+          ],
+          "value": 1.7799999713897705
+        },
+        {
+          "axis": "xmax",
+          "vertex": 54,
+          "point": [
+            1.768088459968567,
+            9.140424728393555,
+            1.7934999465942383
+          ],
+          "value": 1.768088459968567
+        },
+        {
+          "axis": "ymax",
+          "vertex": 78,
+          "point": [
+            1.755805253982544,
+            9.155040740966797,
+            1.7934999465942383
+          ],
+          "value": 9.155040740966797
+        },
+        {
+          "axis": "zmax",
+          "vertex": 13,
+          "point": [
+            0.17494434118270874,
+            8.404967308044434,
+            2.7799999713897705
+          ],
+          "value": 2.7799999713897705
+        }
+      ],
+      "glb_primitives": [
+        {
+          "id": "P507-TV-LARGE",
+          "node_index": 131,
+          "node": "P507_HERO_TV_BEZEL",
+          "parent_index": null,
+          "mesh_index": 98,
+          "primitive_index": 0,
+          "position_accessor": 558,
+          "mode": 4,
+          "vertex_count": 24,
+          "world_matrix_gltf": [
+            [
+              0.9063078207849582,
+              0.0,
+              0.4226182116500965,
+              0.9647915959358215
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              2.2799999713897705
+            ],
+            [
+              -0.4226182116500965,
+              0.0,
+              0.9063078207849582,
+              -8.773279190063477
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "bounds_gltf": [
+            0.15700383717909086,
+            1.7799999713897705,
+            -9.159531459241377,
+            1.7725793546925521,
+            2.7799999713897705,
+            -8.387026920885576
+          ],
+          "extrema_gltf": [
+            {
+              "axis": "xmin",
+              "vertex": 6,
+              "point": [
+                0.15700383717909086,
+                1.7799999713897705,
+                -8.411497232681509
+              ],
+              "value": 0.15700383717909086
+            },
+            {
+              "axis": "ymin",
+              "vertex": 0,
+              "point": [
+                0.16841452918962604,
+                1.7799999713897705,
+                -8.387026920885576
+              ],
+              "value": 1.7799999713897705
+            },
+            {
+              "axis": "zmin",
+              "vertex": 18,
+              "point": [
+                1.761168662682017,
+                1.7799999713897705,
+                -9.159531459241377
+              ],
+              "value": -9.159531459241377
+            },
+            {
+              "axis": "xmax",
+              "vertex": 12,
+              "point": [
+                1.7725793546925521,
+                1.7799999713897705,
+                -9.135061147445445
+              ],
+              "value": 1.7725793546925521
+            },
+            {
+              "axis": "ymax",
+              "vertex": 3,
+              "point": [
+                0.16841452918962604,
+                2.7799999713897705,
+                -8.387026920885576
+              ],
+              "value": 2.7799999713897705
+            },
+            {
+              "axis": "zmax",
+              "vertex": 0,
+              "point": [
+                0.16841452918962604,
+                1.7799999713897705,
+                -8.387026920885576
+              ],
+              "value": -8.387026920885576
+            }
+          ],
+          "extras": {
+            "survey_instance_id": "P507-TV-LARGE",
+            "source_class": "PROPOSED_LAYOUT",
+            "placement_status": "PLACED_PROVISIONAL",
+            "orientation_deg": 25.0,
+            "surface_front_survey": [
+              0.42261826174069944,
+              -0.9063077870366499,
+              0.0
+            ],
+            "logical_type": "hero"
+          }
+        }
+      ]
+    },
+    {
+      "name": "P507_HERO_TV_BLACK_SCREEN",
+      "blender_id": "P507-TV-LARGE",
+      "blender_parent": null,
+      "blender_modifiers": [
+        {
+          "name": "Edge relief",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width": 0.008999999612569809,
+          "segments": 3,
+          "affect": "EDGES",
+          "limit_method": "ANGLE",
+          "angle_limit": 0.5235987901687622,
+          "offset_type": "OFFSET",
+          "use_clamp_overlap": true,
+          "loop_slide": true,
+          "harden_normals": false
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true,
+          "weight": 50,
+          "mode": "FACE_AREA",
+          "keep_sharp": false,
+          "thresh": 0.009999999776482582
+        }
+      ],
+      "matrix_world_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          0.9715535044670105
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.75877857208252
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2860000133514404
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "matrix_local_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          0.9715535044670105
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.75877857208252
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2860000133514404
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "blender_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "original_vertices": 8,
+      "evaluated_vertices": 96,
+      "glb_position_vertices": 24,
+      "original_bounds_gltf": [
+        0.18318787217140198,
+        1.808000087738037,
+        -9.129236221313477,
+        1.7599191665649414,
+        2.7639999389648438,
+        -8.388320922851562
+      ],
+      "evaluated_bounds_gltf": [
+        0.18451857566833496,
+        1.808000087738037,
+        -9.12790584564209,
+        1.758588433265686,
+        2.7639999389648438,
+        -8.38965129852295
+      ],
+      "frozen_bounds_gltf": [
+        0.18318786946060925,
+        1.8080000281333923,
+        -9.129236398957408,
+        1.7599191394734117,
+        2.7639999985694885,
+        -8.388320745207631
+      ],
+      "local_positions_raw_vs_frozen_hausdorff_m": 0.0,
+      "frozen_minus_evaluated_m": [
+        -0.0013307062077257126,
+        -5.960464477539063e-08,
+        -0.0013305533153182836,
+        0.0013307062077256848,
+        5.960464477539063e-08,
+        0.0013305533153182836
+      ],
+      "frozen_minus_evaluated_mm": [
+        -1.3307062077257126,
+        -5.9604644775390625e-05,
+        -1.3305533153182836,
+        1.3307062077256848,
+        5.9604644775390625e-05,
+        1.3305533153182836
+      ],
+      "raw_vs_frozen_hausdorff_m": 5.048246124493607e-07,
+      "evaluated_vs_frozen_hausdorff_m": 0.005656851485045238,
+      "weighted_normals_disabled_hausdorff_m": 0.0,
+      "bevel_disabled_vs_raw_hausdorff_m": 0.0,
+      "original_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 2,
+          "point": [
+            0.18318787217140198,
+            8.3955717086792,
+            1.808000087738037
+          ],
+          "value": 0.18318787217140198
+        },
+        {
+          "axis": "ymin",
+          "vertex": 0,
+          "point": [
+            0.18656882643699646,
+            8.388320922851562,
+            1.808000087738037
+          ],
+          "value": 8.388320922851562
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.18656882643699646,
+            8.388320922851562,
+            1.808000087738037
+          ],
+          "value": 1.808000087738037
+        },
+        {
+          "axis": "xmax",
+          "vertex": 4,
+          "point": [
+            1.7599191665649414,
+            9.12198543548584,
+            1.808000087738037
+          ],
+          "value": 1.7599191665649414
+        },
+        {
+          "axis": "ymax",
+          "vertex": 6,
+          "point": [
+            1.7565381526947021,
+            9.129236221313477,
+            1.808000087738037
+          ],
+          "value": 9.129236221313477
+        },
+        {
+          "axis": "zmax",
+          "vertex": 1,
+          "point": [
+            0.18656882643699646,
+            8.388320922851562,
+            2.7639999389648438
+          ],
+          "value": 2.7639999389648438
+        }
+      ],
+      "evaluated_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 46,
+          "point": [
+            0.18451857566833496,
+            8.39398193359375,
+            2.759999990463257
+          ],
+          "value": 0.18451857566833496
+        },
+        {
+          "axis": "ymin",
+          "vertex": 6,
+          "point": [
+            0.18815800547599792,
+            8.38965129852295,
+            1.812000036239624
+          ],
+          "value": 8.38965129852295
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.18850356340408325,
+            8.393636703491211,
+            1.808000087738037
+          ],
+          "value": 1.808000087738037
+        },
+        {
+          "axis": "xmax",
+          "vertex": 70,
+          "point": [
+            1.758588433265686,
+            9.123575210571289,
+            2.759999990463257
+          ],
+          "value": 1.758588433265686
+        },
+        {
+          "axis": "ymax",
+          "vertex": 78,
+          "point": [
+            1.7549489736557007,
+            9.12790584564209,
+            1.812000036239624
+          ],
+          "value": 9.12790584564209
+        },
+        {
+          "axis": "zmax",
+          "vertex": 13,
+          "point": [
+            0.18850356340408325,
+            8.393636703491211,
+            2.7639999389648438
+          ],
+          "value": 2.7639999389648438
+        }
+      ],
+      "glb_primitives": [
+        {
+          "id": "P507-TV-LARGE",
+          "node_index": 132,
+          "node": "P507_HERO_TV_BLACK_SCREEN",
+          "parent_index": null,
+          "mesh_index": 99,
+          "primitive_index": 0,
+          "position_accessor": 561,
+          "mode": 4,
+          "vertex_count": 24,
+          "world_matrix_gltf": [
+            [
+              0.9063078207849582,
+              0.0,
+              0.4226182116500965,
+              0.9715535044670105
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              2.2860000133514404
+            ],
+            [
+              -0.4226182116500965,
+              0.0,
+              0.9063078207849582,
+              -8.75877857208252
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "bounds_gltf": [
+            0.18318786946060925,
+            1.8080000281333923,
+            -9.129236398957408,
+            1.7599191394734117,
+            2.7639999985694885,
+            -8.388320745207631
+          ],
+          "extrema_gltf": [
+            {
+              "axis": "xmin",
+              "vertex": 6,
+              "point": [
+                0.18318786946060925,
+                1.8080000281333923,
+                -8.39557120811829
+              ],
+              "value": 0.18318786946060925
+            },
+            {
+              "axis": "ymin",
+              "vertex": 0,
+              "point": [
+                0.1865688153143963,
+                1.8080000281333923,
+                -8.388320745207631
+              ],
+              "value": 1.8080000281333923
+            },
+            {
+              "axis": "zmin",
+              "vertex": 18,
+              "point": [
+                1.7565381936196247,
+                1.8080000281333923,
+                -9.129236398957408
+              ],
+              "value": -9.129236398957408
+            },
+            {
+              "axis": "xmax",
+              "vertex": 12,
+              "point": [
+                1.7599191394734117,
+                1.8080000281333923,
+                -9.12198593604675
+              ],
+              "value": 1.7599191394734117
+            },
+            {
+              "axis": "ymax",
+              "vertex": 3,
+              "point": [
+                0.1865688153143963,
+                2.7639999985694885,
+                -8.388320745207631
+              ],
+              "value": 2.7639999985694885
+            },
+            {
+              "axis": "zmax",
+              "vertex": 0,
+              "point": [
+                0.1865688153143963,
+                1.8080000281333923,
+                -8.388320745207631
+              ],
+              "value": -8.388320745207631
+            }
+          ],
+          "extras": {
+            "semantic_part": "display_front",
+            "survey_instance_id": "P507-TV-LARGE",
+            "source_class": "PROPOSED_LAYOUT",
+            "placement_status": "PLACED_PROVISIONAL",
+            "orientation_deg": 25.0,
+            "surface_front_survey": [
+              0.42261826174069944,
+              -0.9063077870366499,
+              0.0
+            ],
+            "logical_type": "hero"
+          }
+        }
+      ]
+    },
+    {
+      "name": "P507_HERO_TV_REAR_CASING",
+      "blender_id": "P507-TV-LARGE",
+      "blender_parent": null,
+      "blender_modifiers": [
+        {
+          "name": "Edge relief",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width": 0.02500000037252903,
+          "segments": 3,
+          "affect": "EDGES",
+          "limit_method": "ANGLE",
+          "angle_limit": 0.5235987901687622,
+          "offset_type": "OFFSET",
+          "use_clamp_overlap": true,
+          "loop_slide": true,
+          "harden_normals": false
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true,
+          "weight": 50,
+          "mode": "FACE_AREA",
+          "keep_sharp": false,
+          "thresh": 0.009999999776482582
+        }
+      ],
+      "matrix_world_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          0.946196436882019
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.813157081604004
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2799999713897705
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "matrix_local_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          0.946196436882019
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.813157081604004
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2799999713897705
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "blender_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "original_vertices": 8,
+      "evaluated_vertices": 96,
+      "glb_position_vertices": 24,
+      "original_bounds_gltf": [
+        0.1531892716884613,
+        1.8075000047683716,
+        -9.209538459777832,
+        1.7392035722732544,
+        2.752500057220459,
+        -8.416775703430176
+      ],
+      "evaluated_bounds_gltf": [
+        0.16150595247745514,
+        1.8075000047683716,
+        -9.20122241973877,
+        1.7308869361877441,
+        2.752500057220459,
+        -8.425091743469238
+      ],
+      "frozen_bounds_gltf": [
+        0.153189281866645,
+        1.8074999749660492,
+        -9.209538749777105,
+        1.7392035918973932,
+        2.752499967813492,
+        -8.416775413430903
+      ],
+      "local_positions_raw_vs_frozen_hausdorff_m": 0.0,
+      "frozen_minus_evaluated_m": [
+        -0.00831667061081015,
+        -2.9802322387695312e-08,
+        -0.008316330038335096,
+        0.008316655709649012,
+        -8.940696716308594e-08,
+        0.008316330038335096
+      ],
+      "frozen_minus_evaluated_mm": [
+        -8.316670610810151,
+        -2.9802322387695312e-05,
+        -8.316330038335096,
+        8.316655709649012,
+        -8.940696716308594e-05,
+        8.316330038335096
+      ],
+      "raw_vs_frozen_hausdorff_m": 3.498289941508242e-07,
+      "evaluated_vs_frozen_hausdorff_m": 0.035355611238349266,
+      "weighted_normals_disabled_hausdorff_m": 0.0,
+      "bevel_disabled_vs_raw_hausdorff_m": 0.0,
+      "original_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 2,
+          "point": [
+            0.1531892716884613,
+            8.484748840332031,
+            1.8075000047683716
+          ],
+          "value": 0.1531892716884613
+        },
+        {
+          "axis": "ymin",
+          "vertex": 0,
+          "point": [
+            0.1848856508731842,
+            8.416775703430176,
+            1.8075000047683716
+          ],
+          "value": 8.416775703430176
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.1848856508731842,
+            8.416775703430176,
+            1.8075000047683716
+          ],
+          "value": 1.8075000047683716
+        },
+        {
+          "axis": "xmax",
+          "vertex": 4,
+          "point": [
+            1.7392035722732544,
+            9.141565322875977,
+            1.8075000047683716
+          ],
+          "value": 1.7392035722732544
+        },
+        {
+          "axis": "ymax",
+          "vertex": 6,
+          "point": [
+            1.7075072526931763,
+            9.209538459777832,
+            1.8075000047683716
+          ],
+          "value": 9.209538459777832
+        },
+        {
+          "axis": "zmax",
+          "vertex": 1,
+          "point": [
+            0.1848856508731842,
+            8.416775703430176,
+            2.752500057220459
+          ],
+          "value": 2.752500057220459
+        }
+      ],
+      "evaluated_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 46,
+          "point": [
+            0.16150595247745514,
+            8.47481632232666,
+            2.7274999618530273
+          ],
+          "value": 0.16150595247745514
+        },
+        {
+          "axis": "ymin",
+          "vertex": 6,
+          "point": [
+            0.194817915558815,
+            8.425091743469238,
+            1.8324999809265137
+          ],
+          "value": 8.425091743469238
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.1969778835773468,
+            8.44999885559082,
+            1.8075000047683716
+          ],
+          "value": 1.8075000047683716
+        },
+        {
+          "axis": "xmax",
+          "vertex": 54,
+          "point": [
+            1.7308869361877441,
+            9.151497840881348,
+            1.8324999809265137
+          ],
+          "value": 1.7308869361877441
+        },
+        {
+          "axis": "ymax",
+          "vertex": 78,
+          "point": [
+            1.6975749731063843,
+            9.20122241973877,
+            1.8324999809265137
+          ],
+          "value": 9.20122241973877
+        },
+        {
+          "axis": "zmax",
+          "vertex": 13,
+          "point": [
+            0.1969778835773468,
+            8.44999885559082,
+            2.752500057220459
+          ],
+          "value": 2.752500057220459
+        }
+      ],
+      "glb_primitives": [
+        {
+          "id": "P507-TV-LARGE",
+          "node_index": 130,
+          "node": "P507_HERO_TV_REAR_CASING",
+          "parent_index": null,
+          "mesh_index": 97,
+          "primitive_index": 0,
+          "position_accessor": 555,
+          "mode": 4,
+          "vertex_count": 24,
+          "world_matrix_gltf": [
+            [
+              0.9063078207849582,
+              0.0,
+              0.4226182116500965,
+              0.946196436882019
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              2.2799999713897705
+            ],
+            [
+              -0.4226182116500965,
+              0.0,
+              0.9063078207849582,
+              -8.813157081604004
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "bounds_gltf": [
+            0.153189281866645,
+            1.8074999749660492,
+            -9.209538749777105,
+            1.7392035918973932,
+            2.752499967813492,
+            -8.416775413430903
+          ],
+          "extrema_gltf": [
+            {
+              "axis": "xmin",
+              "vertex": 6,
+              "point": [
+                0.153189281866645,
+                1.8074999749660492,
+                -8.484748502690783
+              ],
+              "value": 0.153189281866645
+            },
+            {
+              "axis": "ymin",
+              "vertex": 0,
+              "point": [
+                0.18488564899990262,
+                1.8074999749660492,
+                -8.416775413430903
+              ],
+              "value": 1.8074999749660492
+            },
+            {
+              "axis": "zmin",
+              "vertex": 18,
+              "point": [
+                1.7075072247641354,
+                1.8074999749660492,
+                -9.209538749777105
+              ],
+              "value": -9.209538749777105
+            },
+            {
+              "axis": "xmax",
+              "vertex": 12,
+              "point": [
+                1.7392035918973932,
+                1.8074999749660492,
+                -9.141565660517225
+              ],
+              "value": 1.7392035918973932
+            },
+            {
+              "axis": "ymax",
+              "vertex": 3,
+              "point": [
+                0.18488564899990262,
+                2.752499967813492,
+                -8.416775413430903
+              ],
+              "value": 2.752499967813492
+            },
+            {
+              "axis": "zmax",
+              "vertex": 0,
+              "point": [
+                0.18488564899990262,
+                1.8074999749660492,
+                -8.416775413430903
+              ],
+              "value": -8.416775413430903
+            }
+          ],
+          "extras": {
+            "survey_instance_id": "P507-TV-LARGE",
+            "source_class": "PROPOSED_LAYOUT",
+            "placement_status": "PLACED_PROVISIONAL",
+            "orientation_deg": 25.0,
+            "surface_front_survey": [
+              0.42261826174069944,
+              -0.9063077870366499,
+              0.0
+            ],
+            "logical_type": "hero"
+          }
+        }
+      ]
+    },
+    {
+      "name": "P507_HERO_TV_REAR_MOUNT_RAIL",
+      "blender_id": "P507-TV-LARGE",
+      "blender_parent": null,
+      "blender_modifiers": [
+        {
+          "name": "Edge relief",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width": 0.004999999888241291,
+          "segments": 3,
+          "affect": "EDGES",
+          "limit_method": "ANGLE",
+          "angle_limit": 0.5235987901687622,
+          "offset_type": "OFFSET",
+          "use_clamp_overlap": true,
+          "loop_slide": true,
+          "harden_normals": false
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true,
+          "weight": 50,
+          "mode": "FACE_AREA",
+          "keep_sharp": false,
+          "thresh": 0.009999999776482582
+        }
+      ],
+      "matrix_world_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          1.1944221258163452
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.99069595336914
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2799999713897705
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "matrix_local_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          1.1944221258163452
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          8.99069595336914
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.2799999713897705
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "blender_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "original_vertices": 8,
+      "evaluated_vertices": 96,
+      "glb_position_vertices": 24,
+      "original_bounds_gltf": [
+        0.6910926699638367,
+        2.2300000190734863,
+        -9.233558654785156,
+        1.697751522064209,
+        2.3299999237060547,
+        -8.747833251953125
+      ],
+      "evaluated_bounds_gltf": [
+        0.6927559971809387,
+        2.2300000190734863,
+        -9.231895446777344,
+        1.696088194847107,
+        2.3299999237060547,
+        -8.749496459960938
+      ],
+      "frozen_bounds_gltf": [
+        0.6910927041371647,
+        2.2299999706447124,
+        -9.23355851477398,
+        1.6977515474955258,
+        2.3299999721348286,
+        -8.747833391964301
+      ],
+      "local_positions_raw_vs_frozen_hausdorff_m": 0.0,
+      "frozen_minus_evaluated_m": [
+        -0.0016632930437739946,
+        -4.842877388000488e-08,
+        -0.0016630679966365136,
+        0.001663352648418881,
+        4.842877388000488e-08,
+        0.0016630679966365136
+      ],
+      "frozen_minus_evaluated_mm": [
+        -1.6632930437739946,
+        -4.842877388000488e-05,
+        -1.6630679966365136,
+        1.663352648418881,
+        4.842877388000488e-05,
+        1.6630679966365136
+      ],
+      "raw_vs_frozen_hausdorff_m": 2.0216243304100223e-07,
+      "evaluated_vs_frozen_hausdorff_m": 0.007071482204504393,
+      "weighted_normals_disabled_hausdorff_m": 0.0,
+      "bevel_disabled_vs_raw_hausdorff_m": 0.0,
+      "original_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 2,
+          "point": [
+            0.6910926699638367,
+            8.768678665161133,
+            2.2300000190734863
+          ],
+          "value": 0.6910926699638367
+        },
+        {
+          "axis": "ymin",
+          "vertex": 0,
+          "point": [
+            0.7008129358291626,
+            8.747833251953125,
+            2.2300000190734863
+          ],
+          "value": 8.747833251953125
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.7008129358291626,
+            8.747833251953125,
+            2.2300000190734863
+          ],
+          "value": 2.2300000190734863
+        },
+        {
+          "axis": "xmax",
+          "vertex": 4,
+          "point": [
+            1.697751522064209,
+            9.212713241577148,
+            2.2300000190734863
+          ],
+          "value": 1.697751522064209
+        },
+        {
+          "axis": "ymax",
+          "vertex": 6,
+          "point": [
+            1.6880313158035278,
+            9.233558654785156,
+            2.2300000190734863
+          ],
+          "value": 9.233558654785156
+        },
+        {
+          "axis": "zmax",
+          "vertex": 1,
+          "point": [
+            0.7008129358291626,
+            8.747833251953125,
+            2.3299999237060547
+          ],
+          "value": 2.3299999237060547
+        }
+      ],
+      "evaluated_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 30,
+          "point": [
+            0.6927559971809387,
+            8.766692161560059,
+            2.234999895095825
+          ],
+          "value": 0.6927559971809387
+        },
+        {
+          "axis": "ymin",
+          "vertex": 6,
+          "point": [
+            0.7027993202209473,
+            8.749496459960938,
+            2.234999895095825
+          ],
+          "value": 8.749496459960938
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            0.7032313942909241,
+            8.754478454589844,
+            2.2300000190734863
+          ],
+          "value": 2.2300000190734863
+        },
+        {
+          "axis": "xmax",
+          "vertex": 54,
+          "point": [
+            1.696088194847107,
+            9.214699745178223,
+            2.234999895095825
+          ],
+          "value": 1.696088194847107
+        },
+        {
+          "axis": "ymax",
+          "vertex": 78,
+          "point": [
+            1.6860449314117432,
+            9.231895446777344,
+            2.234999895095825
+          ],
+          "value": 9.231895446777344
+        },
+        {
+          "axis": "zmax",
+          "vertex": 13,
+          "point": [
+            0.7032313942909241,
+            8.754478454589844,
+            2.3299999237060547
+          ],
+          "value": 2.3299999237060547
+        }
+      ],
+      "glb_primitives": [
+        {
+          "id": "P507-TV-LARGE",
+          "node_index": 133,
+          "node": "P507_HERO_TV_REAR_MOUNT_RAIL",
+          "parent_index": null,
+          "mesh_index": 100,
+          "primitive_index": 0,
+          "position_accessor": 564,
+          "mode": 4,
+          "vertex_count": 24,
+          "world_matrix_gltf": [
+            [
+              0.9063078207849582,
+              0.0,
+              0.4226182116500965,
+              1.1944221258163452
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              2.2799999713897705
+            ],
+            [
+              -0.4226182116500965,
+              0.0,
+              0.9063078207849582,
+              -8.99069595336914
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "bounds_gltf": [
+            0.6910927041371647,
+            2.2299999706447124,
+            -9.23355851477398,
+            1.6977515474955258,
+            2.3299999721348286,
+            -8.747833391964301
+          ],
+          "extrema_gltf": [
+            {
+              "axis": "xmin",
+              "vertex": 6,
+              "point": [
+                0.6910927041371647,
+                2.2299999706447124,
+                -8.76867847188287
+              ],
+              "value": 0.6910927041371647
+            },
+            {
+              "axis": "ymin",
+              "vertex": 0,
+              "point": [
+                0.7008129230240094,
+                2.2299999706447124,
+                -8.747833391964301
+              ],
+              "value": 2.2299999706447124
+            },
+            {
+              "axis": "zmin",
+              "vertex": 18,
+              "point": [
+                1.688031328608681,
+                2.2299999706447124,
+                -9.23355851477398
+              ],
+              "value": -9.23355851477398
+            },
+            {
+              "axis": "xmax",
+              "vertex": 12,
+              "point": [
+                1.6977515474955258,
+                2.2299999706447124,
+                -9.212713434855411
+              ],
+              "value": 1.6977515474955258
+            },
+            {
+              "axis": "ymax",
+              "vertex": 3,
+              "point": [
+                0.7008129230240094,
+                2.3299999721348286,
+                -8.747833391964301
+              ],
+              "value": 2.3299999721348286
+            },
+            {
+              "axis": "zmax",
+              "vertex": 0,
+              "point": [
+                0.7008129230240094,
+                2.2299999706447124,
+                -8.747833391964301
+              ],
+              "value": -8.747833391964301
+            }
+          ],
+          "extras": {
+            "survey_instance_id": "P507-TV-LARGE",
+            "source_class": "PROPOSED_LAYOUT",
+            "placement_status": "PLACED_PROVISIONAL",
+            "orientation_deg": 25.0,
+            "surface_front_survey": [
+              0.42261826174069944,
+              -0.9063077870366499,
+              0.0
+            ],
+            "logical_type": "hero"
+          }
+        }
+      ]
+    },
+    {
+      "name": "P507_HERO_TV_STANDBY_INDICATOR",
+      "blender_id": "P507-TV-LARGE",
+      "blender_parent": null,
+      "blender_modifiers": [
+        {
+          "name": "Edge relief",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width": 0.0010000000474974513,
+          "segments": 3,
+          "affect": "EDGES",
+          "limit_method": "ANGLE",
+          "angle_limit": 0.5235987901687622,
+          "offset_type": "OFFSET",
+          "use_clamp_overlap": true,
+          "loop_slide": true,
+          "harden_normals": false
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true,
+          "weight": 50,
+          "mode": "FACE_AREA",
+          "keep_sharp": false,
+          "thresh": 0.009999999776482582
+        }
+      ],
+      "matrix_world_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          1.5836718082427979
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          9.037593841552734
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          1.7969999313354492
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "matrix_local_survey": [
+        [
+          0.9063078165054321,
+          -0.42261815071105957,
+          0.0,
+          1.5836718082427979
+        ],
+        [
+          0.42261815071105957,
+          0.9063078165054321,
+          0.0,
+          9.037593841552734
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          1.7969999313354492
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "blender_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "original_vertices": 8,
+      "evaluated_vertices": 96,
+      "glb_position_vertices": 24,
+      "original_bounds_gltf": [
+        1.579201340675354,
+        1.7954999208450317,
+        -9.041096687316895,
+        1.5881422758102417,
+        1.7984999418258667,
+        -9.034090995788574
+      ],
+      "evaluated_bounds_gltf": [
+        1.5795340538024902,
+        1.7954999208450317,
+        -9.040763854980469,
+        1.5878095626831055,
+        1.7984999418258667,
+        -9.034423828125
+      ],
+      "frozen_bounds_gltf": [
+        1.579201340324022,
+        1.7954999313224107,
+        -9.041096930207292,
+        1.5881422761615738,
+        1.7984999313484877,
+        -9.034090752898177
+      ],
+      "local_positions_raw_vs_frozen_hausdorff_m": 0.0,
+      "frozen_minus_evaluated_m": [
+        -0.000332713478468305,
+        1.0477378964424133e-08,
+        -0.0003330752268233539,
+        0.000332713478468305,
+        -1.0477378964424133e-08,
+        0.0003330752268233539
+      ],
+      "frozen_minus_evaluated_mm": [
+        -0.332713478468305,
+        1.0477378964424133e-05,
+        -0.3330752268233539,
+        0.332713478468305,
+        -1.0477378964424133e-05,
+        0.3330752268233539
+      ],
+      "raw_vs_frozen_hausdorff_m": 2.4553227880450687e-07,
+      "evaluated_vs_frozen_hausdorff_m": 0.0014142413282540495,
+      "weighted_normals_disabled_hausdorff_m": 0.0,
+      "bevel_disabled_vs_raw_hausdorff_m": 0.0,
+      "original_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 2,
+          "point": [
+            1.579201340675354,
+            9.037715911865234,
+            1.7954999208450317
+          ],
+          "value": 1.579201340675354
+        },
+        {
+          "axis": "ymin",
+          "vertex": 0,
+          "point": [
+            1.5808918476104736,
+            9.034090995788574,
+            1.7954999208450317
+          ],
+          "value": 9.034090995788574
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            1.5808918476104736,
+            9.034090995788574,
+            1.7954999208450317
+          ],
+          "value": 1.7954999208450317
+        },
+        {
+          "axis": "xmax",
+          "vertex": 4,
+          "point": [
+            1.5881422758102417,
+            9.037471771240234,
+            1.7954999208450317
+          ],
+          "value": 1.5881422758102417
+        },
+        {
+          "axis": "ymax",
+          "vertex": 6,
+          "point": [
+            1.586451768875122,
+            9.041096687316895,
+            1.7954999208450317
+          ],
+          "value": 9.041096687316895
+        },
+        {
+          "axis": "zmax",
+          "vertex": 1,
+          "point": [
+            1.5808918476104736,
+            9.034090995788574,
+            1.7984999418258667
+          ],
+          "value": 1.7984999418258667
+        }
+      ],
+      "evaluated_extrema_survey": [
+        {
+          "axis": "xmin",
+          "vertex": 30,
+          "point": [
+            1.5795340538024902,
+            9.037318229675293,
+            1.7964999675750732
+          ],
+          "value": 1.5795340538024902
+        },
+        {
+          "axis": "ymin",
+          "vertex": 6,
+          "point": [
+            1.5812890529632568,
+            9.034423828125,
+            1.7964999675750732
+          ],
+          "value": 9.034423828125
+        },
+        {
+          "axis": "zmin",
+          "vertex": 0,
+          "point": [
+            1.5813754796981812,
+            9.035419464111328,
+            1.7954999208450317
+          ],
+          "value": 1.7954999208450317
+        },
+        {
+          "axis": "xmax",
+          "vertex": 54,
+          "point": [
+            1.5878095626831055,
+            9.037869453430176,
+            1.7964999675750732
+          ],
+          "value": 1.5878095626831055
+        },
+        {
+          "axis": "ymax",
+          "vertex": 78,
+          "point": [
+            1.5860545635223389,
+            9.040763854980469,
+            1.7964999675750732
+          ],
+          "value": 9.040763854980469
+        },
+        {
+          "axis": "zmax",
+          "vertex": 13,
+          "point": [
+            1.5813754796981812,
+            9.035419464111328,
+            1.7984999418258667
+          ],
+          "value": 1.7984999418258667
+        }
+      ],
+      "glb_primitives": [
+        {
+          "id": "P507-TV-LARGE",
+          "node_index": 134,
+          "node": "P507_HERO_TV_STANDBY_INDICATOR",
+          "parent_index": null,
+          "mesh_index": 101,
+          "primitive_index": 0,
+          "position_accessor": 567,
+          "mode": 4,
+          "vertex_count": 24,
+          "world_matrix_gltf": [
+            [
+              0.9063078207849582,
+              0.0,
+              0.4226182116500965,
+              1.5836718082427979
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              1.7969999313354492
+            ],
+            [
+              -0.4226182116500965,
+              0.0,
+              0.9063078207849582,
+              -9.037593841552734
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "bounds_gltf": [
+            1.579201340324022,
+            1.7954999313224107,
+            -9.041096930207292,
+            1.5881422761615738,
+            1.7984999313484877,
+            -9.034090752898177
+          ],
+          "extrema_gltf": [
+            {
+              "axis": "xmin",
+              "vertex": 6,
+              "point": [
+                1.579201340324022,
+                1.7954999313224107,
+                -9.037715984353506
+              ],
+              "value": 1.579201340324022
+            },
+            {
+              "axis": "ymin",
+              "vertex": 0,
+              "point": [
+                1.5808918132509155,
+                1.7954999313224107,
+                -9.034090752898177
+              ],
+              "value": 1.7954999313224107
+            },
+            {
+              "axis": "zmin",
+              "vertex": 18,
+              "point": [
+                1.5864518032346802,
+                1.7954999313224107,
+                -9.041096930207292
+              ],
+              "value": -9.041096930207292
+            },
+            {
+              "axis": "xmax",
+              "vertex": 12,
+              "point": [
+                1.5881422761615738,
+                1.7954999313224107,
+                -9.037471698751963
+              ],
+              "value": 1.5881422761615738
+            },
+            {
+              "axis": "ymax",
+              "vertex": 3,
+              "point": [
+                1.5808918132509155,
+                1.7984999313484877,
+                -9.034090752898177
+              ],
+              "value": 1.7984999313484877
+            },
+            {
+              "axis": "zmax",
+              "vertex": 0,
+              "point": [
+                1.5808918132509155,
+                1.7954999313224107,
+                -9.034090752898177
+              ],
+              "value": -9.034090752898177
+            }
+          ],
+          "extras": {
+            "survey_instance_id": "P507-TV-LARGE",
+            "source_class": "PROPOSED_LAYOUT",
+            "placement_status": "PLACED_PROVISIONAL",
+            "orientation_deg": 25.0,
+            "surface_front_survey": [
+              0.42261826174069944,
+              -0.9063077870366499,
+              0.0
+            ],
+            "logical_type": "hero"
+          }
+        }
+      ]
+    }
+  ],
+  "diagnostic_exports": [
+    {
+      "case": "omitted_apply",
+      "filename": "DIAGNOSTIC_EXPORT_ONLY_omitted_apply.glb",
+      "export_apply": "OMITTED_OPERATOR_DEFAULT",
+      "disabled_modifier_types": [],
+      "identity": {
+        "bytes": 10692,
+        "sha256": "fefac69275b18b2e402cfd1e96a280ebb936e2bc2586220d92f5c244752f119d"
+      },
+      "bounds_gltf": [
+        0.153189281866645,
+        1.7799999713897705,
+        -9.23355851477398,
+        1.7725793546925521,
+        2.7799999713897705,
+        -8.387026920885576
+      ],
+      "max_component_hausdorff_original_m": 5.048246124493607e-07,
+      "max_component_hausdorff_evaluated_m": 0.035355611238349266,
+      "max_component_hausdorff_frozen_m": 0,
+      "max_matrix_entry_delta_vs_frozen": 0
+    },
+    {
+      "case": "apply_false",
+      "filename": "DIAGNOSTIC_EXPORT_ONLY_apply_false.glb",
+      "export_apply": false,
+      "disabled_modifier_types": [],
+      "identity": {
+        "bytes": 10692,
+        "sha256": "fefac69275b18b2e402cfd1e96a280ebb936e2bc2586220d92f5c244752f119d"
+      },
+      "bounds_gltf": [
+        0.153189281866645,
+        1.7799999713897705,
+        -9.23355851477398,
+        1.7725793546925521,
+        2.7799999713897705,
+        -8.387026920885576
+      ],
+      "max_component_hausdorff_original_m": 5.048246124493607e-07,
+      "max_component_hausdorff_evaluated_m": 0.035355611238349266,
+      "max_component_hausdorff_frozen_m": 0,
+      "max_matrix_entry_delta_vs_frozen": 0
+    },
+    {
+      "case": "apply_true",
+      "filename": "DIAGNOSTIC_EXPORT_ONLY_apply_true.glb",
+      "export_apply": true,
+      "disabled_modifier_types": [],
+      "identity": {
+        "bytes": 70660,
+        "sha256": "ad63b5f4b695e5d712fe2427d2e375f00aa6d63be00440f2502241f9360ad6e5"
+      },
+      "bounds_gltf": [
+        0.16149479434397057,
+        1.7799999713897705,
+        -9.231895213703488,
+        1.7680883975276724,
+        2.7799999713897705,
+        -8.389651421372239
+      ],
+      "max_component_hausdorff_original_m": 0.03535562634592102,
+      "max_component_hausdorff_evaluated_m": 5.023969781214185e-07,
+      "max_component_hausdorff_frozen_m": 0.03535534370390459,
+      "max_matrix_entry_delta_vs_frozen": 0
+    },
+    {
+      "case": "apply_true_without_weighted_normals",
+      "filename": "DIAGNOSTIC_EXPORT_ONLY_apply_true_without_weighted_normals.glb",
+      "export_apply": true,
+      "disabled_modifier_types": [
+        "WEIGHTED_NORMAL"
+      ],
+      "identity": {
+        "bytes": 70660,
+        "sha256": "ad63b5f4b695e5d712fe2427d2e375f00aa6d63be00440f2502241f9360ad6e5"
+      },
+      "bounds_gltf": [
+        0.16149479434397057,
+        1.7799999713897705,
+        -9.231895213703488,
+        1.7680883975276724,
+        2.7799999713897705,
+        -8.389651421372239
+      ],
+      "max_component_hausdorff_original_m": 0.03535562634592102,
+      "max_component_hausdorff_evaluated_m": 5.023969781214185e-07,
+      "max_component_hausdorff_frozen_m": 0.03535534370390459,
+      "max_matrix_entry_delta_vs_frozen": 0
+    },
+    {
+      "case": "apply_true_without_bevel",
+      "filename": "DIAGNOSTIC_EXPORT_ONLY_apply_true_without_bevel.glb",
+      "export_apply": true,
+      "disabled_modifier_types": [
+        "BEVEL"
+      ],
+      "identity": {
+        "bytes": 10692,
+        "sha256": "fefac69275b18b2e402cfd1e96a280ebb936e2bc2586220d92f5c244752f119d"
+      },
+      "bounds_gltf": [
+        0.153189281866645,
+        1.7799999713897705,
+        -9.23355851477398,
+        1.7725793546925521,
+        2.7799999713897705,
+        -8.387026920885576
+      ],
+      "max_component_hausdorff_original_m": 5.048246124493607e-07,
+      "max_component_hausdorff_evaluated_m": 0.035355611238349266,
+      "max_component_hausdorff_frozen_m": 0,
+      "max_matrix_entry_delta_vs_frozen": 0
+    },
+    {
+      "case": "apply_false_without_bevel",
+      "filename": "DIAGNOSTIC_EXPORT_ONLY_apply_false_without_bevel.glb",
+      "export_apply": false,
+      "disabled_modifier_types": [
+        "BEVEL"
+      ],
+      "identity": {
+        "bytes": 10692,
+        "sha256": "fefac69275b18b2e402cfd1e96a280ebb936e2bc2586220d92f5c244752f119d"
+      },
+      "bounds_gltf": [
+        0.153189281866645,
+        1.7799999713897705,
+        -9.23355851477398,
+        1.7725793546925521,
+        2.7799999713897705,
+        -8.387026920885576
+      ],
+      "max_component_hausdorff_original_m": 5.048246124493607e-07,
+      "max_component_hausdorff_evaluated_m": 0.035355611238349266,
+      "max_component_hausdorff_frozen_m": 0,
+      "max_matrix_entry_delta_vs_frozen": 0
+    }
+  ],
+  "containment": {
+    "logical_ids": 121,
+    "vertex_samples": 402482,
+    "violations_at_1mm": 0,
+    "tv": {
+      "vertex_samples": 120,
+      "minimum_signed_clearance_m": -2.8610229518832853e-08,
+      "violations_at_1mm": 0
+    },
+    "per_id": {
+      "P507-WINDOW-01": {
+        "vertex_samples": 144,
+        "minimum_signed_clearance_m": 0.0024999991059297955,
+        "violations_at_1mm": 0
+      },
+      "P507-WINDOW-02": {
+        "vertex_samples": 144,
+        "minimum_signed_clearance_m": 0.002499999105929795,
+        "violations_at_1mm": 0
+      },
+      "P507-WINDOW-03": {
+        "vertex_samples": 144,
+        "minimum_signed_clearance_m": 0.002499999105929795,
+        "violations_at_1mm": 0
+      },
+      "P507-WINDOW-04": {
+        "vertex_samples": 144,
+        "minimum_signed_clearance_m": 0.0024999991059297955,
+        "violations_at_1mm": 0
+      },
+      "P507-BLIND-01": {
+        "vertex_samples": 1656,
+        "minimum_signed_clearance_m": -4.2438507152908755e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-BLIND-02": {
+        "vertex_samples": 1656,
+        "minimum_signed_clearance_m": -4.959106458812812e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-BLIND-03": {
+        "vertex_samples": 1656,
+        "minimum_signed_clearance_m": -1.2207031208077979e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-BLIND-04": {
+        "vertex_samples": 1656,
+        "minimum_signed_clearance_m": -3.6191940289143076e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DOOR-LEAF-01": {
+        "vertex_samples": 3456,
+        "minimum_signed_clearance_m": 4.0313312660486066e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DOOR-LEAF-02": {
+        "vertex_samples": 3456,
+        "minimum_signed_clearance_m": 9.683594095239699e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-A01": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.026557925915995e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-A02": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.026557925915995e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-A03": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.026557925915995e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-A04": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.026557925915995e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-A05": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.026557925915995e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-A06": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.026557925915995e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-B01": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.0728836041806744e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-B02": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.9073486345888568e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-B03": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -4.7683715642676816e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-B04": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.9073486345888568e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-B05": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.9073486345888568e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-B06": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -2.1457672128022412e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-C01": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -4.7683715642676816e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-C02": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.9073486345888568e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-C03": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -4.7683715642676816e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-C04": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.9073486345888568e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-DESK-C05": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": -1.0728836041806744e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-01": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-02": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-03": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-04": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-05": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-06": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-07": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-08": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-09": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-10": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-11": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-A-12": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-01": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-02": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-03": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-04": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-05": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-06": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-07": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-08": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-09": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-10": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-11": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-B-12": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-01": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-02": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-03": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-04": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-05": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-06": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-07": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-08": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-11": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CHAIR-C-12": {
+        "vertex_samples": 3558,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-CABINET-FILES": {
+        "vertex_samples": 13896,
+        "minimum_signed_clearance_m": -1.5076001269598294e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRIDGE": {
+        "vertex_samples": 2932,
+        "minimum_signed_clearance_m": -4.768371586472142e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-UTILITY-SHELF": {
+        "vertex_samples": 6912,
+        "minimum_signed_clearance_m": -4.2880136374989775e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-WASTE-BIN": {
+        "vertex_samples": 1122,
+        "minimum_signed_clearance_m": -6.275990127591058e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-SHOE-RACK": {
+        "vertex_samples": 6850,
+        "minimum_signed_clearance_m": -2.5488784682892174e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-WHITEBOARD": {
+        "vertex_samples": 2660,
+        "minimum_signed_clearance_m": -3.232898526661643e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-TV-SMALL": {
+        "vertex_samples": 1508,
+        "minimum_signed_clearance_m": -4.60809057578615e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-LOGO-SILHOUETTE": {
+        "vertex_samples": 2884,
+        "minimum_signed_clearance_m": 0.011999909975870596,
+        "violations_at_1mm": 0
+      },
+      "P507-HEX-GROUP-L": {
+        "vertex_samples": 936,
+        "minimum_signed_clearance_m": 0.006999991989558696,
+        "violations_at_1mm": 0
+      },
+      "P507-HEX-GROUP-R": {
+        "vertex_samples": 936,
+        "minimum_signed_clearance_m": 0.006999991989558696,
+        "violations_at_1mm": 0
+      },
+      "P507-TV-LARGE": {
+        "vertex_samples": 120,
+        "minimum_signed_clearance_m": -2.8610229518832853e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-TV-LARGE-MOUNT": {
+        "vertex_samples": 484,
+        "minimum_signed_clearance_m": -3.993511210609313e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-CABINET-LOW": {
+        "vertex_samples": 4992,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-DISPLAY-01": {
+        "vertex_samples": 768,
+        "minimum_signed_clearance_m": 5.755573506682765e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-DISPLAY-02": {
+        "vertex_samples": 744,
+        "minimum_signed_clearance_m": 5.755573506682765e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-DISPLAY-03": {
+        "vertex_samples": 1124,
+        "minimum_signed_clearance_m": 5.755573506682765e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-WATER-DISPENSER": {
+        "vertex_samples": 2136,
+        "minimum_signed_clearance_m": 0.0,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-01": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-02": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-03": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-04": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.1563301072214927e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-05": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-06": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.4424324024098212e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-07": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-08": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -2.1100044289568132e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-09": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.633167268089153e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-A-10": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.3470649706803783e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-01": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.3470649706803783e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-02": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -3.5405158982371177e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-03": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-04": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.1563301072214927e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-05": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -3.5405158982371177e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-06": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -3.5405158982371177e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-07": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.1399388277766319e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-08": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -3.5405158982371177e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-I-09": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-01": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -2.3961067174838035e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-02": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.3470649706803783e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-03": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.6331672636482608e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-04": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -2.3961067174838035e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-05": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.139938827776632e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-06": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.6331672636482608e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-07": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -2.3961067174838035e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FRAME-ADJACENT-08": {
+        "vertex_samples": 2988,
+        "minimum_signed_clearance_m": -1.4424324024098212e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-01": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -2.861022951883285e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-02": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -1.0728836041806744e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-03": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -4.0531158429502057e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-04": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -1.0728836041806744e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-05": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -2.2172927849339888e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-06": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -2.2172927849339885e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-07": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -4.696846005458611e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-LIGHT-08": {
+        "vertex_samples": 1152,
+        "minimum_signed_clearance_m": -4.696846005458611e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-FAN-01": {
+        "vertex_samples": 1730,
+        "minimum_signed_clearance_m": -5.841255168448356e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-FAN-02": {
+        "vertex_samples": 1730,
+        "minimum_signed_clearance_m": -5.841255168448356e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-FAN-03": {
+        "vertex_samples": 1730,
+        "minimum_signed_clearance_m": -5.841255168448356e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-FAN-04": {
+        "vertex_samples": 1730,
+        "minimum_signed_clearance_m": -5.841255168448356e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-AC-01": {
+        "vertex_samples": 15210,
+        "minimum_signed_clearance_m": -7.152557346401522e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-AC-02": {
+        "vertex_samples": 15210,
+        "minimum_signed_clearance_m": -1.1920928955078125e-07,
+        "violations_at_1mm": 0
+      },
+      "P507-PROJECTOR-01": {
+        "vertex_samples": 3360,
+        "minimum_signed_clearance_m": -4.1127204752910984e-08,
+        "violations_at_1mm": 0
+      },
+      "P507-CAMERA-01": {
+        "vertex_samples": 938,
+        "minimum_signed_clearance_m": -2.9802322387695312e-08,
+        "violations_at_1mm": 0
+      }
+    }
+  },
+  "unverified": [
+    "Navigation/human safety/PCCC/accessibility and E1 runtime are not evaluated.",
+    "Diagnostic subset export bytes are not frozen artifact bytes; compare positions, not file hashes."
+  ],
+  "three": {
+    "version": "185",
+    "browser": "157.0.8103.50",
+    "manual_vs_python_bounds_max_delta_m": 5.551115123125783e-17,
+    "box3_vs_manual_max_delta_m": 0,
+    "components": [
+      {
+        "name": "P507_HERO_TV_REAR_CASING",
+        "id": "P507-TV-LARGE",
+        "parent": "Scene",
+        "positionCount": 24,
+        "indexCount": 36,
+        "association": {
+          "meshes": 97,
+          "primitives": 0,
+          "nodes": 130
+        },
+        "matrixWorldColumnMajor": [
+          0.9063078207849582,
+          0,
+          -0.4226182116500965,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0.4226182116500965,
+          0,
+          0.9063078207849582,
+          0,
+          0.946196436882019,
+          2.2799999713897705,
+          -8.813157081604004,
+          1
+        ],
+        "manual_bounds_gltf": [
+          0.15318928186664493,
+          1.8074999749660492,
+          -9.209538749777105,
+          1.7392035918973932,
+          2.752499967813492,
+          -8.416775413430903
+        ],
+        "box3_precise_bounds_gltf": [
+          0.15318928186664493,
+          1.8074999749660492,
+          -9.209538749777105,
+          1.7392035918973932,
+          2.752499967813492,
+          -8.416775413430903
+        ],
+        "max_delta_m": 0
+      },
+      {
+        "name": "P507_HERO_TV_BEZEL",
+        "id": "P507-TV-LARGE",
+        "parent": "Scene",
+        "positionCount": 24,
+        "indexCount": 36,
+        "association": {
+          "meshes": 98,
+          "primitives": 0,
+          "nodes": 131
+        },
+        "matrixWorldColumnMajor": [
+          0.9063078207849582,
+          0,
+          -0.4226182116500965,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0.4226182116500965,
+          0,
+          0.9063078207849582,
+          0,
+          0.9647915959358215,
+          2.2799999713897705,
+          -8.773279190063477,
+          1
+        ],
+        "manual_bounds_gltf": [
+          0.15700383717909083,
+          1.7799999713897705,
+          -9.159531459241377,
+          1.7725793546925521,
+          2.7799999713897705,
+          -8.387026920885576
+        ],
+        "box3_precise_bounds_gltf": [
+          0.15700383717909083,
+          1.7799999713897705,
+          -9.159531459241377,
+          1.7725793546925521,
+          2.7799999713897705,
+          -8.387026920885576
+        ],
+        "max_delta_m": 0
+      },
+      {
+        "name": "P507_HERO_TV_BLACK_SCREEN",
+        "id": "P507-TV-LARGE",
+        "parent": "Scene",
+        "positionCount": 24,
+        "indexCount": 36,
+        "association": {
+          "meshes": 99,
+          "primitives": 0,
+          "nodes": 132
+        },
+        "matrixWorldColumnMajor": [
+          0.9063078207849582,
+          0,
+          -0.4226182116500965,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0.4226182116500965,
+          0,
+          0.9063078207849582,
+          0,
+          0.9715535044670105,
+          2.2860000133514404,
+          -8.75877857208252,
+          1
+        ],
+        "manual_bounds_gltf": [
+          0.18318786946060928,
+          1.8080000281333923,
+          -9.129236398957408,
+          1.7599191394734117,
+          2.7639999985694885,
+          -8.388320745207631
+        ],
+        "box3_precise_bounds_gltf": [
+          0.18318786946060928,
+          1.8080000281333923,
+          -9.129236398957408,
+          1.7599191394734117,
+          2.7639999985694885,
+          -8.388320745207631
+        ],
+        "max_delta_m": 0
+      },
+      {
+        "name": "P507_HERO_TV_REAR_MOUNT_RAIL",
+        "id": "P507-TV-LARGE",
+        "parent": "Scene",
+        "positionCount": 24,
+        "indexCount": 36,
+        "association": {
+          "meshes": 100,
+          "primitives": 0,
+          "nodes": 133
+        },
+        "matrixWorldColumnMajor": [
+          0.9063078207849582,
+          0,
+          -0.4226182116500965,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0.4226182116500965,
+          0,
+          0.9063078207849582,
+          0,
+          1.1944221258163452,
+          2.2799999713897705,
+          -8.99069595336914,
+          1
+        ],
+        "manual_bounds_gltf": [
+          0.6910927041371647,
+          2.2299999706447124,
+          -9.23355851477398,
+          1.6977515474955256,
+          2.3299999721348286,
+          -8.747833391964301
+        ],
+        "box3_precise_bounds_gltf": [
+          0.6910927041371647,
+          2.2299999706447124,
+          -9.23355851477398,
+          1.6977515474955256,
+          2.3299999721348286,
+          -8.747833391964301
+        ],
+        "max_delta_m": 0
+      },
+      {
+        "name": "P507_HERO_TV_STANDBY_INDICATOR",
+        "id": "P507-TV-LARGE",
+        "parent": "Scene",
+        "positionCount": 24,
+        "indexCount": 36,
+        "association": {
+          "meshes": 101,
+          "primitives": 0,
+          "nodes": 134
+        },
+        "matrixWorldColumnMajor": [
+          0.9063078207849582,
+          0,
+          -0.4226182116500965,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0.4226182116500965,
+          0,
+          0.9063078207849582,
+          0,
+          1.5836718082427979,
+          1.7969999313354492,
+          -9.037593841552734,
+          1
+        ],
+        "manual_bounds_gltf": [
+          1.579201340324022,
+          1.7954999313224107,
+          -9.041096930207292,
+          1.5881422761615738,
+          1.7984999313484877,
+          -9.034090752898177
+        ],
+        "box3_precise_bounds_gltf": [
+          1.579201340324022,
+          1.7954999313224107,
+          -9.041096930207292,
+          1.5881422761615738,
+          1.7984999313484877,
+          -9.034090752898177
+        ],
+        "max_delta_m": 0
+      }
+    ]
+  }
+}

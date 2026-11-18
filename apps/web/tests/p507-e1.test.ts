@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {readFileSync} from 'node:fs';
+import {Navigation,PLAYER,SPAWN,InputState,colliders,displacement,logicalId,surveyToThree,sweptCircle,validateManifest,type Manifest,type Point} from '../src/p507-e1/core.ts';
+// Synthetic fixtures isolate mathematical behavior; actual asset tests live in experiment runner.
+const square=(x:number,z:number,w=1):Point[]=>[[x,z],[x+w,z],[x+w,z+w],[x,z+w]];
+const fixture=()=>({collision_proxies:[],floor:{walkable_rect_survey:[.05,.05,6.85,9.265]},occupied_use:{chair_pullback_m:.15}} as unknown as Manifest);
+test('single right-handed survey conversion, metre scale',()=>{assert.deepEqual(surveyToThree([1.25,7.415,0]),[1.25,0,-7.415]);assert.deepEqual(surveyToThree([6.9,9.315,3.5]),[6.9,3.5,-9.315]);});
+test('continuous sweep rejects crossing even when destination is clear',()=>{assert(sweptCircle([0,1.5],[4,1.5],square(2,1),.3));assert(!sweptCircle([0,0],[4,0],square(2,1),.3));});
+test('rotated polygon avoids false AABB collision and blocks true footprint',()=>{const p:Point[]=[[2,0],[3,1],[2,2],[1,1]];assert(!sweptCircle([1.05,.05],[1.1,.1],p,.1));assert(sweptCircle([0,1],[4,1],p,.3));});
+test('capsule clearance: diameter .6 cannot fit .2/.15/.5/.45 gaps',()=>{for(const gap of [.15,.2,.45,.5]){assert(sweptCircle([1+gap/2,-1],[1+gap/2,2],square(0,0),.3));}assert(!sweptCircle([1.465,-1],[1.465,2],square(0,0),.3));});
+test('vertical occupancy includes overhead at head but skips ceiling',()=>{const m=fixture();m.collision_proxies=[{id:'head',kind:'tv',polygon:square(2,2),bottom_z:1.7,top_z:2.2,orientation_deg:25},{id:'ceiling',kind:'light',polygon:square(4,4),bottom_z:3,top_z:3.2,orientation_deg:0}];assert.deepEqual(new Navigation(m).obstacles.map(p=>p.id),['head']);});
+test('static and occupied chair envelopes are both retained, rotation correct',()=>{const m=fixture();m.collision_proxies=[{id:'chair',kind:'chair',polygon:square(2,2),bottom_z:0,top_z:1.02,orientation_deg:270}];const c=colliders(m);assert.equal(c.length,2);assert(Math.abs(c[1].polygon[0][0]-1.85)<1e-9);});
+for(const kind of ['desk','chair','cabinet','tv','dispenser'])test(kind+' is blocking throughout occupied height',()=>{const m=fixture();m.collision_proxies=[{id:kind,kind,polygon:square(2,2),bottom_z:0,top_z:1.8,orientation_deg:0}];const n=new Navigation(m);assert.equal(n.move([1,-2.5],[4,0]).reason,kind);assert.deepEqual(n.move([1,-2.5],[4,0]).position,[1,-2.5]);});
+test('room boundary is continuous including open door and large steps',()=>{const n=new Navigation(fixture());for(const d of [[-2,0],[7,0],[0,9],[0,-9]] as Point[])assert.equal(n.move(SPAWN,d).reason,'ROOM_BOUNDARY_OUTSIDE_UNSURVEYED');assert(!n.blocked(SPAWN,SPAWN));});
+test('speed matches 20/30/60/144 FPS, diagonal normalized',()=>{for(const fps of [20,30,60,144]){let x=0;for(let i=0;i<fps*2;i++)x+=displacement(1,0,-Math.PI/2,1/fps)[0];assert(Math.abs(x-PLAYER.speed*2)<1e-9);}const d=displacement(1,1,0,.04);assert(Math.abs(Math.hypot(...d)-PLAYER.speed*.04)<1e-9);});
+test('large/stale/invalid deltas never create free-fly or giant displacement',()=>{assert(Math.hypot(...displacement(1,0,0,900))<=.061);assert.deepEqual(displacement(1,0,0,NaN),[0,0]);assert.deepEqual(displacement(1,0,0,-1),[0,0]);});
+test('collision independent of FPS and jump length',()=>{const m=fixture();m.collision_proxies=[{id:'thin',kind:'desk',polygon:[[2,2],[2.01,2],[2.01,3],[2,3]],bottom_z:0,top_z:1,orientation_deg:0}];for(const fps of [20,30,60,144]){const n=new Navigation(m);let p:Point=[1,-2.5];for(let i=0;i<fps*3;i++)p=n.move(p,displacement(1,0,-Math.PI/2,1/fps)).position;assert(p[0]<1.7&&p[0]>1.63);}assert(new Navigation(m).blocked([1,-2.5],[5,-2.5]));});
+test('child mesh resolves known ancestor, unknown ID never fabricated',()=>{const parent={userData:{survey_instance_id:'P507-DESK-A01'},parent:null},child={userData:{},parent};assert.equal(logicalId(child,new Set(['P507-DESK-A01'])),'P507-DESK-A01');assert.equal(logicalId(child,new Set()),null);});
+test('pointer lock, blur/hidden reset and key release clear held controls',()=>{const i=new InputState();i.key('KeyW',true);assert.deepEqual(i.axes(),[0,0]);i.lock(true);i.key('KeyW',true);assert.deepEqual(i.axes(),[1,0]);i.clear();assert(!i.active);assert.equal(i.keys.size,0);i.lock(true);i.key('KeyW',true);i.lock(false);assert.deepEqual(i.axes(),[0,0]);});
+test('production entry is not changed to reference E1 and no XR/media/API activation',()=>{const code=readFileSync(new URL('../src/p507-webxr-e1.ts',import.meta.url),'utf8');assert(!/requestSession|getUserMedia|\/api\/|WebSocket|localStorage|sessionStorage/.test(code));const app=readFileSync(new URL('../src/app/App.tsx',import.meta.url),'utf8');assert(!app.includes('p507-webxr-e1'));});
+test('bad schema/unit explicitly fails',()=>{assert.throws(()=>validateManifest({schema_version:2,unit:'cm'} as Manifest),/schema\/unit/);});
+
+test('manifest rejects duplicate/missing IDs, unplaced chairs and confused survey dimensions',()=>{
+  const m={schema_version:1,unit:'metre',axis_conversion:'(x,z,-y)',survey_baseline:{width_x:6,length_y:8.1,height_z:3.5,source:'USER_REPORTED'},virtual_dimensions:{width_x:6.9,length_y:9.315,height_z:3.5,source:'OWNER_APPROVED_VIRTUAL_ADAPTATION'},instances:[...Array.from({length:121},(_,i)=>({id:'synthetic-'+i,status:'PLACED_PROVISIONAL'})),...['P507-CHAIR-C-09','P507-CHAIR-C-10'].map(id=>({id,status:'UNPLACED'}))],collision_proxies:Array.from({length:121},(_,i)=>({id:'synthetic-'+i,kind:'desk',polygon:square(2,2),bottom_z:0,top_z:1,orientation_deg:0})),occupied_use:{chair_pullback_m:.15}} as unknown as Manifest;
+  validateManifest(m);
+  const duplicate=structuredClone(m);duplicate.instances[0].id=duplicate.instances[1].id;assert.throws(()=>validateManifest(duplicate),/IDs/);
+  const missing=structuredClone(m);missing.instances.pop();assert.throws(()=>validateManifest(missing),/IDs/);
+  const chair=structuredClone(m);chair.instances.at(-1)!.status='PLACED_PROVISIONAL';assert.throws(()=>validateManifest(chair),/IDs/);
+  const dimensions=structuredClone(m);dimensions.survey_baseline.width_x=6.9;assert.throws(()=>validateManifest(dimensions),/Survey/);
+});
