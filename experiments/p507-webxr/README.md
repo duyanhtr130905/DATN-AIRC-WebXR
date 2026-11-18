@@ -1,3 +1,9 @@
+# Owner-approved private restore — current 18/11/2026
+
+Original ZIP preserved byte-identical in owner-controlled PRIVATE vault. [Preservation/restore runbook](../../docs/3d-production/P507-R4-PRESERVATION.md) supersedes the prior missing-storage statement below. Explicit owner-only restore in a clean checkout: `python experiments/p507-webxr/prepare_asset.py --restore-vault`, then validator --prepare and export-reference checks before Vite/browser. No original-artifact fallback; existing destination is refused. Owner remote restore proof and exact final HEAD results are recorded in that report and Draft PR21. CI cross-repo access remains BLOCKED, no PAT/secret or grant added. Historical --download remains pinned to original artifact, still expiry-dependent.
+
+## AS-OF before private preservation — earlier integration runbook
+
 # P507 E1 — current integration runbook (18/11/2026)
 
 Owner-approved M2 [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19), branch `integrate/m2-p507-issue-19`, based on main `458569026edc917fa38d945ecd190bd4574b925f`. E0/E1 scoped technical acceptance at source PR #15 does not certify this integration HEAD; current results are in [integration report](../../docs/3d-production/P507-M2-INTEGRATION-19.md). All notes below the historical divider are AS-OF evidence.

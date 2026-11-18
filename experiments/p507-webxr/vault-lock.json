@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "repository": "duyanhtr130905/DATN-AIRC-WebXR-asset-vault",
+  "owner": "duyanhtr130905",
+  "commit": "908a5cbb1f77b75b28666fd424cbd85f2aba4c1f",
+  "directory": "p507-r4/artifact-14309207795",
+  "archive_name": "original-artifact-14309207795.zip",
+  "archive_bytes": 11369216,
+  "archive_sha256": "4255b199c6892c53b6709b1c66ce873cbcb4088dfa8ecef679a8e3e4713249f8",
+  "manifest_sha256": "d0a9aaeb6899d2c8ecdca909f7c6e30f413d8ecc28ae59ae6ffde0c15971194a",
+  "asset_lock_sha256": "ea5080bb246b4b8f553da4f73a8eca1b629dd2d4b5627363667114604c8b7c35",
+  "authorization": "https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21#issuecomment-6973024761"
+}

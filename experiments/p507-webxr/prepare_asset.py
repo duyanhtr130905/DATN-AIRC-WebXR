@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 import subprocess
+import sys
 from validate_asset import HERE, ROOT, validate_bundle
 
 REPO='duyanhtr130905/DATN-AIRC-WebXR'
@@ -10,10 +11,14 @@ REPO='duyanhtr130905/DATN-AIRC-WebXR'
 
 def main():
     ap=argparse.ArgumentParser()
-    ap.add_argument('--download',action='store_true')
+    source=ap.add_mutually_exclusive_group()
+    source.add_argument('--download',action='store_true')
+    source.add_argument('--restore-vault',action='store_true',help='Explicit owner-only PRIVATE vault restore; never automatic fallback')
     args=ap.parse_args()
     lock=json.loads((HERE/'asset-lock.json').read_text())
     target=ROOT/'.local/p507-e0-e1/artifact'
+    if args.restore_vault:
+        subprocess.run([sys.executable,str(HERE/'restore_asset.py')],check=True)
     if args.download:
         metadata=json.loads(subprocess.check_output(['gh','api',f'repos/{REPO}/actions/artifacts/{lock["artifact_id"]}'],text=True))
         assert not metadata['expired'], 'Pinned artifact expired: E0_BLOCKED; no automatic substitute or re-export'

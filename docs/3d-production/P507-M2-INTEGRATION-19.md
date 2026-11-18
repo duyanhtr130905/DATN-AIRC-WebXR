@@ -1,3 +1,9 @@
+# Current preservation follow-up — 18/11/2026
+
+Owner-approved private preservation now implemented: see [R4 preservation and restore evidence](P507-R4-PRESERVATION.md). Original ZIP and all member bytes preserved in PRIVATE vault; independent restore/final regression pending. CI cross-repo still BLOCKED without separately approved access. This supersedes earlier missing-storage decision statements below; M2 IN_PROGRESS, #20 DEFERRED, visual pending/circulation partial. Same Draft PR21, no merge/M3.
+
+## AS-OF integration evidence before preservation
+
 # M2 Issue #19 — integration acceptance evidence (18/11/2026)
 
 Draft PR: [#21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21). Status: IN_REVIEW / PARTIAL pending exact final HEAD checks and independent ChatGPT acceptance. Main baseline `458569026edc917fa38d945ecd190bd4574b925f`; branch `integrate/m2-p507-issue-19`. Authorized [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19); [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) deferred owner findings.

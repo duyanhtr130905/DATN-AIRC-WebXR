@@ -1,3 +1,15 @@
+# Current M2 preservation snapshot — 18/11/2026, PR21 IN_REVIEW
+
+Owner explicitly approved private original-R4 archival and independent restore in [PR21 decision](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21#issuecomment-6973024761). Source branch `integrate/m2-p507-issue-19`, starting HEAD `faa12d20a55a5d0dbf8e4b81cd0b1289d61f04bf`; ChatGPT's two-column M2 dependency fix retained. Main still `458569026edc917fa38d945ecd190bd4574b925f`; changes remain on Draft PR21, not merged.
+
+PRIVATE owner-controlled [vault](https://github.com/duyanhtr130905/DATN-AIRC-WebXR-asset-vault) at `908a5cbb1f77b75b28666fd424cbd85f2aba4c1f`, Private verified before/after upload, owner-only collaborator list. Original ZIP11369216bytes/SHA256 `4255b199c6892c53b6709b1c66ce873cbcb4088dfa8ecef679a8e3e4713249f8` matches GitHub digest; all28members preserved, six locks PASS, GLB10751036bytes/SHA256 `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`. No regeneration/Release/Pages/raw photos. [Preservation evidence/runbook](3d-production/P507-R4-PRESERVATION.md).
+
+Independent clean remote restore and final HEAD regression pending. **CI_CROSS_REPO_RESTORE=BLOCKED**: source GITHUB_TOKEN not granted vault access; no PAT or secret added. Current CI still uses original expiring artifact; future automated CI restore needs separate owner decision. Issue20 DEFERRED; G1_CIRCULATION=PARTIAL; G2_VISUAL=PENDING_OWNER_APPROVAL; M2 IN_PROGRESS; M3–M7 unchanged. Next: remote restore proof → final tests/CI → ChatGPT review; Codex does not merge.
+
+---
+
+## AS-OF before private preservation
+
 # Current snapshot — M2 integration Issue #19, 18/11/2026
 
 Main verified `458569026edc917fa38d945ecd190bd4574b925f`. Integration branch `integrate/m2-p507-issue-19` starts from that main; no-ff merge `3f06344` preserves reviewed #15 `c3c800227cfd07426b4504f38607bb864b0b12f8`, #14 `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` and G0 history. Branch contains R4/E0/E1 source **not merged to main**. [Draft PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21); branch tested clean at `69176aa0a005cc7db5433c2b82e24ed68a7b356f`. Final branch HEAD and exact CI are recorded in [integration evidence](3d-production/P507-M2-INTEGRATION-19.md) and Draft PR to avoid circular SHA claims.
