@@ -71,6 +71,14 @@ Evidence M2 hiện có: G0 đã merge; R4 và E0/E1 vẫn chỉ có trên PR ch�
 
 **M2 không đòi đủ ba phòng, dữ liệu AIRC thật, visitor persistence, headset, VR72 hoặc G2 visual hoàn thiện.** Issue #1 không chặn E0/E1/nghiệm thu prototype chức năng. R4 không là photorealistic hay bản sao AIRC hoàn thiện. `G2_VISUAL=PENDING_OWNER_APPROVAL`; không cần G2 visual PASS trước desktop E1. Visual sign-off, quyền ảnh/nhãn và fidelity đánh giá riêng trước demo/nghiệm thu cuối; không tự mở G3.
 
+#### Current M2 integration work item — Issue #19 (18/11/2026)
+
+Owner explicitly approved [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19): integrate reviewed R4/E0/E1 into a new branch from main `458569026edc917fa38d945ecd190bd4574b925f`, fix diagnostic exit status, verify offline demo and update current progress in this same PR. Branch `integrate/m2-p507-issue-19`, history-preserving merge `3f06344`; Draft PR/final HEAD/checks linked from [integration evidence](3d-production/P507-M2-INTEGRATION-19.md). Source #14 `acd21c62` and #15 `c3c8002` remain Draft and unchanged. Main does not yet contain this feature.
+
+Integration IN_REVIEW; initial 76 G1/G2 +18 E0/diagnostic/reference Python and frozen six hashes PASS, final clean-HEAD browser/CI pending. Reviewed #15 scoped E0/E1 technical acceptance remains historical source evidence, not final integration certification. Diagnostic negative regression rejects final ROOT_CAUSE_UNRESOLVED. Current [runbook](../experiments/p507-webxr/README.md) opens standalone Vite E1 without M1 backend. Original artifact expires 24/11/2026 14:46:36 Asia/Saigon; authorized permanent storage absent, durable reproducibility BLOCKED pending owner decision. See report for exact tests and M2 DoD assessment.
+
+Owner-deferred [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) retains chair-row circulation, dimensions and placement discrepancies. No frozen source/asset lock/survey/collision modification permitted. G1_CIRCULATION=PARTIAL; G2_VISUAL=PENDING_OWNER_APPROVAL; no physical-GPU30/VR72 acceptance. **M2 remains IN_PROGRESS**, Roadmap 2.0 APPROVED with exactly M0–M7; M3–M7 states/dependencies unchanged. Independent ChatGPT review is the next gate; Codex stops at Draft PR.
+
 ### M3 — Tích hợp Digital Twin và dữ liệu P507 (PLANNED)
 
 Mapping stable survey IDs ↔ Catalog/API/Information Panel được kiểm không thiếu/trùng/sai room; nguồn/quyền và owner/cadence/timestamps của room_schedule, equipment_status, exhibit_info được xác nhận. Chạy end-to-end từng loại từ nguồn → API/realtime → UI với raw traces; kiểm freshness/stale/error/reconnect và recovery. Evidence pack gồm source matrix có quyền, mapping revision, test scripts/logs, build SHA và nghiệm thu. Synthetic tiếp tục mang nhãn synthetic, không chuyển thành `real_verified`. M1 generic slice và metadata chọn object của M2 không chứng minh M3 hoàn thành.

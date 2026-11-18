@@ -1,3 +1,19 @@
+# Current snapshot — M2 integration Issue #19, 18/11/2026
+
+Main verified `458569026edc917fa38d945ecd190bd4574b925f`. Integration branch `integrate/m2-p507-issue-19` starts from that main; no-ff merge `3f06344` preserves reviewed #15 `c3c800227cfd07426b4504f38607bb864b0b12f8`, #14 `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` and G0 history. Branch contains R4/E0/E1 source **not merged to main**. Final branch HEAD/PR and exact CI are recorded in [integration evidence](3d-production/P507-M2-INTEGRATION-19.md) and Draft PR to avoid circular SHA claims.
+
+Owner-approved [#19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19) is an M2 integration task; Roadmap 2.0 APPROVED, M0/M1 DONE/MERGED, M2 IN_PROGRESS. Independent ChatGPT acceptance pending: integration IN_REVIEW / PARTIAL until final checks and review. Inherited scoped E0/E1 TECHNICAL_PASS applies only to #15 reviewed head, not automatically to this integration. Initial local 76 geometry +18 E0/reference/diagnostic tests and all six bundle hashes PASS. Diagnostic false-green fixed; injected Three manual/Box3 mismatches must conclude UNRESOLVED and exit 1. Original root-cause evidence retained.
+
+[Runbook](../experiments/p507-webxr/README.md): Vite-only Chrome demo at http://127.0.0.1:5173/p507-webxr-e1.html, no M1 backend. Original asset still available; expiry 24/11/2026 14:46:36 Asia/Saigon. Durable fresh-machine reproducibility BLOCKED after expiry without approved original-bundle storage; verified same-machine copy is available, no permanent archive/Release published. Final browser/CI evidence pending and reported separately; no old CI reused as final verification.
+
+Owner-deferred [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20): inaccessible chair-row passages, inaccurate object sizes and placements. Frozen R4 unchanged; G1_CIRCULATION=PARTIAL, G2_VISUAL=PENDING_OWNER_APPROVAL. Hardware KPI30/VR72, mobile/XR and final fidelity/rights remain unverified. M3–M7 stay planned with existing dependencies, no new milestone.
+
+Next: final integration regression and Draft PR → independent ChatGPT review → owner archival decision and later #20 task if explicitly resumed. No autonomous merge/deploy/M3.
+
+---
+
+## AS-OF historical snapshots — retained main documentation before Issue #19
+
 # Trạng thái dự án — snapshot hiện hành
 
 ## Snapshot M2 — E0/E1 được nghiệm thu kỹ thuật (18/11/2026)

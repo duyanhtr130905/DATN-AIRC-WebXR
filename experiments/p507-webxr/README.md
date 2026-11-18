@@ -1,3 +1,60 @@
+# P507 E1 — current integration runbook (18/11/2026)
+
+Owner-approved M2 [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19), branch `integrate/m2-p507-issue-19`, based on main `458569026edc917fa38d945ecd190bd4574b925f`. E0/E1 scoped technical acceptance at source PR #15 does not certify this integration HEAD; current results are in [integration report](../../docs/3d-production/P507-M2-INTEGRATION-19.md). All notes below the historical divider are AS-OF evidence.
+
+## Prepare and open the demo
+
+Requirements: existing authenticated `gh`, Python 3, Node 22.12–22.x, npm and installed Chrome. Run at `D:\Code\DATN` in PowerShell:
+
+```powershell
+python experiments/p507-webxr/prepare_asset.py --download
+python experiments/p507-webxr/validate_asset.py --prepare
+python experiments/p507-webxr/verify_export_reference.py
+npm ci --ignore-scripts --no-fund --prefix apps/web
+npm run dev --prefix apps/web -- --port 5173 --strictPort
+```
+
+Open **http://127.0.0.1:5173/p507-webxr-e1.html** in Chrome. E1 is a DEV-only standalone page and needs no M1 API, database or backend. Keep Vite running. The asset is served locally from ignored `.local/p507-e0-e1/`; it is not published in the production build.
+
+Wait for LOADED, then press Start to lock the mouse. Use W/A/S/D to walk and the mouse to look; click an object to inspect its logical ID and provisional metadata. ESC releases the mouse; Reset returns to the initial position. Blur/pagehide clear held keys. Retry reloads and reruns E0 after errors. E0 errors must be investigated; never disable the validator to open the scene.
+
+Only the short west route is verified: X/Z `[1.25,-7.415] → [.95,-7.415] → [.95,-5.9] → [.95,-5.2]`. Its continuation blocks at `P507-CHAIR-B-11`. Chair-row A-B/B-C gaps, east gaps, cabinets/chairs, room edges and the unsurveyed outward doorway can block motion. Stop/no-slide is intentional. Capsule radius .30m/height1.80m and frozen colliders are unchanged. Owner observed inaccessible chair-row paths and inaccurate object dimensions/positions; these are deferred at [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20). G1_CIRCULATION=PARTIAL; G2_VISUAL=PENDING_OWNER_APPROVAL.
+
+## Offline reuse and artifact expiry
+
+After downloading once, validate the preserved original local bundle without contacting GitHub:
+
+```powershell
+python experiments/p507-webxr/prepare_asset.py
+python experiments/p507-webxr/validate_asset.py --prepare
+python experiments/p507-webxr/verify_export_reference.py
+npm run dev --prefix apps/web -- --port 5173 --strictPort
+```
+
+This is offline only after npm dependencies and the exact original bundle have been prepared. Retain original download-provenance.json, the complete artifact (including original .blend for diagnostics), and asset-lock.json together. Six locked files are checked by size/SHA; source Git blobs are checked separately. Do not substitute a fresh export.
+
+Original artifact 14309207795 expires **24/11/2026 14:46:36 Asia/Saigon** (07:46:36 UTC); current regression artifacts also have seven-day retention. Fresh-machine preparation and future CI become BLOCKED after expiry without the original bundle. No permanent authorized repository exists yet: **RISK / durable reproducibility BLOCKED**. Proposal requiring owner approval: access-controlled storage of the original byte-preserved artifact plus provenance/hash inventory and restore verification; do not publish a GitHub Release or private survey material automatically. A verified existing local bundle remains usable after expiry; it is not an independent backup.
+
+## Current regression commands
+
+```powershell
+python -m unittest discover -s experiments/p507-g1-g2 -p "test_*.py" -v
+python -m unittest discover -s experiments/p507-webxr -p "test_*.py" -v
+npm run build --prefix apps/web
+npm test --prefix apps/web
+node --experimental-strip-types experiments/p507-webxr/navigation-check.mjs
+node experiments/p507-webxr/e0-inspect.mjs
+node experiments/p507-webxr/browser.mjs
+python tools/verify_repository.py
+git diff --check
+```
+
+Browser scripts run installed Chrome and their own temporary Vite on test ports; do not confuse these with the user demo URL on 5173. P507_GPU=default selects the local default GPU; default harness uses SwiftShader. Smoke frame samples do not establish physical-GPU 30 FPS, VR72 or XR acceptance. Original diagnostic report/evidence is immutable; final process status now rejects ROOT_CAUSE_UNRESOLVED after the Three comparison. Different-version PARTIAL is permitted only without --require-original-version.
+
+---
+
+## AS-OF historical runbook — source PR #15
+
 # Current M2 correction — 18/11/2026, IN_REVIEW
 
 Option A separates authoring evaluated bounds from hash-bound actual frozen-export bounds. See [current report](../../docs/3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md). Frozen inputs/lock and 3mm/1mm tolerances unchanged. Runtime imports the committed export-bounds-v1.json; it never generates expected values. Before browser tests run `python experiments/p507-webxr/verify_export_reference.py` after bundle preparation. Python and Chrome independently verify the same frozen bytes, with negative reference/ID/transform/proxy tests. Historical preview approximate AABBs are not the reference.
