@@ -1,6 +1,21 @@
 # Trạng thái dự án — snapshot hiện hành
 
-## Snapshot hậu nghiệm thu — 18/11/2026 (GitHub live sau merge)
+## Snapshot M2 — E0/E1 được nghiệm thu kỹ thuật (18/11/2026)
+
+- **Main trước commit đồng bộ lần này:** [`2deb9267c614bdef55741f9fa104b729960c79db`](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/2deb9267c614bdef55741f9fa104b729960c79db). PR #13 (G0), #16 (Roadmap 2.0) và #17 (post-review sync) đã MERGED; M0/M1 DONE, **M2 IN_PROGRESS**.
+- **[PR #15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15) HEAD `c3c800227cfd07426b4504f38607bb864b0b12f8`: OPEN/DRAFT, base PR #14.** ChatGPT độc lập đã nghiệm thu **E0 technical PASS và E1 desktop Chrome 15/15 scenario groups PASS** trong phạm vi smoke tại [review comment](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15#issuecomment-6969123428); **PR tổng thể PARTIAL/IN_REVIEW, chưa merge, không phải M2 DONE**.
+- **E0:** committed `export-bounds-v1.json` offline Python-derived, gắn frozen GLB SHA `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49` (10,751,036 bytes), 121 logical IDs / 402.482 POSITION samples, 0 oriented-proxy violations. Runtime Chrome đối chiếu reference độc lập, bounds tolerance **3 mm**, proxy containment **1 mm**, TV authoring-vs-export drift **8.3055 mm** vẫn báo rõ. Frozen asset/manifest/lock không thay.
+- **E1:** 15 nhóm Chrome smoke PASS, gồm load/spawn, raycast ancestor ID/panel provisional, WASD/pointer lock/ESC/reset, blur, pagehide **event-injected**, reload, tuyến Tây và blocker `P507-CHAIR-B-11`, các lỗi missing/hash/schema/corrupt với retry và unsupported WebGL. Chỉ tuyến Tây, không chứng nhận toàn phòng an toàn/PCCC/accessibility. Local RTX 3050 short-smoke là lời bàn giao Codex, không trực tiếp kiểm được file `D:\\Code\\DATN\\.local\\...` qua GitHub; CI dùng SwiftShader 640×360, không đủ làm KPI Web3D 30FPS/VR72.
+- **CI đúng head #15:** [E0/E1 44233764219](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44233764219), [G1/G2 44233764259](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44233764259), [TV diagnostic 44233764274](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44233764274) đều SUCCESS (**5/5 check jobs**). Asset artifacts chỉ giữ khoảng 7 ngày.
+- **Còn mở:** [PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) Draft R4, **G2_VISUAL PENDING_OWNER_APPROVAL**, **G1_CIRCULATION PARTIAL**, full-room navigation/mobile/device fidelity chưa nghiệm thu. Diagnostic `diagnose_tv_bounds.py` có nhánh ba chiều số sai nhưng exit 0 dù `ROOT_CAUSE_UNRESOLVED` (non-blocking với E0/E1, phải có negative test và sửa). #14/#15 cần reconcile với main trước khi có thể merge; không để status lịch sử ghi đè Roadmap 2.0.
+- **Next action:** owner xem screenshot/demo chức năng P507 để quyết định acceptance thực tế và hướng tích hợp nhánh M2; sửa diagnostic runner defect trong correction nhỏ cùng phạm vi trước khi đóng pipeline. Không tự mở G3/M3/M5 hoặc thay KPI. ≥3 phòng vẫn thuộc M6; Issues #1–#5 vẫn OPEN.
+
+**Snapshot này phản ánh lần nghiệm thu và branch HEAD, không phải lời khẳng định mã #15 đã merge vào main. Kiểm tra GitHub live sau commit tài liệu tiếp theo.**
+
+---
+
+
+## Lịch sử — snapshot hậu merge #16/#13, trước review #15 (18/11/2026)
 
 - **Main HEAD:** [cce30c06baa3dd2254a8b75c5c982f0900ef29f2](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/cce30c06baa3dd2254a8b75c5c982f0900ef29f2).
 - **Roadmap 2.0 APPROVED / MERGED:** [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16), reviewed head `9117e452f6f691d3c0ebd5cbcb89a8521b91f36e`, merge commit `0efaf50a845091d3e6ac14bb0d7cf5f7963d701c`, final HEAD 7/7 CI PASS. Quy tắc deviation guard và review/sync đã có trên main; ủy quyền merge chỉ trong phạm vi owner cho phép.

@@ -55,15 +55,15 @@ Sau mỗi lượt Codex:
 6. Nếu docs trên branch chưa merge, ghi rõ trạng thái branch so với main, PR/head/base và CI tương ứng; không tuyên bố đã đồng bộ main chỉ vì Draft PR xanh.
 7. Chủ dự án quyết định merge/triển khai bước tiếp theo hoặc **ủy quyền có phạm vi cho ChatGPT merge các PR đủ điều kiện** sau review và kiểm tra live. Codex không được merge. Không coi review AI thay nghiệm thu học thuật/quyền AIRC.
 
-Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 được bàn giao qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16); trạng thái nghiệm thu/merge phải xác minh GitHub live, không suy từ lời bàn giao cũ. E0/E1 correction là task feature tiếp theo của M2, cần quyền riêng sau đồng bộ. Không tự bắt đầu M3–M7.
+Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 đã MERGED qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16); phải xác minh GitHub live. E0/E1 correction đã qua technical review ở [Draft PR #15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15); bước tiếp là owner review demo và đối chiếu PR #14/#15 với main, không tự bắt đầu M3–M7.
 
 ## Quy tắc M2 P507 hiện hành
 
 - M2 chỉ prototype một phòng P507. Issue #1 OPEN: `DEFERRED_FOR_M2; REQUIRED_FOR_M6`; không chặn E0/E1/nghiệm thu chức năng M2. MT1-01 ≥3 phòng giữ nguyên tại M6; không chia phòng giả.
 - Survey 6.00 × 8.10 × 3.50 m USER_REPORTED; virtual 6.90 × 9.315 × 3.50 m OWNER_APPROVED_VIRTUAL_ADAPTATION, X/Y +15%, không 1:1.
-- Owner cho phép R4 provisional thử E0/E1; không cần G2 visual PASS trước desktop E1. `G2_VISUAL=PENDING_OWNER_APPROVAL`; E0 aggregate FAIL/E1 runtime BLOCKED vẫn giữ cho tới correction và evidence được nghiệm thu. Freeze không mở G3.
+- Owner cho phép R4 provisional thử E0/E1; không cần G2 visual PASS trước desktop E1. `G2_VISUAL=PENDING_OWNER_APPROVAL`. ChatGPT đã nghiệm thu **E0/E1 scoped TECHNICAL_PASS** trên Draft PR #15 HEAD `c3c8002` (Chrome 15/15 smoke, 5/5 CI), **chưa merge vào main, M2 chưa DONE**; các câu E0_FAIL/E1_BLOCKED cũ là snapshot trước correction. Freeze không mở G3.
 - Visual sign-off, quyền ảnh/nhãn và fidelity cần đánh giá riêng trước demo/nghiệm thu cuối. Không chạm frozen hash/asset/contract/runtime trong task tài liệu.
-- Trước task asset/Blender/P507, đọc [G0 tại PR #13 HEAD](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/c0eff0755d2d058b38944de60f40fb17387f2a91/docs/3d-production/P507-G0-PRODUCTION-SPEC.md) và các report commit-linked trong ROADMAP/STATUS; chúng chưa có trên main. Không commit raw survey/photos/PII; dùng revision và stable IDs, không mở G0-fix chỉ vì bổ sung số đo.
+- Trước task asset/Blender/P507, đọc [G0 tại PR #13 HEAD](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/c0eff0755d2d058b38944de60f40fb17387f2a91/docs/3d-production/P507-G0-PRODUCTION-SPEC.md) và các report commit-linked trong ROADMAP/STATUS; G0 đã merge nhưng R4 và E0/E1 chưa vào main. Không commit raw survey/photos/PII; dùng revision và stable IDs, không mở G0-fix chỉ vì bổ sung số đo.
 
 ## Kiểm tra tiến độ chỉ đọc trong cuộc chat mới
 
