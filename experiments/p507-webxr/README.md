@@ -1,3 +1,11 @@
+# Current M2 correction — 18/11/2026, IN_REVIEW
+
+Option A separates authoring evaluated bounds from hash-bound actual frozen-export bounds. See [current report](../../docs/3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md). Frozen inputs/lock and 3mm/1mm tolerances unchanged. Runtime imports the committed export-bounds-v1.json; it never generates expected values. Before browser tests run `python experiments/p507-webxr/verify_export_reference.py` after bundle preparation. Python and Chrome independently verify the same frozen bytes, with negative reference/ID/transform/proxy tests. Historical preview approximate AABBs are not the reference.
+
+Browser smoke now exercises unlocked E1; no old known-TV failure is expected. ESC explicitly clears/unlocks; retry performs a full reload/gate. Software raw frames are retained, with a ten-frame minimum and up to 60s collection extension after the 10s target; actual measurement duration is sum(raw). Not hardware/KPI/VR evidence. Final result, clean HEAD and CI/artifacts are published in Draft PR #15. Old notes below describe the previous failure and are historical.
+
+---
+
 # P507 E0/E1 experiment — runbook
 
 Approved task: owner prompt 17/11/2026. Only E0 + desktop Web 3D E1; stop at Draft PR for independent ChatGPT/owner acceptance. E2/E3/G3, immersive XR, production integration, merge and deployment are excluded.

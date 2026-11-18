@@ -5,17 +5,65 @@
 - Root duy nhất: `D:\Code\DATN`. Remote duy nhất được phép ghi: `https://github.com/duyanhtr130905/DATN-AIRC-WebXR.git`.
 - Không truy cập, đọc, chỉnh sửa, sao chép, fork hay dùng dữ liệu/mã/tài liệu của KLTN-Factory-Agentic-DT. Không dùng repository cũ làm template.
 - Trước mọi thao tác ghi GitHub: kiểm tra `Get-Location`, `git rev-parse --show-toplevel`, `git remote -v`, `git branch --show-current`, `git status --short`, diff và secret. Sai root/remote thì dừng.
-- Không force push, merge PR, xóa nhánh/repo, thay visibility, deploy hoặc bắt đầu M1 nếu chưa được yêu cầu. Không sửa Git global config; không cài công cụ hệ thống nếu không cần.
-- Lịch sử: M0-A chỉ tài liệu và checker; task M0-B1 ngày 14/11/2026 cho phép hai PoC cô lập trong experiments/ và test tooling dùng dữ liệu synthetic. Giới hạn lịch sử M0-B1; task M0-B2 ngày 14/11/2026 đã duyệt nền tảng chính thức apps/web, apps/api, infra. Stack/Modular Monolith/UI theo ADR-0001 ACCEPTED. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/nghiệm thu VR vẫn chưa duyệt; không thay KPI, không triển khai M1 hoặc AI/RAG.
+- Không force push, xóa nhánh/repo, thay visibility, deploy hoặc bắt đầu milestone/feature chưa được giao. **Codex không được tự merge PR.** ChatGPT chỉ được merge khi có ủy quyền cụ thể từ chủ dự án, review độc lập PASS, kiểm đúng HEAD/CI, không còn blocker và GitHub cho phép merge; ủy quyền của chủ dự án ngày 18/11/2026 áp dụng các PR đủ điều kiện trong lượt nghiệm thu hiện tại, không mặc nhiên cấp quyền vô thời hạn. Không sửa Git global config; không cài công cụ hệ thống nếu không cần.
+- Lịch sử: M0-A chỉ tài liệu và checker; task M0-B1 ngày 14/11/2026 cho phép hai PoC cô lập trong experiments/ và test tooling dùng dữ liệu synthetic. Giới hạn lịch sử M0-B1; task M0-B2 ngày 14/11/2026 đã duyệt nền tảng chính thức apps/web, apps/api, infra. Stack/Modular Monolith/UI theo ADR-0001 ACCEPTED. Schema chi tiết/auth/hosting/retention/quyền dữ liệu/nghiệm thu VR vẫn chưa duyệt; không thay KPI hoặc tự triển khai feature chưa được giao/AI/RAG. Các giới hạn chưa M1 trong task cũ là lịch sử, không phủ nhận M1 đã merge.
 
 ## Nguồn thông tin và quyền tiếp tục hiện hành
 
-- [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **PROPOSED không phải quyền tự triển khai**; không suy ra M0–M8 đã được phê duyệt.
-- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. Không tự bắt đầu M2/M3 hoặc milestone tiếp theo sau khi PR trước merge.
+- [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **2.0 APPROVED ngày 18/11/2026**, duy nhất tám milestone M0–M7. Phê duyệt kế hoạch không cấp quyền tự triển khai mọi feature. Current milestone M2 IN_PROGRESS; M0/M1 DONE/MERGED; xem STATUS để tách branch/main.
+- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. **M2 đang IN_PROGRESS** nhưng không được tự bắt đầu work item M2/M3 mới hoặc milestone tiếp theo chỉ vì PR trước đã merge.
 - Không tự đổi tên, thứ tự hoặc nội dung milestone đã duyệt. Đề xuất thay đổi phải ghi riêng và chờ phê duyệt, không sửa KPI hoặc chia P507 thành ba phòng.
-- Sau mỗi PR đã được nghiệm thu, cập nhật PROJECT_STATUS: kết quả, PR/HEAD, merge commit nếu có, evidence, giới hạn, blocker và bước tiếp đã được phép. Khi chưa nghiệm thu phải ghi IN REVIEW; merge kỹ thuật không đồng nghĩa KPI đạt.
+- Sau mỗi lượt/review, áp dụng Post-Acceptance Synchronization bên dưới kể cả khi thất bại; chưa nghiệm thu ghi IN_REVIEW. Merge kỹ thuật không đồng nghĩa KPI đạt.
 - Nếu tài liệu mâu thuẫn, báo chủ dự án kèm nguồn, thời điểm và tác động; không tự chọn một cách hiểu, sửa quyết định hoặc dùng kế hoạch lịch sử làm quyền triển khai. Giữ nguyên acceptance/evidence lịch sử và dẫn trạng thái hiện tại.
 - Snapshot bàn giao task tài liệu ngày 15/11/2026: [PR #12](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/12) IN REVIEW as-of 15/11/2026 — verify GitHub live. Phạm vi và lệnh dừng của lần bàn giao này được lưu trong PR; không dùng chúng làm task hiện hành vĩnh viễn hoặc ngăn yêu cầu kiểm tra tiến độ chỉ đọc. Sau merge, status vẫn là snapshot theo ngày; cập nhật khi task sau được chủ dự án duyệt. Merge tài liệu không phê duyệt roadmap hoặc task M2/M3.
+
+## Roadmap Deviation Guard — Mandatory
+
+Trước khi nhận hoặc thực thi bất kỳ yêu cầu phát triển nào, ChatGPT/Codex phải xác định: yêu cầu thuộc M0–M7 nào; nằm trong phạm vi/DoD đã duyệt không; dependency đã đạt chưa; có đổi kiến trúc, dữ liệu, KPI, quyền, asset baseline, thứ tự ưu tiên hoặc milestone không; có mâu thuẫn quyết định đã duyệt không. Đối chiếu ROADMAP, PROJECT_STATUS, KPI, ADR và task có thẩm quyền trước phần triển khai.
+
+Nếu yêu cầu mới từ chủ dự án khác/mâu thuẫn roadmap hiện hành:
+
+1. **Báo ngay trước khi thực hiện phần sai lệch.**
+2. Chỉ rõ milestone, tài liệu và quyết định liên quan.
+3. Giải thích tác động kỹ thuật, tiến độ, phụ thuộc và KPI.
+4. Đưa phương án giữ roadmap hoặc thay đổi có kiểm soát.
+5. Chờ chủ dự án quyết định khi ảnh hưởng phạm vi, kiến trúc, điều kiện nghiệm thu hoặc an toàn dữ liệu; tiếp tục được phần độc lập đã được phép.
+6. Nếu duyệt ngoại lệ/điều chỉnh, cập nhật decision log, ROADMAP và PROJECT_STATUS **trước** triển khai theo phạm vi mới, ghi người/ngày/phạm vi và evidence; không bịa chat URL.
+
+Mẫu thông báo:
+
+**ROADMAP DEVIATION DETECTED**
+
+- Requested action:
+- Current milestone / approved scope:
+- Conflict:
+- Impact / risks:
+- Recommended action:
+- Decision required:
+
+Không suy diễn “cứ làm đi” chung chung thành quyền thay KPI, bỏ dependency hoặc thêm milestone. Không dùng roadmap để từ chối máy móc yêu cầu hợp lệ: nêu xung đột và phương án để owner quyết định. Không tạo roadmap thứ hai trong README/AGENTS/YAML; checkpoint/work item thuộc tám milestone, không đổi tên hồi tố.
+
+## Post-Acceptance Synchronization — Mandatory
+
+Sau mỗi lượt Codex:
+
+1. Codex giao PR/HEAD/CI đúng SHA/evidence và giới hạn, không tự nghiệm thu.
+2. ChatGPT nghiệm thu độc lập với kết luận **PASS/PARTIAL/FAIL/BLOCKED**.
+3. Cập nhật **ROADMAP và PROJECT_STATUS ngay cả khi nghiệm thu thất bại**: kết luận/DoD, evidence, blocker, next action và quyền tiếp tục.
+4. Commit tài liệu đồng bộ.
+5. ChatGPT đọc lại diff và HEAD cập nhật; nếu còn sai, ghi và sửa theo phạm vi.
+6. Nếu docs trên branch chưa merge, ghi rõ trạng thái branch so với main, PR/head/base và CI tương ứng; không tuyên bố đã đồng bộ main chỉ vì Draft PR xanh.
+7. Chủ dự án quyết định merge/triển khai bước tiếp theo hoặc **ủy quyền có phạm vi cho ChatGPT merge các PR đủ điều kiện** sau review và kiểm tra live. Codex không được merge. Không coi review AI thay nghiệm thu học thuật/quyền AIRC.
+
+Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 được bàn giao qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16); trạng thái nghiệm thu/merge phải xác minh GitHub live, không suy từ lời bàn giao cũ. E0/E1 correction là task feature tiếp theo của M2, cần quyền riêng sau đồng bộ. Không tự bắt đầu M3–M7.
+
+## Quy tắc M2 P507 hiện hành
+
+- M2 chỉ prototype một phòng P507. Issue #1 OPEN: `DEFERRED_FOR_M2; REQUIRED_FOR_M6`; không chặn E0/E1/nghiệm thu chức năng M2. MT1-01 ≥3 phòng giữ nguyên tại M6; không chia phòng giả.
+- Survey 6.00 × 8.10 × 3.50 m USER_REPORTED; virtual 6.90 × 9.315 × 3.50 m OWNER_APPROVED_VIRTUAL_ADAPTATION, X/Y +15%, không 1:1.
+- Owner cho phép R4 provisional thử E0/E1; không cần G2 visual PASS trước desktop E1. `G2_VISUAL=PENDING_OWNER_APPROVAL`; E0 aggregate FAIL/E1 runtime BLOCKED vẫn giữ cho tới correction và evidence được nghiệm thu. Freeze không mở G3.
+- Visual sign-off, quyền ảnh/nhãn và fidelity cần đánh giá riêng trước demo/nghiệm thu cuối. Không chạm frozen hash/asset/contract/runtime trong task tài liệu.
+- Trước task asset/Blender/P507, đọc [G0 tại PR #13 HEAD](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/c0eff0755d2d058b38944de60f40fb17387f2a91/docs/3d-production/P507-G0-PRODUCTION-SPEC.md) và các report commit-linked trong ROADMAP/STATUS; chúng chưa có trên main. Không commit raw survey/photos/PII; dùng revision và stable IDs, không mở G0-fix chỉ vì bổ sung số đo.
 
 ## Kiểm tra tiến độ chỉ đọc trong cuộc chat mới
 
@@ -36,7 +84,7 @@ Quy trình này áp dụng cả sau khi PR #12 merge. Một yêu cầu triển k
 - Với mọi nhiệm vụ liên quan dựng Blender, GLB, camera matching, material/lighting, WebXR asset hoặc survey P507: **phải đọc [P507 G0 Production Specification v1.0](docs/3d-production/P507-G0-PRODUCTION-SPEC.md)** trước khi đặt giả định/viết code. Đây là chuẩn art & quality đã được chủ dự án chốt ngày 16/11/2026; không lặp lại vòng G0-fix chỉ vì có thêm đồ vật hoặc số đo.
 - Dữ liệu khảo sát P507 ngày 16/11/2026 do người dùng cung cấp vẫn ở mức USER_REPORTED/PROVISIONAL; **chưa có AIRC quyền lưu/công bố**. File G0 không cấp phép commit raw images chứa người, màn hình, bảng công tác, logo/ảnh bản quyền hoặc chuyển data sang real_verified.
 - Inventory là mở. New measurements/objects update survey revision, preserve stable IDs; never rewrite art direction from scratch. Camera matches/Blender exports/software GLB tests don't by themselves satisfy MT1–MT3.
-- Đã chốt phương pháp G0 **không** đồng nghĩa toàn bộ ĐX-P507/ĐX-UX/ĐX-XR trong ROADMAP được phê duyệt. G1/G2 chỉ bắt đầu trong phạm vi user giao và G2 phải có visual sign-off trước G3; không tự merge hoặc deploy.
+- Câu các nhóm ĐX-P507/ĐX-UX/ĐX-XR còn PROPOSED là **ngữ cảnh lịch sử G0 ngày 16/11/2026**, đã được thay bởi Roadmap 2.0 APPROVED M0–M7 ngày 18/11/2026. G0 riêng không cấp quyền triển khai G1/G2/G3; G2 phải có visual sign-off trước G3, không tự merge hoặc deploy.
 
 ## Quy trình
 

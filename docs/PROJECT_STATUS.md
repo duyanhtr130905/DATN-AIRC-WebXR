@@ -1,83 +1,112 @@
-# Trạng thái dự án — nguồn tiếp tục hiện hành
+# M2 E0 contract correction / E1 desktop — IN_REVIEW (18/11/2026)
 
-## E0 diagnostic follow-up — 17/11/2026, IN REVIEW; E0 vẫn FAIL
+Owner task 18/11 authorizes Option A conditional on independent validation, then actual Chrome E1. This is a work item of **M2**, not a new milestone. Technical results remain IN_REVIEW pending ChatGPT acceptance; M2 is not DONE, G2_VISUAL remains PENDING_OWNER_APPROVAL.
 
-[TV bounds investigation](3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md): ROOT_CAUSE_CONFIRMED bằng Blender4.0.2/exporter4.0.44, sáu controlled exports diagnostic-only, vertex/transform đối chiếu độc lập. Manifest đo evaluated bevel; export R4 bỏ export_apply nên dùng original mesh. xmin GLB từ rear casing, xmin evaluated từ bezel, chênh8.3055mm.402482POSITION samples/121IDs không vượt oriented proxy ở1mm. Evidence run44065711842 thuộc commit6ae02b0; finalHEAD/CI được cập nhật trong Draft PR15.
+Baseline live main `2deb9267c614bdef55741f9fa104b729960c79db`; PR #13/#16 MERGED; PR #14/#15 OPEN/DRAFT. PR #15 remains `feat/p507-webxr-e0-e1-experiment` based on PR #14 `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`. No rebase, retarget or merge. Final HEAD, exact-head CI and artifacts will be linked in PR #15; do not reuse checks from `43a3828`.
 
-Không sửa R4/manifest/asset-lock/validator hoặc ngưỡng3mm; không chọn/áp dụng OptionA/B, không unlockE1. Chờ ChatGPT/chủ dự án nghiệm thu diagnostic và duyệt task correction riêng. G2_VISUAL PENDING, merge/deploy/E2/E3 không thực hiện.
+- E0 technical PASS locally: hash/bytes immutable; static Python-derived actual-export reference compared independently with actual Chrome GLTFLoader, 121 IDs / 402482 samples; maximum bounds delta 4.44e-16m. Runtime proxy containment is a hard gate at 1mm; bounds gate remains 3mm. TV evaluated/exported drift 8.3055mm retained in raw geometry report and original diagnostic.
+- E1 technical PASS locally: 15 actual Chrome scenario groups, including error recovery, provisional selection, pointer lock/WASD/mouse/ESC/reset, blur/pagehide/reload and short west route. Local default backend reports RTX 3050 / Direct3D11; short 2s warmup + 3x10s smoke only, not KPI; see [current report](3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md). Software Chrome evidence cannot establish physical-GPU 30FPS or VR72.
+- Frozen six file hashes, source generator, survey metadata, lock and navigation radius unchanged. Production M1-C/API/PostgreSQL/migrations/data rights/KPI unchanged. No XR physical-device work, G3/M3/M5 or deploy.
+- Reconciliation risk: ROADMAP/AGENTS/README are copied byte-for-byte from live main for policy preservation, not a merge or acceptance sync. STATUS retains the complete main snapshot below, with this branch result explicitly separate. PR #14 still carries historical status; reconcile #14 then #15 against latest main before future owner-authorized integration. Never restore PROPOSED roadmap/current M0 status from stacked history.
 
----
+## Preserved main snapshot (historical as of task start)
 
-## E0/E1 experiment — 17/11/2026, IN REVIEW / BLOCKED BY E0
+# Trạng thái dự án — snapshot hiện hành
 
-Task owner đã duyệt E0 + desktop E1 ngày 17/11/2026; quyền này thay snapshot “chưa giao WebXR experiment” bên dưới, không phê duyệt roadmap/E2/E3/G3. Branch `feat/p507-webxr-e0-e1-experiment` từ PR #14 HEAD `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`, Draft PR mới base `feat/p507-g1-g2-blockout-hero`; không sửa PR #13/#14 hoặc production.
+## Snapshot hậu nghiệm thu — 18/11/2026 (GitHub live sau merge)
 
-**E0_FAIL:** artifact run44038653564/id14309207795 còn hạn, GLB10751036bytes/hash `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`, bundle/source/checkout/123records/121IDs/metres/axes/floor/windows/door đều kiểm được. Actual exported TV bounds khác manifest authored bounds tối đa8.3055mm; original browser report cũng có sai lệch. Zero oriented-proxy vertex violations ở1mm; không sửa R4 hoặc nới kiểm tra bounds3mm để PASS. Cần ChatGPT/owner nghiệm thu ý nghĩa authored-vs-exported bounds hoặc task sửa handoff riêng.
+- **Main HEAD:** [cce30c06baa3dd2254a8b75c5c982f0900ef29f2](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/cce30c06baa3dd2254a8b75c5c982f0900ef29f2).
+- **Roadmap 2.0 APPROVED / MERGED:** [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16), reviewed head `9117e452f6f691d3c0ebd5cbcb89a8521b91f36e`, merge commit `0efaf50a845091d3e6ac14bb0d7cf5f7963d701c`, final HEAD 7/7 CI PASS. Quy tắc deviation guard và review/sync đã có trên main; ủy quyền merge chỉ trong phạm vi owner cho phép.
+- **G0 P507 đặc tả MERGED:** [PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13), reviewed head `c0eff0755d2d058b38944de60f40fb17387f2a91`, merge commit `cce30c06baa3dd2254a8b75c5c982f0900ef29f2`, 7/7 CI PASS ở head. Không đồng nghĩa G2 visual được duyệt.
+- **Còn OPEN/DRAFT:** [PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) head `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` (G1/G2 R4; technical PASS nhưng G2_VISUAL PENDING, G1_CIRCULATION PARTIAL); [PR #15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15) head `43a3828654ca90a8a1d1a05750c4f06e36f6bba6` (root cause TV ACCEPTED, **E0 aggregate FAIL / E1 runtime BLOCKED**). Không merge hoặc tự retarget #14/#15.
+- **Milestone:** M0/M1 DONE/MERGED; **M2 IN_PROGRESS**, P507-only provisional; M3–M7 PLANNED. ≥3 phòng là yêu cầu MT1-01 của M6, không chặn prototype M2. Issues #1–#5 vẫn chưa được xác nhận giải quyết.
+- **Bước tiếp theo:** M2 E0 contract correction có kiểm soát trên frozen R4 theo task được duyệt riêng, tiếp đó Chrome E1 walkthrough và nghiệm thu. Giữ PR #14/#15 Draft đến khi đạt các gate riêng; bảo toàn Roadmap 2.0 khi reconcile nhánh M2.
 
-**E1 PARTIAL source / BLOCKED_BY_E0 runtime:** standalone DEV page, WASD/pointerlock lifecycle, conservative swept collision, selection và instrumentation đã viết. Pure logic xác minh tuyến ngắn Tây tới survey[.95,5.2,0], chặn tiếp vềB/khe hẹp/cửa ngoài; không walkthrough browser hoặc FPS PASS. Actual Chrome dừng ởE0 trước renderer E1. Frontend/unit/build và76Python regression PASS; exact finalHEAD/CI/artifact được bàn giao trong Draft PR. CI browser gate phải giữ đỏ khi finding còn mở.
-
-Xem [báo cáo kỹ thuật E0/E1](3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md) và [runbook](../experiments/p507-webxr/README.md). R4 không đổi, G1_CIRCULATION PARTIAL, G2_VISUAL PENDING, GPUthật/Galaxy/VR72 NOT TESTED. Dừng Draft PR, chờ ChatGPT/chủ dự án nghiệm thu; không merge/deploy/E2/E3.
-
----
-
-## Bàn giao sang phiên chat mới — nghiệm thu kỹ thuật P507 R4 ngày 17/11/2026 (snapshot)
-
-**Mục đích:** duy trì tiến độ qua các cuộc trò chuyện. Đây là snapshot nghiệm thu **trên bản asset commit**, không phải trạng thái GitHub tự cập nhật; phiên mới **phải fetch GitHub live** theo [AGENTS](../AGENTS.md), sau đó mới báo/triển khai.
-
-**GitHub đã xác minh (17/11/2026):**
-- `main` tại `e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`: M0-A/B1/B2 và M1-A/B/C đã **MERGED** (đây chỉ là prototype synthetic, không phải P507 thật hoặc nghiệm thu KPI).
-- [PR #13 — G0](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13): **OPEN, chưa merge**, head `c0eff0755d2d058b38944de60f40fb17387f2a91`, base `main`.
-- [PR #14 — P507 G1/G2](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14): **OPEN/DRAFT, chưa merge**, base `docs/g0-p507-3d-production-spec`. **Asset R4 được nghiệm thu tại commit `3a11ec757168a59625a087ac83f28c433751a1f5`**, [CI run 44009648703](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44009648703) **SUCCESS, 2/2 jobs trên chính asset SHA**; [artifact](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44009648703/artifacts/14296828070) có `.blend`, `.glb`, `asset-manifest.json`, báo cáo và 17 ảnh Chrome (artifact GitHub chỉ lưu 7 ngày). **Nếu có commit tài liệu sau `3a11ec7`, CI ở trên không phải kết quả của HEAD mới; không được gán sai SHA.**
-
-**Kết luận nghiệm thu kỹ thuật của ChatGPT sau khi kiểm tra mã, dữ liệu, logs, GLB/ảnh và 121 vùng hình học:**
-- `G1_GEOMETRY = PASS` trong phạm vi provisional đã đặt; `G1_LAYOUT_34_CHAIRS = PASS`. Phòng khảo sát **6.00×8.10×3.50m** (`USER_REPORTED`); bản **trải nghiệm ảo** **6.90×9.315×3.50m** (chủ dự án phê duyệt mở rộng X/Y **15%**, tăng diện tích **32.25%**, **không còn tỷ lệ phòng 1:1**). Vật thể giữ kích thước gốc trừ kệ được phép tăng chiều ngang.
-- **17 bàn** A6/B6/C5; **36 ID ghế lịch sử**, **34 ghế có mesh** A12/B12/C10; C09/C10 **UNPLACED/UNASSIGNED** (không tự xóa). Cửa hai cánh **mở ra ngoài**, tủ tài liệu **ba khoang kính**, kệ đồ rộng **1.50m** và TV nhỏ có support, tường **kem vani sRGB `#F5E6C8`**. Giữ TV chéo, rèm, trần và khu tiện ích.
-- `G2_PIPELINE = PASS` trên asset SHA: **76 Python tests**, **25 frontend tests**, Blender `.blend`→GLB, Khronos glTF Validator **0 errors/0 warnings**, Chrome 17 ảnh/không ghi nhận lỗi console; GLB **10,751,036 bytes**. **Đây là nghiệm thu kỹ thuật, không phải G2 visual sign-off của chủ dự án**.
-- `G1_CIRCULATION = PARTIAL`: lối Tây static/use **1.08/0.93m**, giữa cụm khi kéo ghế **0.20/0.15m**, hàng C tới tường **0.10m**; không gọi các khe hẹp là lối đi, không xác nhận ergonomics/PCCC/accessibility.
-- `G2_VISUAL = PENDING OWNER APPROVAL`, `PHOTO_MATCH = PARTIAL` (kích thước phòng ảo không 1:1), `REAL_DEVICE_WEBXR = NOT RUN`, `REAL_AIRC_DATA = NOT VERIFIED`, `G3 = NOT STARTED`. Các số frame-time của SwiftShader CI **không phải FPS GPU/VR vật lý**. Chưa có bằng chứng về quyền công bố ảnh, logo/nội dung gốc hay nguồn trạng thái thiết bị thật.
-
-**Quyết định/điểm dừng:** **đóng băng asset P507 R4 ở mức `READY FOR WEBXR EXPERIMENT`**, *không* phê duyệt độ chân thực cuối cùng; tạm dừng sửa hình 3D/G3. **WebXR experiment là bước tiếp theo dự kiến, chưa có nhiệm vụ Codex triển khai hoặc kết quả chạy headset**. Không tự merge PR #13/#14, retarget, deploy, sửa app M1-C production, KPI, API hoặc database. Đề xuất vòng sau: người dùng giao nhiệm vụ cụ thể → ChatGPT lập **một prompt** cho Codex → Codex mở nhánh/PR thí nghiệm WebXR riêng, tải đúng GLB/manifest và kiểm tra scale/trục/ID, camera/locomotion/collision/hiệu năng → ChatGPT nghiệm thu. Thử đi lại cần tránh vùng hẹp; mọi WebXR session phải do hành động người dùng kích hoạt. Không tự động bắt đầu code khi chỉ được yêu cầu báo tiến độ.
-
-**Nguồn đọc bắt buộc cho chat mới:** [ROADMAP](ROADMAP.md) (sáu nhóm vẫn **PROPOSED**, không ngầm được duyệt), [R4 frozen layout](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md), [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md), [G0 production spec](3d-production/P507-G0-PRODUCTION-SPEC.md) và [PR #14/CI live](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14). **Quy trình đã chốt:** ChatGPT lập kế hoạch/viết prompt → **Codex triển khai** → ChatGPT đọc code/PR, chạy hoặc xem CI/ảnh để **nghiệm thu**; ChatGPT không tự ý viết code hoặc merge.
-
----
-
-## Cập nhật R4 ngày17/11/2026 — đóng băng asset, chờ nghiệm thu trước thử WebXR
-
-Theo quyết định mới của owner, [R4](3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md) tách survey6×8.1×3.5m USER_REPORTED khỏi virtual6.9×9.315×3.5m OWNER_APPROVED_VIRTUAL_ADAPTATION.17bàn giữ kích thước,36ID ghế lịch sử/34placed A12B12C10/C09C10UNPLACED. Cửa2cánh OUTWARD, tủ3khoang kính, kệ1.50m sâu.47m, sơnkemvani#F5E6C8.121placed vertex proxies; static/occupied-use report tách riêng, circulation PARTIAL; trụcTây1.08/.93m, centraluse.20/.15m. [WebXR asset handoff](3d-production/P507-WEBXR-ASSET-HANDOFF.md) READY FOR WEBXR EXPERIMENT sau technical gates/exactHEAD CI trong PRhandoff, không runtime mới. G2_VISUAL PENDING OWNER APPROVAL; REAL_DEVICE_WEBXR NOT RUN; không merge/deploy/G3. R3 bên dưới là lịch sử.
-
----
-
-## Cập nhật ngày 17/11/2026 — R3 tổng hợp G1/G2, chờ review
-
-Tiếp tục Draft PR #14/base G0, không merge/deploy/G3. Đã mở13 ảnh thực và3 sơ đồ local; không công bố nguồn. [Báo cáo R3](3d-production/P507-G1-G2-COMPREHENSIVE-REVIEW.md) và [đối chiếu nguồn](3d-production/P507-G1-G2-SURVEY-COMPARISON.md) thay trạng thái hiện hành của snapshot cũ bên dưới.17 bàn/36 ID ghế,24 đặt/12 UNPLACED; B/C dịch+X, TV chéo25°, máy nước xoay90°, AI wall27 frame, utility đầy đủ, trần8đèn/4quạt/2AC/projector/camera và4rèm.111 instance đã đặt có vertex proof,56unit tests; circulation PARTIAL (.26m sát tường phải/.53m chỗ kệ giày), usable walkway UNKNOWN. PHOTO_MATCH PARTIAL định tính, survey PROVISIONAL; G2_VISUAL PENDING OWNER APPROVAL, thiết bị thật NOT RUN. Final exact-HEAD CI/artifacts được ghi trong PR handoff sau khi chạy; không lấy green775 làm chứng cứ R3. Dừng sau bàn giao.
-
----
-
-## Cập nhật 16/11/2026 — tiếp tục PR #14 sửa layout/hero G1/G2
-
-Task hiện hành được chủ dự án giao: sửa A, ghế phải B/C, tủ/bình nước/cửa, inventory v2 và góc hero; **không merge/deploy/G3**. Root `D:\Code\DATN`, branch `feat/p507-g1-g2-blockout-hero`; [PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) giữ Draft/base `docs/g0-p507-3d-production-spec`. PR #13 vẫn open lúc kiểm tra đầu task; không retarget/sửa G0.
-
-Đã sửa 17 bàn/36 ghế explicit, SAT occupancy và mesh bounds độc lập trong Blender; không còn tủ–ghế/bình nước–entry overlap. A dịch +.60m X, cửa −.90m Y. Xem [revision với tọa độ và giới hạn](3d-production/P507-G1-G2-LAYOUT-LOOKDEV-REVISION.md) và [acceptance](3d-production/P507-G1-G2-ACCEPTANCE.md). Hero có ghế cong/khung ống, apron bàn, TV/tủ/máy nước nhiều chi tiết và vật liệu procedural; Three.js có lighting/camera/metrics riêng. Không thay Scene production, PostgreSQL/API/KPI.
-
-**G1 geometry PASS cho occupancy provisional đã đặt; survey PROVISIONAL.** Clearance UNKNOWN: khoảng giữa envelope ghế chỉ .20/.40m, không chứng nhận sử dụng/PCCC. Tủ/kệ chưa có tọa độ và hướng/số cánh cửa UNKNOWN. **G2_VISUAL PENDING OWNER APPROVAL**; vẫn là scene procedural đơn giản, không photorealistic hoàn tất. PHOTO_MATCH BLOCKED; REAL_DEVICE_WEBXR NOT RUN; REAL_AIRC_DATA NOT VERIFIED; G3 NOT STARTED.
-
-Local checks: 31 geometry tests, Blender4.5.9 export/evaluated bounds (cả thêm supported item), Khronos validator, frontend build/25 unit, checker10, repository verifier/diff/privacy scan. Final exact-HEAD CI và artifact links ghi trong PR handoff khi run hoàn tất; không lấy run cũ làm chứng cứ mới. Raw neutral artifacts nằm `.local/p507-g1-g2/` và CI artifact, không có ảnh khảo sát. Bước tiếp: exact-HEAD CI → ChatGPT/chủ dự án xem render → dừng chờ visual sign-off; không tự bắt đầu G3.
+**Snapshot này là bằng chứng tại thời điểm ghi; mọi lần tiếp tục phải kiểm tra GitHub live và không gán CI của head cũ cho commit mới.**
 
 ---
 
 
-## Cập nhật ngày 16/11/2026 — G1/G2 đã khởi động, chưa nghiệm thu (snapshot, xác minh GitHub live)
+## Lịch sử — snapshot trước merge 2026-11-18 09:57 +07:00 (Asia/Saigon)
 
-**Task người dùng vừa duyệt:** bắt đầu **G1 room geometry + G2 hero lookdev**, theo [G0 production spec](3d-production/P507-G0-PRODUCTION-SPEC.md); **không triển khai G3**. [Draft PR #14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) trên `feat/p507-g1-g2-blockout-hero`, đang **IN PROGRESS / NOT MERGE READY** as-of 16/11/2026. Vì [G0 PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) chưa merge, PR #14 được xếp chồng lên branch G0; sau khi G0 được duyệt và merge, mới kiểm tra retarget PR #14 sang main. Không tự merge hai PR.
+Repository `duyanhtr130905/DATN-AIRC-WebXR`; root `D:\Code\DATN`; default branch `main`; live main HEAD **`e9a72caa084d9f2cbc4af2656b73509ea57b6d4b`** ([commit](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/e9a72caa084d9f2cbc4af2656b73509ea57b6d4b)). Snapshot GitHub khớp baseline yêu cầu 18/11/2026. [PR #12](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/12) đã MERGED tại main HEAD ngày 15/11/2026; câu IN REVIEW phía lịch sử không còn là trạng thái hiện hành.
 
-**Đã viết mã nguồn:** inventory tạm thời P507 có thể bổ sung với 17 bàn và 36 ghế placeholder, kiểm tra boundary/non-overlap/ID/provenance; Blender-Python source dựng shell có cửa/cửa sổ, nội thất/trần và góc hero TV–tủ–bình nước; trang preview Three.js dev-only. Các tọa độ là `PROPOSED_LAYOUT`, không chứng nhận lối đi hoặc dữ liệu AIRC. Chưa thay sản phẩm M1-C, schema, API hay quyền dữ liệu.
+**Roadmap 2.0 APPROVED ngày 18/11/2026 bởi chủ dự án qua ChatGPT. M0/M1 DONE / MERGED. Current milestone: M2 IN_PROGRESS, dependency_status PARTIAL.** [ROADMAP](ROADMAP.md) duy nhất quản lý DoD M0–M7; [AGENTS](../AGENTS.md) quản lý quyền và guard. Phê duyệt kế hoạch không cấp quyền tự làm mọi feature. MT1–MT3 chưa nghiệm thu trên sản phẩm thật.
 
-**Kết quả kỹ thuật đã chạy:** [CI G1/G2 run 43804659514](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/43804659514) trên commit `e04427e739668e2414aae5acb4eb00c3da1c3f6b` đã xuất được Blender `.blend` + GLB, kiểm qua **Khronos glTF Validator 0 errors/0 warnings** (431 INFO unused UV), build frontend, mở bằng Chrome software WebGL và xuất ảnh 3 góc desktop + 390px mobile. Có khoảng 432 mesh và 7.200 triangles. Xem [báo cáo G1/G2](3d-production/P507-G1-G2-ACCEPTANCE.md). **G1: geometry/source technical PASS có giới hạn. G2: visual NOT ACCEPTED** sau khi ChatGPT trực tiếp xem ảnh; thiếu photo match P507, vật liệu và chi tiết kiểu game, hiệu năng GPU/thiết bị thật. Quyền ảnh/nhãn AIRC PENDING; ảnh gốc có người/nội dung nội bộ không commit. PR #14 phải giữ Draft trước khi user duyệt G2; không bắt đầu G3.
+**Branch vs main — snapshot tại 09:57 ngày 18/11/2026:** bản cập nhật được soạn trên `docs/approved-m0-m7-roadmap-v2` từ main HEAD nêu trên, lúc đó chưa merge. [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) là nguồn để xác minh HEAD/checks/merge **mới nhất**; sau khi review và merge, không được dùng snapshot này để nói nội dung vẫn chưa có trên `main`. Chủ dự án đã ủy quyền trong lượt nghiệm thu này cho ChatGPT merge trực tiếp các PR đủ điều kiện sau review/CI/mergeability; Codex không được tự merge.
 
-**KPI:** MT1–MT3 chưa nghiệm thu thực địa; ≥3 phòng vẫn nguyên; Issues #1–#5 chưa được đóng chỉ vì G1/G2 code có mặt.
+### PR hiện hành — truy vấn GitHub live
 
----
+| PR | Phạm vi | HEAD | Base branch | Draft | State / merge |
+| --- | --- | --- | --- | --- | --- |
+| [#13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) | G0 specification, work item M2 | `c0eff0755d2d058b38944de60f40fb17387f2a91` | `main` | false | OPEN / NOT MERGED |
+| [#14](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/14) | G1/G2 R4 asset, work items M2 | `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` | `docs/g0-p507-3d-production-spec` (#13) | true | OPEN / NOT MERGED |
+| [#15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/15) | E0/E1 + TV diagnostic, work items M2 | `43a3828654ca90a8a1d1a05750c4f06e36f6bba6` | `feat/p507-g1-g2-blockout-hero` (#14) | true | OPEN / NOT MERGED |
+
+Base heads xác minh tương ứng: #13 base main `e9a72caa…`; #14 base #13 `c0eff075…`; #15 base #14 `acd21c62…`. Không chỉnh sửa/retarget/rebase/merge các PR này. File 3D/E0/E1 không có trên main; dùng GitHub commit links bên dưới, không relative link tới file vắng mặt.
+
+### M2 — asset, nghiệm thu và giới hạn
+
+| Thành phần | Trạng thái hiện hành / bằng chứng |
+| --- | --- |
+| Frozen R4 | Provisional functional trial được owner cho phép; [freeze tại acd21c62](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/acd21c62c24b94d7dda4bbf25c80fe0b4224cc31/docs/3d-production/P507-G1-G2-R4-VIRTUAL-FREEZE.md), [handoff](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/acd21c62c24b94d7dda4bbf25c80fe0b4224cc31/docs/3d-production/P507-WEBXR-ASSET-HANDOFF.md) |
+| Survey / virtual | Survey **6.00 × 8.10 × 3.50 m USER_REPORTED**; virtual **6.90 × 9.315 × 3.50 m OWNER_APPROVED_VIRTUAL_ADAPTATION**; X/Y +15%, không 1:1, chưa AIRC xác nhận fidelity/quyền |
+| G1 geometry | Technical PASS cho phạm vi provisional: 121 placed IDs / 123 records, 17 bàn, 34 ghế đặt / 36 ID lịch sử; circulation PARTIAL, không chứng nhận navigation/PCCC/accessibility |
+| G2 | PIPELINE PASS theo CI dưới; **G2_VISUAL=PENDING_OWNER_APPROVAL**. Không photorealistic/final-art PASS; không cần visual PASS trước desktop E1 |
+| TV diagnostic | ROOT_CAUSE_CONFIRMED; **ACCEPTED** theo nghiệm thu ChatGPT được chủ dự án xác nhận trong yêu cầu 18/11; không có URL quyết định chat được cung cấp |
+| E0 | **Aggregate FAIL**; [report tại 43a38286](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/43a3828654ca90a8a1d1a05750c4f06e36f6bba6/docs/3d-production/P507-WEBXR-E0-E1-EXPERIMENT.md); chưa correction Option A/B |
+| E1 | Source **PARTIAL**, runtime **BLOCKED_BY_E0**; chưa browser walkthrough/render/performance E1; unit/input/navigation logic không thay runtime acceptance |
+| Sau M2 | G3 NOT STARTED; M3–M7 PLANNED/chưa triển khai trong phạm vi tương ứng. M1 synthetic không là M3 real P507; M1 state history không là M4 visitor persistence |
+
+Frozen GLB 10,751,036 bytes, SHA-256 `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`; source `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31`, original CI checkout merge `9764b90f86317446bb585bf668171f81e1c57edb`, R4 checkpoint `3a11ec757168a59625a087ac83f28c433751a1f5`. [Original run/artifact 14309207795](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44038653564/artifacts/14309207795) được ghi trong handoff là hết hạn 24/11/2026 07:46:36 UTC; lần này không tải lại binary hoặc kiểm lại hash/retention. Nếu mất artifact thì ghi BLOCKED, không tự thay bằng re-export. Quyền ảnh/nhãn và final fidelity/visual sign-off cần đánh giá riêng trước demo/nghiệm thu cuối.
+
+### CI trên đúng HEAD PR #15
+
+Ba run sau đều được truy vấn live với `headSha=43a3828654ca90a8a1d1a05750c4f06e36f6bba6`:
+
+| Run | Conclusion | Ý nghĩa |
+| --- | --- | --- |
+| [G1/G2 44066707478](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44066707478) | SUCCESS | Regression geometry/Blender/Chrome pipeline; không dùng export mới thay frozen R4 hoặc suy E1 PASS |
+| [TV diagnostic 44066707650](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44066707650) | SUCCESS | Chẩn đoán root cause; không đổi aggregate E0 |
+| [E0/E1 44066707535](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44066707535) | FAILURE | Logic SUCCESS; browser FAILURE tại E0 gate TV, E1 chưa mở |
+
+Khác biệt với phần thân PR #15 AS-OF 17/11: G1/G2 run trước ghi IN_PROGRESS, nay live SUCCESS; đây là cập nhật trạng thái run, không phê duyệt visual/E1. Không chạy lại các workflow trong task tài liệu.
+
+**TV root cause:** Blender **4.0.2** / exporter **4.0.44**; `authored_bounds_survey` lấy evaluated bevel geometry, frozen GLB export có `export_apply=false` nên dùng original positions. Max union bounds delta khoảng **8.3055 mm**; các extremum owners khác nhau. Independent oriented proxy audit: **402,482 POSITION samples / 121 IDs, 0 violations vượt tolerance 1 mm**. Đây là containment evidence, không chứng nhận an toàn/tuyến đi/fidelity. [Báo cáo chẩn đoán tại HEAD #15](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/blob/43a3828654ca90a8a1d1a05750c4f06e36f6bba6/docs/3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md) giữ numeric snapshot source `6ae02b0397c88970c46618bbe5b4ba3d501edfcf`; không gán snapshot cũ cho HEAD mới. **Option A/B chưa được triển khai**; diagnostic ACCEPTED không là E0 contract correction hoặc E0 PASS.
+
+### Issues và milestone chịu trách nhiệm
+
+Tất cả #1–#5 xác minh vẫn **OPEN**; bảng sau là phân công trách nhiệm trong roadmap, không phải thay GitHub Milestone metadata hoặc đóng issue.
+
+| Issue | Phạm vi chịu trách nhiệm / ảnh hưởng |
+| --- | --- |
+| [#1 Phòng](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/1) | **DEFERRED_FOR_M2; REQUIRED_FOR_M6**. Không chặn E0/E1/nghiệm thu chức năng một phòng P507; MT1-01 ≥3 phòng vẫn bắt buộc M6 |
+| [#2 Survey/inventory](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/2) | M3 mapping/xác thực, M6 inventory/KPI; đã có nguồn USER_REPORTED/provisional cho M2, chưa bộ survey AIRC verified hoàn chỉnh |
+| [#3 Nguồn/quyền](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/3) | M3 nguồn ba trạng thái; M6 nghiệm thu; quyền ảnh/nhãn/demo vẫn riêng; neutral R4 không cấp quyền raw photos hoặc real_verified |
+| [#4 Galaxy AR](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/4) | M5 thiết bị AR thực, M6 KPI; chưa có evidence vật lý |
+| [#5 VR](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/5) | M5 kính/protocol và M6 VR72; emulator không thay thiết bị |
+
+Scope ba phòng/KPI, quyền AIRC, nguồn trạng thái, consent/retention/auth/quyền ghi và protocol học thuật chưa được giải quyết chỉ bằng roadmap. Không giả định có AIRC API, không tự tạo dữ liệu thật.
+
+### Quyết định gần nhất và next action
+
+Owner đã duyệt 2.0/P507-only/defer ba phòng tới M6/R4 functional trial; xem decision log và DoD trong ROADMAP. Guard bắt buộc báo sai lệch trước phần ngoài phạm vi; sau mỗi review PASS/PARTIAL/FAIL/BLOCKED đều commit đồng bộ ROADMAP/STATUS, đọc lại diff/HEAD và phân biệt branch/main.
+
+1. Bàn giao **một Draft PR tài liệu**, dừng cho ChatGPT nghiệm thu độc lập. Hiện bản cập nhật tài liệu chưa ACCEPTED/chưa MERGED; không tự ghi review PASS.
+2. Sau nghiệm thu, cập nhật kết luận/evidence/HEAD vào ROADMAP/STATUS, commit và ChatGPT đọc lại; owner quyết định merge/bước tiếp. Không sửa hoặc merge PR #13–#15 trong lượt này.
+3. Task phát triển tiếp theo vẫn **M2: quyết định/chốt E0 validation contract correction có kiểm soát, rồi browser walkthrough E1 trên frozen R4**. Không tự tuyên bố E0 PASS, không trộn correction/runtime vào PR tài liệu, không khởi tạo milestone mới.
+
+### Kiểm tra task tài liệu và integration
+
+Kiểm tra local lần này: `python tools/verify_repository.py` PASS (171 files/171 local Markdown links, UTF-8/limited secret patterns/resources); `git diff --check` PASS; checker syntax và 10 Node tests PASS; 8 Python runner tests và compileall tools PASS. Kiểm bổ sung tạm ngoài repository PASS: đúng 8 file được phép/8 milestone và DoD, M0/M1 links, M2/E0/E1/visual/guard, body KPI và history không đổi, cấu trúc bảng Markdown; PyYAML 6.0.3 safe_load, giữ nguyên key set/path; 6 GitHub commit-file links tồn tại tại đúng SHA qua Git tree API. PyYAML chỉ ở `.local` ignored, không đổi dependencies. Không phát hiện schema/enum/parser consumer của project.yaml trong source/config repository; consumer ngoài repo chưa xác minh. Final HEAD/clean status/CI được chốt trong PR bàn giao; pattern scan không là security audit toàn diện, không crawl mọi external URL. Phạm vi chỉ Markdown và metadata YAML; không thay feature/CI/dependencies/frozen asset. Không chạy ứng dụng E0/E1/KPI/thiết bị trong task này; checker regression là kiểm công cụ M0, không là evidence E1. Working tree ban đầu sạch trên branch E0/E1; sau switch main, GLB local vốn ignored ở branch #15 hiện untracked. Đã giữ nguyên file và thêm exclude **chỉ local `.git/info/exclude`**, không sửa asset/.gitignore hoặc đưa binary vào commit.
+
+PR #13 sửa chung AGENTS/README/STATUS, #14/#15 bổ sung STATUS; nguy cơ conflict/khôi phục snapshot cũ. Branch Roadmap 2.0 này là nguồn thay đổi chính sách đã duyệt. Sau merge docs, reconcile #13 rồi #14 rồi #15, giữ guard, metadata M2 và snapshot mới; chỉ đưa nội dung lịch sử/gate-specific vào đúng phần, không khôi phục PROPOSED/M0-B1 current. Đây là đề xuất cho owner khi nghiệm thu, không tự rebase/retarget/merge.
+
+## AS-OF / HISTORICAL — snapshot 15/11/2026
+
+Phần nguyên văn dưới đây được giữ để bảo toàn kết luận/SHA/evidence cũ. Các câu PROPOSED/chưa phê duyệt/chưa survey/PR #12 IN REVIEW là **lịch sử**, không điều khiển task hiện hành; snapshot 18/11 và Roadmap 2.0 ở trên thay cho hiện trạng cũ.
+
+### Bản lưu 15/11 — nguồn tiếp tục tại thời điểm đó
 
 ## Cập nhật ngày 16/11/2026 — khảo sát P507 và chuẩn G0 (snapshot, kiểm GitHub live)
 

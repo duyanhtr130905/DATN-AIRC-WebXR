@@ -1,3 +1,39 @@
+# M2 E0 contract correction and desktop E1 — 18/11/2026
+
+**IN_REVIEW.** Owner authorizes this bounded correction on Draft PR #15. Main baseline `2deb9267c614bdef55741f9fa104b729960c79db`; PR #13 and #16 merged, #14/#15 remain Draft. This work belongs to M2. No M2-A/E2/new milestone, merge, rebase/retarget, deployment, physical WebXR or KPI change.
+
+## Option A contract and independent reference
+
+[Versioned export-bounds-v1.json](../../experiments/p507-webxr/export-bounds-v1.json) is an offline reference for actual frozen-export FLOAT POSITION vertices after hierarchy/TRS/matrix transforms in glTF world axes, metres. It contains 121 unique logical IDs, six bounds each, primitive/vertex counts and exact GLB SHA/bytes. It is derived with the independent Python decoder in [tv_diagnostic_math.py](../../experiments/p507-webxr/tv_diagnostic_math.py), never from runtime expected=actual values. [Offline verifier](../../experiments/p507-webxr/verify_export_reference.py) verifies pinned bundle, IDs/counts/bounds/containment; Chrome GLTFLoader independently reconstructs actual geometry and compares every ID against the committed reference. Reference is bundled with experiment source, not served as an editable asset.
+
+Initial attempt to use original preview objectBounds was rejected: historical preview uses Box3.setFromObject(node) without precise=true, and those approximate transformed local AABBs differ from actual vertices by up to 0.026923881461m. That report is preserved unchanged, not used as exact expected geometry. The separately derived Python reference and precise Chrome actual vertices agree to 4.44e-16m. This distinction applies to all objects, not a TV-only exception.
+
+`authored_bounds_survey` retains its authoring/evaluated pre-export meaning. Every material drift above 1 micrometre is reported in geometry.authoringDrift; actual TV union differs by 0.008305509641076014m. Original [TV diagnostic](P507-E0-TV-BOUNDS-DIAGNOSTIC.md), component deltas, modifier/export settings and raw historical report remain unchanged. No tolerance increase, source revision, re-export or lock edit. Runtime still requires 3mm agreement with independent actual-export reference; every POSITION sample must be inside its oriented prism within 1mm. Hash/bytes, 123 records/121 placed IDs, UNPLACED exclusion, counts, metres/axes, identity, floor/room/windows/outward door, spawn and swept navigation remain hard gates.
+
+## Executed verification — provisional local results
+
+E0 actual Chrome PASS: 489 meshes, 121 logical IDs, 394 child meshes resolved through ancestors, 402482 logical POSITION samples, zero oriented proxy violations. Negative actual-GLB tests reject wrong reference bounds/hash, missing/duplicate reference/manifest records, wrong logical ID, child transform, out-of-proxy vertex, double scale and double rotation. Bundle tests reject wrong asset hash/bytes and corrupt/missing files. These checks do not certify physical safety or final visual fidelity.
+
+E1 technical PASS locally in **15 scenario groups**: actual frozen load/spawn, real raycast/ancestor ID and provisional panel, WASD gating and all four key events, pointer lock/movement/mouse/ESC/reset, blur, pagehide event injection (explicit harness lifecycle simulation), loading, actual reload, west route and exact blocked continuation, missing/hash/schema/corrupt error plus full retry recovery, unsupported WebGL. Loading/recovery use intercepted HTTP fault fixtures; valid retries load the unchanged frozen asset. Native tab hiding is not independently verified by the pagehide event injection. No backend/XR/media calls were made.
+
+Local environment: Chrome 158.0.8127.36, Windows 10.0.26300, i5-12450HX, ANGLE NVIDIA GeForce RTX 3050 6GB Laptop GPU / Direct3D11, browser viewport/render resolution 1280x720/DPR1. Parsed 118.4ms, first frame 2320.5ms, 344 draw calls (one observation). Three short route runs retained 1442/1438/1441 intervals, p95 7.2/7.1/7.1ms; no >33.33ms intervals in these specific runs. This is a headless actual-Chrome short default-GPU observation, not representative workload, minimum-FPS KPI, human review or VR evidence. Software-only CI is labeled separately. Final clean-HEAD raw results and exact CI links will be in PR #15.
+
+Preliminary local runs found the ESC/input issue and harness faults (700ms movement wait, reading panel after a null hit, generic navigation reasons, software-GPU sample shortage and reload load-event timeout). The final harness waits for observed behavior, asserts exact blockers and preserves slow samples; it pauses other experiment renderers during loading checks. Failed precommit results are not presented as final passing evidence. No slow samples are deleted to improve FPS. Local precommit evidence explicitly records dirty=true and baseline HEAD, never attributed to final HEAD. Browser JSON contains OS/Chrome/GPU/viewport, exact asset hash/source/checkout, parsed/first-frame time, draw calls and raw frame intervals. All slow software frames retained. Samples may extend beyond the 10s target until at least ten frames; actual duration is sum(raw). This software smoke is not the proposed 30s+3x120s physical-GPU protocol.
+
+Local regression: 76 G1/G2 Python tests, 16 E0/diagnostic/reference Python tests, 45 frontend unit tests, build/typecheck, 10 capability-checker tests, repository verifier and whitespace PASS. Actual-asset E0 negative tests and exact-ID navigation PASS. Full G1/G2 Blender/Khronos/Chrome regression is requested on the final source HEAD in CI; new generated artifacts from that regression never replace frozen R4. Production backend/PostgreSQL were not run because their source is unchanged. Final clean SHA verification and CI are reported via PR, avoiding circular self-references.
+
+## Scope and integration risk
+
+Frozen GLB remains 10,751,036 bytes / SHA-256 `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`. All six asset-lock file identities remain unchanged. Western route only: `[1.25,-7.415] -> [.95,-7.415] -> [.95,-5.9] -> [.95,-5.2]`; continuation blocked by `P507-CHAIR-B-11`. Negative routes assert exact object/region, including chair, cabinet, A-B/B-C gaps, boundary/open door and large sweep; no claim of whole-room access, PCCC/accessibility or human safety. Capsule radius .30m and height 1.80m unchanged.
+
+Selection displays explicit PROVISIONAL/USER_REPORTED/rights-pending label. E0 errors show actual category/ID instead of always blaming TV. ESC explicitly clears held input and exits pointer lock; blur/pagehide clear input; retry reloads the page and the entire asset gate. Production M1-C/API/PostgreSQL/migrations and data/KPI untouched. G2_VISUAL remains PENDING_OWNER_APPROVAL, G1_CIRCULATION PARTIAL. M2 is not DONE.
+
+ROADMAP/AGENTS/README preserve live main policy byte-for-byte. PROJECT_STATUS keeps main snapshot and a separate IN_REVIEW branch section. Stacked #14 carries historical status: future owner-approved integration must reconcile against then-current main, not overwrite M0-M7 policy. No automatic merge/rebase/retarget has occurred. Stop at Draft PR #15 for independent ChatGPT acceptance.
+
+---
+
+## Historical report — 17/11/2026 (superseded only by results above)
+
 # P507 E0/E1 — technical implementation handoff (17/11/2026)
 
 ## Decision and scope
