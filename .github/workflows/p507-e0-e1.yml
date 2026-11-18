@@ -44,6 +44,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       CHROME_BIN: /usr/bin/google-chrome
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      # Functional software-GPU smoke: CSS viewport unchanged, actual pixels recorded.
+      # Not a performance comparison or KPI claim.
+      P507_DPR: '0.5'
     steps:
       - uses: actions/checkout@v4
         with:
