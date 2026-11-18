@@ -1,6 +1,6 @@
 # Project index only; ROADMAP is the sole plan, PROJECT_STATUS owns live evidence.
 # Existing scalar fields retained; no repository parser/schema/enum consumer found.
-# APPROVED roadmap does not authorize all features. M2 E0/E1 is reviewed on Draft PR #15; feature integration remains gated.
+# APPROVED roadmap does not authorize all features. P507/E0/E1 provisional merged PR #21; M2 remains IN_PROGRESS, CI issue #22 open, M3 features not authorized.
 name: DATN-AIRC-WebXR
 workspace: 'D:\Code\DATN'
 mode: continue
@@ -17,4 +17,4 @@ risks: docs/03-risk-register.md
 architecture_options: docs/09-architecture-options.md
 acceptance: docs/ROADMAP.md
 status_document: docs/PROJECT_STATUS.md
-next_gate: M2-owner-demo-review-and-stacked-PR14-PR15-reconciliation-after-E0E1-technical-pass
+next_gate: M2-CI-private-vault-restore-issue-22-before-2026-11-24-and-functional-DoD-review
