@@ -32,7 +32,7 @@ Codes include CREDENTIAL_MISSING, CREDENTIAL_INVALID_OR_EXPIRED, VAULT_ACCESS_DE
 
 Precommit:76geometry,30E0/reference/restore/diagnostic/security Python and13Node identity tests PASS; these include mock/synthetic API fixtures only, not live App proof. YAML parse for all three P507 workflows PASS (PyYAML6.0.3 tooling-local, no app dependency changes). Responsive actual Chrome emulation390x844/768x1024 PASS render/selection label/panel bounds, not touch locomotion or physical mobile.
 
-Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote restore PASS (28members/six hashes,0original-artifact calls), E0 Chrome PASS, E1 15/15 PASS and responsive390/768PASS; [sanitized checkpoint](../evidence/p507-issue22-functional-6ed7c82.json) explicitly labels this LOCAL_OWNER_NOT_APP. Final clean HEAD will rerun owner-only remote restore in a fresh checkout and actual E0/E1 plus responsive harness; all applicable CI (legacy actual frozen E0/E1, Blender/Khronos/Chrome, TV negatives, frontend/API/PostgreSQL, repository) must bind to final PR HEAD. Exact final SHA/run links/raw evidence live in Draft PR to avoid self-referential SHA. App credential proof remains BLOCKED even if legacy CI is green. No forged positive App result.
+Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote restore PASS (28members/six hashes,0original-artifact calls), E0 Chrome PASS, E1 15/15 PASS and responsive390/768PASS; [sanitized checkpoint](../evidence/p507-issue22-functional-6ed7c82.json) explicitly labels this LOCAL_OWNER_NOT_APP. Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote restore PASS (28members/six hashes,0original-artifact calls), E0 Chrome PASS, E1 15/15 PASS and responsive390/768PASS; [sanitized checkpoint](../evidence/p507-issue22-functional-6ed7c82.json) explicitly labels this LOCAL_OWNER_NOT_APP. Final clean HEAD will rerun owner-only remote restore in a fresh checkout and actual E0/E1 plus responsive harness; all applicable CI (legacy actual frozen E0/E1, Blender/Khronos/Chrome, TV negatives, frontend/API/PostgreSQL, repository) must bind to final PR HEAD. Exact final SHA/run links/raw evidence live in Draft PR to avoid self-referential SHA. App credential proof remains BLOCKED even if legacy CI is green. No forged positive App result.
 
 | M2 functional DoD | Scope/status to verify on final HEAD |
 | --- | --- |
@@ -66,5 +66,7 @@ Observed exposure: development/build/CI process, not browser production bundle o
 - [JWT App/installation endpoints](https://docs.github.com/en/rest/apps/apps), [installation repository scope](https://docs.github.com/en/rest/apps/installations).
 - [Environment protection/Private plan restrictions](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).
 - [Reviewed advisory](https://github.com/advisories/GHSA-fc5q-39xc-vjpf); audit JSON and dependency tree retained in ignored local evidence.
+
+Registry read-only check18/11: latest picomatch4.0.7,fdir6.5.0,tinyglobby0.2.17,Vite8.3.8. A newer Vite major is not proof that the picomatch advisory is fixed; no upgrade/downgrade applied.
 
 Registry read-only check18/11: latest picomatch4.0.7,fdir6.5.0,tinyglobby0.2.17,Vite8.3.8. A newer Vite major is not proof that the picomatch advisory is fixed; no upgrade/downgrade applied.
