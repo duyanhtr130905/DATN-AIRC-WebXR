@@ -76,7 +76,9 @@ jobs:
       - name: E0 actual geometry and negative contract tests
         run: node experiments/p507-webxr/e0-inspect.mjs
       - name: Actual Chrome E0 gate then E1 smoke
-        run: node experiments/p507-webxr/browser.mjs
+        run: |
+          node experiments/p507-webxr/browser.mjs
+          node experiments/p507-webxr/browser-responsive.mjs
       - name: Upload neutral diagnostics and raw samples, no private profiles or survey photos
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -167,7 +169,9 @@ jobs:
       - name: E0 actual geometry and negative contract tests
         run: node experiments/p507-webxr/e0-inspect.mjs
       - name: Actual Chrome E0 gate then E1 smoke
-        run: node experiments/p507-webxr/browser.mjs
+        run: |
+          node experiments/p507-webxr/browser.mjs
+          node experiments/p507-webxr/browser-responsive.mjs
       - name: Upload neutral diagnostics and raw samples, no private profiles or survey photos
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
