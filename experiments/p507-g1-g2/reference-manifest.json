@@ -1,0 +1,188 @@
+{
+  "reference_revision": 3,
+  "reference_status": "16 SOURCES OPENED",
+  "source_files_committed": false,
+  "photo_match": "PARTIAL: direct qualitative comparison; camera/coordinates not calibrated",
+  "references": [
+    {
+      "id": "PHOTO-01",
+      "opened": true,
+      "description": "TV/cabinet/water corner",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-02",
+      "opened": true,
+      "description": "AI frame wall and table",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-03",
+      "opened": true,
+      "description": "four windows/blinds and seating",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-04",
+      "opened": true,
+      "description": "file cabinet/fridge/storage/small TV",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-05",
+      "opened": true,
+      "description": "shoe rack/whiteboard/storage/door",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-06",
+      "opened": true,
+      "description": "cluster A and neighbouring seating",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-07",
+      "opened": true,
+      "description": "three clusters/windows/logo wall",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-08",
+      "opened": true,
+      "description": "cluster C/logo wall",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-09",
+      "opened": true,
+      "description": "AI frame wall front view and ceiling glimpse",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-10",
+      "opened": true,
+      "description": "logo wall and hexagonal displays",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-11",
+      "opened": true,
+      "description": "whiteboard/shoe rack/bin",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-12",
+      "opened": true,
+      "description": "room/ceiling/projector/AC/windows",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "PHOTO-13",
+      "opened": true,
+      "description": "entrance two leaves/diagonal TV/water/cabinet",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_PHOTO",
+      "measurement_status": "NOT_CALIBRATED"
+    },
+    {
+      "id": "SKETCH-CEILING",
+      "opened": true,
+      "description": "hand-drawn ceiling plan",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_DRAWN",
+      "measurement_status": "NOT_TO_SCALE"
+    },
+    {
+      "id": "SKETCH-FLOOR",
+      "opened": true,
+      "description": "hand-drawn floor plan",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_DRAWN",
+      "measurement_status": "NOT_TO_SCALE"
+    },
+    {
+      "id": "CEILING-DIGITAL",
+      "opened": true,
+      "description": "two-column ceiling equipment layout",
+      "rights": {
+        "local_reference_analysis": "OWNER_AUTHORIZED",
+        "github_ci_source_publication": "NOT_AUTHORIZED"
+      },
+      "source_kind": "USER_DRAWN",
+      "measurement_status": "NOT_TO_SCALE"
+    }
+  ],
+  "missing": [
+    "Dedicated separate B/C assembly image was not supplied, but floor sketch + written owner constraints define the structure",
+    "Measured furniture/opening/ceiling positions, lens calibration and AIRC redistribution permission remain unavailable"
+  ]
+}

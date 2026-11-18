@@ -1,0 +1,140 @@
+name: P507 G1 geometry and G2 source validation
+
+on:
+  pull_request:
+    paths:
+      - "experiments/p507-g1-g2/**"
+      - "apps/web/p507-g1-g2-preview.html"
+      - "apps/web/src/p507-preview.ts"
+      - ".github/workflows/p507-g1-g2.yml"
+      - ".gitignore"
+      - "docs/3d-production/P507-G1-G2*"
+      - "docs/evidence/p507*"
+      - "docs/PROJECT_STATUS.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p507-g1g2-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  provisional-source-checks:
+    name: P507 inventory, geometry, Python syntax and privacy boundaries
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Geometry verifier and source provenance
+        run: python experiments/p507-g1-g2/geometry.py --report /tmp/p507-g1-report.json
+      - name: Geometry and extensibility tests
+        run: python -m unittest discover -s experiments/p507-g1-g2 -p "test_*.py" -v
+      - name: Compile Blender generator source without pretending Blender ran
+        run: python -m py_compile experiments/p507-g1-g2/geometry.py experiments/p507-g1-g2/generate_blender.py
+      - name: Ensure raw photo/export folders were not committed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files -- 'experiments/p507-g1-g2/private/**' 'experiments/p507-g1-g2/out/**' 'apps/web/public/p507-local-preview/**' | grep -q .; then
+            echo "Unapproved P507 private or generated binaries tracked"
+            exit 1
+          fi
+          echo "P507 raw photo/output paths not tracked"
+      - name: Repository links and limited secret scan
+        run: python tools/verify_repository.py
+      - name: Upload provisional geometry report (no private assets)
+        uses: actions/upload-artifact@v4
+        with:
+          name: p507-provisional-geometry-report
+          path: /tmp/p507-g1-report.json
+          retention-days: 7
+
+  blender-export-and-chrome-lookdev:
+    name: Actual Blender GLB export and Three.js Chrome preview (software GPU)
+    needs: provisional-source-checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      CHROME_BIN: /usr/bin/google-chrome
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Install Blender in disposable GitHub runner, not user laptop
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+          blender --version | head -3
+      - name: Export actual editable Blender scene and glTF binary
+        run: |
+          blender --background --python-exit-code 1 --python experiments/p507-g1-g2/generate_blender.py -- --inventory experiments/p507-g1-g2/p507-provisional.json --output-dir .local/p507-g1-g2
+          python experiments/p507-g1-g2/geometry.py --report .local/p507-g1-g2/geometry-report.json
+          ls -lh .local/p507-g1-g2/
+      - name: Basic GLB binary structure and ID metadata check
+        run: |
+          python - <<'PY'
+          import json, pathlib, struct
+          p = pathlib.Path('.local/p507-g1-g2/P507_G1_G2_PROVISIONAL.glb')
+          blob = p.read_bytes()
+          magic, version, length = struct.unpack_from('<4sII', blob, 0)
+          assert magic == b'glTF' and version == 2 and length == len(blob)
+          chunk_bytes, kind = struct.unpack_from('<I4s', blob, 12)
+          assert kind == b'JSON'
+          doc = json.loads(blob[20:20+chunk_bytes])
+          assert len(doc.get('meshes', [])) > 0
+          assert len(doc.get('materials', [])) > 0
+          assert any(str(n.get('extras', {}).get('survey_instance_id', '')).startswith('P507-') for n in doc.get('nodes', []))
+          print('Valid GLB header and geometry/metadata markers:', len(doc['meshes']), 'meshes,', len(doc['nodes']), 'nodes')
+          PY
+      - name: Khronos glTF Validator (pinned, CI-local; no app dependency)
+        run: |
+          npm install --no-save --package-lock=false --ignore-scripts --prefix .local/p507-gltf-validator gltf-validator@2.0.0-dev.3.10
+          node experiments/p507-g1-g2/validate_glb.mjs
+      - name: Install locked frontend dependencies and build
+        run: |
+          npm ci --ignore-scripts --no-fund --prefix apps/web
+          npm run build --prefix apps/web
+          npm test --prefix apps/web
+      - name: Copy only synthetic-neutral procedural GLB into ignored dev preview
+        run: |
+          mkdir -p apps/web/public/p507-local-preview
+          cp .local/p507-g1-g2/P507_G1_G2_PROVISIONAL.glb apps/web/public/p507-local-preview/
+      - name: Real Chrome WebGL preview screenshots and frame evidence
+        run: node experiments/p507-g1-g2/browser_preview.mjs
+      - name: Verify frozen asset handoff includes real captured camera presets
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('.local/p507-g1-g2')
+          m=json.loads((p/'asset-manifest.json').read_text())
+          b=json.loads((p/'browser-report.json').read_text())
+          assert m['model_sha256']==b['glbSha256']
+          assert len(m['preview_camera_presets'])==17
+          assert {c['shot'] for c in m['preview_camera_presets']} >= {'cluster_A','cluster_B','cluster_C','door_closed','door_outward','shelf','vanilla_wall'}
+          assert m['state']=='READY_FOR_WEBXR_EXPERIMENT'
+          print('Frozen asset/collision/camera handoff verified; no XR runtime started')
+          PY
+      - name: Upload generated, synthetic-neutral artifacts only
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: p507-g1-g2-neutral-blender-chrome
+          path: |
+            .local/p507-g1-g2/
+          retention-days: 7
+          if-no-files-found: warn

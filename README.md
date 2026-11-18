@@ -38,3 +38,7 @@ AI cần đọc tài liệu trên default branch và truy vấn GitHub live theo
 Acceptance, research và checkpoint cũ được giữ nguyên; các phát biểu “đang review/chưa triển khai” trong snapshot mô tả thời điểm bàn giao đó. Đối chiếu trạng thái mới trong PROJECT_STATUS và phần lịch sử/merge của ROADMAP; nếu còn mâu thuẫn thì báo chủ dự án.
 
 Default live không âm thầm fallback dữ liệu hardcode; DEMO offline chỉ khi chọn riêng. Dữ liệu synthetic, viewport emulation, software WebGL và IWER không chứng minh dữ liệu thật P507, AR/VR vật lý hoặc KPI. Chưa có visitor session/event persistence, public write hoặc deployment sản phẩm. Hướng dẫn chạy chi tiết nằm trong runbook tương ứng.
+
+## P507 desktop demo — M2 integration IN_REVIEW
+
+Standalone Chrome demo: [current runbook](experiments/p507-webxr/README.md), [Issue #19 integration report](docs/3d-production/P507-M2-INTEGRATION-19.md). Open `http://127.0.0.1:5173/p507-webxr-e1.html` after preparing the pinned bundle and starting Vite; no M1 backend required. [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) retains deferred circulation/size/placement issues. M2 remains IN_PROGRESS; see ROADMAP/PROJECT_STATUS for branch versus main and current tests.

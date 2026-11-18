@@ -1,3 +1,40 @@
+# Current M2 preservation snapshot — 18/11/2026, PR21 IN_REVIEW
+
+Owner explicitly approved private original-R4 archival and independent restore in [PR21 decision](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21#issuecomment-6973024761). Source branch `integrate/m2-p507-issue-19`, starting HEAD `faa12d20a55a5d0dbf8e4b81cd0b1289d61f04bf`; ChatGPT's two-column M2 dependency fix retained. Main still `458569026edc917fa38d945ecd190bd4574b925f`; changes remain on Draft PR21, not merged.
+
+PRIVATE owner-controlled [vault](https://github.com/duyanhtr130905/DATN-AIRC-WebXR-asset-vault) at `908a5cbb1f77b75b28666fd424cbd85f2aba4c1f`, Private verified before/after upload, owner-only collaborator list. Original ZIP11369216bytes/SHA256 `4255b199c6892c53b6709b1c66ce873cbcb4088dfa8ecef679a8e3e4713249f8` matches GitHub digest; all28members preserved, six locks PASS, GLB10751036bytes/SHA256 `8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49`. No regeneration/Release/Pages/raw photos. [Preservation evidence/runbook](3d-production/P507-R4-PRESERVATION.md).
+
+Independent clean owner remote restore PASS on `193720b1770de119d5f87e732d5594a0f10b8b62`,dirty=false: all28members/six hashes,Python reference,E0 actual Chrome and E1 15/15 PASS without M1 backend; [numeric evidence](evidence/p507-r4-owner-restore-193720b.json). No existing bundle/original Actions fallback. 76 geometry+23 E0/restore/diagnostic,45 frontend units/build/typecheck,repository checks PASS. Final documentation HEAD reruns remote restore/local checks and all CI; exact final HEAD/results in Draft PR21. npm audit flags4HIGH on unchanged frontend tooling; no dependency edits, separate triage remains. **CI_CROSS_REPO_RESTORE=BLOCKED**: source GITHUB_TOKEN not granted vault access; no PAT or secret added. Current CI still uses original expiring artifact; future automated CI restore needs separate owner decision. Issue20 DEFERRED; G1_CIRCULATION=PARTIAL; G2_VISUAL=PENDING_OWNER_APPROVAL; M2 IN_PROGRESS; M3–M7 unchanged. Next: final exact-HEAD tests/CI → ChatGPT review → owner decision on CI vault access; Codex does not merge.
+
+---
+
+## AS-OF before private preservation
+
+# Current snapshot — M2 integration Issue #19, 18/11/2026
+
+Main verified `458569026edc917fa38d945ecd190bd4574b925f`. Integration branch `integrate/m2-p507-issue-19` starts from that main; no-ff merge `3f06344` preserves reviewed #15 `c3c800227cfd07426b4504f38607bb864b0b12f8`, #14 `acd21c62c24b94d7dda4bbf25c80fe0b4224cc31` and G0 history. Branch contains R4/E0/E1 source **not merged to main**. [Draft PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21); branch tested clean at `69176aa0a005cc7db5433c2b82e24ed68a7b356f`. Final branch HEAD and exact CI are recorded in [integration evidence](3d-production/P507-M2-INTEGRATION-19.md) and Draft PR to avoid circular SHA claims.
+
+Owner-approved [#19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/19) is an M2 integration task; Roadmap 2.0 APPROVED, M0/M1 DONE/MERGED, M2 IN_PROGRESS. Independent ChatGPT acceptance pending: integration IN_REVIEW / PARTIAL until final checks and review. Inherited scoped E0/E1 TECHNICAL_PASS applies only to #15 reviewed head, not automatically to this integration. Initial local 76 geometry +18 E0/reference/diagnostic tests and all six bundle hashes PASS. Diagnostic false-green fixed; injected Three manual/Box3 mismatches must conclude UNRESOLVED and exit 1. Original root-cause evidence retained.
+
+[Runbook](../experiments/p507-webxr/README.md): Vite-only Chrome demo at http://127.0.0.1:5173/p507-webxr-e1.html, no M1 backend. Original asset still available; expiry 24/11/2026 14:46:36 Asia/Saigon. Durable fresh-machine reproducibility BLOCKED after expiry without approved original-bundle storage; verified same-machine copy is available, no permanent archive/Release published. Local clean `69176aa`: E0 actual Chrome PASS (402482 POSITION samples, 0 proxy violations), E1 15/15 groups PASS with no M1 backend, 45 frontend units/build/typecheck and 10 checker tests PASS. Same-version Blender4.0.2/exporter4.0.44 diagnostic CI [44247798568](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247798568) SUCCESS at clean `69176aa`: matching CONFIRMED/exit0, injected manual and Box3 mismatch UNRESOLVED/exit1. Exact URL5173 Chrome smoke PASS, no API/WS requests. Final documentation HEAD CI reported separately in #21; no old CI reused as final verification.
+
+Owner-deferred [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20): inaccessible chair-row passages, inaccurate object sizes and placements. Frozen R4 unchanged; G1_CIRCULATION=PARTIAL, G2_VISUAL=PENDING_OWNER_APPROVAL. Hardware KPI30/VR72, mobile/XR and final fidelity/rights remain unverified. M3–M7 stay planned with existing dependencies, no new milestone.
+
+Next: final integration regression and Draft PR → independent ChatGPT review → owner archival decision and later #20 task if explicitly resumed. No autonomous merge/deploy/M3.
+
+---
+
+## Review bổ sung — PR #21, 18/11/2026 (snapshot theo HEAD trước chỉnh tài liệu)
+
+- **Nguồn review độc lập:** [PR #21 review comment](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21#issuecomment-6972847975), HEAD được kiểm `a0b91a8ab61d47a88ff9eb991631a561a62f2a08`; **12/12 CI checks SUCCESS** tại HEAD đó, bao gồm E0 frozen-asset Chrome và E1 15/15 smoke, Blender/Khronos/Chrome, API/PostgreSQL, PoC và diagnostic. Không được gán CI này cho commit cập nhật tài liệu mới cho đến khi chạy lại.
+- **Verdict:** `TECHNICAL_PASS` cho phạm vi mã tích hợp Issue #19; **PR #21 PARTIAL / IN_REVIEW, chưa merge**. `main` tại thời điểm review vẫn `458569026edc917fa38d945ecd190bd4574b925f`.
+- **Đã sửa trong commit cập nhật tài liệu tiếp theo:** lỗi cấu trúc bảng hai cột `Ma trận phụ thuộc` tại hàng M2 (trước đó chứa cả dòng 11 cột), không thay DoD/KPI.
+- **Blocker còn mở:** nguồn original artifact ID `14309207795` hết hạn **24/11/2026 07:46:36 UTC (14:46:36 ICT)**; chưa có kho lưu trữ byte-preserving độc lập được owner cấp quyền, nên durable fresh-machine restore/CI lâu dài là `BLOCKED`. Hiện artifact còn truy cập được, bản local được kiểm chứng nhưng không phải backup riêng.
+- **Backlog owner hoãn:** [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) lối đi giữa hàng ghế, sai kích thước/vị trí vật thể. `G1_CIRCULATION=PARTIAL`, `G2_VISUAL=PENDING_OWNER_APPROVAL`; E1 smoke kỹ thuật không chứng nhận độ chân thực/đi lại toàn phòng, 30FPS, VR72, AR/VR hoặc KPI cuối.
+- **Next action:** chủ dự án phê duyệt phương án lưu trữ riêng có hạn chế quyền + hash/restore; khi có đường dẫn hợp lệ, triển khai và kiểm chứng khôi phục; sau đó review chính xác HEAD mới và xét merge PR #21. Chưa bắt đầu M3; #14/#15 giữ Draft. Roadmap M0–M7 không đổi.
+
+## AS-OF historical snapshots — retained main documentation before Issue #19
+
 # Trạng thái dự án — snapshot hiện hành
 
 ## Snapshot M2 — E0/E1 được nghiệm thu kỹ thuật (18/11/2026)
