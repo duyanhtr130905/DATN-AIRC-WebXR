@@ -1,4 +1,4 @@
-# M2 Issue22 â€” secure PRIVATE-vault CI and functional evidence
+# M2 Issue22 — secure PRIVATE-vault CI and functional evidence
 
 18/11/2026. Owner authorized code/workflow/tests/docs/Draft PR only. **PARTIAL / SECURITY_APPROVAL_REQUIRED**. Main baseline `42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`; new branch `feat/m2-secure-vault-ci-22`. PR21 MERGED, Issue19 CLOSED; Issue22 current; #20 DEFERRED. PR23 remained OPEN/DRAFT at `0f63a671cbea5f3160330d7a954761ff780d18bb` at intake. Its five-file reviewed documentation snapshot is preserved on this branch (AGENTS/README/.techlead byte-identical; ROADMAP/STATUS extended), with provenance instead of overwriting it or claiming PR23 merged. No source PR changed.
 
@@ -20,7 +20,7 @@ Owner path restore_asset.py remains unchanged (gh owner/private/admin). New expl
 
 Codes include CREDENTIAL_MISSING, CREDENTIAL_INVALID_OR_EXPIRED, VAULT_ACCESS_DENIED, PINNED_SOURCE_UNAVAILABLE, NETWORK_FAILURE, UNTRUSTED_CONTEXT/SHA/WORKFLOW, APP_IDENTITY_MISMATCH, TOKEN_REPOSITORY_SCOPE_MISMATCH, VAULT_IDENTITY_MISMATCH, FILE_LOCK_MISMATCH, DESTINATION_EXISTS. Remaining invalid bundle conditions use INVALID_OR_UNAVAILABLE_BUNDLE without exception text. No legacy /actions/artifacts request or generated GLB fallback exists in CI restore.
 
-## Owner setup â€” separate approval REQUIRED, not performed
+## Owner setup — separate approval REQUIRED, not performed
 
 1. Approve/create dedicated owner GitHub App, repository Contents Read-only (Metadata Read-only implicit), no other permissions, webhooks unused. Install only DATN-AIRC-WebXR-asset-vault; verify full selected set and record App/installation numeric IDs and Client ID. Do not grant source repo contents or administration.
 2. In source repo create/verify protected environment p507-vault-ci after checking plan supports required protection for Private repo. Main-only branch policy, required reviewer, no self-review/admin bypass; independently inspect exact merged SHA/job. No premerge dispatch of PR code with secrets is supported.
@@ -32,7 +32,7 @@ Codes include CREDENTIAL_MISSING, CREDENTIAL_INVALID_OR_EXPIRED, VAULT_ACCESS_DE
 
 Precommit:76geometry,30E0/reference/restore/diagnostic/security Python and13Node identity tests PASS; these include mock/synthetic API fixtures only, not live App proof. YAML parse for all three P507 workflows PASS (PyYAML6.0.3 tooling-local, no app dependency changes). Responsive actual Chrome emulation390x844/768x1024 PASS render/selection label/panel bounds, not touch locomotion or physical mobile.
 
-Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote restore PASS (28members/six hashes,0original-artifact calls), E0 Chrome PASS, E1 15/15 PASS and responsive390/768PASS; [sanitized checkpoint](../evidence/p507-issue22-functional-6ed7c82.json) explicitly labels this LOCAL_OWNER_NOT_APP. Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote restore PASS (28members/six hashes,0original-artifact calls), E0 Chrome PASS, E1 15/15 PASS and responsive390/768PASS; [sanitized checkpoint](../evidence/p507-issue22-functional-6ed7c82.json) explicitly labels this LOCAL_OWNER_NOT_APP. Final clean HEAD will rerun owner-only remote restore in a fresh checkout and actual E0/E1 plus responsive harness; all applicable CI (legacy actual frozen E0/E1, Blender/Khronos/Chrome, TV negatives, frontend/API/PostgreSQL, repository) must bind to final PR HEAD. Exact final SHA/run links/raw evidence live in Draft PR to avoid self-referential SHA. App credential proof remains BLOCKED even if legacy CI is green. No forged positive App result.
+Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote restore PASS (28members/six hashes,0original-artifact calls), E0 Chrome PASS, E1 15/15 PASS and responsive390/768PASS; [sanitized checkpoint](../evidence/p507-issue22-functional-6ed7c82.json) explicitly labels this LOCAL_OWNER_NOT_APP. Final clean HEAD will rerun owner-only remote restore in a fresh checkout and actual E0/E1 plus responsive harness; all applicable CI (legacy actual frozen E0/E1, Blender/Khronos/Chrome, TV negatives, frontend/API/PostgreSQL, repository) must bind to final PR HEAD. Exact final SHA/run links/raw evidence live in Draft PR to avoid self-referential SHA. App credential proof remains BLOCKED even if legacy CI is green. No forged positive App result.
 
 | M2 functional DoD | Scope/status to verify on final HEAD |
 | --- | --- |
@@ -44,11 +44,11 @@ Clean checkpoint `6ed7c820147a36678fe0416664fcd6fc4604e8d2` owner-only remote re
 | Basic performance | Raw short samples OS/browser/GPU/resolution/build; not KPI30/VR72 |
 | Independent acceptance | PENDING ChatGPT; M2 IN_PROGRESS |
 
-Issue20 chair-row access, dimensions and placements remain DEFERRED; G1_CIRCULATION=PARTIAL,G2_VISUAL=PENDING_OWNER_APPROVAL. M3 PLANNED/DEPENDENCY_BLOCKED, no coding M3; M0/M1 DONE; M3â€“M7 unchanged.
+Issue20 chair-row access, dimensions and placements remain DEFERRED; G1_CIRCULATION=PARTIAL,G2_VISUAL=PENDING_OWNER_APPROVAL. M3 PLANNED/DEPENDENCY_BLOCKED, no coding M3; M0/M1 DONE; M3–M7 unchanged.
 
 ## Read-only dependency triage
 
-18/11 npm audit reports4HIGH, all dev=true in unchanged package-lock; npm audit --omit=dev reports0. All four are propagated from **one** picomatch ReDoS advisory GHSA-fc5q-39xc-vjpf / CVE-2026-112366, not four independently established exploits. npm ls: vite7.3.8â†’picomatch4.0.7; viteâ†’fdir6.5.0â†’picomatch; viteâ†’tinyglobby0.2.17â†’fdir/picomatch; @vitejs/plugin-react5.1.1 uses same Vite.
+18/11 npm audit reports4HIGH, all dev=true in unchanged package-lock; npm audit --omit=dev reports0. All four are propagated from **one** picomatch ReDoS advisory GHSA-fc5q-39xc-vjpf / CVE-2026-112366, not four independently established exploits. npm ls: vite7.3.8→picomatch4.0.7; vite→fdir6.5.0→picomatch; vite→tinyglobby0.2.17→fdir/picomatch; @vitejs/plugin-react5.1.1 uses same Vite.
 
 | Package/version | Direct | Location | Finding/fix |
 | --- | --- | --- | --- |
@@ -66,7 +66,5 @@ Observed exposure: development/build/CI process, not browser production bundle o
 - [JWT App/installation endpoints](https://docs.github.com/en/rest/apps/apps), [installation repository scope](https://docs.github.com/en/rest/apps/installations).
 - [Environment protection/Private plan restrictions](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).
 - [Reviewed advisory](https://github.com/advisories/GHSA-fc5q-39xc-vjpf); audit JSON and dependency tree retained in ignored local evidence.
-
-Registry read-only check18/11: latest picomatch4.0.7,fdir6.5.0,tinyglobby0.2.17,Vite8.3.8. A newer Vite major is not proof that the picomatch advisory is fixed; no upgrade/downgrade applied.
 
 Registry read-only check18/11: latest picomatch4.0.7,fdir6.5.0,tinyglobby0.2.17,Vite8.3.8. A newer Vite major is not proof that the picomatch advisory is fixed; no upgrade/downgrade applied.
