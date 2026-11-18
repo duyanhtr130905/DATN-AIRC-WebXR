@@ -5,7 +5,7 @@
 - Ngày phê duyệt: `2026-11-18`.
 - Người phê duyệt: **chủ dự án, qua trao đổi ChatGPT** trong yêu cầu Roadmap 2.0 ngày 18/11/2026. Không có URL quyết định chat được cung cấp; không dựng permalink.
 - Phạm vi phê duyệt: kế hoạch tám milestone M0–M7 và quy tắc quản lý tiến độ. **Không cấp quyền tự triển khai tất cả feature hoặc tự bắt đầu milestone.**
-- GitHub last verified: **2026-11-18, Issue #19 integration / Draft PR #21**; main `458569026edc917fa38d945ecd190bd4574b925f` (PR #18 sync MERGED). PR #14/#15 remain OPEN/DRAFT at reviewed SHAs; [#21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) contains integration on a new branch, not main. This is a dated snapshot; verify live each session.
+- GitHub last verified: **2026-11-18, sau nghiệm thu/merge PR #21**; main baseline `42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`. [PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) đã MERGED vào main, tích hợp prototype P507/E0/E1 và phương thức restore từ vault PRIVATE; PR #14/#15 vẫn là Draft nguồn lịch sử, không merge trùng. M2 vẫn IN_PROGRESS; [#22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) ghi rủi ro CI sau 24/11, #20 giữ tồn đọng 3D. Đây là snapshot, phải kiểm tra GitHub live mỗi phiên.
 - Roadmap 2.0 đã được nghiệm thu/merge qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) tại `0efaf50a845091d3e6ac14bb0d7cf5f7963d701c`; G0 specification đã merge qua [PR #13](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/13) tại `cce30c06baa3dd2254a8b75c5c982f0900ef29f2`. Trạng thái branch/main vẫn phải xác minh GitHub live trước mỗi nhiệm vụ.
 
 ## Source of truth và thứ tự ưu tiên
@@ -38,7 +38,7 @@ Ngày last verified trong bảng là ngày đối chiếu kế hoạch/snapshot,
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | M0 | Nghiên cứu, lựa chọn công nghệ và nền tảng | APPROVED | DONE | NONE | Đề bài và quyền task M0 | Nghiên cứu, PoC, ADR, foundation đã nghiệm thu/tích hợp | PR #6/#7/#8, acceptance bên dưới | Không còn blocker trong DoD M0; blocker thực địa chuyển tiếp | Bảo toàn lịch sử | 2026-11-18 |
 | M1 | Prototype hệ thống và luồng dữ liệu synthetic | APPROVED | DONE | NONE | M0 | Catalog, state/realtime, vertical slice synthetic đã tích hợp | PR #9/#10/#11, acceptance bên dưới | Không phải real Digital Twin hoặc visitor tracking | Tái sử dụng baseline theo task được giao | 2026-11-18 |
-| M2 | Prototype 3D tương tác phòng P507 | APPROVED | IN_PROGRESS | PARTIAL | M0 → M1; frozen R4; E0 contract trước E1 | E0 actual checks PASS và browser walkthrough chức năng được nghiệm thu | [#21 Draft integration](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21), sources #14/#15; [evidence](3d-production/P507-M2-INTEGRATION-19.md) | Branch integration IN_REVIEW; owner private restore PASS / future CI cross-repo BLOCKED, #20 deferred; G2_VISUAL PENDING, circulation PARTIAL | ChatGPT review exact final HEAD/CI; owner CI-access decision; no M3 | 2026-11-18 |
+| M2 | Prototype 3D tương tác phòng P507 | APPROVED | IN_PROGRESS | PARTIAL | M0 → M1; frozen R4; E0 contract trước E1 | Provisional P507 3D, E0/E1 Chrome smoke và private original restore đã nghiệm thu phạm vi, chưa nghiệm thu toàn M2 | [#21 MERGED](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) `42a34979`; [#22 CI](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22), [#20 3D deferred](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20); [vault evidence](3d-production/P507-R4-PRESERVATION.md) | CI source-token không đọc được vault sau khi artifact gốc hết hạn 24/11; G2_VISUAL PENDING, G1_CIRCULATION PARTIAL; mobile/GPU/review còn thiếu | Chốt giải pháp CI riêng tư #22 theo quyền owner, hoàn tất nghiệm thu chức năng M2; chưa mở M3 | 2026-11-18 |
 | M3 | Tích hợp Digital Twin và dữ liệu P507 | APPROVED | PLANNED | BLOCKED | M1, prototype chức năng M2, nguồn/quyền | Stable mapping, 3 trạng thái có nguồn, realtime/freshness, source → UI | Chưa có PR triển khai M3; DoD bên dưới | DEPENDENCY_BLOCKED: #2/#3, chưa đạt M2 | Chốt nguồn/quyền và task tích hợp khi được giao | 2026-11-18 |
 | M4 | Lưu vết trải nghiệm và báo cáo phiên | APPROVED | PLANNED | PARTIAL | M1, tương tác, event contract, chính sách dữ liệu | Persistence/recovery/dedupe/export và oracle | Chưa có PR triển khai M4 | Contract/consent/retention chưa chốt | Chuẩn bị thiết kế theo dependency khi được giao | 2026-11-18 |
 | M5 | Tích hợp WebXR AR/VR | APPROVED | PLANNED | BLOCKED | Asset/trải nghiệm M2; thiết bị và XR protocol | Lifecycle/interactions/fallback và evidence thiết bị thật | Chưa có PR triển khai M5 | DEVICE_BLOCKED: #4/#5; chưa có evidence kính/AR thật | Chốt thiết bị/protocol và task XR | 2026-11-18 |
@@ -56,6 +56,10 @@ Giữ nguyên M0-A/B1/B2 theo PR #6/#7/#8: nghiên cứu có nguồn, capability
 Giữ M1-A/B/C theo PR #9/#10/#11: Catalog và constraints/migrations được phép, state/realtime/history/outbox, bounded atomic snapshots và vertical slice PostgreSQL → API → browser/scene/panel. Evidence/acceptance lịch sử bên dưới kiểm logic, PostgreSQL/TCP/Chrome theo SHA. **M1 không là real Digital Twin P507; state history không là visitor tracking.**
 
 ### M2 — Prototype 3D tương tác phòng P507 (IN_PROGRESS)
+
+**CURRENT (sau PR #21):** P507 R4/E0/E1 đã nằm trên `main` ở `42a34979`. E0 reference và Chrome E1 15/15 smoke PASS trong phạm vi PR #21, owner-private vault remote restore đã được Codex xác minh bằng evidence và GitHub xác nhận object archive tồn tại trong PRIVATE repo. **Không** công nhận G2 visual/fidelity, full circulation, 30FPS/VR72/mobile/XR hay MT1–MT3. CI post-expiry [#22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) còn BLOCKED, R4 vẫn provisional; M2 chưa DONE.
+
+**Definition of Done M2 bên dưới vẫn hiện hành.** Những đoạn mô tả PR #21 còn Draft/chưa có trên main trong phần giải trình cũ là **snapshot AS-OF trước merge**, không phải trạng thái hiện tại.
 
 Từng tiêu chí cần expected/actual, build/asset SHA hoặc hash, môi trường và kết luận review:
 
@@ -116,7 +120,7 @@ Luận văn/sơ đồ/phương pháp/benchmark/phân tích kết quả truy ngư
 | Đích | Phụ thuộc / điều kiện |
 | --- | --- |
 | M1 | M0 → M1 |
-| M2 | M0 → M1 → M2; E0 đạt trước E1 runtime; E0/E1 smoke được review theo PR #21 nhưng M2 còn PARTIAL vì archive/fidelity/other DoD |
+| M2 | M0 → M1 → M2; E0/E1 kỹ thuật và owner-vault restore đã nghiệm thu qua PR #21 MERGED, nhưng M2 vẫn IN_PROGRESS vì CI private-vault #22, visual/circulation #20 và những DoD chưa đạt |
 | M3 | M1 + prototype chức năng M2 + quyết định nguồn/quyền (#2/#3) |
 | M4 | M1 + luồng tương tác đã có + event contract/chính sách dữ liệu; có thể chuẩn bị song song khi dependency liên quan sẵn sàng và được giao |
 | M5 | Asset/trải nghiệm M2 + quyết định thiết bị/XR protocol (#4/#5) |
@@ -160,11 +164,14 @@ Không giả định M3/M4/M5 phải code tuần tự tuyệt đối; chuẩn b�
 | 2026-11-18 | ChatGPT nghiệm thu và merge PR #16, PR #13, đồng bộ PR #17 | Roadmap 2.0 MERGED `0efaf50a`; G0 spec MERGED `cce30c06`; status sync MERGED `2deb9267`. Dòng E0_FAIL/E1_BLOCKED phản ánh **thời điểm trước correction**, không còn là kết quả mới nhất của PR #15; G2 visual vẫn pending, M2 chưa DONE |
 | 2026-11-18 | ChatGPT nghiệm thu kỹ thuật E0/E1 trên PR #15 HEAD `c3c8002` | E0 reference frozen SHA-bound / 1mm proxy, 3mm bounds PASS; 15 nhóm Chrome smoke E1 PASS; 5/5 checks CI PASS. Draft PR #15 chưa merge, PR #14 vẫn Draft. Ghi lỗi phụ diagnostic runner có thể exit 0 khi Three mismatch, cần sửa/test trước khi chứng nhận pipeline toàn diện. Tiếp theo: review demo/visual và reconciliation không ghi đè roadmap |
 
-Điểm kiểm soát: [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16) đã merge governance. M2 E0/E1 đã qua **scoped technical review trên Draft PR #15** nhưng chưa tích hợp vào main. Bước cần quyết định là nghiệm thu demo chức năng/giới hạn visual provisional và reconciliation các PR xếp chồng #14/#15, kèm sửa diagnostic exit-code defect; không tự mở G3/M3/M5. ChatGPT chỉ merge khi có ủy quyền, review toàn phạm vi đúng HEAD/CI và không còn blocker; Codex không tự merge.
-
 | 2026-11-18 | ChatGPT review kỹ thuật PR #21 tại `a0b91a8` | 12/12 exact-head CI SUCCESS; R4 lock, G1/G2 source và E0/E1 runtime giữ nguyên; diagnostic exit lỗi âm tính đã sửa, Chrome E1 15/15 PASS. **Kết luận: TECHNICAL_PASS phạm vi tích hợp, PR tổng thể PARTIAL/IN_REVIEW, chưa MERGE_READY** do bảng phụ thuộc M2 đã cần chỉnh và durable asset archive chưa được owner quyết định. Issue #20 deferred, G2_VISUAL PENDING/G1_CIRCULATION PARTIAL, M2 IN_PROGRESS |
+| 2026-11-18 | Chủ dự án cho phép kho PRIVATE và Codex bảo toàn bản original R4 | Vault commit `908a5cbb`: ZIP 11,369,216 bytes, SHA256 `4255b199…3249f8`, 28 members, sáu locks; owner remote restore/E0/E1 theo [evidence](3d-production/P507-R4-PRESERVATION.md). Không cấp token CI cross-repo |
+| 2026-11-18 | ChatGPT nghiệm thu và MERGE PR #21 | HEAD đã review `27ab5838` 12/12 exact-head CI SUCCESS, E0 PASS, E1 15/15; merge main `42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`. Nghiệm thu **phạm vi tích hợp chức năng và lưu trữ nguyên bản**; không phải M2 DONE. Theo dõi [#22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) vì nguồn CI vẫn dùng artifact gốc hết hạn 24/11 và 4 HIGH dependency cần triage; #20 giữ deferred; không mở M3 |
 
-Decision 18/11/2026 — owner approved integration #19 and explicitly deferred #20 visual/circulation/fidelity corrections. Implementation is on Draft PR #21 only; no frozen changes, no M2 DONE and no new milestone. Prior next-action wording above about planning reconciliation is AS-OF before #19 and is superseded by this approved integration task. Current next gate is independent ChatGPT review, followed by owner archival decision.
+Điểm kiểm soát hiện hành: PR #16 đã merge governance; [PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) đã merge P507/E0/E1 vào main. Diagnostic đã sửa exit code; private vault owner restore PASS, nhưng future CI vẫn BLOCKED ở [#22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22). M2 IN_PROGRESS, #20 deferred, chưa G2 visual PASS hoặc KPI. Merge chỉ theo ủy quyền chủ dự án, review độc lập đúng HEAD/CI, không bỏ qua blockers; Codex không tự merge.
+
+
+AS-OF trước merge #21: owner approved integration #19 and deferred #20; Draft PR #21 lúc đó pending review/archival decision. Lịch sử này đã được thay bởi dòng MERGED #21 trong decision log; current gate là quyền CI private-vault #22 và nghiệm thu chức năng M2 còn thiếu. Không có milestone mới.
 
 ## Lịch sử M0/M1 — giữ nguyên checkpoint và evidence
 
