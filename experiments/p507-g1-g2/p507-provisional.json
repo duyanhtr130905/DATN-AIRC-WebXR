@@ -1,0 +1,3865 @@
+{
+  "schema_version": 3,
+  "label": "P507 virtual experience +15%, owner-approved adaptation; not survey 1:1",
+  "room": {
+    "code": "P507",
+    "unit": "m",
+    "width_x": 6.9,
+    "length_y": 9.315,
+    "height_z": 3.5,
+    "source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+    "rights": "PENDING"
+  },
+  "coordinates": {
+    "basis": "SURVEY_X_EAST_Y_TV_Z_UP",
+    "origin": "intersection of logo wall and entrance wall",
+    "three_conversion": "(x,z,-y)"
+  },
+  "rights": {
+    "photo_and_brand": "PENDING",
+    "can_publish": true,
+    "scope": "neutral geometric preview only, NO authentic visual assets or personal data"
+  },
+  "objects": [
+    {
+      "id": "P507-DESK-A01",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        1.8,
+        6.4,
+        3.3,
+        7.0
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-A02",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        3.3,
+        6.4,
+        4.8,
+        7.0
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-A03",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        4.8,
+        6.4,
+        6.3,
+        7.0
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-A04",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        1.8,
+        7.0,
+        3.3,
+        7.6
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-A05",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        3.3,
+        7.0,
+        4.8,
+        7.6
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-A06",
+      "type": "table_standard",
+      "cluster": "A",
+      "rect": [
+        4.8,
+        7.0,
+        6.3,
+        7.6
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-B01",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        2.3,
+        3.6,
+        3.8,
+        4.2
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-B02",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        3.8,
+        3.6,
+        5.3,
+        4.2
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-B03",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        2.3,
+        4.2,
+        3.8,
+        4.8
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-B04",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        3.8,
+        4.2,
+        5.3,
+        4.8
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-B05",
+      "type": "table_standard",
+      "cluster": "B",
+      "rect": [
+        5.3,
+        3.45,
+        5.9,
+        4.95
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 90,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-B06",
+      "type": "table_small",
+      "cluster": "B",
+      "rect": [
+        1.7,
+        3.6,
+        2.3,
+        4.8
+      ],
+      "height": 0.9,
+      "size_source": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 90,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-C01",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        2.3,
+        0.85,
+        3.8,
+        1.45
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-C02",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        3.8,
+        0.85,
+        5.3,
+        1.45
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-C03",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        2.3,
+        1.45,
+        3.8,
+        2.05
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-C04",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        3.8,
+        1.45,
+        5.3,
+        2.05
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 0,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-DESK-C05",
+      "type": "table_standard",
+      "cluster": "C",
+      "rect": [
+        5.3,
+        0.7,
+        5.9,
+        2.2
+      ],
+      "height": 0.9,
+      "size_source": "USER_REPORTED",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "interactive": false,
+      "orientation_deg": 90,
+      "source_kind": "PROPOSED_LAYOUT",
+      "status": "PLACED_PROVISIONAL",
+      "source_refs": [
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "P507-CABINET-FILES",
+      "name": "file cabinet",
+      "type": "file_cabinet",
+      "cluster": null,
+      "rect": [
+        0.1,
+        0.25,
+        0.59,
+        1.25
+      ],
+      "height": 1.8,
+      "bottom_z": 0,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-CABINET-FILES",
+      "compartment_count": 3,
+      "compartment_axis": "LOCAL_X_VERTICAL_BAYS",
+      "front_material": "clear_glass",
+      "detail_source": "OWNER_CONFIRMED_THREE_COMPARTMENTS_PHOTO_04"
+    },
+    {
+      "id": "P507-FRIDGE",
+      "name": "fridge",
+      "type": "fridge",
+      "cluster": null,
+      "rect": [
+        0.1,
+        1.4,
+        0.64,
+        2.0
+      ],
+      "height": 1.2,
+      "bottom_z": 0,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-FRIDGE"
+    },
+    {
+      "id": "P507-UTILITY-SHELF",
+      "name": "storage shelf",
+      "type": "storage_shelf",
+      "cluster": null,
+      "rect": [
+        0.1,
+        2.05,
+        0.57,
+        3.55
+      ],
+      "height": 1.45,
+      "bottom_z": 0,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-UTILITY-SHELF",
+      "proposed_front_width_m": 1.5,
+      "dimension_basis": "Owner requests wider shelf; PHOTO-04 relative proportions, unmeasured proposed 1.50m front along Y; depth unchanged .47m"
+    },
+    {
+      "id": "P507-WASTE-BIN",
+      "name": "waste bin",
+      "type": "waste_bin",
+      "cluster": null,
+      "rect": [
+        0.1,
+        4.86,
+        0.42,
+        5.18
+      ],
+      "height": 0.45,
+      "bottom_z": 0,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-WASTE-BIN"
+    },
+    {
+      "id": "P507-SHOE-RACK",
+      "name": "shoe rack",
+      "type": "shoe_rack",
+      "cluster": null,
+      "rect": [
+        0.1,
+        5.28,
+        0.45,
+        6.58
+      ],
+      "height": 0.8,
+      "bottom_z": 0,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-SHOE-RACK"
+    },
+    {
+      "id": "P507-WHITEBOARD",
+      "name": "whiteboard",
+      "type": "whiteboard",
+      "cluster": null,
+      "rect": [
+        0.08,
+        5.18,
+        0.14,
+        6.63
+      ],
+      "height": 1.1,
+      "bottom_z": 1.3,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-WHITEBOARD",
+      "wall_mount": "west",
+      "support_id": "P507-ARCH-WALL-WEST"
+    },
+    {
+      "id": "P507-TV-SMALL",
+      "name": "tv small",
+      "type": "tv_small",
+      "cluster": null,
+      "rect": [
+        0.15,
+        2.4,
+        0.4,
+        3.2
+      ],
+      "height": 0.65,
+      "bottom_z": 1.45,
+      "orientation_deg": 90,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-04",
+        "PHOTO-05",
+        "PHOTO-11"
+      ],
+      "verification_level": "PHOTO_OBSERVED_FORM_PROPOSED_DIMENSIONS",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-TV-SMALL",
+      "support_id": "P507-UTILITY-SHELF"
+    },
+    {
+      "id": "P507-DISPLAY-01",
+      "type": "decor_display",
+      "name": "Neutral supported display",
+      "cluster": null,
+      "rect": [
+        1.74,
+        8.97,
+        1.94,
+        9.1
+      ],
+      "height": 0.28,
+      "bottom_z": 1.05,
+      "orientation_deg": 0,
+      "support_id": "P507-CABINET-LOW",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-13",
+        "PHOTO-01"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-DISPLAY-01"
+    },
+    {
+      "id": "P507-DISPLAY-02",
+      "type": "decor_display",
+      "name": "Neutral supported display",
+      "cluster": null,
+      "rect": [
+        2.15,
+        8.97,
+        2.35,
+        9.1
+      ],
+      "height": 0.28,
+      "bottom_z": 1.05,
+      "orientation_deg": 0,
+      "support_id": "P507-CABINET-LOW",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-13",
+        "PHOTO-01"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-DISPLAY-02"
+    },
+    {
+      "id": "P507-DISPLAY-03",
+      "type": "decor_display",
+      "name": "Neutral supported display",
+      "cluster": null,
+      "rect": [
+        2.56,
+        8.97,
+        2.76,
+        9.1
+      ],
+      "height": 0.28,
+      "bottom_z": 1.05,
+      "orientation_deg": 0,
+      "support_id": "P507-CABINET-LOW",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-13",
+        "PHOTO-01"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-DISPLAY-03"
+    },
+    {
+      "id": "P507-TV-LARGE-MOUNT",
+      "name": "Corner TV articulated mount",
+      "type": "tv_mount",
+      "cluster": null,
+      "rect": [
+        1.55,
+        9.155000000000001,
+        1.73,
+        9.265
+      ],
+      "height": 0.34,
+      "bottom_z": 2.12,
+      "orientation_deg": 0,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-13"
+      ],
+      "wall_mount": "north",
+      "attachment_id": "P507-TV-LARGE",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-TV-LARGE-MOUNT"
+    },
+    {
+      "id": "P507-LOGO-SILHOUETTE",
+      "name": "Neutral south-wall architectural placeholder",
+      "type": "wall_placeholder",
+      "variant": "neutral_ring_bars",
+      "cluster": null,
+      "rect": [
+        2.6500000000000004,
+        0.06,
+        4.25,
+        0.12
+      ],
+      "bottom_z": 2.3,
+      "height": 0.85,
+      "orientation_deg": 180,
+      "wall_mount": "south",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-10"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-LOGO-SILHOUETTE",
+      "authentic_artwork_status": "BLOCKED_NO_REDISTRIBUTION_PERMISSION",
+      "placeholder_shape_count": null,
+      "count_source": "SELF_AUTHORED_PLACEHOLDER_NOT_OBSERVED_QUANTITY"
+    },
+    {
+      "id": "P507-HEX-GROUP-L",
+      "name": "Neutral south-wall architectural placeholder",
+      "type": "wall_placeholder",
+      "variant": "neutral_hex_group",
+      "cluster": null,
+      "rect": [
+        0.9,
+        0.06,
+        2.2,
+        0.12
+      ],
+      "bottom_z": 1.7,
+      "height": 0.9,
+      "orientation_deg": 180,
+      "wall_mount": "south",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-10"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-HEX-GROUP-L",
+      "authentic_artwork_status": "BLOCKED_NO_REDISTRIBUTION_PERMISSION",
+      "placeholder_shape_count": 13,
+      "count_source": "SELF_AUTHORED_PLACEHOLDER_NOT_OBSERVED_QUANTITY"
+    },
+    {
+      "id": "P507-HEX-GROUP-R",
+      "name": "Neutral south-wall architectural placeholder",
+      "type": "wall_placeholder",
+      "variant": "neutral_hex_group",
+      "cluster": null,
+      "rect": [
+        4.7,
+        0.06,
+        6.0,
+        0.12
+      ],
+      "bottom_z": 1.7,
+      "height": 0.9,
+      "orientation_deg": 180,
+      "wall_mount": "south",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "PROPOSED_LAYOUT",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-10"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mesh_binding": "P507-HEX-GROUP-R",
+      "authentic_artwork_status": "BLOCKED_NO_REDISTRIBUTION_PERMISSION",
+      "placeholder_shape_count": 13,
+      "count_source": "SELF_AUTHORED_PLACEHOLDER_NOT_OBSERVED_QUANTITY"
+    }
+  ],
+  "chairs": {
+    "count": 36,
+    "model": "provisional dark metal-frame chair",
+    "warning": "All dimensions/placements provisional; no safe-clearance claim",
+    "instances": [
+      {
+        "id": "P507-CHAIR-A-01",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          2.175,
+          6.12
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-02",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          2.925,
+          6.12
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-03",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          3.675,
+          6.12
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-04",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          4.425,
+          6.12
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-05",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          5.175,
+          6.12
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-06",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          5.925,
+          6.12
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-07",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          2.1,
+          7.27
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A",
+        "center": [
+          2.175,
+          7.88
+        ]
+      },
+      {
+        "id": "P507-CHAIR-A-08",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          2.76,
+          7.27
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A",
+        "center": [
+          2.925,
+          7.88
+        ]
+      },
+      {
+        "id": "P507-CHAIR-A-09",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          3.675,
+          7.88
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-10",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          4.425,
+          7.88
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-11",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          5.175,
+          7.88
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-A-12",
+        "type": "chair",
+        "cluster": "A",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          5.925,
+          7.88
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "A",
+        "placement_allocation": "A"
+      },
+      {
+        "id": "P507-CHAIR-B-01",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          1.93,
+          2.98
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          2.675,
+          3.32
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-02",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          2.68,
+          2.98
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          3.425,
+          3.32
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-03",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          3.43,
+          2.98
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          4.175,
+          3.32
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-04",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          4.18,
+          2.98
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          4.925,
+          3.32
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-05",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          1.93,
+          4.82
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          2.675,
+          5.08
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-06",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          2.68,
+          4.82
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          3.425,
+          5.08
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-07",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          3.43,
+          4.82
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          4.175,
+          5.08
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-08",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          4.18,
+          4.82
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          4.925,
+          5.08
+        ]
+      },
+      {
+        "id": "P507-CHAIR-B-09",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          6.2,
+          3.85
+        ],
+        "orientation_deg": 90,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "right_end",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "desk_id": "P507-DESK-B05"
+      },
+      {
+        "id": "P507-CHAIR-B-10",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          6.2,
+          4.55
+        ],
+        "orientation_deg": 90,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "right_end",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "desk_id": "P507-DESK-B05"
+      },
+      {
+        "id": "P507-CHAIR-B-11",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 270,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "left_end",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          0.66,
+          3.6
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          1.4,
+          3.85
+        ],
+        "desk_id": "P507-DESK-B06"
+      },
+      {
+        "id": "P507-CHAIR-B-12",
+        "type": "chair",
+        "cluster": "B",
+        "status": "PLACED_PROVISIONAL",
+        "orientation_deg": 270,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "left_end",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "previous_proposed_center": [
+          0.66,
+          4.2
+        ],
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "B",
+        "placement_allocation": "B",
+        "center": [
+          1.4,
+          4.55
+        ],
+        "desk_id": "P507-DESK-B06"
+      },
+      {
+        "id": "P507-CHAIR-C-01",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          2.675,
+          0.57
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-02",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          3.425,
+          0.57
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-03",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          4.175,
+          0.57
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-04",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          4.925,
+          0.57
+        ],
+        "orientation_deg": 0,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_lower",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-05",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          2.675,
+          2.33
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-06",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          3.425,
+          2.33
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-07",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          4.175,
+          2.33
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-08",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          4.925,
+          2.33
+        ],
+        "orientation_deg": 180,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "row_upper",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C"
+      },
+      {
+        "id": "P507-CHAIR-C-09",
+        "type": "chair",
+        "cluster": "C",
+        "status": "UNPLACED",
+        "orientation_deg": null,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "UNASSIGNED",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Outside owner-approved 34-chair layout; historical ID retained, UNASSIGNED, not rendered.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": null
+      },
+      {
+        "id": "P507-CHAIR-C-10",
+        "type": "chair",
+        "cluster": "C",
+        "status": "UNPLACED",
+        "orientation_deg": null,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "UNASSIGNED",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Outside owner-approved 34-chair layout; historical ID retained, UNASSIGNED, not rendered.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": null
+      },
+      {
+        "id": "P507-CHAIR-C-11",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          6.2,
+          1.1
+        ],
+        "orientation_deg": 90,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "right_end",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C",
+        "desk_id": "P507-DESK-C05"
+      },
+      {
+        "id": "P507-CHAIR-C-12",
+        "type": "chair",
+        "cluster": "C",
+        "status": "PLACED_PROVISIONAL",
+        "center": [
+          6.2,
+          1.8
+        ],
+        "orientation_deg": 90,
+        "footprint_size": [
+          0.46,
+          0.5
+        ],
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+        "size_source": "PROPOSED_LAYOUT",
+        "placement_role": "right_end",
+        "footprint_offset": [
+          0,
+          -0.02
+        ],
+        "height": 1.02,
+        "source_refs": [
+          "SKETCH-FLOOR",
+          "PHOTO-06",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "placement_reason": "Owner-approved 34-chair allocation; proposed full-size static pose, occupied-use proxy evaluated separately.",
+        "footprint_basis": "AUTHORED_MESH_ENVELOPE: local width .46, localY -.27..+.23; removed empty proxy padding only, no global mesh scale change",
+        "historical_cluster": "C",
+        "placement_allocation": "C",
+        "desk_id": "P507-DESK-C05"
+      }
+    ],
+    "approved_layout_count": 34,
+    "allocation_source": "OWNER_APPROVED_34_CHAIR_LAYOUT",
+    "historical_inventory_count": 36
+  },
+  "openings": {
+    "door": {
+      "wall": "west",
+      "from_y": 6.665,
+      "to_y": 8.165,
+      "height": 2.5,
+      "source": "PROPOSED_LAYOUT",
+      "entry_rect": [
+        0.05,
+        6.665,
+        1.02,
+        8.165
+      ],
+      "swing": "OUTWARD",
+      "leaf_count": 2,
+      "leaf_count_source": "PHOTO_OBSERVED",
+      "opening_angle_deg": 60,
+      "opening_angle_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-13",
+        "SKETCH-FLOOR"
+      ],
+      "leaf_thickness": 0.035,
+      "leaves": [
+        {
+          "id": "P507-DOOR-LEAF-01",
+          "type": "door_leaf",
+          "center": [
+            -0.3747595264191645,
+            6.8525,
+            1.25
+          ],
+          "size": [
+            0.035,
+            0.75,
+            2.5
+          ],
+          "orientation_deg": 60,
+          "status": "PLACED_PROVISIONAL",
+          "source_kind": "PROPOSED_LAYOUT",
+          "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+          "size_source": "PROPOSED_LAYOUT",
+          "source_refs": [
+            "PHOTO-13"
+          ],
+          "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+          "mount_support": "P507-ARCH-WEST-DOOR-FRAME",
+          "footprint_size": [
+            0.07,
+            0.75
+          ],
+          "visual_size": [
+            0.035,
+            0.69,
+            2.42
+          ],
+          "visual_bottom_z": 0.03,
+          "proxy_vertical_conservative": true,
+          "hinge_survey": [
+            -0.05,
+            6.665,
+            0
+          ],
+          "swing": "OUTWARD"
+        },
+        {
+          "id": "P507-DOOR-LEAF-02",
+          "type": "door_leaf",
+          "center": [
+            -0.3747595264191645,
+            7.977499999999999,
+            1.25
+          ],
+          "size": [
+            0.035,
+            0.75,
+            2.5
+          ],
+          "orientation_deg": -60,
+          "status": "PLACED_PROVISIONAL",
+          "source_kind": "PROPOSED_LAYOUT",
+          "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+          "size_source": "PROPOSED_LAYOUT",
+          "source_refs": [
+            "PHOTO-13"
+          ],
+          "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+          "mount_support": "P507-ARCH-WEST-DOOR-FRAME",
+          "footprint_size": [
+            0.07,
+            0.75
+          ],
+          "visual_size": [
+            0.035,
+            0.69,
+            2.42
+          ],
+          "visual_bottom_z": 0.03,
+          "proxy_vertical_conservative": true,
+          "hinge_survey": [
+            -0.05,
+            8.165,
+            0
+          ],
+          "swing": "OUTWARD"
+        }
+      ],
+      "swing_polygon": [
+        [
+          -0.85,
+          6.665
+        ],
+        [
+          0,
+          6.665
+        ],
+        [
+          0,
+          8.165
+        ],
+        [
+          -0.85,
+          8.165
+        ]
+      ],
+      "direction_source": "OWNER_CONFIRMED",
+      "exterior_context": "UNKNOWN_NO_CORRIDOR_MODELLED",
+      "sweep_polygons": [
+        [
+          [
+            -0.05,
+            6.665
+          ],
+          [
+            -0.05,
+            7.415
+          ],
+          [
+            -0.11536680706074363,
+            7.412146023568809
+          ],
+          [
+            -0.18023613325019777,
+            7.403605814759156
+          ],
+          [
+            -0.24411428382689054,
+            7.389444369716801
+          ],
+          [
+            -0.30651510749425154,
+            7.369769465589432
+          ],
+          [
+            -0.36696369630552456,
+            7.344730840277488
+          ],
+          [
+            -0.42499999999999993,
+            7.314519052838329
+          ],
+          [
+            -0.4801823272632845,
+            7.279364033216744
+          ],
+          [
+            -0.5320907072649045,
+            7.239533332339233
+          ],
+          [
+            -0.5803300858899108,
+            7.1953300858899105
+          ],
+          [
+            -0.6245333323392336,
+            7.147090707264905
+          ],
+          [
+            -0.6643640332167439,
+            7.095182327263284
+          ],
+          [
+            -0.699519052838329,
+            7.04
+          ]
+        ],
+        [
+          [
+            -0.05,
+            8.165
+          ],
+          [
+            -0.05,
+            7.414999999999999
+          ],
+          [
+            -0.11536680706074363,
+            7.41785397643119
+          ],
+          [
+            -0.18023613325019777,
+            7.426394185240843
+          ],
+          [
+            -0.24411428382689054,
+            7.440555630283198
+          ],
+          [
+            -0.30651510749425154,
+            7.4602305344105675
+          ],
+          [
+            -0.36696369630552456,
+            7.485269159722511
+          ],
+          [
+            -0.42499999999999993,
+            7.51548094716167
+          ],
+          [
+            -0.4801823272632845,
+            7.550635966783255
+          ],
+          [
+            -0.5320907072649045,
+            7.590466667660766
+          ],
+          [
+            -0.5803300858899108,
+            7.634669914110089
+          ],
+          [
+            -0.6245333323392336,
+            7.682909292735094
+          ],
+          [
+            -0.6643640332167439,
+            7.734817672736715
+          ],
+          [
+            -0.699519052838329,
+            7.789999999999999
+          ]
+        ]
+      ]
+    },
+    "windows": [
+      {
+        "wall": "east",
+        "from_y": 0.4805,
+        "to_y": 1.9805,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT",
+        "id": "P507-WINDOW-01",
+        "blind": {
+          "id": "P507-BLIND-01",
+          "drop_m": 0.98,
+          "source_kind": "PROPOSED_LAYOUT",
+          "source_refs": [
+            "PHOTO-03",
+            "PHOTO-12"
+          ],
+          "rect": [
+            6.74,
+            0.4805,
+            6.8500000000000005,
+            1.9805
+          ],
+          "bottom_z": 1.96,
+          "height": 1.1,
+          "orientation_deg": 0,
+          "status": "PLACED_PROVISIONAL",
+          "position_source": "PROPOSED_LAYOUT",
+          "size_source": "PROPOSED_LAYOUT",
+          "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+          "wall_mount": "east"
+        },
+        "proxy_rect": [
+          6.8500000000000005,
+          0.44549999999999984,
+          6.95,
+          2.0155
+        ]
+      },
+      {
+        "wall": "east",
+        "from_y": 2.723,
+        "to_y": 4.223,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT",
+        "id": "P507-WINDOW-02",
+        "blind": {
+          "id": "P507-BLIND-02",
+          "drop_m": 0.62,
+          "source_kind": "PROPOSED_LAYOUT",
+          "source_refs": [
+            "PHOTO-03",
+            "PHOTO-12"
+          ],
+          "rect": [
+            6.74,
+            2.723,
+            6.8500000000000005,
+            4.223
+          ],
+          "bottom_z": 2.32,
+          "height": 0.74,
+          "orientation_deg": 0,
+          "status": "PLACED_PROVISIONAL",
+          "position_source": "PROPOSED_LAYOUT",
+          "size_source": "PROPOSED_LAYOUT",
+          "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+          "wall_mount": "east"
+        },
+        "proxy_rect": [
+          6.8500000000000005,
+          2.6879999999999997,
+          6.95,
+          4.258
+        ]
+      },
+      {
+        "wall": "east",
+        "from_y": 4.9655,
+        "to_y": 6.4655,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT",
+        "id": "P507-WINDOW-03",
+        "blind": {
+          "id": "P507-BLIND-03",
+          "drop_m": 1.1,
+          "source_kind": "PROPOSED_LAYOUT",
+          "source_refs": [
+            "PHOTO-03",
+            "PHOTO-12"
+          ],
+          "rect": [
+            6.74,
+            4.9655,
+            6.8500000000000005,
+            6.4655
+          ],
+          "bottom_z": 1.84,
+          "height": 1.22,
+          "orientation_deg": 0,
+          "status": "PLACED_PROVISIONAL",
+          "position_source": "PROPOSED_LAYOUT",
+          "size_source": "PROPOSED_LAYOUT",
+          "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+          "wall_mount": "east"
+        },
+        "proxy_rect": [
+          6.8500000000000005,
+          4.930499999999999,
+          6.95,
+          6.5005
+        ]
+      },
+      {
+        "wall": "east",
+        "from_y": 7.208,
+        "to_y": 8.708,
+        "sill_z": 0.85,
+        "top_z": 2.85,
+        "source": "PROPOSED_LAYOUT",
+        "id": "P507-WINDOW-04",
+        "blind": {
+          "id": "P507-BLIND-04",
+          "drop_m": 0.8,
+          "source_kind": "PROPOSED_LAYOUT",
+          "source_refs": [
+            "PHOTO-03",
+            "PHOTO-12"
+          ],
+          "rect": [
+            6.74,
+            7.208,
+            6.8500000000000005,
+            8.708
+          ],
+          "bottom_z": 2.14,
+          "height": 0.92,
+          "orientation_deg": 0,
+          "status": "PLACED_PROVISIONAL",
+          "position_source": "PROPOSED_LAYOUT",
+          "size_source": "PROPOSED_LAYOUT",
+          "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+          "wall_mount": "east"
+        },
+        "proxy_rect": [
+          6.8500000000000005,
+          7.172999999999999,
+          6.95,
+          8.742999999999999
+        ]
+      }
+    ]
+  },
+  "hero": {
+    "tv": {
+      "wall": "north_west_corner",
+      "center_x": 0.95,
+      "center_z": 2.28,
+      "width": 1.77,
+      "height": 1,
+      "source": "PROPOSED_LAYOUT",
+      "id": "P507-TV-LARGE",
+      "center": [
+        0.95,
+        8.805,
+        2.28
+      ],
+      "orientation_deg": 25,
+      "footprint_size": [
+        1.8,
+        0.16
+      ],
+      "footprint_offset": [
+        0,
+        0
+      ],
+      "bottom_z": 1.78,
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "SKETCH-FLOOR",
+        "PHOTO-13",
+        "PHOTO-01"
+      ],
+      "angle_confidence": "LOW: visual estimate, not calibrated",
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+      "mount_support": "north_west_wall_bracket"
+    },
+    "cabinet": {
+      "center": [
+        2.25,
+        9.035,
+        0.525
+      ],
+      "size": [
+        1.5,
+        0.4,
+        1.05
+      ],
+      "source": "PROPOSED_LAYOUT",
+      "id": "P507-CABINET-LOW",
+      "occupancy_rect": [
+        1.48,
+        8.775,
+        3.02,
+        9.245
+      ],
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "bottom_z": 0,
+      "occupancy_height": 1.05,
+      "orientation_deg": 0,
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-01",
+        "PHOTO-13",
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    },
+    "water_dispenser": {
+      "center": [
+        0.4,
+        8.515,
+        0.55
+      ],
+      "radius": 0.22,
+      "height": 1.52,
+      "source": "PROPOSED_LAYOUT",
+      "id": "P507-WATER-DISPENSER",
+      "status": "PLACED_PROVISIONAL",
+      "source_kind": "PROPOSED_LAYOUT",
+      "footprint_size": [
+        0.44,
+        0.5
+      ],
+      "footprint_offset": [
+        0,
+        -0.02
+      ],
+      "machine_height": 0.95,
+      "bottom_z": 0,
+      "orientation_deg": 90,
+      "position_source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+      "size_source": "PROPOSED_LAYOUT",
+      "source_refs": [
+        "PHOTO-13",
+        "PHOTO-01",
+        "SKETCH-FLOOR"
+      ],
+      "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY"
+    }
+  },
+  "ceiling": {
+    "lights": {
+      "count": 8,
+      "pattern": "2x4",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "fans": {
+      "count": 4,
+      "pattern": "2x2",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "ac": {
+      "count": 2,
+      "type": "cassette",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "projector": {
+      "count": 1,
+      "location": "near_center",
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "camera": {
+      "count": 1,
+      "source": "USER_REPORTED_WITH_PROPOSED_COORDS"
+    },
+    "instances": [
+      {
+        "id": "P507-LIGHT-01",
+        "type": "light_panel",
+        "center": [
+          1.4375,
+          0.92,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-02",
+        "type": "light_panel",
+        "center": [
+          5.4625,
+          0.92,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-03",
+        "type": "light_panel",
+        "center": [
+          1.4375,
+          3.22,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-04",
+        "type": "light_panel",
+        "center": [
+          5.4625,
+          3.22,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-05",
+        "type": "light_panel",
+        "center": [
+          1.4375,
+          6.095,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-06",
+        "type": "light_panel",
+        "center": [
+          5.4625,
+          6.095,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-07",
+        "type": "light_panel",
+        "center": [
+          1.4375,
+          8.395,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-LIGHT-08",
+        "type": "light_panel",
+        "center": [
+          5.4625,
+          8.395,
+          3.46
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.08
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-FAN-01",
+        "type": "ceiling_fan",
+        "center": [
+          1.4375,
+          2.07,
+          3.15
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.7
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING",
+        "swept_radius": 0.5,
+        "blade_z": 3.15,
+        "bottom_z": 3.03,
+        "top_z": 3.5
+      },
+      {
+        "id": "P507-FAN-02",
+        "type": "ceiling_fan",
+        "center": [
+          5.4625,
+          2.07,
+          3.15
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.7
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING",
+        "swept_radius": 0.5,
+        "blade_z": 3.15,
+        "bottom_z": 3.03,
+        "top_z": 3.5
+      },
+      {
+        "id": "P507-FAN-03",
+        "type": "ceiling_fan",
+        "center": [
+          1.4375,
+          7.245,
+          3.15
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.7
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING",
+        "swept_radius": 0.5,
+        "blade_z": 3.15,
+        "bottom_z": 3.03,
+        "top_z": 3.5
+      },
+      {
+        "id": "P507-FAN-04",
+        "type": "ceiling_fan",
+        "center": [
+          5.4625,
+          7.245,
+          3.15
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.7
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING",
+        "swept_radius": 0.5,
+        "blade_z": 3.15,
+        "bottom_z": 3.03,
+        "top_z": 3.5
+      },
+      {
+        "id": "P507-AC-01",
+        "type": "cassette_ac",
+        "center": [
+          3.45,
+          2.07,
+          3.43
+        ],
+        "size": [
+          0.74,
+          0.74,
+          0.14
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-AC-02",
+        "type": "cassette_ac",
+        "center": [
+          3.45,
+          7.245,
+          3.43
+        ],
+        "size": [
+          0.74,
+          0.74,
+          0.14
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING"
+      },
+      {
+        "id": "P507-PROJECTOR-01",
+        "type": "projector",
+        "center": [
+          3.45,
+          4.6575,
+          3.18
+        ],
+        "size": [
+          0.42,
+          0.34,
+          0.64
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "CEILING-DIGITAL",
+          "SKETCH-CEILING",
+          "PHOTO-12"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING",
+        "bottom_z": 2.98,
+        "top_z": 3.5
+      },
+      {
+        "id": "P507-CAMERA-01",
+        "type": "camera",
+        "center": [
+          6.555,
+          8.855,
+          3.18
+        ],
+        "size": [
+          0.2,
+          0.2,
+          0.24
+        ],
+        "orientation_deg": 315,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "OWNER_REPORTED_CORNER"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "mount_support": "P507-ARCH-CEILING",
+        "placement_confidence": "LOW: owner-described window corner; PHOTO-09 camera appears near TV-wall side, not enough anchors to resolve identity/position",
+        "bottom_z": 3.06,
+        "top_z": 3.5,
+        "aim": "SOUTH_WEST_INTERIOR_PROPOSED",
+        "appearance_source_refs": [
+          "PHOTO-09"
+        ],
+        "placement_source_refs": [
+          "OWNER_REPORTED_CORNER"
+        ]
+      }
+    ],
+    "required_counts": {
+      "light_panel": 8,
+      "ceiling_fan": 4,
+      "cassette_ac": 2,
+      "projector": 1,
+      "camera": 1
+    }
+  },
+  "source_notes": [
+    "R3 inspected16 authorized local/attached references; R4 re-opened PHOTO-04/05 and actual R3 renders. Source photographs stay local-only.",
+    "Survey baseline6 x8.1 x3.5m remains USER_REPORTED; virtual room6.9 x9.315 x3.5m is OWNER_APPROVED_VIRTUAL_ADAPTATION, not measured1:1.",
+    "Historical36 chair IDs preserved; owner-approved34 placed, C09/C10 UNPLACED/UNASSIGNED outside approved allocation. No legal egress certification."
+  ],
+  "schema_migration": {
+    "from": [
+      1,
+      2
+    ],
+    "to": 3,
+    "policy": "Historical imports retain survey room and do not invent virtual approval; R4 explicitly separates survey baseline from owner-approved virtual dimensions."
+  },
+  "unknown_inventory": [],
+  "layout_revision": 4,
+  "reference_manifest": "reference-manifest.json",
+  "photo_wall": {
+    "wall": "north",
+    "layout": "A + I + adjacent group observed PHOTO-09",
+    "source": "USER_PHOTO_OBSERVED_WITH_PROPOSED_COORDINATES",
+    "count_confidence": "MANUALLY_COUNTED_27; no 1:1 scale claim",
+    "frames": [
+      {
+        "id": "P507-FRAME-A-01",
+        "group": "A",
+        "center": [
+          3.1,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-02",
+        "group": "A",
+        "center": [
+          2.9200000000000004,
+          9.245,
+          2.77
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-03",
+        "group": "A",
+        "center": [
+          3.2800000000000002,
+          9.245,
+          2.77
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-04",
+        "group": "A",
+        "center": [
+          2.7600000000000002,
+          9.245,
+          2.44
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-05",
+        "group": "A",
+        "center": [
+          3.4400000000000004,
+          9.245,
+          2.44
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-06",
+        "group": "A",
+        "center": [
+          2.6100000000000003,
+          9.245,
+          2.11
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-07",
+        "group": "A",
+        "center": [
+          3.1,
+          9.245,
+          2.11
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-08",
+        "group": "A",
+        "center": [
+          3.5900000000000003,
+          9.245,
+          2.11
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-09",
+        "group": "A",
+        "center": [
+          2.46,
+          9.245,
+          1.78
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-A-10",
+        "group": "A",
+        "center": [
+          3.74,
+          9.245,
+          1.78
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-01",
+        "group": "I",
+        "center": [
+          4.09,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-02",
+        "group": "I",
+        "center": [
+          4.51,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-03",
+        "group": "I",
+        "center": [
+          4.930000000000001,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-04",
+        "group": "I",
+        "center": [
+          4.51,
+          9.245,
+          2.77
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-05",
+        "group": "I",
+        "center": [
+          4.51,
+          9.245,
+          2.44
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-06",
+        "group": "I",
+        "center": [
+          4.51,
+          9.245,
+          2.11
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-07",
+        "group": "I",
+        "center": [
+          4.09,
+          9.245,
+          1.78
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-08",
+        "group": "I",
+        "center": [
+          4.51,
+          9.245,
+          1.78
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-I-09",
+        "group": "I",
+        "center": [
+          4.930000000000001,
+          9.245,
+          1.78
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-01",
+        "group": "ADJACENT",
+        "center": [
+          5.37,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-02",
+        "group": "ADJACENT",
+        "center": [
+          5.79,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-03",
+        "group": "ADJACENT",
+        "center": [
+          6.21,
+          9.245,
+          3.1
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-04",
+        "group": "ADJACENT",
+        "center": [
+          5.37,
+          9.245,
+          2.77
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-05",
+        "group": "ADJACENT",
+        "center": [
+          5.79,
+          9.245,
+          2.77
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-06",
+        "group": "ADJACENT",
+        "center": [
+          6.21,
+          9.245,
+          2.77
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-07",
+        "group": "ADJACENT",
+        "center": [
+          5.37,
+          9.245,
+          2.44
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      },
+      {
+        "id": "P507-FRAME-ADJACENT-08",
+        "group": "ADJACENT",
+        "center": [
+          5.37,
+          9.245,
+          2.11
+        ],
+        "size": [
+          0.3,
+          0.04,
+          0.23
+        ],
+        "orientation_deg": 0,
+        "status": "PLACED_PROVISIONAL",
+        "source_kind": "PROPOSED_LAYOUT",
+        "position_source": "PROPOSED_LAYOUT",
+        "size_source": "PROPOSED_LAYOUT",
+        "source_refs": [
+          "PHOTO-09",
+          "PHOTO-02"
+        ],
+        "rights": "NEUTRAL_GENERATED_GEOMETRY_ONLY",
+        "content": "SELF_AUTHORED_ABSTRACT_ONLY",
+        "wall_mount": "north"
+      }
+    ],
+    "required_groups": {
+      "A": 10,
+      "I": 9,
+      "ADJACENT": 8
+    }
+  },
+  "layout_baseline": {
+    "head": "5cce85f887c7c877685113a42908eb0008287bb4",
+    "revision": 3,
+    "A": [
+      1.35,
+      5.75,
+      5.85,
+      6.95
+    ],
+    "B": [
+      0.98,
+      3.15,
+      5.18,
+      4.65
+    ],
+    "C": [
+      1.58,
+      0.5,
+      5.18,
+      2.0
+    ],
+    "chair_gaps_m": {
+      "A-B": 0.51,
+      "B-C": 0.71
+    },
+    "room_dimensions": [
+      6,
+      8.1,
+      3.5
+    ]
+  },
+  "survey_baseline": {
+    "code": "P507",
+    "unit": "m",
+    "width_x": 6,
+    "length_y": 8.1,
+    "height_z": 3.5,
+    "source": "USER_REPORTED",
+    "rights": "PENDING"
+  },
+  "virtual_experience": {
+    "source": "OWNER_APPROVED_VIRTUAL_ADAPTATION",
+    "horizontal_expansion_factor": 1.15,
+    "width_x": 6.9,
+    "length_y": 9.315,
+    "height_z": 3.5,
+    "not_survey_scale_1_to_1": true,
+    "design_freeze": "READY_FOR_WEBXR_EXPERIMENT",
+    "scope": "ASSET_HANDOFF_ONLY_NO_WEBXR_RUNTIME"
+  },
+  "appearance": {
+    "wall_base_color_srgb": "#F5E6C8",
+    "wall_roughness": 0.92,
+    "source_kind": "PROPOSED_LAYOUT",
+    "basis": "OWNER vanilla cream direction + PHOTO-04/05 relative tone; not calibrated color measurement"
+  },
+  "occupied_use": {
+    "chair_pullback_m": 0.15,
+    "basis": "Proposed use pose translates full authored seat/back envelope 0.15m opposite sitting direction; not measured ergonomics or person/leg sweep",
+    "main_route_target_m": 0.8,
+    "target_source": "PROPOSED_DESIGN_TARGET_NOT_LEGAL_OR_FIRE_STANDARD"
+  },
+  "handoff": {
+    "starting_feet_survey": [
+      1.25,
+      7.415,
+      0
+    ],
+    "eye_height_m": 1.65,
+    "view_direction_survey": [
+      1,
+      0,
+      0
+    ],
+    "source_kind": "PROPOSED_LAYOUT",
+    "nominal_avatar_radius_m": 0.2,
+    "basis": "Proposed starting pose inside entrance; 2D nominal radius check only, no XR capsule/locomotion acceptance"
+  }
+}

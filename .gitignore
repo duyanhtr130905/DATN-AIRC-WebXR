@@ -23,3 +23,8 @@ artifacts/private/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+
+# P507 G1/G2 local-only survey, Blender binaries and private previews
+experiments/p507-g1-g2/out/
+experiments/p507-g1-g2/private/
+apps/web/public/p507-local-preview/

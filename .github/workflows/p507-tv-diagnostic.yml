@@ -1,0 +1,64 @@
+name: P507 TV bounds read-only diagnostic
+on:
+  pull_request:
+    paths:
+      - 'experiments/p507-webxr/diagnose_tv*'
+      - 'experiments/p507-webxr/tv_diagnostic_math.py'
+      - 'experiments/p507-webxr/test_tv_diagnostic.py'
+      - 'docs/3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md'
+      - '.github/workflows/p507-tv-diagnostic.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-version-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CHROME_BIN: /usr/bin/google-chrome
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download original pinned artifact and verify six hashes
+        run: |
+          python experiments/p507-webxr/prepare_asset.py --download
+          python experiments/p507-webxr/validate_asset.py --prepare
+      - name: Install same Ubuntu Blender package family as original run
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+          blender --version | head -3
+      - name: Read frozen blend and perform isolated DIAGNOSTIC_EXPORT_ONLY cases
+        run: |
+          mkdir -p .local/p507-tv-diagnostic
+          blender --background --disable-autoexec --python-exit-code 1 --python experiments/p507-webxr/diagnose_tv_blender.py -- --artifact-dir .local/p507-e0-e1/artifact --output-dir .local/p507-tv-diagnostic/blender-original-version
+      - run: npm ci --ignore-scripts --no-fund --prefix apps/web
+      - name: Manual Three vertices vs Box3 (no E1 renderer)
+        run: node experiments/p507-webxr/diagnose_tv_bounds.mjs
+      - name: Independent decoder and controlled hypothesis comparisons
+        run: |
+          python -m unittest discover -s experiments/p507-webxr -p 'test_*.py' -v
+          python experiments/p507-webxr/diagnose_tv_bounds.py --artifact-dir .local/p507-e0-e1/artifact --blender-dir .local/p507-tv-diagnostic/blender-original-version --three-report .local/p507-tv-diagnostic/three-tv-report.json --output .local/p507-tv-diagnostic/tv-bounds-diagnostic.json --require-original-version
+      - name: Confirm diagnostic never changed frozen lock or runtime gate
+        run: |
+          git diff --exit-code -- experiments/p507-g1-g2 experiments/p507-webxr/asset-lock.json apps/web/src/p507-e1/scene-contract.ts
+          git diff --check
+      - name: Upload numeric diagnostic evidence (not E0 acceptance)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p507-tv-bounds-read-only-diagnostic
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            .local/p507-tv-diagnostic/**/*.json
+            .local/p507-e0-e1/download-provenance.json
+            .local/p507-e0-e1/e0-bundle-report.json
