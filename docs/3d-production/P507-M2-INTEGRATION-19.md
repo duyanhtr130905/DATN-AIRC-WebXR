@@ -16,7 +16,7 @@ Diagnostic exit now uses final conclusion after Three comparison. CONFIRMED succ
 
 ## Regression on integration branch
 
-Initial local: 76 G1/G2 Python and 18 E0/reference/diagnostic Python PASS; six bundle hashes PASS. Final clean-HEAD local/CI results and links are appended after verification; pending checks are not PASS. Blender/Khronos/Chrome full pipeline runs independently on integration HEAD in CI. Generated regression exports never replace frozen R4.
+Clean integration `69176aa`: 76 G1/G2 Python and 18 E0/reference/diagnostic Python PASS; six bundle hashes PASS; 45 frontend units/build/typecheck PASS; repository verifier 227 files/230 links PASS; diff/privacy/source-of-truth checks PASS. Final clean-HEAD local/CI results and links are appended after verification; pending checks are not PASS. Blender/Khronos/Chrome full pipeline runs independently on integration HEAD in CI. Generated regression exports never replace frozen R4.
 
 ## Demo and long-term reproducibility
 
@@ -27,11 +27,11 @@ Initial local: 76 G1/G2 Python and 18 E0/reference/diagnostic Python PASS; six b
 | Roadmap M2 DoD | Integration assessment |
 | --- | --- |
 | 1 Frozen source/GLB/provenance | Hash PASS; durable new-machine access BLOCKED after artifact expiry without approved storage |
-| 2 E0 actual geometry and contract | Source #15 accepted TECHNICAL_PASS; clean `ff4ac96` local actual Chrome PASS; final HEAD CI in #21 |
-| 3 E1 Chrome controls/collision | Source #15 15/15 accepted; clean `ff4ac96` local actual Chrome PASS; final HEAD CI in #21; full circulation PARTIAL |
-| 4 Logical ID/panel provenance | Source implementation retained; clean `ff4ac96` actual Chrome PASS; final HEAD CI in #21; provisional USER_REPORTED metadata |
-| 5 Error/retry/recovery | Source scenarios retained; clean `ff4ac96` actual Chrome PASS; final HEAD CI in #21 |
-| 6 Browser evidence/performance | Functional smoke PASS on clean `ff4ac96`; no physical-GPU KPI30/VR72/mobile/XR certification |
+| 2 E0 actual geometry and contract | Source #15 accepted TECHNICAL_PASS; clean `69176aa` local actual Chrome PASS; final HEAD CI in #21 |
+| 3 E1 Chrome controls/collision | Source #15 15/15 accepted; clean `69176aa` local actual Chrome PASS; final HEAD CI in #21; full circulation PARTIAL |
+| 4 Logical ID/panel provenance | Source implementation retained; clean `69176aa` actual Chrome PASS; final HEAD CI in #21; provisional USER_REPORTED metadata |
+| 5 Error/retry/recovery | Source scenarios retained; clean `69176aa` actual Chrome PASS; final HEAD CI in #21 |
+| 6 Browser evidence/performance | Functional smoke PASS on clean `69176aa`; no physical-GPU KPI30/VR72/mobile/XR certification |
 | 7 Runbook/limitations/review | Current runbook supplied; independent ChatGPT acceptance pending; M2 IN_PROGRESS |
 
 G1_CIRCULATION=PARTIAL, G2_VISUAL=PENDING_OWNER_APPROVAL. Owner deferred chair-row accessibility and inaccurate furniture sizes/positions under #20; no resolution or PASS claimed. Virtual 6.90×9.315×3.50m is owner-approved +15% adaptation of USER_REPORTED 6×8.1×3.5m, not 1:1. AIRC rights/fidelity, mobile/physical devices, G3, M3–M7 remain outside this task.
@@ -40,10 +40,18 @@ Next: finish final exact-HEAD checks; independent ChatGPT review of one Draft PR
 
 ## Clean integration checkpoint and final verification protocol
 
-Clean `ff4ac9677a029cd02b50285793704c86db6890fc`: E0_PASS; all actual geometry/reference negatives PASS; E1 15/15 scenario groups PASS in Chrome 158.0.8127.36 on Windows, P507_GPU=default (inspect renderer in raw JSON; no performance certification). Three short frame runs preserved. 45 frontend units/build/typecheck, 10 capability-checker units, Python reference decoder (402482 positions, delta0), navigation exact blockers PASS. No API/DB/XR/media requests in E1 harness. Historical raw ff4ac96 files retained locally before final rerun.
+Clean `69176aa0a005cc7db5433c2b82e24ed68a7b356f`: E0_PASS; all actual geometry/reference negatives PASS; E1 15/15 scenario groups PASS in Chrome 158.0.8127.36 on Windows, P507_GPU=default (inspect renderer in raw JSON; no performance certification). Three short frame runs preserved. 45 frontend units/build/typecheck, 10 capability-checker units, Python reference decoder (402482 positions, delta0), navigation exact blockers PASS. No API/DB/XR/media requests in E1 harness. Earlier ff4ac96 checkpoint raw files retained separately; clean 69176aa results are fresh reruns, not relabeled evidence.
 
 Checkpoint workflows (not final-HEAD certification): E0/E1 [44247427593](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247427593), G1/G2 [44247427630](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247427630), diagnostic [44247427636](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247427636). Final doc commit reruns all six workflows; workflow path filters include integration status/report so documentation synchronization cannot silently skip E0/diagnostic gates. Final actual branch HEAD, workflow run IDs/conclusions and artifact links are recorded in Draft PR #21 after completion, avoiding a self-referential commit hash. Checkout HEAD/dirty fields in raw E0/E1/diagnostic reports must agree with final PR HEAD, dirty=false.
 
 Local same-version diagnostic replay could not run from old numeric-only CI artifact: isolated DIAGNOSTIC_EXPORT_ONLY GLBs are absent. This is NOT a PASS; full Blender4.0.2/exporter4.0.44 diagnostic and real CLI matching/manual/Box3 negative regression run fresh in CI. No old evidence is relabeled. Diagnostic helper reports stderr when inputs are missing.
 
 Final checks also compare AGENTS to main and frozen/runtime/reference/evidence paths to c3c8002, verify source ancestor chain and all six lock hashes, run repository verifier/links/limited secret scan, inspect tracked binary/private paths and diff --check. Actual final results are in #21. Privacy scan is limited pattern checking, not a comprehensive security audit. No source photos/private data/generated GLB/.blend/node_modules/.env are newly tracked.
+
+## Same-version diagnostic and current local demo evidence
+
+On clean integration `69176aa0a005cc7db5433c2b82e24ed68a7b356f`, [TV CI 44247798568](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44247798568) SUCCESS. Downloaded numeric artifact inspected: Blender4.0.2/exporter4.0.44, ROOT_CAUSE_CONFIRMED; matching real CLI exit0; injected manual10mm and Box3 10mm mismatches both ROOT_CAUSE_UNRESOLVED/exit1; every case records exact head and dirty=false. Original diagnosis remains intact. Local old-artifact replay limitation above is resolved for acceptance by fresh CI, not by claiming missing local inputs existed.
+
+Actual Chrome URL5173 smoke PASS on clean 69176aa, E0_PASS and no API/WS requests. Local E1 final rerun 15/15 PASS, Chrome158/RTX3050 backend, 1280×720/DPR1, default-GPU short smoke only. Local sanitized logs/JSON/screenshots retained ignored at `.local/p507-integration-19/`; software CI neutral evidence is downloadable through #21. Full final-documentation HEAD reruns the same checks and six workflows; final IDs/results live in PR #21 (not old SHA CI). This is the final documentation synchronization, with branch/main separation unchanged.
+
+Proposed overall verdict remains **PARTIAL / IN_REVIEW**: functionality and diagnostic have fresh technical evidence, but independent ChatGPT acceptance and a durable original-bundle storage decision remain outstanding. Issue #20 is explicitly deferred, not an integration blocker by itself. No M2 DONE/G2_VISUAL acceptance implied.
