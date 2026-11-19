@@ -1,5 +1,19 @@
 # P507 M3 technical integration and acceptance
 
+## Current technical acceptance and M3 field gate — 2026-11-19
+
+**Technical result: ACCEPTED / MERGED**, limited to **manual-first Admin + synthetic/provisional P507 integration**, not full milestone M3. Owner-authorized [PR #25](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25) merged candidate `a7acadc951ab554360606d324cc427da354ec090` into main at `ba5139d34de1454029d9b71958123f2d5aec1375`, after [independent ChatGPT final review](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25#pullrequestreview-5971384295).
+
+| M3 Roadmap gate | Technical evidence reviewed | Field/full-DoD verdict |
+| --- | --- | --- |
+| Mapping | 121/121 frozen R4 placed logical IDs → stable Catalog UUIDs, two unplaced excluded, new items private NOT_MODELED/INFO_ONLY | PARTIAL: physical AIRC inventory not exhaustive or independently confirmed |
+| Source/rights | Manual-first Admin/source provenance recorded; distinguish SYNTHETIC_TEST from OWNER_ENTERED and missing UNKNOWN | BLOCKED: actual owner/source/cadence/rights/evidence for all 3 types and data disclosure |
+| Three-source E2E | Real PostgreSQL/API/private WS + Chrome panel for synthetic room_schedule, equipment_status, exhibit_info | PASS synthetic, BLOCKED for actual AIRC observations and source→UI evidence |
+| Freshness/recovery | Time uncertainty handling, multi-tab invalidate → authoritative fetch; stale/reconnect; M1 WS v2 regressions | PASS technical, PARTIAL without real manual cadence/source clock |
+| Evidence/review | [CI run](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44477280736): 76 selected PG tests PASS; 13 checks SUCCESS (2 status-only), 2 SKIPPED privileged vault jobs; F1/F2/F3 final-head independently reviewed | TECHNICAL ACCEPTED, full field & rights acceptance PENDING |
+
+**Key evidence distinction:** GitHub CI Admin Chrome uses **DOM fallback** (frozen GLB not loaded) and actual DB/WS; owner-local original-hash frozen R4 Chrome/raycast E0/E1 checks were reported by Codex, not directly viewed/replayed by this independent reviewer. Neither measures AIRC physical change→render KPI. Admin is intentionally loopback DEV-only; no public hosting approval. #20 deferred 3D geometry, #22 vault App privileged jobs open. Retain [Issue #2](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/2) and [Issue #3](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/3) open until real survey/records/authorization evidence is provided; M3 remains IN_PROGRESS/BLOCKED and M4–M7 remain PLANNED.
+
 ## Synthetic baseline and AS-OF evidence
 
 The sections below preserve synthetic baseline evidence. See the manual-first workflow and acceptance gates at the end of this document.
@@ -79,6 +93,6 @@ Check the database name, connection scope, current Alembic revision, write activ
 | Source and rights | Private audit provenance and explicit source timestamps | BLOCKED. Field content, disclosure scope and verification evidence pending |
 | E2E three types | PostgreSQL, Admin API, private WS and panel with synthetic fixtures | BLOCKED for actual observations |
 | Freshness and recovery | Existing M1 cases plus private two-tab invalidation and authoritative reconnect | PARTIAL. Field cadence and clock uncertainty pending |
-| Evidence and independent review | Exact candidate, disposable upgrade report, Chrome traces and CI in Draft PR #25 | PENDING independent acceptance |
+| Evidence and independent review | Exact candidate `a7acadc9`, review [#5971384295](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25#pullrequestreview-5971384295), [CI](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44477280736), [PR #25 MERGED](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25) | TECHNICAL ACCEPTED; AIRC FIELD EVIDENCE PENDING |
 
 `M3_TECHNICAL_MERGE_READY` depends on successful F1/F2/F3 regression, exact-candidate evidence and private/public isolation. `M3_FULL_DOD_ACCEPTANCE_READY` also requires actual source-to-UI evidence, inventory confirmation and independently reviewed rights. Provide a representative modeled device and exhibit with their Catalog identities, any missing inventory items to add, one actual observation per state type with timestamp/timezone and evidence, intended manual update cadence, and the allowed audience for each record or attachment. Issues #2 and #3 remain open. Issues #20 and #22 remain separate.

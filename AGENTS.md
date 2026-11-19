@@ -10,8 +10,8 @@
 
 ## Nguồn thông tin và quyền tiếp tục hiện hành
 
-- [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **2.0 APPROVED ngày 18/11/2026**, duy nhất tám milestone M0–M7. Phê duyệt kế hoạch không cấp quyền tự triển khai mọi feature. M0/M1/M2 DONE (M2 chỉ FUNCTIONAL PROTOTYPE P507, PR #24 MERGED); M3 PLANNED/DEPENDENCY_BLOCKED #2/#3; xem STATUS để đối chiếu GitHub live.
-- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. **M2 đã DONE trong phạm vi prototype chức năng**; không tự bắt đầu work item M3 hoặc milestone tiếp theo chỉ vì PR #24 đã merge. CI App #22 và visual #20 vẫn mở.
+- [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **2.0 APPROVED ngày 18/11/2026**, duy nhất tám milestone M0–M7. Phê duyệt kế hoạch không cấp quyền tự triển khai mọi feature. M0/M1/M2 DONE (M2 chỉ FUNCTIONAL PROTOTYPE P507, PR #24 MERGED); M3 technical manual-first Admin [PR #25 MERGED](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25) sau independent review, **M3 IN_PROGRESS/BLOCKED field evidence #2/#3, chưa DONE**; xem STATUS và GitHub live.
+- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. **M2 đã DONE trong phạm vi prototype chức năng**; **M3 technical slice đã merge PR #25 theo ủy quyền riêng** nhưng field DoD #2/#3 chưa đạt. Không tự triển khai M4–M7 hoặc mở tiếp feature mới chỉ vì đã merge. CI App #22 và visual #20 vẫn mở.
 - Không tự đổi tên, thứ tự hoặc nội dung milestone đã duyệt. Đề xuất thay đổi phải ghi riêng và chờ phê duyệt, không sửa KPI hoặc chia P507 thành ba phòng.
 - Sau mỗi lượt/review, áp dụng Post-Acceptance Synchronization bên dưới kể cả khi thất bại; chưa nghiệm thu ghi IN_REVIEW. Merge kỹ thuật không đồng nghĩa KPI đạt.
 - Nếu tài liệu mâu thuẫn, báo chủ dự án kèm nguồn, thời điểm và tác động; không tự chọn một cách hiểu, sửa quyết định hoặc dùng kế hoạch lịch sử làm quyền triển khai. Giữ nguyên acceptance/evidence lịch sử và dẫn trạng thái hiện tại.
@@ -55,7 +55,7 @@ Sau mỗi lượt Codex:
 6. Nếu docs trên branch chưa merge, ghi rõ trạng thái branch so với main, PR/head/base và CI tương ứng; không tuyên bố đã đồng bộ main chỉ vì Draft PR xanh.
 7. Chủ dự án quyết định merge/triển khai bước tiếp theo hoặc **ủy quyền có phạm vi cho ChatGPT merge các PR đủ điều kiện** sau review và kiểm tra live. Codex không được merge. Không coi review AI thay nghiệm thu học thuật/quyền AIRC.
 
-Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 APPROVED; [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) đã MERGED sau độc lập review, M2 FUNCTIONAL PROTOTYPE DONE (7/7 DoD đúng phạm vi). Giữ Issue #22 OPEN về privileged vault CI/App token chưa có live proof, Issue #20 owner-deferred lối ghế/kích thước/vị trí, G2 visual pending. M3–M7 chưa được chủ dự án cho phép triển khai mã; M3 phụ thuộc quyền/nguồn dữ liệu #2/#3. Không gọi DoD M2 là hoàn thiện real-world fidelity/VR/KPI.
+Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 APPROVED; [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) đã MERGED sau độc lập review, M2 FUNCTIONAL PROTOTYPE DONE (7/7 DoD đúng phạm vi). Giữ Issue #22 OPEN về privileged vault CI/App token chưa có live proof, Issue #20 owner-deferred lối ghế/kích thước/vị trí, G2 visual pending. M3 technical manual-first Admin đã được owner giao, review và merge PR #25; phần field sources/rights #2/#3 còn BLOCKED. M4–M7 chưa được owner giao triển khai mã. Không gọi DoD M2 là hoàn thiện real-world fidelity/VR/KPI.
 
 ## Quy tắc M2 P507 hiện hành
 
