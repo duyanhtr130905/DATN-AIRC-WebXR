@@ -40,9 +40,14 @@ def main():
         or url.host not in {"localhost", "127.0.0.1"}
         or url.query
         or name != args.confirm_database
-        or not name.startswith("airc_test_catalog_")
+        or not (
+            name.startswith("airc_test_catalog_")
+            or (name == "airc_foundation" and args.seed_manifest is not None)
+        )
     ):
-        parser.error("Confirmed disposable PostgreSQL database required")
+        parser.error(
+            "Use a confirmed project database for seed or a disposable database for observations"
+        )
     if args.seed_manifest:
         lock, ids = evidence()
         with args.seed_manifest.open("rb") as stream:

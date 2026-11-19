@@ -66,6 +66,7 @@ def replay(engine, room_id: UUID, after: int) -> tuple[list[dict], bool]:
             session.scalars(
                 select(Outbox)
                 .where(
+                    Outbox.audience == "public",
                     Outbox.room_id == room_id,
                     Outbox.sequence > after,
                     Outbox.published_at.is_not(None),
@@ -99,7 +100,10 @@ def replay(engine, room_id: UUID, after: int) -> tuple[list[dict], bool]:
         pending = session.scalar(
             select(Outbox)
             .where(
-                Outbox.room_id == room_id, Outbox.sequence > after, Outbox.published_at.is_(None)
+                Outbox.audience == "public",
+                Outbox.room_id == room_id,
+                Outbox.sequence > after,
+                Outbox.published_at.is_(None),
             )
             .order_by(Outbox.sequence)
             .limit(1)

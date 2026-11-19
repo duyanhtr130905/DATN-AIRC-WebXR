@@ -8,6 +8,25 @@ from sqlalchemy.engine import make_url
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True)
 
+    admin_enabled: bool = False
+    admin_origin: str = "http://127.0.0.1:5173"
+
+    @field_validator("admin_origin")
+    @classmethod
+    def validate_admin_origin(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        if (
+            parsed.scheme not in {"http", "https"}
+            or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}
+            or parsed.path
+            or parsed.query
+            or parsed.fragment
+            or parsed.username
+            or parsed.password
+        ):
+            raise ValueError("Admin origin must be an explicit loopback HTTP or HTTPS origin")
+        return value
+
     realtime_dispatcher_enabled: bool = True
     database_url: SecretStr | None = None
     cors_origins: str = "http://127.0.0.1:5173,http://localhost:5173"

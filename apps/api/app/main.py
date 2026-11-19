@@ -9,6 +9,9 @@ from starlette.exceptions import HTTPException
 
 from app.core.config import Settings
 from app.database.connection import Database
+from app.modules.admin_auth import router as admin_auth_router
+from app.modules.admin_catalog import router as admin_catalog_router
+from app.modules.admin_catalog import stream_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.realtime.dispatcher import Broker, Dispatcher
 from app.modules.realtime.router import router as realtime_router
@@ -25,6 +28,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.database = database_factory(config)
+        app.state.admin_config = config
         app.state.origins = config.origins
         app.state.broker = Broker()
         app.state.dispatcher = Dispatcher(app.state.database.engine, app.state.broker)
@@ -77,6 +81,10 @@ def create_app(
             {"error": {"code": "INTERNAL_ERROR", "message": "Lỗi nội bộ."}}, status_code=500
         )
 
+    if config.admin_enabled:
+        application.include_router(admin_auth_router)
+        application.include_router(admin_catalog_router)
+        application.include_router(stream_router)
     application.include_router(router)
     application.include_router(catalog_router)
     application.include_router(realtime_router)

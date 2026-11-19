@@ -130,7 +130,7 @@ Luận văn/sơ đồ/phương pháp/benchmark/phân tích kết quả truy ngư
 | Đích | Phụ thuộc / điều kiện |
 | --- | --- |
 | M1 | M0 → M1 |
-| M2 | M0 → M1 → M2; E0/E1 kỹ thuật và owner-vault restore đã nghiệm thu qua PR #21 MERGED, nhưng M2 vẫn IN_PROGRESS vì CI private-vault #22, visual/circulation #20 và những DoD chưa đạt |
+| M2 | M0 → M1 → M2; M2 DONE trong phạm vi prototype chức năng qua PR #24. #20 deferred và #22 OPEN riêng |
 | M3 | M1 + prototype chức năng M2 + quyết định nguồn/quyền (#2/#3) |
 | M4 | M1 + luồng tương tác đã có + event contract/chính sách dữ liệu; có thể chuẩn bị song song khi dependency liên quan sẵn sàng và được giao |
 | M5 | Asset/trải nghiệm M2 + quyết định thiết bị/XR protocol (#4/#5) |
@@ -214,3 +214,5 @@ Bảng M0-A/M0-B/M1/M2/M3/M4 trong charter là **đề xuất lịch sử** tạ
 ### M3 owner authorization — 2026-11-19
 
 Owner approved technical implementation of the P507 M3 slice in one branch and one Draft PR. AIRC source and rights dependency remains BLOCKED by #2/#3. See [source matrix](m3/P507-DATA-SOURCE-MATRIX.md). G3 and M4–M7 remain outside this task.
+
+M3 manual-first Admin được chủ dự án duyệt 2026-11-19 trong PR #25. Xem [quyết định](m3/P507-ADMIN-DECISION.md). M3 IN_REVIEW / PARTIAL, quyền công bố chưa xác nhận.

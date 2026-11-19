@@ -90,7 +90,7 @@ def test_upgrade_0001_to_0002_preserves_catalog():
             assert connection.scalar(select(func.count()).select_from(CurrentState)) == 0
             assert (
                 connection.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0002_state_realtime"
+                == "0003_admin_manual"
             )
             assert inspect(connection).get_unique_constraints("outbox")
 
@@ -310,10 +310,10 @@ def test_latest_exhausted_delta_requires_resync_and_gap(state_database):
 
 
 @pytest.fixture
-def live_server(state_database):
+def live_server(state_database, live_options):
     database, url = state_database
     application = create_app(
-        Settings(_env_file=None, database_url=url, realtime_dispatcher_enabled=True)
+        Settings(_env_file=None, database_url=url, realtime_dispatcher_enabled=True, **live_options)
     )
     listener = socket.socket()
     listener.bind(("127.0.0.1", 0))

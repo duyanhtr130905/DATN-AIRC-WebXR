@@ -1,3 +1,4 @@
+import { observationAge } from "../features/live/observationAge.ts";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
@@ -66,7 +67,7 @@ function StateCard({ state, stale }: { state: TwinState; stale: boolean }) {
             <dt>Nguồn</dt><dd>{state.source_kind} · fixture {mapping.revision}</dd>
             <dt>Phiên bản</dt><dd>{state.version}</dd>
             <dt>Thời điểm quan sát</dt><dd>{observed ?? "UNKNOWN"}</dd>
-            <dt>Tuổi theo đồng hồ trình duyệt</dt><dd>{observed ? `${Math.floor((now - Date.parse(observed)) / 1000)} s` : "UNKNOWN"} · cadence chưa xác minh</dd>
+            <dt>Tuổi theo đồng hồ trình duyệt</dt><dd>{observationAge(observed, now, state.committed_at)} · cadence chưa xác minh</dd>
             <dt>Thời điểm ghi trong DB</dt><dd>{state.committed_at}</dd>
         </dl>
         {stale && <p>STALE — mất đồng bộ</p>}
@@ -75,28 +76,10 @@ function StateCard({ state, stale }: { state: TwinState; stale: boolean }) {
 
 export default function P507App() {
     const [revision, retry] = useState(0);
-    const [scene, setScene] = useState<Object3D>();
-    const [assetError, setAssetError] = useState("");
     const [backendError, setBackendError] = useState(false);
     const [objects, setObjects] = useState<Map<string, CatalogObject>>();
     const [replica, setReplica] = useState<Replica>();
     const [selected, select] = useState("");
-    const pickMesh = useCallback((event: { object: Object3D; stopPropagation(): void }) => {
-        const id = logicalId(event.object, known);
-        if (id) {
-            event.stopPropagation();
-            select(id);
-        }
-    }, []);
-    useEffect(() => {
-        const controller = new AbortController();
-        loadFrozenP507(controller.signal).then(({ gltf }) => {
-            if (!controller.signal.aborted) setScene(gltf.scene);
-        }).catch(() => {
-            if (!controller.signal.aborted) setAssetError("UNAVAILABLE — không tải được asset R4 đã kiểm hash.");
-        });
-        return () => controller.abort();
-    }, [revision]);
     useEffect(() => {
         const controller = new AbortController();
         readRooms(controller.signal).then(rooms => {
@@ -129,19 +112,9 @@ export default function P507App() {
             {backendError ? "UNAVAILABLE — backend hoặc mapping không khả dụng" : scoped?.status ?? "Đang kết nối"}
             {scoped && stale && " · STALE"}
         </p>
-        <button onClick={() => { setScene(undefined); setObjects(undefined); setReplica(undefined); setBackendError(false); setAssetError(""); retry(value => value + 1); }}>Tải lại P507</button>
+        <button onClick={() => { setObjects(undefined); setReplica(undefined); setBackendError(false); retry(value => value + 1); }}>Tải lại P507</button>
         <div className="workspace">
-            <section className="scene" aria-label="Cảnh P507">
-                {assetError ? <p role="alert">{assetError}</p> : scene ?
-                    <ErrorBoundary key={revision}>
-                        <Canvas frameloop="demand" camera={{ position: [1.25, 1.65, -7.415], fov: 48 }} fallback={<p role="alert">WebGL không khả dụng</p>}>
-                            <ambientLight intensity={0.75} />
-                            <directionalLight position={[2, 8, -2]} intensity={2} />
-                            <Controls />
-                            <primitive object={scene} onClick={pickMesh} />
-                        </Canvas>
-                    </ErrorBoundary> : <p role="status">Đang kiểm tra asset R4…</p>}
-            </section>
+            <P507Scene key={revision} pick={select} />
             <aside>
                 <label>Đối tượng P507 <select aria-label="Đối tượng P507" value={selected} onChange={event => select(event.target.value)}>
                     <option value="">Chọn đối tượng</option>
@@ -160,4 +133,36 @@ export default function P507App() {
             </aside>
         </div>
     </main>;
+}
+
+export function P507Scene({ pick }: { pick(id: string): void }) {
+    const [scene, setScene] = useState<Object3D>();
+    const [assetError, setAssetError] = useState("");
+    const pickMesh = useCallback((event: { object: Object3D; stopPropagation(): void }) => {
+        const id = logicalId(event.object, known);
+        if (id) {
+            event.stopPropagation();
+            pick(id);
+        }
+    }, [pick]);
+    useEffect(() => {
+        const controller = new AbortController();
+        loadFrozenP507(controller.signal).then(({ gltf }) => {
+            if (!controller.signal.aborted) setScene(gltf.scene);
+        }).catch(() => {
+            if (!controller.signal.aborted) setAssetError("UNAVAILABLE — không tải được asset R4 đã kiểm hash.");
+        });
+        return () => controller.abort();
+    }, []);
+    return <section className="scene" aria-label="Cảnh P507">
+                {assetError ? <p role="alert">{assetError}</p> : scene ?
+                    <ErrorBoundary>
+                        <Canvas frameloop="demand" camera={{ position: [1.25, 1.65, -7.415], fov: 48 }} fallback={<p role="alert">WebGL không khả dụng</p>}>
+                            <ambientLight intensity={0.75} />
+                            <directionalLight position={[2, 8, -2]} intensity={2} />
+                            <Controls />
+                            <primitive object={scene} onClick={pickMesh} />
+                        </Canvas>
+                    </ErrorBoundary> : <p role="status">Đang kiểm tra asset R4…</p>}
+            </section>;
 }

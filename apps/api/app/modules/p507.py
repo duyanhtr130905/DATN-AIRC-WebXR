@@ -71,7 +71,7 @@ def validate_mapping(session: Session, *, seed: bool = False):
         select(Object)
         .where(
             or_(
-                Object.room_id == ROOM_ID,
+                (Object.room_id == ROOM_ID) & (Object.source_kind == "synthetic"),
                 Object.id.in_(mappings.values()),
                 Object.external_reference.in_(set(ids) | UNPLACED),
             )
@@ -152,6 +152,7 @@ def ingest(session: Session, observation: Observation, *, authorization: str | N
         select(CurrentState)
         .where(
             column == target,
+            CurrentState.audience == "public",
             CurrentState.state_type == observation.state_type,
         )
         .with_for_update()
