@@ -1,9 +1,36 @@
 import { Raycaster, Vector2, Vector3, type Camera, type Object3D, type Texture, type WebGLRenderer } from "three";
 import { logicalId, type Point } from "../p507-e1/core.ts";
 
+export function visibleRoomHit(ray: Raycaster, room: Object3D) {
+    return ray.intersectObject(room, true).find(hit => {
+        for (let node: Object3D | null = hit.object; node; node = node.parent) {
+            if (!node.visible) return false;
+        }
+        return true;
+    });
+}
+
 export function intersectLogical(ray: Raycaster, room: Object3D, ids: Set<string>) {
-    const first = ray.intersectObject(room, true)[0];
+    const first = visibleRoomHit(ray, room);
     return first ? logicalId(first.object, ids) : null;
+}
+
+export function tabletopCutaway(room: Object3D, ids: Set<string>) {
+    const hidden: Object3D[] = [];
+    room.traverse(node => {
+        // R4's anonymous ceiling and perimeter shells cover the interior when seen from above.
+        if (!node.visible || !/^P507_ARCH_(CEILING_|WALL_)/.test(node.name)) return;
+        if (logicalId(node, ids)) return;
+        const subtree = new Set<string>();
+        node.traverse(child => {
+            const id = child.userData.survey_instance_id;
+            if (typeof id === "string") subtree.add(id);
+        });
+        if (subtree.size) return;
+        node.visible = false;
+        hidden.push(node);
+    });
+    return () => hidden.forEach(node => { node.visible = true; });
 }
 
 export function pointerRay(ray: Raycaster, camera: Camera, element: HTMLCanvasElement, x: number, y: number) {

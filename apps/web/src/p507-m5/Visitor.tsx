@@ -161,7 +161,7 @@ export default function Visitor() {
         <p className="notice">{provenance}. Mô hình ảo 6,90 × 9,315 × 3,50 m. Dữ liệu tại đây chỉ dùng để xem thử.</p>
         <section className="visitor-xr" aria-label="Chế độ WebXR">
             <h2>Trải nghiệm WebXR</h2>
-            <p>AR là mô hình thu nhỏ để bàn, không căn chỉnh 1:1 với phòng thật. VR dùng tuyến và vật cản ảo của R4.</p>
+            <p>AR là mô hình thu nhỏ để bàn có mặt cắt, không căn chỉnh 1:1 với phòng thật. VR dùng tuyến và vật cản ảo của R4.</p>
             {modes.map((mode, index) => <div key={mode} data-testid={"support-" + mode} data-support={xr.support[index]}>
                 <button disabled={disabled || xr.support[index] !== "supported"} onClick={() => xr.enter(mode)}>
                     {mode === "immersive-vr" ? "Vào VR" : "Vào AR"}

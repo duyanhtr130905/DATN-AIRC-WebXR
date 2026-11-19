@@ -3,7 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { BufferAttribute, BufferGeometry, CanvasTexture, Group, Line, LineBasicMaterial, Matrix4, Mesh, Quaternion, Raycaster, SRGBColorSpace, Vector3 } from "three";
 import { displacement, Navigation, SPAWN, type Point } from "../p507-e1/core.ts";
-import { intersectLogical, previewHit, thumbstick } from "./runtime.ts";
+import { intersectLogical, previewHit, tabletopCutaway, thumbstick, visibleRoomHit } from "./runtime.ts";
 
 type Preview = "waiting" | "surface" | "unavailable" | "placed";
 export const provenance = "R4 · PROVISIONAL / USER_REPORTED · quyền đang chờ";
@@ -77,6 +77,7 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         previewState.current = "waiting";
         setPreview("waiting");
         setStationary(false);
+        const restoreShell = ar ? tabletopCutaway(model, ids) : undefined;
         let cancelled = false;
 
         const inputChanged = () => {
@@ -141,6 +142,7 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         return () => {
             cancelled = true;
             hitSource.current?.cancel();
+            restoreShell?.();
             hitSource.current = null;
             target.current = null;
             session.removeEventListener("select", select);
@@ -159,7 +161,7 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         const ctx = label.canvas.getContext("2d")!;
         const lines = detail ? [detail.id, detail.kind + " · " + detail.status,
             "Nguồn " + detail.source] : [
-            ar ? "P507 · Bản xem thử để bàn" : "P507 · Tham quan VR",
+            ar ? "P507 · Mô hình để bàn có mặt cắt" : "P507 · Tham quan VR",
             ar ? (preview === "unavailable" ? "Hit test không khả dụng" :
                 preview === "placed" ? "Chạm để chọn đối tượng" :
                 preview === "surface" ? "Chạm để đặt mô hình" : "Hướng máy về mặt phẳng gần") :
@@ -256,7 +258,7 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
             matrix.fromArray(sourcePose.transform.matrix);
             ray.ray.origin.setFromMatrixPosition(matrix).applyMatrix4(view.matrixWorld);
             ray.ray.direction.set(0, 0, -1).transformDirection(matrix).transformDirection(view.matrixWorld);
-            const end = ray.intersectObject(ui, false)[0] ?? (group.visible ? ray.intersectObject(model, true)[0] : undefined);
+            const end = ray.intersectObject(ui, false)[0] ?? (group.visible ? visibleRoomHit(ray, model) : undefined);
             ray.ray.at(Math.min(end?.distance ?? 3, 3), world);
             beam.geometry.attributes.position.setXYZ(0, ...ray.ray.origin.toArray());
             beam.geometry.attributes.position.setXYZ(1, ...world.toArray());

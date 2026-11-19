@@ -264,7 +264,7 @@ try {
             report.vr = evidence;
             return "R4 chair A-01 from tracked-pointer; release once, visibility, lost and reconnected controller, obstacle gate, system end and re-entry";
         });
-        await scenario("IWER AR hit test, explicit placement, unmount", "IWER grants hit test, one deliberate select places tabletop, AR ends on unmount", async () => {
+        await scenario("IWER AR hit test, explicit placement, unmount", "IWER grants hit test, one deliberate select places tabletop, ray from above the ceiling reaches interior, AR ends on unmount", async () => {
             await open(context, { iwer: {} });
             await waitR4();
             await page.evaluate(() => {
@@ -276,7 +276,7 @@ try {
             assert(!await page.evaluate(() => window.__P507_M5__.events.includes("ar:placed")));
             await trigger();
             await event("ar:placed");
-            await input("right", [0.08 * (2.175 - 3.45), 0.86,
+            await input("right", [0.08 * (2.175 - 3.45), 1.18,
                 -0.93 / Math.tan(0.7) + 0.08 * (-6.115 + 4.6575)], down);
             await trigger();
             await event("select:P507-CHAIR-A-01");

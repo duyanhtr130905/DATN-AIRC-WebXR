@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
-import { intersectLogical, previewHit, thumbstick } from "../src/p507-m5/runtime.ts";
+import { intersectLogical, previewHit, tabletopCutaway, thumbstick } from "../src/p507-m5/runtime.ts";
 
 test("R4 pick resolves a placed ancestor and an unknown foreground mesh occludes it", () => {
     const model = new Group();
@@ -20,6 +20,15 @@ test("R4 pick resolves a placed ancestor and an unknown foreground mesh occludes
         assert.equal(intersectLogical(ray, model, new Set(["P507-CHAIR-A-01"])), "P507-CHAIR-A-01");
         model.add(foreign);
         model.updateMatrixWorld(true);
+        assert.equal(intersectLogical(ray, model, new Set(["P507-CHAIR-A-01"])), null);
+        foreign.name = "P507_ARCH_CEILING_TILES";
+        const protectedShell = tabletopCutaway(model, new Set(["P507-CHAIR-A-01"]));
+        assert(foreign.visible, "Cutaway must preserve meshes with a logical identity");
+        protectedShell();
+        delete foreign.userData.survey_instance_id;
+        const restore = tabletopCutaway(model, new Set(["P507-CHAIR-A-01"]));
+        assert.equal(intersectLogical(ray, model, new Set(["P507-CHAIR-A-01"])), "P507-CHAIR-A-01");
+        restore();
         assert.equal(intersectLogical(ray, model, new Set(["P507-CHAIR-A-01"])), null);
     } finally {
         geometry.dispose();
