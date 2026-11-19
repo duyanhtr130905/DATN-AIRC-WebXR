@@ -214,6 +214,10 @@ Bảng M0-A/M0-B/M1/M2/M3/M4 trong charter là **đề xuất lịch sử** tạ
 - Metadata M0-B1/PROPOSED đã được đồng bộ về M2/ACCEPTED trong task này; YAML chỉ là index, không là roadmap hay quyền tự triển khai. Không phát hiện parser/schema/enum consumer trong repository khi quét tracked source/config; giữ nguyên bộ field.
 - Các snapshot PR #13–#15 có câu chờ xác nhận/số ghế/layout/CI đang chạy theo thời điểm cũ. Giữ nguyên branch đó; snapshot hiện hành ở STATUS phân biệt owner cho thử chức năng, diagnostic ACCEPTED và visual pending. Mâu thuẫn về quyền AIRC/protocol chưa được quyết định không tự giải quyết bằng tài liệu.
 
+### Demo-first priority decision — 2026-11-19
+
+**Owner priority decision — 2026-11-19 (demo-first, inventory deferred):** Chủ dự án tạm dừng thu thập/bổ sung vật nhỏ trong inventory P507 để ưu tiên thử demo chức năng sớm. **Không thay đổi M3 execution_status=IN_PROGRESS/dependency_status=BLOCKED; M3 full DoD nguồn thật #2/#3 chưa đạt.** Được phép chuẩn bị/tự chạy thử local demo các phần đã merge: E1 standalone có đi bộ, M3 Admin private manual-first có 3 state types, và trang P507 public synthetic riêng (không coi là một trải nghiệm viewer tích hợp). **Admin private không tự publish sang public WS**; mọi phương án hợp nhất viewer/publication phải được đánh giá về quyền dữ liệu trước khi code. M4/M5/M6/M7 giữ PLANNED; kế hoạch và task code mới cần owner phê duyệt riêng.
+
 ### M3 owner authorization — 2026-11-19
 
 Owner approved technical implementation of the P507 M3 slice in one branch and one Draft PR. AIRC source and rights dependency remains BLOCKED by #2/#3. See [source matrix](m3/P507-DATA-SOURCE-MATRIX.md). G3 and M4–M7 remain outside this task.
