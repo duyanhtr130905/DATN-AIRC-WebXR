@@ -1,3 +1,9 @@
+# CURRENT 2026-11-19 — M2 FUNCTIONAL PROTOTYPE ACCEPTED (PR #24 MERGED)
+
+The P507 standalone desktop E1 prototype has passed scoped M2 acceptance at PR #24 head `b0a4e0f6`, merge `0b727a06`. This runbook still opens the DEV-only P507 demo via owner-only `--restore-vault`; its scripts and frozen R4 remain unchanged. [Issue #22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) privileged App CI is **NOT LIVE VERIFIED** (no token/secrets/grants configured, two jobs skipped) and is not a 7-DoD M2 blocker. [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) 3D navigation/size/placement is deferred, G2 visual pending; no real mobile, XR, hardware FPS certification or AIRC rights. M3 work needs separate owner approval. Historical notes below are AS-OF and must not override this status.
+
+---
+
 # Issue22 — current secure CI status (18/11/2026)
 
 [App CI security/setup and functional report](../../docs/3d-production/P507-ISSUE22-SECURE-CI.md). Explicit --restore-vault-ci is installation-token-only and trusted-main-only, no legacy artifact/generated fallback; --restore-vault remains unchanged owner-only local restore. App/secret/environment setup NOT authorized/performed, actual App proof BLOCKED / SECURITY_APPROVAL_REQUIRED. PR CI runs without App secrets and records NOT_RUN_PRIVILEGED_REQUIRED for actual asset checks.

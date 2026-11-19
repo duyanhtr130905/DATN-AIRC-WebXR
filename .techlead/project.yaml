@@ -1,12 +1,12 @@
 # Project index only; ROADMAP is the sole plan, PROJECT_STATUS owns live evidence.
 # Existing scalar fields retained; no repository parser/schema/enum consumer found.
-# APPROVED roadmap does not authorize all features. P507/E0/E1 provisional merged PR #21; M2 remains IN_PROGRESS, CI issue #22 open, M3 features not authorized.
+# Roadmap approved, M2 prototype FUNCTIONAL scope DONE via PR #24; #22 App CI unproven, #20 visual deferred; M3 needs new owner approval and source rights #2/#3.
 name: DATN-AIRC-WebXR
 workspace: 'D:\Code\DATN'
 mode: continue
 scale: small
 milestone: M2
-status: in-progress
+status: done
 language: vi
 scope_authority: owner-approved-roadmap-v2-2026-11-18-per-feature-approval-required
 stack: ACCEPTED
@@ -17,4 +17,4 @@ risks: docs/03-risk-register.md
 architecture_options: docs/09-architecture-options.md
 acceptance: docs/ROADMAP.md
 status_document: docs/PROJECT_STATUS.md
-next_gate: M2-CI-private-vault-restore-issue-22-before-2026-11-24-and-functional-DoD-review
+next_gate: owner-approve-M3-source-rights-issues-2-3-and-stable-mapping-plan; issue-22-App-CI-ops-open

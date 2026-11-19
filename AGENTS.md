@@ -10,8 +10,8 @@
 
 ## Nguồn thông tin và quyền tiếp tục hiện hành
 
-- [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **2.0 APPROVED ngày 18/11/2026**, duy nhất tám milestone M0–M7. Phê duyệt kế hoạch không cấp quyền tự triển khai mọi feature. Current milestone M2 IN_PROGRESS; M0/M1 DONE/MERGED; xem STATUS để tách branch/main.
-- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. **M2 đang IN_PROGRESS** nhưng không được tự bắt đầu work item M2/M3 mới hoặc milestone tiếp theo chỉ vì PR trước đã merge.
+- [ROADMAP](docs/ROADMAP.md) là nguồn roadmap duy nhất; [PROJECT_STATUS](docs/PROJECT_STATUS.md) ghi hiện trạng và bằng chứng. Roadmap **2.0 APPROVED ngày 18/11/2026**, duy nhất tám milestone M0–M7. Phê duyệt kế hoạch không cấp quyền tự triển khai mọi feature. M0/M1/M2 DONE (M2 chỉ FUNCTIONAL PROTOTYPE P507, PR #24 MERGED); M3 PLANNED/DEPENDENCY_BLOCKED #2/#3; xem STATUS để đối chiếu GitHub live.
+- Chỉ thực hiện task được chủ dự án phê duyệt, trong phạm vi và DoD đã chốt. **M2 đã DONE trong phạm vi prototype chức năng**; không tự bắt đầu work item M3 hoặc milestone tiếp theo chỉ vì PR #24 đã merge. CI App #22 và visual #20 vẫn mở.
 - Không tự đổi tên, thứ tự hoặc nội dung milestone đã duyệt. Đề xuất thay đổi phải ghi riêng và chờ phê duyệt, không sửa KPI hoặc chia P507 thành ba phòng.
 - Sau mỗi lượt/review, áp dụng Post-Acceptance Synchronization bên dưới kể cả khi thất bại; chưa nghiệm thu ghi IN_REVIEW. Merge kỹ thuật không đồng nghĩa KPI đạt.
 - Nếu tài liệu mâu thuẫn, báo chủ dự án kèm nguồn, thời điểm và tác động; không tự chọn một cách hiểu, sửa quyết định hoặc dùng kế hoạch lịch sử làm quyền triển khai. Giữ nguyên acceptance/evidence lịch sử và dẫn trạng thái hiện tại.
@@ -55,13 +55,13 @@ Sau mỗi lượt Codex:
 6. Nếu docs trên branch chưa merge, ghi rõ trạng thái branch so với main, PR/head/base và CI tương ứng; không tuyên bố đã đồng bộ main chỉ vì Draft PR xanh.
 7. Chủ dự án quyết định merge/triển khai bước tiếp theo hoặc **ủy quyền có phạm vi cho ChatGPT merge các PR đủ điều kiện** sau review và kiểm tra live. Codex không được merge. Không coi review AI thay nghiệm thu học thuật/quyền AIRC.
 
-Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 đã MERGED qua [PR #16](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/16); phải xác minh GitHub live. Prototype P507/E0/E1 và owner-private archive đã tích hợp vào main qua [PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) (scoped ACCEPTED, không phải M2 DONE). Bước tiếp là xử lý CI private vault [#22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) trước khi old artifact hết hạn, nghiệm thu M2 còn thiếu; không tự mở M3–M7.
+Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 APPROVED; [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) đã MERGED sau độc lập review, M2 FUNCTIONAL PROTOTYPE DONE (7/7 DoD đúng phạm vi). Giữ Issue #22 OPEN về privileged vault CI/App token chưa có live proof, Issue #20 owner-deferred lối ghế/kích thước/vị trí, G2 visual pending. M3–M7 chưa được chủ dự án cho phép triển khai mã; M3 phụ thuộc quyền/nguồn dữ liệu #2/#3. Không gọi DoD M2 là hoàn thiện real-world fidelity/VR/KPI.
 
 ## Quy tắc M2 P507 hiện hành
 
 - M2 chỉ prototype một phòng P507. Issue #1 OPEN: `DEFERRED_FOR_M2; REQUIRED_FOR_M6`; không chặn E0/E1/nghiệm thu chức năng M2. MT1-01 ≥3 phòng giữ nguyên tại M6; không chia phòng giả.
 - Survey 6.00 × 8.10 × 3.50 m USER_REPORTED; virtual 6.90 × 9.315 × 3.50 m OWNER_APPROVED_VIRTUAL_ADAPTATION, X/Y +15%, không 1:1.
-- Owner cho phép R4 provisional thử E0/E1; không cần G2 visual PASS trước desktop E1. `G2_VISUAL=PENDING_OWNER_APPROVAL`. E0/E1 ở PR #15 HEAD `c3c8002` là bằng chứng TECHNICAL_PASS lịch sử; **PR #21 đã MERGED vào main**, Chrome E1 15/15 và owner-private vault restore được nghiệm thu theo phạm vi, **M2 chưa DONE**. Các câu E0_FAIL/E1_BLOCKED cũ là AS-OF trước correction. Freeze không mở G3, backlog #20 chưa được sửa.
+- Owner cho phép R4 provisional thử E0/E1; không cần G2 visual PASS trước desktop E1. `G2_VISUAL=PENDING_OWNER_APPROVAL`. E0/E1 ở PR #15 HEAD `c3c8002` là bằng chứng TECHNICAL_PASS lịch sử; **PR #21 đã MERGED vào main**, Chrome E1 15/15 và owner-private vault restore được nghiệm thu theo phạm vi, **M2 đã DONE chỉ cho prototype chức năng qua PR #24**, không chứng nhận G2 visual/physical mobile/KPI. Các câu E0_FAIL/E1_BLOCKED cũ là AS-OF trước correction. Freeze không mở G3, backlog #20 chưa được sửa.
 - Visual sign-off, quyền ảnh/nhãn và fidelity cần đánh giá riêng trước demo/nghiệm thu cuối. Không chạm frozen hash/asset/contract/runtime trong task tài liệu.
 - Trước task asset/Blender/P507, đọc [G0 đã merge](docs/3d-production/P507-G0-PRODUCTION-SPEC.md) và các report commit-linked trong ROADMAP/STATUS; G0, R4 provisional và E0/E1 hiện đã vào main qua PR #13/#21. Không commit raw survey/photos/PII; dùng revision và stable IDs, không mở G0-fix chỉ vì bổ sung số đo.
 

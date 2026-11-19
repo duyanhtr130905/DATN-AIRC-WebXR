@@ -1,3 +1,18 @@
+# CURRENT PROJECT STATUS — M2 functional prototype accepted, 2026-11-19
+
+**Source of truth:** [Roadmap 2.0](ROADMAP.md) APPROVED. Main merge baseline `0b727a06aef0773063dd4427a066054a3a87cd7d` after [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) was independently reviewed at exact head `b0a4e0f6f8d48053a470cbf5f20f9f44e5bc7d45` and **MERGED**. A subsequent docs-only post-acceptance commit may advance main; always verify live GitHub SHA. [Final M2 7-DoD matrix](3d-production/P507-M2-FINAL-ACCEPTANCE.md) is authoritative over historical PENDING/Rerun notes.
+
+**Milestones:** M0 DONE, M1 DONE, **M2 DONE in the single-room provisional P507 FUNCTIONAL PROTOTYPE scope**, M3–M7 PLANNED (M3 `DEPENDENCY_BLOCKED` by source/rights Issues #2/#3 and future owner task). PR #21/#23/#24 MERGED; R4 frozen GLB/lock and M1 backend unchanged. M2 completion does not authorize M3 coding.
+
+**Functional acceptance:** DoD 1–7 closed by ChatGPT independent review/owner-delegated PR integration. Owner-private clean restore data, E0 actual 121 logical IDs / 402482 vertices / 3mm and 1mm bounds, E1 Chrome 15/15 scoped west route, logical ID panel with provisional provenance, loading/errors/retry/reload, desktop/responsive 390x844/768x1024 emulation and fallback evidence all documented. Candidate exact SHA GitHub CI: **13 SUCCESS including 2 status-only, 2 privileged SKIPPED, 0 FAIL**; App-token actual CI **NOT RUN**. Final-HEAD local image ZIP exists on owner's machine but was not uploaded/visually inspected by this reviewer; owner-provided raw JSON/report and previous CI browser artifacts were inspected. No physical mobile/touch, hardware FPS30, VR72, AR/VR or physical-realism signoff.
+
+**Tracked open risks:** [#22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) owner-controlled private-vault CI App authorization/configuration and live trusted-main restore is **OPEN/NOT_PROVEN** (not M2 DoD); never claim a skipped job passed. Original Actions artifact expires 24/11/2026 14:46+07, but byte-preserved PRIVATE vault archive commit `908a5cbb` is present. [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) is DEFERRED_BY_OWNER (chair-row aisle, object sizes/positions), `G1_CIRCULATION=PARTIAL`, `G2_VISUAL=PENDING_OWNER_APPROVAL`. M3 #2/#3 (source and data rights) still BLOCKED, not green. Historical four HIGH npm advisories in dev chain returned zero on final Codex audit without lock change; re-check prior to deploy.
+
+**Next approval gate:** only **plan M3 source/rights and catalog-to-P507 mapping** until owner separately authorizes implementation. No auto G3, visual corrections, App grants/secrets, main deployment or M3/M4/M5 development.
+
+---
+
+## AS-OF trước nghiệm thu M2 cuối — preserved historical snapshots
 # Final M2 closure candidate (2026-11-19)
 
 Draft PR #24 is based on main 5b971f591585124424e8393118b0911eb7c11110 after PR #21/#23. M2 IN_PROGRESS pending independent acceptance and owner decision. See [M2 final acceptance matrix](3d-production/P507-M2-FINAL-ACCEPTANCE.md). Exact candidate HEAD and evidence are recorded on PR #24.
