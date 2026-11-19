@@ -18,6 +18,7 @@ from pydantic import (
     model_validator,
 )
 from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -34,11 +35,13 @@ from app.database.visitor_models import (
     SCOPE,
     VisitorEvent,
     VisitorSession,
+    VisitorStartAttempt,
 )
 from app.modules.admin_auth import LOOPBACK, TOKEN, digest
 
 PATH = "/api/v1/visitor"
 COOKIE = "airc_visitor"
+INTENT_COOKIE = "airc_visitor_intent"
 LIFETIME = timedelta(hours=8)
 MAX_BODY = 8192
 MAX_EVENTS = 500
@@ -51,6 +54,8 @@ class VisitorBody(BaseModel):
 
 class OptIn(VisitorBody):
     consent: Literal["synthetic_opt_in_v1"]
+    attempt_id: UUID4 | None = None
+    previous_id: UUID4 | None = None
 
 
 class Event(VisitorBody):
@@ -151,22 +156,20 @@ def local_db(request: Request, _: Local):
 DB = Annotated[Session, Depends(local_db, scope="function")]
 
 
-def session_by_proof(request: Request, db: Session) -> VisitorSession | None:
+def lock_session(db: Session, **filters) -> VisitorSession | None:
+    return db.scalar(select(VisitorSession).filter_by(**filters).with_for_update())
+
+
+def current_proof(request: Request, db: Session) -> VisitorSession | None:
     token = request.cookies.get(COOKIE)
     if not token or not TOKEN.fullmatch(token):
         return None
-    return db.scalar(
-        select(VisitorSession)
-        .where(
-            VisitorSession.token_digest == digest(token),
-            VisitorSession.token_expires_at > func.now(),
-        )
-        .with_for_update()
-    )
+    session = lock_session(db, token_digest=digest(token))
+    return session if session and session.token_expires_at > datetime.now(UTC) else None
 
 
 def authorized(request: Request, db: Session, session_id: UUID) -> VisitorSession:
-    session = session_by_proof(request, db)
+    session = current_proof(request, db)
     if session is None or session.id != session_id:
         raise HTTPException(401)
     return session
@@ -215,16 +218,69 @@ async def event_batch(request: Request) -> Batch:
     return await json_body(request, Batch)
 
 
-@router.post("/sessions", status_code=201)
-def start(
+def cookie_options(request: Request):
+    return dict(path=PATH, httponly=True, secure=request.url.scheme == "https", samesite="strict")
+
+
+def intent_proof(request: Request, attempt_id: UUID) -> str | None:
+    prefix, _, proof = request.cookies.get(INTENT_COOKIE, "").partition(".")
+    return proof if prefix == str(attempt_id) and TOKEN.fullmatch(proof) else None
+
+
+def attempt_or_error(db: Session, attempt_id: UUID, *, lock=False) -> VisitorStartAttempt:
+    attempt = db.get(VisitorStartAttempt, attempt_id, with_for_update=lock, populate_existing=True)
+    if attempt is None or attempt.expires_at <= datetime.now(UTC):
+        raise HTTPException(401)
+    return attempt
+
+
+@router.post("/sessions/intent")
+def prepare_start(
     request: Request, response: Response, _: Local, body: Annotated[OptIn, Depends(opt_in)], db: DB
 ):
-    # Explicit opt-in can safely recover a previously committed start for the same cookie.
-    previous = session_by_proof(request, db)
-    if previous is not None:
-        return view(db, previous)
+    attempt_id = body.attempt_id
+    if attempt_id is None:
+        raise HTTPException(422)
+    candidate = secrets.token_urlsafe(32)
+    db.execute(
+        insert(VisitorStartAttempt)
+        .values(
+            id=attempt_id, expires_at=datetime.now(UTC) + LIFETIME, pending_digest=digest(candidate)
+        )
+        .on_conflict_do_nothing(index_elements=[VisitorStartAttempt.id])
+    )
+    attempt = attempt_or_error(db, attempt_id, lock=True)
+    if attempt.pending_digest is None:
+        raise HTTPException(409)
+    old_candidate = intent_proof(request, attempt_id)
+    if old_candidate is None or digest(old_candidate) != attempt.pending_digest:
+        # A lost preparation reply may be retried before commit, without creating a visit.
+        attempt.pending_digest = digest(candidate)
+        response.set_cookie(
+            INTENT_COOKIE,
+            f"{attempt_id}.{candidate}",
+            max_age=max(1, int((attempt.expires_at - datetime.now(UTC)).total_seconds())),
+            **cookie_options(request),
+        )
+    return {"prepared": True}
+
+
+def create_session(
+    request: Request, db: Session, body: OptIn, attempt: VisitorStartAttempt, token: str
+):
+    if attempt.pending_digest != digest(token):
+        raise HTTPException(401)
+    previous = current_proof(request, db)
+    if body.previous_id:
+        if previous is None or previous.id != body.previous_id:
+            raise HTTPException(401)
+        if previous.ended_at is None:
+            raise HTTPException(409)
+        previous.token_expires_at = datetime.now(UTC)
+    elif previous is not None:
+        raise HTTPException(409)
+
     now = datetime.now(UTC)
-    token = secrets.token_urlsafe(32)
     session = VisitorSession(
         id=uuid4(),
         token_digest=digest(token),
@@ -236,19 +292,56 @@ def start(
     )
     db.add(session)
     db.flush()
+    attempt.session_id = session.id
+    attempt.pending_digest = None
     db.add(
         new_event(
-            session, now=now, id=uuid4(), event_type="session_start", room_id=ROOM, occurred_at=now
+            session,
+            now=now,
+            id=uuid4(),
+            event_type="session_start",
+            room_id=ROOM,
+            occurred_at=now,
         )
     )
+    return session
+
+
+@router.post("/sessions", status_code=201)
+def start(
+    request: Request, response: Response, _: Local, body: Annotated[OptIn, Depends(opt_in)], db: DB
+):
+    if body.attempt_id is None:
+        # Preserve active-session reuse for older clients. Creating requires an intent.
+        previous = current_proof(request, db)
+        if previous is None or previous.ended_at is not None or body.previous_id is not None:
+            raise HTTPException(409)
+        return view(db, previous)
+
+    token = intent_proof(request, body.attempt_id)
+    if token is None:
+        raise HTTPException(401)
+    attempt = attempt_or_error(db, body.attempt_id)
+    if attempt.pending_digest is not None:
+        # Only a new commit takes the attempt row lock. Recheck after a racing commit.
+        attempt = attempt_or_error(db, body.attempt_id, lock=True)
+    if attempt.pending_digest is not None:
+        session = create_session(request, db, body, attempt, token)
+    else:
+        # Read-only duplicate. An expired proof or a deleted visit cannot be resurrected.
+        session = db.get(VisitorSession, attempt.session_id) if attempt.session_id else None
+        if (
+            session is None
+            or session.token_digest != digest(token)
+            or session.token_expires_at <= datetime.now(UTC)
+        ):
+            raise HTTPException(401)
+
     response.set_cookie(
         COOKIE,
         token,
-        path=PATH,
-        httponly=True,
-        secure=request.url.scheme == "https",
-        samesite="strict",
-        max_age=int(LIFETIME.total_seconds()),
+        max_age=max(1, int((session.token_expires_at - datetime.now(UTC)).total_seconds())),
+        **cookie_options(request),
     )
     return view(db, session)
 
@@ -264,6 +357,7 @@ def clear(session_id: UUID, request: Request, response: Response, db: DB):
     response.delete_cookie(
         COOKIE, path=PATH, httponly=True, secure=request.url.scheme == "https", samesite="strict"
     )
+    response.delete_cookie(INTENT_COOKIE, **cookie_options(request))
     return {"cleared": True}
 
 

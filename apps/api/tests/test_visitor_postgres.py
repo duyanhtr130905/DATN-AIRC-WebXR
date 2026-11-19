@@ -9,7 +9,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from alembic.config import Config
@@ -23,17 +23,17 @@ from alembic import command
 from app.core.config import Settings
 from app.database.admin_models import AdminAccount, AdminAudit
 from app.database.connection import Database
-from app.database.visitor_models import VisitorEvent, VisitorSession
+from app.database.visitor_models import VisitorEvent, VisitorSession, VisitorStartAttempt
 from app.main import create_app
 from app.modules.admin_auth import hash_password
 from app.modules.catalog.seed import OBJECT_IDS, ROOM_ID, seed_demo
 from app.modules.state.service import change_state
-from app.modules.visitor import COOKIE, PATH, ROOM, digest
+from app.modules.visitor import COOKIE, INTENT_COOKIE, PATH, ROOM, digest
 
 pytestmark = pytest.mark.postgres
 ORIGIN = "http://127.0.0.1:5173"
 REPORT = "/api/v1/admin/visitor-reports"
-HEAD = "0005_visitor_sessions"
+HEAD = "0006_visitor_start_attempts"
 ROOT = API_ROOT.parents[1]
 
 
@@ -60,8 +60,21 @@ def client_for(url, *, enabled=True, host="127.0.0.1", connected="127.0.0.1", ad
     )
 
 
+def prepare_start(client, previous=None):
+    body = {
+        "consent": "synthetic_opt_in_v1",
+        "attempt_id": str(uuid4()),
+        "previous_id": previous.rsplit("/", 1)[-1] if previous else None,
+    }
+    response = client.post(PATH + "/sessions/intent", json=body)
+    assert response.status_code == 200
+    assert response.json() == {"prepared": True}
+    assert "HttpOnly" in response.headers["set-cookie"]
+    return body
+
+
 def opt_in(client):
-    response = client.post(PATH + "/sessions", json={"consent": "synthetic_opt_in_v1"})
+    response = client.post(PATH + "/sessions", json=prepare_start(client))
     assert response.status_code == 201, response.text
     assert "HttpOnly" in response.headers["set-cookie"]
     assert "SameSite=strict" in response.headers["set-cookie"]
@@ -173,9 +186,11 @@ def test_migration_populated_0004_backup_restore_forward_only_and_guard():
             with connection.begin() as transaction:
                 config.attributes["connection"] = connection
                 command.upgrade(config, HEAD)
-                assert "visitor_events" in inspect(connection).get_table_names()
+                assert {"visitor_events", "visitor_start_attempts"}.issubset(
+                    inspect(connection).get_table_names()
+                )
                 transaction.rollback()
-            assert "visitor_events" not in inspect(connection).get_table_names()
+            assert "visitor_start_attempts" not in inspect(connection).get_table_names()
             assert (
                 connection.scalar(text("SELECT version_num FROM alembic_version"))
                 == "0004_admin_provenance"
@@ -208,9 +223,54 @@ def test_migration_populated_0004_backup_restore_forward_only_and_guard():
             with Operations.context(MigrationContext.configure(connection)):
                 with pytest.raises(RuntimeError, match="verified loopback project database"):
                     migration.upgrade()
-            assert "visitor_events" not in inspect(connection).get_table_names()
+            assert "visitor_start_attempts" not in inspect(connection).get_table_names()
     finally:
         guard.close()
+
+
+def test_upgrade_retains_existing_0005_visits():
+    with isolated_catalog_database(migrate=False) as (database, url):
+        config = Config(str(API_ROOT / "alembic.ini"))
+        now = datetime.now(UTC)
+        session_id, event_id = uuid4(), uuid4()
+        proof = secrets.token_urlsafe(32)
+        with database.engine.begin() as connection:
+            config.attributes["connection"] = connection
+            command.upgrade(config, "0005_visitor_sessions")
+            connection.execute(
+                VisitorSession.__table__.insert().values(
+                    id=session_id,
+                    token_digest=digest(proof),
+                    token_expires_at=now + timedelta(hours=1),
+                    started_at=now,
+                    last_seen_at=now,
+                    ended_at=now,
+                    event_count=1,
+                )
+            )
+            connection.execute(
+                VisitorEvent.__table__.insert().values(
+                    id=event_id,
+                    session_id=session_id,
+                    ordinal=1,
+                    event_type="session_start",
+                    room_id=ROOM,
+                    occurred_at=now,
+                    received_at=now,
+                )
+            )
+            command.upgrade(config, HEAD)
+            command.check(config)
+        with client_for(url) as client:
+            client.cookies.set(COOKIE, proof, domain="127.0.0.1", path=PATH)
+            path = f"{PATH}/sessions/{session_id}"
+            assert client.get(path).json()["ended"]
+            response = client.post(PATH + "/sessions", json=prepare_start(client, path))
+            assert response.status_code == 201
+        with Session(database.engine) as db:
+            assert db.get(VisitorEvent, event_id).session_id == session_id
+            assert db.get(VisitorSession, session_id).ended_at == now
+        assert counts(database) == (2, 2)
 
 
 def test_default_no_consent_and_origin_proxy_database_guards(local_database):
@@ -245,6 +305,18 @@ def test_default_no_consent_and_origin_proxy_database_guards(local_database):
                 ).status_code
                 == 403
             )
+        body = prepare_start(client)
+        assert (
+            client.post(
+                PATH + "/sessions",
+                json=body,
+                headers={"cookie": f"{INTENT_COOKIE}={body['attempt_id']}.{'a' * 43}"},
+            ).status_code
+            == 401
+        )
+        with Session(database.engine) as db, db.begin():
+            db.execute(update(VisitorStartAttempt).values(expires_at=datetime.now(UTC)))
+        assert client.post(PATH + "/sessions", json=body).status_code == 401
     with client_for(url, host="localhost") as client:
         assert client.get(PATH + "/status").status_code == 403
     with client_for(url, connected="192.0.2.10") as client:
@@ -336,6 +408,106 @@ def test_concurrent_same_session_and_event_collision_across_sessions(local_datab
             second = executor.submit(send, other, other_path, cross)
             assert sorted(task.result().status_code for task in (first, second)) == [200, 409]
         assert counts(database) == (2, 4)
+
+
+def test_start_retry_rollback_rotation_and_consumed_intent_after_delete(
+    local_database, monkeypatch
+):
+    database, url = local_database
+    with client_for(url) as client:
+        a_body = prepare_start(client)
+        a_intent = client.cookies[INTENT_COOKIE]
+        assert counts(database) == (0, 0)
+        no_session_cookie = {"cookie": f"{INTENT_COOKIE}={a_intent}"}
+        # Concurrent initial delivery with the same cookie before either response applies.
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = [
+                executor.submit(
+                    client.post, PATH + "/sessions", json=a_body, headers=no_session_cookie
+                )
+                for _ in range(2)
+            ]
+            starts = [future.result() for future in futures]
+        assert [r.status_code for r in starts] == [201, 201]
+        assert starts[0].json() == starts[1].json()
+        path_a = f"{PATH}/sessions/{starts[0].json()['id']}"
+        proof_a = client.cookies[COOKIE]
+        assert counts(database) == (1, 1)
+
+        b_body = prepare_start(client, path_a)
+        assert client.post(PATH + "/sessions", json=b_body).status_code == 409
+        item = event("object_select")
+        assert send(client, path_a, item).status_code == 200
+        closed = event("session_end", time=datetime.now(UTC) + timedelta(milliseconds=10))
+        assert send(client, path_a, closed).status_code == 200
+        assert send(client, path_a, closed).json()["receipts"][0]["status"] == "duplicate"
+
+        # The new start must be atomic with proof revocation, even if commit fails.
+        with monkeypatch.context() as fault:
+            ids = iter([uuid4(), UUID(item["id"])])
+            fault.setattr("app.modules.visitor.uuid4", lambda: next(ids))
+            assert client.post(PATH + "/sessions", json=b_body).status_code == 409
+        assert client.get(path_a).json()["ended"]
+        assert counts(database) == (1, 3)
+
+        b_intent = client.cookies[INTENT_COOKIE]
+        before_transfer = {"cookie": f"{COOKIE}={proof_a}; {INTENT_COOKIE}={b_intent}"}
+        response = client.post(PATH + "/sessions", json=b_body, headers=before_transfer)
+        assert response.status_code == 201
+        path_b = f"{PATH}/sessions/{response.json()['id']}"
+        assert path_b != path_a
+        assert response.json()["selected_id"] is None
+        assert client.cookies[COOKIE] != proof_a
+        replay = client.post(PATH + "/sessions", json=b_body, headers=before_transfer)
+        assert replay.status_code == 201 and replay.json() == response.json()
+        assert counts(database) == (2, 4)
+        assert client.get(path_a, headers=before_transfer).status_code == 401
+        assert client.delete(path_a, headers=before_transfer).status_code == 401
+        assert (
+            client.post(
+                path_a + "/events",
+                json={"events": [item]},
+                headers=before_transfer,
+            ).status_code
+            == 401
+        )
+        assert (
+            client.post(
+                PATH + "/sessions",
+                json=a_body,
+                headers=no_session_cookie,
+            ).status_code
+            == 401
+        )
+
+        assert client.delete(path_b).status_code == 200
+        assert (
+            client.post(PATH + "/sessions", json=b_body, headers=before_transfer).status_code == 401
+        )
+        assert counts(database) == (1, 3)
+
+
+def test_competing_new_intents_can_only_rotate_one_ended_session(local_database):
+    database, url = local_database
+    with client_for(url) as client, client_for(url) as first, client_for(url) as second:
+        path = opt_in(client)
+        assert send(client, path, event("session_end")).status_code == 200
+        proof = client.cookies[COOKIE]
+        bodies = [prepare_start(tab, path) for tab in (first, second)]
+        headers = [
+            {"cookie": f"{COOKIE}={proof}; {INTENT_COOKIE}={tab.cookies[INTENT_COOKIE]}"}
+            for tab in (first, second)
+        ]
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            outcomes = [
+                executor.submit(tab.post, PATH + "/sessions", json=body, headers=cookie)
+                for tab, body, cookie in zip((first, second), bodies, headers, strict=True)
+            ]
+            assert sorted(future.result().status_code for future in outcomes) == [201, 401]
+        with Session(database.engine) as db:
+            attempts = db.scalar(select(func.count()).select_from(VisitorStartAttempt))
+            assert attempts == 3
+        assert counts(database) == (2, 3)
 
 
 def test_restart_database_outage_retains_id_and_commit_receipt(local_database):
@@ -558,4 +730,82 @@ def test_chrome_fixture_uses_real_api_and_postgres(local_database):
         timeout=120,
     )
     assert result.returncode == 0, (result.stdout + result.stderr)[-4000:]
-    assert counts(database) == (0, 0)
+    assert counts(database) == (2, 12)
+    out = ROOT / ".local/m4-visitor-browser"
+    exported = json.loads((out / "rotation-export.json").read_text(encoding="utf-8"))
+    with (out / "rotation-export.csv").open(encoding="utf-8", newline="") as stream:
+        csv_rows = list(csv.DictReader(stream))
+
+    with Session(database.engine) as db:
+        sessions = db.scalars(select(VisitorSession).order_by(VisitorSession.started_at)).all()
+        events = db.scalars(
+            select(VisitorEvent).order_by(VisitorEvent.session_id, VisitorEvent.ordinal)
+        ).all()
+        event_rows = [
+            dict(
+                session_id=str(e.session_id),
+                event_id=str(e.id),
+                ordinal=e.ordinal,
+                event_type=e.event_type,
+                room_id=e.room_id,
+                object_id=e.object_id,
+                occurred_at=e.occurred_at.isoformat(),
+                received_at=e.received_at.isoformat(),
+            )
+            for e in events
+        ]
+        assert all(s.ended_at is not None for s in sessions)
+        assert sessions[0].token_expires_at < sessions[1].started_at
+        assert sessions[0].token_digest != sessions[1].token_digest
+        assert [s.event_count for s in sessions] == [7, 5]
+        for session, expected_types in zip(
+            sessions,
+            (
+                [
+                    "session_start",
+                    "room_enter",
+                    "object_select",
+                    "object_select",
+                    "info_close",
+                    "info_open",
+                    "session_end",
+                ],
+                ["session_start", "room_enter", "object_select", "info_close", "session_end"],
+            ),
+            strict=True,
+        ):
+            rows = [row for row in event_rows if row["session_id"] == str(session.id)]
+            assert [row["ordinal"] for row in rows] == list(range(1, session.event_count + 1))
+            assert [row["event_type"] for row in rows] == expected_types
+        assert [row["session_id"] for row in exported["sessions"]] == [str(s.id) for s in sessions]
+
+    def canonical(row):
+        return (
+            row["session_id"],
+            row["event_id"],
+            int(row["ordinal"]),
+            row["event_type"],
+            row["room_id"],
+            row["object_id"] or None,
+            datetime.fromisoformat(row["occurred_at"]),
+            datetime.fromisoformat(row["received_at"]),
+        )
+
+    expected = {canonical(row) for row in event_rows}
+    assert len({row["event_id"] for row in event_rows}) == 12
+    for export in (csv_rows, exported["events"]):
+        assert len(export) == len(expected) and {canonical(row) for row in export} == expected
+    (out / "rotation-database.json").write_text(
+        json.dumps(
+            dict(
+                status="PASS",
+                code_sha=sha,
+                sessions=2,
+                counts=[7, 5],
+                db_csv_json_ids_match=True,
+                events=event_rows,
+            ),
+            indent=2,
+        ),
+        encoding="utf-8",
+    )

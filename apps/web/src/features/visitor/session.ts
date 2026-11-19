@@ -1,6 +1,7 @@
 export const ROOM = "demo-room-foundation";
 export const PATH = "/api/v1/visitor";
 export const KEY = "airc.synthetic.visitor.v1";
+export const PENDING_KEY = KEY + ".start";
 export const QUEUE_LIMIT = 128;
 export const BATCH_SIZE = 16;
 type ObjectId = "demo-object-cube" | "demo-object-column";
@@ -13,7 +14,8 @@ export type View = {
     id: string; room_id: typeof ROOM; scope: "synthetic_local";
     selected_id: ObjectId | null; info_open: boolean; ended: boolean;
 };
-export type LocalSession = { view: View; queue: VisitEvent[]; clock: number; clearing: boolean };
+export type LocalSession = { view: View; queue: VisitEvent[]; clock: number; clearing: boolean; proofLost?: boolean };
+export type PendingStart = { id: string; previousId: string | null; prepared: boolean };
 
 const uuid = /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/;
 const kinds = ["room_enter", "object_select", "info_open", "info_close", "session_end"];
@@ -31,13 +33,27 @@ export function readView(input: unknown): View {
     return value as View;
 }
 
+export function readPending(storage: Pick<Storage, "getItem">): PendingStart | null {
+    const raw = storage.getItem(PENDING_KEY);
+    if (raw === null) return null;
+    if (raw.length > 256) throw new Error("Invalid start attempt");
+    const attempt = JSON.parse(raw) as PendingStart;
+    if (!attempt || !uuid.test(attempt.id) ||
+        (attempt.previousId !== null && !uuid.test(attempt.previousId)) ||
+        typeof attempt.prepared !== "boolean") throw new Error("Invalid start attempt");
+    return attempt;
+}
+
+export const settled = (session: LocalSession) =>
+    session.view.ended && session.queue.length === 0 && !session.clearing && !session.proofLost;
+
 export function readLocal(storage: Pick<Storage, "getItem">): LocalSession | null {
     const raw = storage.getItem(KEY);
     if (raw === null) return null;
     if (raw.length > 50_000) throw new Error("Invalid queue");
     const value = JSON.parse(raw) as LocalSession;
     readView(value.view);
-    if (!Number.isSafeInteger(value.clock) || typeof value.clearing !== "boolean" ||
+    if ((value.proofLost !== undefined && typeof value.proofLost !== "boolean") || !Number.isSafeInteger(value.clock) || typeof value.clearing !== "boolean" ||
         !Array.isArray(value.queue) || value.queue.length > QUEUE_LIMIT ||
         value.queue.some(item => !uuid.test(item.id) || item.schema_version !== 1 ||
             item.room_id !== ROOM || !kinds.includes(item.event_type) ||
@@ -57,7 +73,7 @@ export function applyEvent(view: View, item: VisitEvent): View {
 
 export function enqueue(session: LocalSession, kind: Kind, object: string | null, now: number,
     id: string): LocalSession {
-    if (session.clearing || session.view.ended) return session;
+    if (session.clearing || session.proofLost || session.view.ended) return session;
     if (session.queue.length >= QUEUE_LIMIT) throw new Error("Queue is full");
     if (object !== null && !objectId(object)) throw new Error("Unknown synthetic object");
     const clock = Math.max(now, session.clock + 1);

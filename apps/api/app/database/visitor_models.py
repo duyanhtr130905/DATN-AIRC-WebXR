@@ -61,3 +61,14 @@ class VisitorEvent(Base):
     object_id: Mapped[str | None] = mapped_column(String(32))
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class VisitorStartAttempt(Base):
+    __tablename__ = "visitor_start_attempts"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+    pending_digest: Mapped[str | None] = mapped_column(String(64))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    session_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("visitor_sessions.id", ondelete="SET NULL"), unique=True
+    )
