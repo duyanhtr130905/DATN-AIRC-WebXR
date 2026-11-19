@@ -1,40 +1,88 @@
 name: P507 TV bounds read-only diagnostic
 on:
   pull_request:
-    paths:
-      - 'experiments/p507-webxr/diagnose_tv*'
-      - 'experiments/p507-webxr/tv_diagnostic_math.py'
-      - 'experiments/p507-webxr/test_tv_diagnostic.py'
-      - 'experiments/p507-webxr/verify_diagnostic_exit.py'
-      - 'docs/3d-production/P507-E0-TV-BOUNDS-DIAGNOSTIC.md'
-      - '.github/workflows/p507-tv-diagnostic.yml'
-      - 'docs/3d-production/P507-M2-INTEGRATION-19.md'
-      - 'docs/ROADMAP.md'
-      - 'docs/PROJECT_STATUS.md'
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
-  actions: read
 jobs:
-  original-version-diagnostic:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    env:
-      GH_TOKEN: ${{ github.token }}
-      CHROME_BIN: /usr/bin/google-chrome
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+  diagnostic-unit:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s experiments/p507-webxr -p 'test_tv_diagnostic.py' -v
+  asset-validation-status:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Report actual-asset validation status
+        env:
+          ENABLED: ${{ vars.P507_VAULT_CI_ENABLED }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$EVENT" = pull_request ] || [ "$REF" != refs/heads/main ]; then
+            echo "ACTUAL_ASSET_VALIDATION=NOT_RUN_PRIVILEGED_REQUIRED" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$ENABLED" != true ]; then
+            echo "ACTUAL_ASSET_VALIDATION=NOT_RUN_PRIVILEGED_REQUIRED (activation is disabled)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ACTUAL_ASSET_VALIDATION=SEE_TRUSTED_JOB" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  vault-original-version-diagnostic:
+    # Only main code can receive environment-only secrets. No arbitrary SHA input.
+    if: >-
+      github.repository == 'duyanhtr130905/DATN-AIRC-WebXR' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.P507_VAULT_CI_ENABLED == 'true'
+    environment: p507-vault-ci
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      P507_APP_CLIENT_ID: ${{ vars.P507_VAULT_APP_CLIENT_ID }}
+      P507_APP_ID: ${{ vars.P507_VAULT_APP_ID }}
+      P507_VAULT_INSTALLATION_ID: ${{ vars.P507_VAULT_INSTALLATION_ID }}
+      CHROME_BIN: /usr/bin/google-chrome
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
-      - name: Download original pinned artifact and verify six hashes
+      - name: Verify App JWT identity and minimal installation permissions
+        run: node experiments/p507-webxr/app-identity.mjs
+        env:
+          P507_APP_PRIVATE_KEY: ${{ secrets.P507_VAULT_APP_PRIVATE_KEY }}
+      - name: Mint vault-only short-lived read token
+        id: vault-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0, Node24
+        with:
+          client-id: ${{ vars.P507_VAULT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.P507_VAULT_APP_PRIVATE_KEY }}
+          owner: duyanhtr130905
+          repositories: DATN-AIRC-WebXR-asset-vault
+          permission-contents: read
+          skip-token-revoke: false
+      - name: Restore original only from pinned PRIVATE vault (no artifact fallback)
         run: |
-          python experiments/p507-webxr/prepare_asset.py --download
+          python experiments/p507-webxr/prepare_asset.py --restore-vault-ci
           python experiments/p507-webxr/validate_asset.py --prepare
+        env:
+          P507_VAULT_TOKEN: ${{ steps.vault-token.outputs.token }}
+          P507_TOKEN_INSTALLATION_ID: ${{ steps.vault-token.outputs.installation-id }}
       - name: Install same Ubuntu Blender package family as original run
         run: |
           sudo apt-get update -qq
@@ -59,12 +107,12 @@ jobs:
           git diff --check
       - name: Upload numeric diagnostic evidence (not E0 acceptance)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: p507-tv-bounds-read-only-diagnostic
+          name: p507-vault-tv-bounds-read-only-diagnostic
           retention-days: 7
           if-no-files-found: warn
           path: |
             .local/p507-tv-diagnostic/**/*.json
-            .local/p507-e0-e1/download-provenance.json
+            .local/p507-e0-e1/ci-vault-report.json
             .local/p507-e0-e1/e0-bundle-report.json

@@ -14,9 +14,12 @@ def main():
     source=ap.add_mutually_exclusive_group()
     source.add_argument('--download',action='store_true')
     source.add_argument('--restore-vault',action='store_true',help='Explicit owner-only PRIVATE vault restore; never automatic fallback')
+    source.add_argument('--restore-vault-ci',action='store_true',help='Trusted GitHub App installation restore; no fallback')
     args=ap.parse_args()
     lock=json.loads((HERE/'asset-lock.json').read_text())
     target=ROOT/'.local/p507-e0-e1/artifact'
+    if args.restore_vault_ci:
+        subprocess.run([sys.executable,str(HERE/'restore_asset_ci.py')],check=True)
     if args.restore_vault:
         subprocess.run([sys.executable,str(HERE/'restore_asset.py')],check=True)
     if args.download:

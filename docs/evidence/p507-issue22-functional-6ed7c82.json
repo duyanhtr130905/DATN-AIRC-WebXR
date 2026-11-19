@@ -1,0 +1,193 @@
+{
+  "head": "6ed7c820147a36678fe0416664fcd6fc4604e8d2",
+  "dirty": false,
+  "identity_path": "LOCAL_OWNER_NOT_APP",
+  "app_installation_ci": "BLOCKED_SECURITY_APPROVAL_REQUIRED",
+  "restore": {
+    "result": "RESTORE_BUNDLE_PASS",
+    "timestamp_utc": "2026-11-18T09:44:17.522367+00:00",
+    "head": "6ed7c820147a36678fe0416664fcd6fc4604e8d2",
+    "dirty": false,
+    "vault_commit": "908a5cbb1f77b75b28666fd424cbd85f2aba4c1f",
+    "archive_sha256": "4255b199c6892c53b6709b1c66ce873cbcb4088dfa8ecef679a8e3e4713249f8",
+    "archive_bytes": 11369216,
+    "privacy_before": {
+      "repository": "duyanhtr130905/DATN-AIRC-WebXR-asset-vault",
+      "private": true,
+      "authenticated_owner": "duyanhtr130905"
+    },
+    "privacy_after": {
+      "repository": "duyanhtr130905/DATN-AIRC-WebXR-asset-vault",
+      "private": true,
+      "authenticated_owner": "duyanhtr130905"
+    },
+    "member_count": 28,
+    "origin_actions_downloads": 0,
+    "existing_local_bundle_used": false,
+    "bundle": {
+      "result": "E0_BUNDLE_PASS",
+      "sourceSha": "acd21c62c24b94d7dda4bbf25c80fe0b4224cc31",
+      "checkoutSha": "9764b90f86317446bb585bf668171f81e1c57edb",
+      "modelSha256": "8662ff65af012f547b062c8e5121cdf3fc7269319e5ebce9daef9cd32cf11f49",
+      "modelBytes": 10751036,
+      "stableRecords": 123,
+      "placedIDs": 121,
+      "notice": "Runtime world-geometry, identity transform and capsule spawn checks also required for E0_PASS."
+    },
+    "notice": "E0 actual geometry/reference and E1 Chrome must run separately; no CI cross-repo credentials granted."
+  },
+  "E0": "E0_PASS",
+  "vertices": 402482,
+  "E1": {
+    "result": "PASS",
+    "scenarios": [
+      {
+        "name": "actual R4 load, scene contract and spawn",
+        "result": "PASS"
+      },
+      {
+        "name": "actual raycast child/group to logical record and provisional panel",
+        "result": "PASS"
+      },
+      {
+        "name": "WASD gated until pointer lock",
+        "result": "PASS"
+      },
+      {
+        "name": "user gesture lock, WASD, mouse look, ESC and reset",
+        "result": "PASS"
+      },
+      {
+        "name": "all WASD key events reach active controller",
+        "result": "PASS"
+      },
+      {
+        "name": "blur clears held movement",
+        "result": "PASS"
+      },
+      {
+        "name": "pagehide clears held movement",
+        "result": "PASS"
+      },
+      {
+        "name": "loading state precedes asset response",
+        "result": "PASS"
+      },
+      {
+        "name": "reload restores spawn with inactive controls",
+        "result": "PASS"
+      },
+      {
+        "name": "actual browser route segments and blocked continuation",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: missing",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: hash",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: schema",
+        "result": "PASS"
+      },
+      {
+        "name": "error state: corrupt",
+        "result": "PASS"
+      },
+      {
+        "name": "unsupported WebGL state",
+        "result": "PASS"
+      }
+    ],
+    "browser": "158.0.8127.36",
+    "physicalGPU": "Default backend observed: ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 6GB Laptop GPU (0x000025EC) Direct3D11 vs_5_0 ps_5_0, D3D11); physical-GPU KPI protocol NOT RUN",
+    "sample_counts": [
+      1441,
+      1439,
+      1440
+    ]
+  },
+  "responsive": {
+    "head": "6ed7c820147a36678fe0416664fcd6fc4604e8d2",
+    "dirty": false,
+    "result": "PASS",
+    "scope": "Viewport/touch emulation; physical phone NOT TESTED, mobile touch navigation NOT IMPLEMENTED",
+    "cases": [
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "actual": {
+          "e0": "E0_PASS",
+          "selected": "P507-CHAIR-A-09",
+          "panel": "{\n  \"data_label\": \"PROVISIONAL / USER_REPORTED; rights pending\",\n  \"id\": \"P507-CHAIR-A-09\",\n  \"type\": \"chair\",\n  \"status\": \"PLACED_PROVISIONAL\",\n  \"source\": \"PROPOSED_LAYOUT\",\n  \"position_source\": \"OWNER_APPROVED_VIRTUAL_ADAPTATION\",\n  \"rights\": \"PENDING\"\n}",
+          "aside": {
+            "left": 16,
+            "right": 374,
+            "top": 16,
+            "bottom": 352
+          },
+          "selection": {
+            "left": 16,
+            "right": 390,
+            "top": 593,
+            "bottom": 826
+          },
+          "viewport": [
+            390,
+            844
+          ],
+          "canvas": [
+            390,
+            844
+          ]
+        },
+        "result": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "actual": {
+          "e0": "E0_PASS",
+          "selected": "P507-FRAME-I-03",
+          "panel": "{\n  \"data_label\": \"PROVISIONAL / USER_REPORTED; rights pending\",\n  \"id\": \"P507-FRAME-I-03\",\n  \"type\": \"photo_frame\",\n  \"status\": \"PLACED_PROVISIONAL\",\n  \"source\": \"PROPOSED_LAYOUT\",\n  \"position_source\": \"PROPOSED_LAYOUT\",\n  \"rights\": \"PENDING\"\n}",
+          "aside": {
+            "left": 16,
+            "right": 426,
+            "top": 16,
+            "bottom": 313
+          },
+          "selection": {
+            "left": 16,
+            "right": 442.9375,
+            "top": 811,
+            "bottom": 1006
+          },
+          "viewport": [
+            768,
+            1024
+          ],
+          "canvas": [
+            768,
+            1024
+          ]
+        },
+        "result": "PASS"
+      }
+    ],
+    "browser": "158.0.8127.36"
+  },
+  "scope": "Desktop smoke and responsive emulation only; not physical-mobile/touch locomotion/KPI or App-token acceptance",
+  "raw_sha256": {
+    "vault-restore-report.json": "3e4c8180e108e16e722f16004414a50e3d2addba0f3279aa1ead195a54d06a01",
+    "e0-scene-report.json": "73ca39dc30eb1b4032653b2940dcc53ed513395d0705b962d91695b7faf4eb95",
+    "browser-report-e1.json": "93e9d05896a4e0f2bc49a67f31b265e22f0bf3bff3e1132c7cb459e036e779c2",
+    "responsive-report.json": "59503eef09578117a4372a6daf1d1478dbd94fde6f85d861f5a52b7b78089240"
+  }
+}

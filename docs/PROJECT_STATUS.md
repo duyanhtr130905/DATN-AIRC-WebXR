@@ -1,3 +1,38 @@
+# Final M2 closure candidate (2026-11-19)
+
+Draft PR #24 is based on main 5b971f591585124424e8393118b0911eb7c11110 after PR #21/#23. M2 IN_PROGRESS pending independent acceptance and owner decision. See [M2 final acceptance matrix](3d-production/P507-M2-FINAL-ACCEPTANCE.md). Exact candidate HEAD and evidence are recorded on PR #24.
+
+## AS-OF trước lần hợp nhất cuối PR #24
+
+# Independent review status — M2 Issue #22 (18/11/2026)
+
+**Main:** `5b971f591585124424e8393118b0911eb7c11110` after [PR #23 MERGED](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/23) (docs-only, exact-head 12/12 CI SUCCESS). PR #21 MERGED P507/owner-private archive; Issue #19 CLOSED.
+
+**PR #24:** reviewed implementation HEAD `997c93033ebd0716b85a910558686e4edd762b6e`; Draft, **PARTIAL / SECURITY_APPROVAL_REQUIRED**, NOT MERGED. Exact-head GitHub checks: **14 SUCCESS + 2 App SKIPPED**, 0 failed. Two of 14 are reporting-only readiness checks. Live installation-token restore was NOT RUN; mock negative tests and owner-local vault restore must not be mislabeled as App CI proof. [Review](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) and [Issue #22](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/22) record these facts.
+
+**Technical evidence scoped PASS:** 76 geometry Python, 30 E0/restore/security Python, 13 Node identity, 45 frontend tests; actual Chrome legacy E0 PASS and E1 15/15 PASS, responsive viewport emulation 390x844/768x1024 PASS for rendering and panel layout. No physical touch navigation, real mobile acceptance, GPU30/VR72, full circulation or G2 visual signoff. Owner-private R4 original asset remains frozen. Existing HIGH dev dependencies not remediated.
+
+**Blockers:** (1) owner approval/configuration for vault-only Contents:read GitHub App and protected `p507-vault-ci` environment with private key as environment secret, not repo/org secret; (2) legacy PR browser/diagnostic checks still use expiring Actions artifact after **24/11/2026 14:46:36 +07**; (3) main `vault-access-readiness` fails if feature flag disabled, requiring owner-approved setup/transition; (4) PR #23 merged into main after PR #24 branch created, and GitHub reports PR24 mergeable=false until carefully reconciled; (5) exact-head live App proof and post-expiry required-check policy missing.
+
+**Roadmap:** M0/M1 DONE, M2 IN_PROGRESS/PARTIAL, M3–M7 PLANNED; #20 deferred (G1_CIRCULATION=PARTIAL, G2_VISUAL=PENDING_OWNER_APPROVAL); no unapproved App grant/deployment/M3. This snapshot is on Draft PR24 branch only, NOT on main. Preserve previous history as AS-OF. New docs-only HEAD must be separately checked; CI of reviewed HEAD `997c9303` is not CI of the new docs commit.
+
+---
+
+## AS-OF before independent PR24 review (historical snapshot)
+# Current Issue22 snapshot — 18/11/2026, implementation IN_REVIEW
+
+Main `42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`: PR21 MERGED, Issue19 CLOSED, P507 provisional + owner-private restore present. New branch `feat/m2-secure-vault-ci-22` implements authorized Issue22; App CI **BLOCKED / SECURITY_APPROVAL_REQUIRED** (no App/key/installation/environment/activation created). Exact final HEAD/checks/run/evidence are in the [Draft PR24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) and [security/functional report](3d-production/P507-ISSUE22-SECURE-CI.md). Legacy original-artifact checks are separate from blocked App proof; skipped privileged jobs never count as E0/E1 PASS.
+
+PR23 is OPEN/DRAFT at `0f63a671cbea5f3160330d7a954761ff780d18bb` at intake; preserved its reviewed five-file synchronization on this branch, with current Issue22 extension, without merging/modifying PR23 or claiming those docs already main. Correct two-column M2 dependency table retained. See AS-OF PR23 snapshot below.
+
+Separate CI App/JWT identity/installation/read-only token scope and explicit pinned-vault restore implemented; owner restore_asset.py unchanged. Privileged main-only environment jobs never checkout PR SHA; secure setup runbook requires owner approval, environment-only key, protection entitlement and full installation selection audit. Current API found protected environment/activation absent. Frozen ZIP/GLB/lock/IDs/provenance/collision/tolerances unchanged. Precommit30Python+13Node security/identity and76geometry PASS; actual responsive emulation390/768 PASS. Clean checkpoint6ed7c82 owner remote restore/E0/E1 15/15/responsive390/768 PASS, explicitly LOCAL_OWNER_NOT_APP ([evidence](evidence/p507-issue22-functional-6ed7c82.json)). Final exact-HEAD rerun/CI results linked from Draft PR24; actual App proof still BLOCKED. Read-only npm triage:4HIGH from one picomatch ReDoS chain, all dev; production-only audit0; no dependency changes.
+
+M0/M1 DONE,M2 IN_PROGRESS,M3 PLANNED/DEPENDENCY_BLOCKED. #20 DEFERRED,G1_CIRCULATION=PARTIAL,G2_VISUAL=PENDING_OWNER_APPROVAL; no mobile-device/touch navigation/KPI30/VR72 acceptance. Next: final checks and independent ChatGPT security review; owner separately approves App/protected environment/secrets and real trusted-main CI proof. No merge/deploy/M3.
+
+---
+
+## AS-OF PR23 documentation synchronization (unmerged source snapshot)
+
 # Trạng thái hiện hành — M2 P507 đã tích hợp, 18/11/2026
 
 **Main HEAD tại lần nghiệm thu:** [`42a34979d5f48b31f3e58f17f59b7b7f6010bfe8`](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/commit/42a34979d5f48b31f3e58f17f59b7b7f6010bfe8). Đây là snapshot đã kiểm tra live; lần tiếp theo phải fetch GitHub để xác nhận SHA mới. [PR #21](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/21) **MERGED** sau independent ChatGPT review tại head `27ab5838db5f27c3a6694916b9bdbada4edb72ea`, **12/12 CI checks SUCCESS** (6 workflows) trên đúng head; GitHub xác nhận merge commit `42a34979`. PR #14/#15 là nhánh nguồn Draft lịch sử, **không cần và không được tự merge lại**.
