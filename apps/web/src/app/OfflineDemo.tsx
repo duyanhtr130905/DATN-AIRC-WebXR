@@ -2,10 +2,20 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { readHealth, readReadiness } from "../api/client.ts";
 import { ErrorBoundary } from "../components/ErrorBoundary.tsx";
 import { loadDemo, selectedObject } from "../features/catalog/demo.ts";
+import { useVisitor } from "../features/visitor/useVisitor.ts";
 const DemoScene = lazy(() => import("../scene/DemoScene.tsx"));
 const scene = loadDemo();
 export default function OfflineDemo() {
-  const [selectedId, select] = useState<string | null>(null);
+  const [untrackedId, setUntrackedId] = useState<string | null>(null);
+  const visitor = useVisitor();
+  const tracked = visitor.session && !visitor.session.clearing;
+  const recording = tracked && !visitor.suspended && !visitor.session?.view.ended;
+  const selectedId = recording ? visitor.session?.view.selected_id ?? null : untrackedId;
+  const showDetails = !recording || visitor.session?.view.info_open;
+  function select(id: string | null) {
+    setUntrackedId(id);
+    if (recording && id) visitor.actions?.record("object_select", id);
+  }
   const [api, setApi] = useState("Đang kiểm tra backend…");
   const [database, setDatabase] = useState("Chưa biết trạng thái database.");
   const [revision, refresh] = useState(0);
@@ -27,9 +37,23 @@ export default function OfflineDemo() {
     <main><p className="notice">DEMO OFFLINE ĐƯỢC CHỌN TƯỜNG MINH — không phải Catalog live. <a href="/">Về chế độ API live</a></p>
       <div className="intro"><div><p className="eyebrow">KHÁM PHÁ KHÔNG GIAN</p><h1>Nền tảng cho một góc nhìn mới.</h1></div><p>Scene + Information Panel<br />Chưa có dữ liệu khảo sát thực tế.</p></div>
       <p className="notice">SYNTHETIC / DEMO — DỮ LIỆU MÔ PHỎNG, KHÔNG PHẢI PHÒNG 507</p>
+      {(visitor.available || visitor.session || visitor.message) && <section className="connection" aria-label="Phiên mô phỏng cục bộ">
+        <h2>Phiên mô phỏng cục bộ</h2>
+        {!visitor.session && visitor.available && <button onClick={() => visitor.actions?.start()}>Đồng ý ghi phiên mô phỏng</button>}
+        {visitor.session && <>
+          <p role="status" data-testid="visitor-session">
+            {visitor.session.clearing ? "Chờ xác nhận xóa trên máy chủ" : visitor.suspended ? "Máy chủ đã tắt ghi phiên" : visitor.session.view.ended ? "Đã kết thúc" : "Đang ghi phiên mô phỏng"}
+            {" · "}{visitor.session.queue.length} sự kiện chờ
+          </p>
+          {recording && <button onClick={() => visitor.actions?.record("session_end")}>Kết thúc phiên</button>}
+          {!visitor.session.clearing && <button onClick={() => { setUntrackedId(null); visitor.actions?.clear(); }}>Dừng ghi và xóa phiên</button>}
+          <button onClick={() => visitor.actions?.retry()}>Thử đồng bộ lại</button>
+        </>}
+        {visitor.message && <p role="status">{visitor.message}</p>}
+      </section>}
       <div className="workspace"><section className="scene" aria-label="Cảnh mô phỏng"><div className="scene-label">01 / KHÔNG GIAN DEMO</div><ErrorBoundary><Suspense fallback={<p role="status">Đang tải module 3D…</p>}><DemoScene key={revision} scene={scene} selectedId={selectedId} select={select} /></Suspense></ErrorBoundary><p className="hint">Kéo để xoay · Cuộn để phóng to · Chọn khối hoặc dùng danh sách bên cạnh</p></section>
       <aside><section id="objects"><p className="eyebrow">DANH MỤC MẪU</p><h2>Đối tượng trong cảnh</h2><div className="object-list">{scene.objects.map((object, index) => <button key={object.id} aria-pressed={object.id === selectedId} onClick={() => select(object.id)}><span>0{index + 1}</span>{object.name}<span aria-hidden="true">↗</span></button>)}</div></section>
-      <section className="details" aria-live="polite"><h2>{selected?.name ?? "Chọn một đối tượng"}</h2><p>{selected?.description ?? "Thông tin hiển thị tại đây khi bạn chọn trong cảnh hoặc danh sách."}</p>{selected && <dl><dt>Stable ID</dt><dd>{selected.id}</dd><dt>Room ID</dt><dd>{selected.roomId}</dd><dt>Nguồn</dt><dd>{selected.sourceKind}</dd></dl>}</section>
+      <section className="details" aria-live="polite"><h2>{selected?.name ?? "Chọn một đối tượng"}</h2>{recording && selected && <button onClick={() => visitor.actions?.record(showDetails ? "info_close" : "info_open", selected.id)}>{showDetails ? "Ẩn thông tin" : "Mở thông tin"}</button>}{showDetails && <p>{selected?.description ?? "Thông tin hiển thị tại đây khi bạn chọn trong cảnh hoặc danh sách."}</p>}{selected && showDetails && <dl><dt>Stable ID</dt><dd>{selected.id}</dd><dt>Room ID</dt><dd>{selected.roomId}</dd><dt>Nguồn</dt><dd>{selected.sourceKind}</dd></dl>}</section>
       <section className="connection" aria-live="polite"><h2>Kết nối nền tảng</h2><p data-testid="health">{api}</p><p data-testid="readiness">{database}</p><button onClick={() => refresh(value => value + 1)}>Kiểm tra lại & đặt lại cảnh</button></section></aside></div>
       <footer>Chưa có phiên AR/VR thực tế · Chưa đạt nghiệm thu KPI MT1–MT3 · Guided Tour sẽ phát triển sau</footer>
     </main>

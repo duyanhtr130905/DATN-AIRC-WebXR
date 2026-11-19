@@ -2,7 +2,9 @@ from sqlalchemy import create_engine, pool, text
 
 from alembic import context
 from app.core.config import Settings
+from app.database import visitor_models  # noqa: F401 -- register M4 metadata
 from app.database.models import Base
+from app.database.visitor_guard import LOCAL_VISITOR_DATABASE
 
 config = context.config
 target_metadata = Base.metadata
@@ -26,7 +28,10 @@ def run_migrations():
     name = parsed.database
     confirmation = context.get_x_argument(as_dictionary=True).get("confirm_catalog_database")
     if (
-        not (name == "airc_foundation" or name.startswith("airc_test_catalog_"))
+        not (
+            name in {"airc_foundation", LOCAL_VISITOR_DATABASE}
+            or name.startswith("airc_test_catalog_")
+        )
         or confirmation != name
         or parsed.host not in {"127.0.0.1", "localhost"}
         or parsed.query

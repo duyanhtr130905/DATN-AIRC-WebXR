@@ -98,16 +98,18 @@ def test_migration_empty_database_head_repeat_and_model_drift(catalog_database):
             "admin_sessions",
             "admin_catalog",
             "admin_audit",
+            "visitor_sessions",
+            "visitor_events",
         }
         assert connection.scalar(select(func.count()).select_from(Room)) == 0
         assert connection.scalar(select(func.count()).select_from(Object)) == 0
         command.current(config)
-        assert "0004_admin_provenance" in output.getvalue()
+        assert "0005_visitor_sessions" in output.getvalue()
         command.upgrade(config, "head")
         command.check(config)
         assert (
             connection.scalar(text("SELECT version_num FROM alembic_version"))
-            == "0004_admin_provenance"
+            == "0005_visitor_sessions"
         )
         inspector = inspect(connection)
         assert inspector.get_foreign_keys("objects")[0]["options"]["ondelete"] == "RESTRICT"
@@ -399,7 +401,7 @@ def test_actual_cli_migration_and_seed_on_new_database():
             )
             assert result.returncode == 0, f"Alembic CLI {action[0]} failed; see isolated test"
             if action == ["current"]:
-                assert "0004_admin_provenance (head)" in result.stdout
+                assert "0005_visitor_sessions (head)" in result.stdout
         for _ in range(2):
             result = subprocess.run(
                 [

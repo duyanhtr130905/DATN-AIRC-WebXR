@@ -55,7 +55,7 @@ Sau mỗi lượt Codex:
 6. Nếu docs trên branch chưa merge, ghi rõ trạng thái branch so với main, PR/head/base và CI tương ứng; không tuyên bố đã đồng bộ main chỉ vì Draft PR xanh.
 7. Chủ dự án quyết định merge/triển khai bước tiếp theo hoặc **ủy quyền có phạm vi cho ChatGPT merge các PR đủ điều kiện** sau review và kiểm tra live. Codex không được merge. Không coi review AI thay nghiệm thu học thuật/quyền AIRC.
 
-Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 APPROVED; [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) đã MERGED sau độc lập review, M2 FUNCTIONAL PROTOTYPE DONE (7/7 DoD đúng phạm vi). Giữ Issue #22 OPEN về privileged vault CI/App token chưa có live proof, Issue #20 owner-deferred lối ghế/kích thước/vị trí, G2 visual pending. M3 technical manual-first Admin đã được owner giao, review và merge PR #25; phần field sources/rights #2/#3 còn BLOCKED. M4–M7 chưa được owner giao triển khai mã. Không gọi DoD M2 là hoàn thiện real-world fidelity/VR/KPI.
+Quy trình áp dụng sau mọi kết luận, không đợi PASS. Roadmap 2.0 APPROVED; [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) đã MERGED sau độc lập review, M2 FUNCTIONAL PROTOTYPE DONE (7/7 DoD đúng phạm vi). Giữ Issue #22 OPEN về privileged vault CI/App token chưa có live proof, Issue #20 owner-deferred lối ghế/kích thước/vị trí, G2 visual pending. M3 technical manual-first Admin đã được owner giao, review và merge PR #25; phần field sources/rights #2/#3 còn BLOCKED. Issue #27 giao phần kỹ thuật M4 synthetic/local; M5–M7 chưa được giao. Chính sách thu thập phiên thật vẫn chờ phê duyệt. Không gọi DoD M2 là hoàn thiện real-world fidelity/VR/KPI.
 
 ## Quy tắc M2 P507 hiện hành
 

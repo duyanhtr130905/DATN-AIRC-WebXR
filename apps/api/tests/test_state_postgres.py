@@ -92,7 +92,7 @@ def test_upgrade_0001_to_0002_preserves_catalog():
             assert connection.scalar(select(func.count()).select_from(CurrentState)) == 0
             assert (
                 connection.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0004_admin_provenance"
+                == "0005_visitor_sessions"
             )
             assert inspect(connection).get_unique_constraints("outbox")
 

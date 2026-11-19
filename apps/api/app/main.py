@@ -17,6 +17,8 @@ from app.modules.realtime.dispatcher import Broker, Dispatcher
 from app.modules.realtime.router import router as realtime_router
 from app.modules.state.router import router as state_router
 from app.modules.status import router
+from app.modules.visitor import router as visitor_router
+from app.modules.visitor_reports import router as visitor_reports_router
 
 
 def create_app(
@@ -85,6 +87,10 @@ def create_app(
         application.include_router(admin_auth_router)
         application.include_router(admin_catalog_router)
         application.include_router(stream_router)
+    if config.visitor_synthetic_enabled:
+        application.include_router(visitor_router)
+        if config.admin_enabled:
+            application.include_router(visitor_reports_router)
     application.include_router(router)
     application.include_router(catalog_router)
     application.include_router(realtime_router)
