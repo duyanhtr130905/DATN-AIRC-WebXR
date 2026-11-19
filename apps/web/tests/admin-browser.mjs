@@ -47,6 +47,27 @@ try {
             });
         });
     });
+    if (report.frozen) await page.addInitScript(() => {
+        const draws = new WeakMap();
+        const events = [];
+        for (const method of ["drawArrays", "drawElements", "drawArraysInstanced", "drawElementsInstanced"]) {
+            const original = WebGL2RenderingContext.prototype[method];
+            WebGL2RenderingContext.prototype[method] = function (...args) {
+                draws.set(this.canvas, (draws.get(this.canvas) ?? 0) + 1);
+                return original.apply(this, args);
+            };
+        }
+        for (const type of ["pointerdown", "pointerup", "click"]) document.addEventListener(type, event => {
+            const canvas = document.querySelector("canvas");
+            if (canvas && events.length < 75) events.push({
+                type, target: event.target.tagName, x: event.clientX, y: event.clientY, draws: draws.get(canvas) ?? 0,
+            });
+        }, true);
+        window.p507AdminRayProbe = {
+            hasDrawn: () => (draws.get(document.querySelector("canvas")) ?? 0) > 0,
+            events: () => events.slice(),
+        };
+    });
     await page.goto(origin + "/?mode=admin");
     await page.getByLabel("Tên đăng nhập").fill("qa_operator");
     await page.getByLabel("Mật khẩu", { exact: true }).fill("invalid-test-" + crypto.randomUUID());
@@ -69,14 +90,28 @@ try {
     const picker = page.getByLabel("Đối tượng", { exact: true });
     assert.equal(await picker.locator("option").count(), 122);
     if (report.frozen) {
-        await page.locator("canvas").waitFor({ timeout: 40000 });
-        const box = await page.locator("canvas").boundingBox();
-        for (const y of [0.5, 0.65, 0.35, 0.8, 0.2]) {
-            await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * y);
-            if (await picker.inputValue()) break;
+        const canvas = page.locator("canvas");
+        await canvas.waitFor({ timeout: 40000 });
+        const shoot = async (verticalFractions) => {
+            const box = await canvas.boundingBox();
+            for (const y of verticalFractions) {
+                await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * y);
+                if (await picker.inputValue()) break;
+            }
+            return picker.inputValue();
+        };
+        report.ray = {};
+        if (process.env.M5_ADMIN_RAY_PROBE === "1") {
+            report.ray.early = await shoot([0.5, 0.65, 0.35, 0.8, 0.2]);
+            report.ray.before = await page.evaluate(() => window.p507AdminRayProbe.events());
+            await picker.selectOption("");
         }
-        report.mesh = await picker.inputValue();
-        assert.ok(Object.values(mapping.objects).includes(report.mesh));
+        // React inserts the default-size canvas before R3F lays out and draws the frozen scene.
+        // Wait for a real WebGL draw, then measure the settled canvas and click its center.
+        await page.waitForFunction(() => window.p507AdminRayProbe.hasDrawn(), null, { timeout: 40000 });
+        report.mesh = await shoot([0.5]);
+        report.ray.after = await page.evaluate(() => window.p507AdminRayProbe.events());
+        assert.equal(report.mesh, mapping.objects["P507-CHAIR-C-08"]);
     } else await page.getByRole("alert").filter({ hasText: "asset R4" }).waitFor();
     second.setDefaultTimeout(20000);
     await second.route('**/*.glb', route => route.abort());

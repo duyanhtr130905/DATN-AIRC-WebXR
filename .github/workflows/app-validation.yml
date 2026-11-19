@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ github.head_ref == 'feat/m4-visitor-sessions-reporting' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ (github.head_ref == 'feat/m4-visitor-sessions-reporting' || github.head_ref == 'feat/m5-webxr-ar-vr-integration') && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
@@ -36,6 +36,8 @@ jobs:
           VITE_TEST_DIAGNOSTICS: '1'
       - run: npm test --prefix apps/web
       - run: npm run test:browser --prefix apps/web
+      - name: M5 browser fallback (secretless, no R4 or XR claim)
+        run: node apps/web/tests/m5-browser.mjs
       - name: Browser report and real screenshots only
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -44,6 +46,7 @@ jobs:
           path: |
             .local/app-browser/report.json
             .local/app-browser/*.png
+            .local/p507-m5/report.json
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
@@ -68,7 +71,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ github.head_ref == 'feat/m4-visitor-sessions-reporting' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ (github.head_ref == 'feat/m4-visitor-sessions-reporting' || github.head_ref == 'feat/m5-webxr-ar-vr-integration') && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.13'

@@ -5,6 +5,8 @@ import { p507ExperimentAssets } from "./p507-e1-server";
 const target = process.env.API_PROXY_TARGET || "http://127.0.0.1:8000";
 export default defineConfig({
     plugins: [react(), p507ExperimentAssets()],
+    // Owner-local previews in public/ are only for DEV, including the standalone E1 comparison.
+    build: { copyPublicDir: false },
     server: { host: "127.0.0.1", proxy: { "/api": { target }, "/ws": { target, ws: true, changeOrigin: false } } },
     preview: { host: "127.0.0.1", proxy: { "/api": { target }, "/ws": { target, ws: true, changeOrigin: false } } },
 });

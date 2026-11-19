@@ -22,6 +22,7 @@
     "@react-three/xr": "6.6.32"
   },
   "devDependencies": {
+    "iwer": "2.8.0",
     "typescript": "5.9.3",
     "vite": "7.3.8",
     "@vitejs/plugin-react": "5.1.1",
