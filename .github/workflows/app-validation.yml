@@ -100,6 +100,7 @@ jobs:
             .local/m1-c-browser/
             .local/m3-browser/report.json
             .local/m3-browser/panel-*.png
+            .local/m3-migration-report.json
             .local/m3-admin-browser/report.json
             .local/m3-admin-browser/panel-*.png
           include-hidden-files: true

@@ -2,11 +2,11 @@
 
 import asyncio
 from typing import Annotated, Literal
-from uuid import UUID
+from uuid import UUID, uuid4
 
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints
-from sqlalchemy import and_, func, select
+from fastapi import APIRouter, HTTPException, Query, WebSocket, WebSocketDisconnect
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from sqlalchemy import and_, func, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -14,19 +14,30 @@ from app.database.admin_models import AdminAccount, AdminAudit, AdminCatalog
 from app.database.models import Object
 from app.database.state_models import CurrentState, Outbox, StateHistory
 from app.modules.admin_auth import COOKIE, DB, Operator, allowed, auth
-from app.modules.p507 import ROOM_ID, object_id
+from app.modules.p507 import ROOM_ID, Observation, object_id
 from app.modules.state.schemas import StateType
 from app.modules.state.service import (
     StateConflict,
     StateUnavailable,
     change_state,
+    next_admin_sequence,
     state_payload,
     visible_room,
 )
 
 router = APIRouter(prefix="/api/v1/admin/p507")
 stream_router = APIRouter()
-PROVENANCE = "OWNER_SURVEYED / PENDING_VERIFICATION"
+Provenance = Literal["SYNTHETIC_TEST", "OWNER_ENTERED"]
+LABELS = {
+    "SYNTHETIC_TEST": "SYNTHETIC_TEST / NOT_AIRC",
+    "OWNER_ENTERED": "OWNER_ENTERED / PENDING_VERIFICATION",
+}
+
+
+def provenance_label(source: str | None) -> str:
+    return LABELS.get(source, "UNKNOWN")
+
+
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=256)]
 Kind = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)]
 
@@ -40,7 +51,15 @@ class CatalogInput(BaseModel):
     location: str = Field(max_length=256)
     modeling: Literal["MODELED", "NOT_MODELED", "INFO_ONLY"]
     archived: bool
+    provenance: Provenance | None = None
+    observed_at: AwareDatetime | None = None
+    source_note: str | None = Field(default=None, max_length=256)
     expected_version: int = Field(strict=True, ge=0, le=2**53 - 2)
+
+    @field_validator("observed_at", mode="before")
+    @classmethod
+    def explicit_timestamp(cls, value):
+        return Observation.require_source_timestamp(value) if value is not None else None
 
 
 class StateInput(BaseModel):
@@ -50,7 +69,13 @@ class StateInput(BaseModel):
     value: dict
     observed_at: AwareDatetime
     source_note: str = Field(default="", max_length=256)
+    provenance: Provenance | None = None
     expected_version: int = Field(strict=True, ge=0, le=2**53 - 2)
+
+    @field_validator("observed_at", mode="before")
+    @classmethod
+    def explicit_timestamp(cls, value):
+        return Observation.require_source_timestamp(value)
 
 
 def logical_id(obj: Object) -> str | None:
@@ -60,7 +85,12 @@ def logical_id(obj: Object) -> str | None:
     return None
 
 
-def catalog_row(obj: Object, details: AdminCatalog | None):
+def catalog_row(
+    obj: Object, details: AdminCatalog | None, audit: AdminAudit | None, username: str | None
+):
+    source = (
+        audit.provenance if audit else "SYNTHETIC_TEST" if not details and logical_id(obj) else None
+    )
     return {
         "id": obj.id,
         "logical_id": logical_id(obj),
@@ -76,21 +106,36 @@ def catalog_row(obj: Object, details: AdminCatalog | None):
         else "MODELED"
         if logical_id(obj)
         else "NOT_MODELED",
-        "provenance": PROVENANCE if details else "PROVISIONAL / SYNTHETIC",
+        "provenance": provenance_label(source),
+        "operator": username,
+        "source_observed_at": audit.observed_at if audit else None,
+        "committed_at": audit.recorded_at if audit else None,
+        "source_note": audit.source_note if audit else None,
     }
 
 
 @router.get("")
 def snapshot(db: DB, account: Operator):
+    lock_room(db)
     objects = db.execute(
-        select(Object, AdminCatalog)
+        select(Object, AdminCatalog, AdminAudit, AdminAccount.username)
         .outerjoin(AdminCatalog)
+        .outerjoin(
+            AdminAudit,
+            and_(
+                AdminAudit.target_id == Object.id,
+                AdminAudit.revision == AdminCatalog.revision,
+                AdminAudit.operation.in_(("catalog.create", "catalog.update")),
+                AdminAudit.outcome == "success",
+            ),
+        )
+        .outerjoin(AdminAccount, AdminAccount.id == AdminAudit.account_id)
         .where(Object.room_id == ROOM_ID, Object.source_kind.in_(("synthetic", "unknown")))
         .order_by(Object.id)
         .limit(513)
     ).all()
     states = db.execute(
-        select(CurrentState, AdminAccount.username, StateHistory.source_note)
+        select(CurrentState, AdminAccount.username, StateHistory.source_note, AdminAudit.provenance)
         .join(
             AdminAudit,
             and_(
@@ -114,15 +159,15 @@ def snapshot(db: DB, account: Operator):
     if len(objects) > 512 or len(states) > 1536:
         raise HTTPException(409)
     return {
-        "objects": [catalog_row(obj, details) for obj, details in objects],
+        "objects": [catalog_row(*row) for row in objects],
         "states": [
             {
                 **state_payload(state),
                 "operator": username,
                 "source_note": note,
-                "provenance": PROVENANCE,
+                "provenance": provenance_label(source),
             }
-            for state, username, note in states
+            for state, username, note, source in states
         ],
     }
 
@@ -137,21 +182,63 @@ def save_catalog(
     if (body.modeling == "MODELED") != bool(logical_id(obj)):
         raise HTTPException(422)
     row = existing or AdminCatalog(object_id=obj.id)
-    for key, value in body.model_dump(exclude={"expected_version"}).items():
+    prior = (
+        db.scalar(
+            select(AdminAudit).where(
+                AdminAudit.target_id == obj.id,
+                AdminAudit.revision == version,
+                AdminAudit.operation.in_(("catalog.create", "catalog.update")),
+                AdminAudit.outcome == "success",
+            )
+        )
+        if existing
+        else None
+    )
+    source = body.provenance or (prior.provenance if prior else None)
+    observed_at = body.observed_at if body.provenance else prior.observed_at if prior else None
+    note = body.source_note if body.provenance else prior.source_note if prior else None
+    if (body.provenance == "OWNER_ENTERED" and observed_at is None) or (
+        body.provenance is None and (body.observed_at is not None or body.source_note is not None)
+    ):
+        raise HTTPException(422)
+    fields = body.model_dump(
+        exclude={"expected_version", "provenance", "observed_at", "source_note"}
+    )
+    for key, value in fields.items():
         setattr(row, key, value)
     row.revision = version + 1
     db.add(row)
-    db.add(
-        AdminAudit(
-            account_id=account.id,
-            target_id=obj.id,
-            operation="catalog.create" if creating else "catalog.update",
-            outcome="success",
-            previous_revision=version,
-            revision=row.revision,
-        )
+    timestamp = db.scalar(text("SELECT clock_timestamp()"))
+    audit = AdminAudit(
+        account_id=account.id,
+        target_id=obj.id,
+        operation="catalog.create" if creating else "catalog.update",
+        outcome="success",
+        previous_revision=version,
+        revision=row.revision,
+        recorded_at=timestamp,
+        provenance=source,
+        observed_at=observed_at,
+        source_note=note,
     )
-    return catalog_row(obj, row)
+    try:
+        sequence = next_admin_sequence(db, ROOM_ID)
+    except StateConflict:
+        raise HTTPException(409) from None
+    db.add_all(
+        [
+            audit,
+            Outbox(
+                message_id=uuid4(),
+                room_id=ROOM_ID,
+                audience="admin",
+                sequence=sequence,
+                payload={"type": "catalog.invalidate"},
+                committed_at=timestamp,
+            ),
+        ]
+    )
+    return catalog_row(obj, row, audit, account.username)
 
 
 def lock_room(db: Session):
@@ -172,7 +259,7 @@ def create_object(body: CatalogInput, db: DB, account: Operator):
         name="Private Catalog object",
         type="private",
         source_kind="unknown",
-        evidence_ref=PROVENANCE,
+        evidence_ref="Private Admin Catalog",
     )
     db.add(obj)
     db.flush()
@@ -227,15 +314,67 @@ def update_state(body: StateInput, db: DB, account: Operator):
             account_id=account.id,
             target_id=UUID(state["id"]),
             operation=body.state_type,
+            provenance=body.provenance,
             outcome="success",
             previous_revision=body.expected_version,
             revision=state["version"],
         )
     )
+    result["state"].update(
+        provenance=provenance_label(body.provenance),
+        operator=account.username,
+        source_note=body.source_note,
+    )
     return result
 
 
-def published(socket: WebSocket):
+@router.get("/state/{identity}/history")
+def state_history(
+    identity: UUID,
+    db: DB,
+    account: Operator,
+    after_version: int = Query(0, ge=0, le=2**53 - 1),
+):
+    state = db.scalar(
+        select(CurrentState).where(
+            CurrentState.id == identity,
+            CurrentState.room_id == ROOM_ID,
+            CurrentState.audience == "admin",
+        )
+    )
+    if state is None:
+        raise HTTPException(404)
+    rows = db.execute(
+        select(StateHistory, AdminAudit, AdminAccount.username)
+        .outerjoin(
+            AdminAudit,
+            and_(
+                AdminAudit.target_id == identity,
+                AdminAudit.revision == StateHistory.version,
+                AdminAudit.operation == state.state_type,
+                AdminAudit.outcome == "success",
+            ),
+        )
+        .outerjoin(AdminAccount, AdminAccount.id == AdminAudit.account_id)
+        .where(StateHistory.state_id == identity, StateHistory.version > after_version)
+        .order_by(StateHistory.version)
+        .limit(101)
+    ).all()
+    data = [
+        {
+            **state_payload(state, history),
+            "provenance": provenance_label(audit.provenance if audit else None),
+            "operator": username,
+            "source_note": history.source_note,
+        }
+        for history, audit, username in rows[:100]
+    ]
+    return {"data": data, "next_after_version": data[-1]["version"] if len(rows) > 100 else None}
+
+
+def committed_cursor(socket: WebSocket):
+    # Broker notifications wake the reader. Polling committed rows also recovers
+    # on reconnect, after queue coalescing, or while the dispatcher is unavailable.
     engine = socket.app.state.database.engine
     if engine is None:
         return None
@@ -246,14 +385,16 @@ def published(socket: WebSocket):
             select(func.coalesce(func.max(Outbox.sequence), 0)).where(
                 Outbox.room_id == ROOM_ID,
                 Outbox.audience == "admin",
-                Outbox.published_at.is_not(None),
             )
         )
 
 
 @stream_router.websocket("/ws/v1/admin/p507")
 async def stream(socket: WebSocket):
-    if not allowed(socket, check_origin=True) or await asyncio.to_thread(published, socket) is None:
+    if (
+        not allowed(socket, check_origin=True)
+        or await asyncio.to_thread(committed_cursor, socket) is None
+    ):
         await socket.close(code=1008)
         return
     broker = socket.app.state.broker
@@ -268,7 +409,7 @@ async def stream(socket: WebSocket):
         disconnect = asyncio.create_task(socket.receive())
         previous = None
         while not disconnect.done():
-            cursor = await asyncio.to_thread(published, socket)
+            cursor = await asyncio.to_thread(committed_cursor, socket)
             if cursor is None:
                 await socket.close(code=1008)
                 return

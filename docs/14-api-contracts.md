@@ -142,4 +142,4 @@ Client giữ trạng thái cũ đánh STALE khi mấtWS; không gọi dữ liệ
 
 ## M3 private operator API
 
-The loopback-only Admin supplement defines private session, Catalog and observation routes. Public M1 contracts above retain their read-only synthetic scope. See the [M3 runbook and architecture](m3/P507-M3-INTEGRATION.md) and [owner decision](m3/P507-ADMIN-DECISION.md).
+The loopback-only Admin supplement defines private session, Catalog and observation routes. Public M1 contracts above retain their read-only synthetic scope. Admin snapshot entries carry provenance, revision, actor, observation timestamp, system timestamp and an optional source note. The Admin write contract accepts only fixture and unverified owner provenance. The private GET `/api/v1/admin/p507/state/{state_id}/history?after_version=0` returns at most 100 revisions with their audit actor and provenance. Pass `next_after_version` from a page to request the next page. Private Catalog changes produce sequence-only invalidations on the authenticated Admin stream. See the [M3 runbook and architecture](m3/P507-M3-INTEGRATION.md) and [owner decision](m3/P507-ADMIN-DECISION.md).

@@ -105,4 +105,4 @@ Làm rõ bounded delivery: retry hữu hạn và lease có thể dẫn tới x�
 
 ## M3 private manual data supplement
 
-Forward-only revision 0003_admin_manual adds named accounts, server-side sessions, a private Catalog overlay and narrow audit refs. Observation rows and events remain in the M1 State/History/Outbox tables with a separate Admin audience. See the [M3 runbook and architecture](m3/P507-M3-INTEGRATION.md).
+Forward-only revision 0003_admin_manual adds named accounts, server-side sessions, a private Catalog overlay and narrow audit refs. Revision 0004_admin_provenance adds nullable provenance and source context to private audit revisions. Existing missing provenance reads as UNKNOWN. Observation rows and events remain in the M1 State/History/Outbox tables with a separate Admin audience. See the [M3 runbook and architecture](m3/P507-M3-INTEGRATION.md).

@@ -66,6 +66,18 @@ def state_payload(state: CurrentState, history: StateHistory | None = None) -> d
     )
 
 
+def next_admin_sequence(session: Session, room_id: UUID) -> int:
+    # Callers hold the room row lock before allocating a private sequence.
+    sequence = session.scalar(
+        select(func.coalesce(func.max(Outbox.sequence), 0)).where(
+            Outbox.room_id == room_id, Outbox.audience == "admin"
+        )
+    )
+    if sequence >= 2**63 - 1:
+        raise StateConflict("Admin sequence exhausted")
+    return sequence + 1
+
+
 def change_state(
     session: Session,
     *,
@@ -128,15 +140,7 @@ def change_state(
             raise ValueError("Private observation requires a timestamp")
         if state and state.source_observed_at and source_observed_at <= state.source_observed_at:
             raise StateConflict("Source observation must advance")
-        sequence = (
-            session.scalar(
-                select(func.coalesce(func.max(Outbox.sequence), 0)).where(
-                    Outbox.room_id == room_id,
-                    Outbox.audience == audience,
-                )
-            )
-            + 1
-        )
+        sequence = next_admin_sequence(session, room_id)
     else:
         session.execute(
             insert(RoomStateCursor).values(room_id=room_id, sequence=0).on_conflict_do_nothing()

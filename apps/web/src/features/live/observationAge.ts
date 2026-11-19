@@ -2,7 +2,7 @@ function timestamp(value?: string | null) {
     return value && /(?:Z|[+-]\d{2}:\d{2})$/.test(value) ? Date.parse(value) : NaN;
 }
 
-export function observationAge(observed: string | null, now: number, committed?: string) {
+export function observationAge(observed: string | null, now: number, committed?: string | null) {
     const observation = timestamp(observed);
     if (!Number.isFinite(observation) || !Number.isFinite(now)) return "UNKNOWN";
     const mutation = timestamp(committed);

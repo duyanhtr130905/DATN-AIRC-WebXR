@@ -8,7 +8,7 @@ On 2026-11-19 the owner confirmed AIRC has no management API or existing device 
 | equipment_status | Owner records equipment status manually | P507 object UUID; explicit time of observation and system mutation timestamp | Manual/on-change; R4 inventory coverage and authoritative device status pending |
 | exhibit_info | Owner enters title, description and source note | P507 object UUID; observation/content revision time and system mutation timestamp | Manual/on-change; institutional content authority and SLA unconfirmed |
 
-Timezone is explicit on the wire. The prototype browser interprets the wall time in the operator's local timezone and converts it to UTC. System time and version are assigned independently. Private observations use `source_kind=unknown` and `OWNER_SURVEYED / PENDING_VERIFICATION`. Tests use generated fictional content and ephemeral credentials. Public readers remain synthetic-only.
+Timezone is explicit on the wire. The prototype browser interprets the wall time in the operator's local timezone and converts it to UTC. System time and version are assigned independently. Private observations remain in the Admin audience with `source_kind=unknown` for transport. The per-revision audit stores provenance separately. The UI labels explicit fixtures `SYNTHETIC_TEST / NOT_AIRC`, explicit owner entries `OWNER_ENTERED / PENDING_VERIFICATION`, and legacy entries without provenance `UNKNOWN`. Tests use generated fictional content and ephemeral credentials. Public readers remain synthetic-only.
 
 | Right | Status |
 | --- | --- |

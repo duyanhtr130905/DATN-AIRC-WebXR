@@ -44,6 +44,9 @@ class AdminAudit(Base):
     outcome: Mapped[str] = mapped_column(String(16))
     previous_revision: Mapped[int | None] = mapped_column(BigInteger)
     revision: Mapped[int | None] = mapped_column(BigInteger)
+    provenance: Mapped[str | None] = mapped_column(String(16))
+    observed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source_note: Mapped[str | None] = mapped_column(String(256))
     recorded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

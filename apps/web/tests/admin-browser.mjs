@@ -34,7 +34,8 @@ try {
     assert.ok(executablePath, "Chrome required");
     browser = await chromium.launch({ executablePath, args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
     report.chrome = browser.version();
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, timezoneId: "UTC" });
+    const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, timezoneId: "UTC" });
+    const page = await context.newPage();
     page.setDefaultTimeout(20000);
     const frames = [];
     page.on("websocket", socket => {
@@ -44,6 +45,10 @@ try {
         });
     });
     await page.goto(origin + "/?mode=admin");
+    await page.getByLabel("Tên đăng nhập").fill("qa_operator");
+    await page.getByLabel("Mật khẩu", { exact: true }).fill("invalid-test-" + crypto.randomUUID());
+    await page.getByRole("button", { name: "Đăng nhập" }).click();
+    await page.getByRole("alert").filter({ hasText: "(401)" }).waitFor();
     await page.getByLabel("Tên đăng nhập").fill("qa_operator");
     await page.getByLabel("Mật khẩu", { exact: true }).fill(fixture);
     await page.getByRole("button", { name: "Đăng nhập" }).click();
@@ -70,32 +75,78 @@ try {
         report.mesh = await picker.inputValue();
         assert.ok(Object.values(mapping.objects).includes(report.mesh));
     } else await page.getByRole("alert").filter({ hasText: "asset R4" }).waitFor();
+    const second = await context.newPage();
+    second.setDefaultTimeout(20000);
+    await second.route('**/*.glb', route => route.abort());
+    await second.goto(origin + "/?mode=admin");
+    const secondSync = second.getByTestId("admin-sync");
+    await secondSync.filter({ hasText: "CONNECTED" }).waitFor();
+    const secondPicker = second.getByLabel("Đối tượng", { exact: true });
+    const secondPanel = second.getByTestId("admin-panel");
     const panel = page.getByTestId("admin-panel");
     const catalog = page.locator("form").filter({ has: page.getByRole("button", { name: "Lưu danh mục" }) });
     await picker.selectOption("");
     await catalog.getByLabel("Tên", { exact: true }).fill("Synthetic inventory item");
     await catalog.getByLabel("Loại", { exact: true }).fill("fixture");
     await catalog.getByLabel("Nhóm", { exact: true }).fill("test");
+    await catalog.getByLabel("Nguồn dữ liệu").selectOption("SYNTHETIC_TEST");
     await catalog.getByRole("button", { name: "Lưu danh mục" }).click();
     await panel.getByRole("heading", { name: "Synthetic inventory item" }).waitFor();
     assert.match(await panel.innerText(), /NOT_MODELED/);
     const created = await picker.inputValue();
     assert.equal((await fetch(origin + "/api/v1/objects/" + created)).status, 404);
+    await secondPicker.getByRole("option", { name: "Synthetic inventory item" }).waitFor({ state: "attached" });
+    await secondPicker.selectOption(created);
+    await catalog.getByLabel("Lưu trữ đối tượng").check();
+    await catalog.getByRole("button", { name: "Lưu danh mục" }).click();
+    await secondPicker.getByRole("option", { name: "Synthetic inventory item" }).waitFor({ state: "detached" });
+    await second.getByLabel("Lọc trạng thái danh mục", { exact: true }).selectOption("archived");
+    await secondPicker.selectOption(created);
+    const archived = second.locator('input[name="archived"]');
+    await second.waitForFunction(() => document.querySelector('input[name="archived"]')?.checked === true);
+    assert.equal(await archived.isChecked(), true);
+    assert.equal(await second.getByRole("form", { name: "equipment_status" }).count(), 0);
     const target = report.mesh || Object.values(mapping.objects)[0];
     await picker.selectOption(target);
+    await second.getByLabel("Lọc trạng thái danh mục", { exact: true }).selectOption("active");
+    await secondPicker.selectOption(target);
     await catalog.getByLabel("Tên", { exact: true }).fill("Private synthetic test label");
+    await catalog.getByLabel("Nguồn dữ liệu").selectOption("SYNTHETIC_TEST");
     await catalog.getByRole("button", { name: "Lưu danh mục" }).click();
     await panel.getByRole("heading", { name: "Private synthetic test label" }).waitFor();
     assert.match(await panel.innerText(), new RegExp(target));
+    assert.match(await panel.innerText(), /SYNTHETIC_TEST \/ NOT_AIRC/);
+    await secondPanel.getByRole("heading", { name: "Private synthetic test label" }).waitFor();
+    assert.equal(await secondPicker.inputValue(), target);
+    let disconnected = false;
+    let secondSocket;
+    await second.routeWebSocket("**/ws/v1/admin/p507", socket => {
+        if (disconnected) socket.close();
+        else { secondSocket = socket; socket.connectToServer(); }
+    });
+    await second.reload();
+    await secondSync.filter({ hasText: "CONNECTED" }).waitFor();
+    disconnected = true;
+    secondSocket.close();
+    await secondSync.filter({ hasText: "STALE" }).waitFor();
+    await catalog.getByLabel("Tên", { exact: true }).fill("Private synthetic refreshed label");
+    await catalog.getByRole("button", { name: "Lưu danh mục" }).click();
+    await panel.getByRole("heading", { name: "Private synthetic refreshed label" }).waitFor();
+    disconnected = false;
+    await secondSync.filter({ hasText: "CONNECTED" }).waitFor();
+    await secondPicker.selectOption(target);
+    await secondPanel.getByRole("heading", { name: "Private synthetic refreshed label" }).waitFor();
+    report.twoTabs = { edit: true, create: true, archive: true, stale: true, reconnect: true };
     await panel.screenshot({ path: resolve(out, "panel-before.png") });
 
-    for (const [index, type] of ["equipment_status", "exhibit_info", "room_schedule"].entries()) {
+    for (const type of ["equipment_status", "exhibit_info", "room_schedule"]) {
         const form = page.getByRole("form", { name: type });
         if (type === "equipment_status") await form.getByLabel("Trạng thái").selectOption("maintenance");
         if (type === "exhibit_info") await form.getByLabel("Tiêu đề").fill("Synthetic exhibit revision");
         if (type === "room_schedule") await form.getByLabel("Hoạt động").fill("Synthetic schedule activity");
         const observed = new Date(Date.now() - 1000).toISOString().slice(0, 19);
         await form.locator("input[type=datetime-local]").fill(observed);
+        await form.getByLabel("Nguồn dữ liệu").selectOption("SYNTHETIC_TEST");
         const accepted = page.waitForResponse(response => response.url().endsWith("/api/v1/admin/p507/state") && response.request().method() === "PUT" && response.ok());
         const start_ms = Date.now();
         await form.getByRole("button", { name: "Lưu quan sát" }).click();
@@ -104,10 +155,11 @@ try {
         await state.waitFor();
         const applied_ms = Date.now();
         const persisted = await (await accepted).json();
-        assert.equal(persisted.sequence, index + 1);
+        assert.ok(persisted.sequence > 4);
         assert.equal(persisted.state.state_type, type);
         assert.match(await state.innerText(), /qa_operator/);
-        const frame = frames.find(frame => frame.sequence === index + 1);
+        assert.match(await state.innerText(), /SYNTHETIC_TEST \/ NOT_AIRC/);
+        const frame = frames.find(frame => frame.sequence === persisted.sequence);
         assert.ok(frame, "Authoritative room invalidation must reach Chrome");
         report.samples.push({
             ...frame, state_type: type, version: persisted.state.version,
@@ -124,12 +176,13 @@ try {
     report.publicFrames = publicFrames.map(frame => ({ type: frame.type, sequence: frame.sequence }));
     const publicStates = await (await fetch(origin + `/api/v1/rooms/${mapping.room_id}/states`)).json();
     assert.deepEqual(publicStates.data, []);
-    assert.doesNotMatch(await (await fetch(origin + "/api/v1/objects/" + target)).text(), /Private synthetic test label/);
+    assert.doesNotMatch(await (await fetch(origin + "/api/v1/objects/" + target)).text(), /Private synthetic/);
     await panel.screenshot({ path: resolve(out, "panel-after.png") });
     await page.getByTestId("admin-schedule").locator("[data-state-type=room_schedule]").screenshot({ path: resolve(out, "panel-schedule.png") });
     await page.getByRole("button", { name: "Đăng xuất" }).click();
     await page.getByRole("heading", { name: "Đăng nhập quản trị P507" }).waitFor();
     assert.equal(await page.evaluate(async () => (await fetch("/api/v1/admin/p507")).status), 401);
+    await second.getByRole("heading", { name: "Đăng nhập quản trị P507" }).waitFor();
     report.status = "PASS";
 } finally {
     await browser?.close();

@@ -4,7 +4,7 @@ Owner approved [M3 manual-first Admin](m3/P507-ADMIN-DECISION.md) for this same 
 
 Main at task start: `b509e5b377ed713e5a462d2cc0790a42424dbb79`. Branch `feat/m3-p507-digital-twin-integration` carries the owner-authorized technical integration for independent review. The M3 candidate and documentation are branch changes.
 
-M0/M1/M2 DONE in approved scope. M3 `execution_status=IN_REVIEW`, `dependency_status=BLOCKED` by Issues #2/#3. Overall `M3_PARTIAL / DATA_RIGHTS_BLOCKED`. Read the [M3 integration runbook and acceptance matrix](m3/P507-M3-INTEGRATION.md) and [source matrix](m3/P507-DATA-SOURCE-MATRIX.md). The Draft PR and check runs identify the exact candidate SHA. M4–M7 remain planned. #20 remains deferred and #22 remains an independent operational item.
+M0/M1/M2 DONE in approved scope. M3 `execution_status=IN_REVIEW`, `dependency_status=BLOCKED` by Issues #2/#3. Overall `M3_PARTIAL / DATA_RIGHTS_BLOCKED`. Read the [M3 integration runbook and acceptance matrix](m3/P507-M3-INTEGRATION.md) and [source matrix](m3/P507-DATA-SOURCE-MATRIX.md). The Draft PR and check runs identify the exact candidate SHA. Technical closure targets per-revision provenance, the populated 0002 upgrade and authenticated cross-tab Catalog invalidation in Draft PR #25. Full DoD still requires real observations and independently confirmed evidence and rights. M4–M7 remain planned. #20 remains deferred and #22 remains an independent operational item.
 
 ---
 

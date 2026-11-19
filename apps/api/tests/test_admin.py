@@ -165,9 +165,59 @@ def test_auth_catalog_state_and_public_isolation(state_database):
             == 409
         )
 
-        assert client.get(PRIVATE).json()["states"][0]["operator"] == "qa_operator"
+        legacy = client.get(PRIVATE).json()
+        assert legacy["states"][0]["operator"] == "qa_operator"
+        assert legacy["states"][0]["provenance"] == "UNKNOWN"
+        history_path = PRIVATE + f"/state/{legacy['states'][0]['id']}/history"
+        history = client.get(history_path)
+        assert history.headers["cache-control"] == "no-store"
+        assert history.json() == {"data": legacy["states"], "next_after_version": None}
+        assert client.get(history_path + "?after_version=1").json()["data"] == []
+        assert (
+            next(row for row in legacy["objects"] if row["id"] == object_key)["provenance"]
+            == "UNKNOWN"
+        )
+        assert next(row for row in legacy["objects"] if row["logical_id"] and row["id"] != target)[
+            "provenance"
+        ] == ("SYNTHETIC_TEST / NOT_AIRC")
+        observed_at = (datetime.now(UTC) + timedelta(minutes=1)).isoformat()
+        for source in ("real_verified", "VERIFIED", "INVALID"):
+            assert (
+                client.put(
+                    PRIVATE + "/state", json={**value, "provenance": source}, headers=csrf
+                ).status_code
+                == 422
+            )
+        owner = {
+            **data,
+            "expected_version": 1,
+            "modeling": "MODELED",
+            "provenance": "OWNER_ENTERED",
+        }
+        assert (
+            client.put(f"{PRIVATE}/objects/{target}", json=owner, headers=csrf).status_code == 422
+        )
+        entered = client.put(
+            f"{PRIVATE}/objects/{target}",
+            json={**owner, "observed_at": observed_at, "source_note": "Protected observation note"},
+            headers=csrf,
+        )
+        assert entered.status_code == 200
+        assert entered.json()["provenance"] == "OWNER_ENTERED / PENDING_VERIFICATION"
+        updated = client.put(
+            f"{PRIVATE}/objects/{target}",
+            json={**data, "expected_version": 2, "modeling": "MODELED"},
+            headers=csrf,
+        ).json()
+        assert updated["version"] == 3
+        assert updated["provenance"] == entered.json()["provenance"]
+        assert updated["source_note"] == "Protected observation note"
+        assert updated["operator"] == "qa_operator"
+        assert updated["committed_at"]
+        assert "Protected observation note" not in client.get(f"/api/v1/objects/{target}").text
         assert client.post(BASE + "/logout", headers=csrf).status_code == 200
         assert client.get(PRIVATE, headers={"cookie": f"{COOKIE}={cookie}"}).status_code == 401
+        assert client.get(history_path).status_code == 401
 
         # Reuse the revoked cookie to try a write directly, outside the UI.
         assert (
@@ -194,8 +244,9 @@ def test_auth_catalog_state_and_public_isolation(state_database):
         assert client.get(PRIVATE).status_code == 401
 
     with Session(database.engine) as db:
-        for table in (CurrentState, StateHistory, Outbox):
+        for table in (CurrentState, StateHistory):
             assert db.scalar(select(func.count()).select_from(table)) == 1
+        assert db.scalar(select(func.count()).select_from(Outbox)) == 6
         assert (
             db.scalar(
                 select(func.count())
@@ -207,7 +258,7 @@ def test_auth_catalog_state_and_public_isolation(state_database):
             )
             == 1
         )
-        assert db.scalar(select(Outbox.audience)) == "admin"
+        assert set(db.scalars(select(Outbox.audience))) == {"admin"}
 
 
 def test_inactive_account_and_throttle(state_database):
@@ -261,7 +312,7 @@ def test_admin_real_chrome(live_server):
                 .select_from(Outbox)
                 .where(
                     Outbox.audience == "admin",
-                    Outbox.published_at.is_not(None),
+                    Outbox.payload["state_id"].astext.is_not(None),
                 )
             )
             == 3

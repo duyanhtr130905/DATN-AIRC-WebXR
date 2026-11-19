@@ -40,7 +40,7 @@ Overall `M3_PARTIAL / DATA_RIGHTS_BLOCKED`. Claim `M3_TECHNICAL_INTEGRATION_PASS
 
 ## Manual-first Admin runbook
 
-Apply Alembic revision 0003_admin_manual explicitly on a confirmed project development or disposable PostgreSQL database. From apps/api with the existing DATABASE_URL configured:
+Apply Alembic through 0004_admin_provenance on a confirmed project development or disposable PostgreSQL database. From apps/api with the existing DATABASE_URL configured:
 
 ```powershell
 alembic -x confirm_catalog_database=<database> upgrade head
@@ -55,7 +55,7 @@ The protected preview uses R4 OrbitControls and a Catalog selector. E1 first-per
 
 Authentication uses salted Python stdlib scrypt, N=2^17, r=8, p=1, following the [OWASP password storage guidance](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). The database stores only digests of opaque session tokens. Sessions expire in eight hours, rotate on login and revoke on logout; only active named accounts can operate. Cookie mutations require the exact origin and a session-bound CSRF value. The database serializes login attempts and limits failures. Passwords and sessions stay out of API logs, audit, browser storage and URLs.
 
-Revision 0003 adds accounts, sessions, narrow audit records and the private Catalog overlay. It widens existing state/outbox uniqueness by audience, preserving legacy rows in public. Private observations use the existing state/history/outbox transaction and a P507-scoped private sequence. The authenticated WebSocket sends published outbox sequence hints only. The private protected REST snapshot supplies authoritative values and account attribution. Public REST, history, replay and snapshot keep synthetic visibility predicates.
+Revision 0003 adds accounts, sessions, narrow audit records and the private Catalog overlay. It widens existing state/outbox uniqueness by audience, preserving legacy rows in public. Private observations use the existing state/history/outbox transaction and a P507-scoped private sequence. The authenticated WebSocket sends private committed outbox sequence hints only. Catalog create/edit/archive writes an opaque hint in the same transaction as the revision and audit. The shared Admin sequence advances under the room lock. Broker wakeups and a periodic committed-cursor read cover delayed or missed delivery. Reconnect always requests an authoritative snapshot. The private protected REST snapshot supplies authoritative values and account attribution. Public REST, history, replay and snapshot keep synthetic visibility predicates.
 
 | Gate | Expected evidence | Status |
 | --- | --- | --- |
@@ -65,4 +65,20 @@ Revision 0003 adds accounts, sessions, narrow audit records and the private Cata
 | Timestamp presentation | Invalid/missing to UNKNOWN, future/skew to TIME_UNCERTAIN, no assumed AIRC SLA | Review under the same PR |
 | Field sources and rights | Authorized real records, permitted disclosure and validated field observation workflow | PARTIAL / BLOCKED |
 
-Use the existing disposable PostgreSQL test guard and run pytest -m postgres tests/test_admin.py from apps/api. Set M3_REQUIRE_FROZEN=1 only with the prepared original bundle. Inspect .local/m3-admin-browser/report.json and its cropped panel images. Draft PR #25 records final-head regression evidence. M3 remains IN_REVIEW / PARTIAL.
+Use the existing disposable PostgreSQL test guard and run pytest -m postgres tests/test_admin.py from apps/api. Set M3_REQUIRE_FROZEN=1 only with the prepared original bundle. Inspect .local/m3-admin-browser/report.json and its cropped panel images. Draft PR #25 records the candidate evidence. M3 remains IN_REVIEW / PARTIAL.
+
+## Migration preflight and recovery
+
+Check the database name, connection scope, current Alembic revision, write activity and available disk space before any development upgrade. Capture UUIDs, row counts, state versions, cursor and outbox publication status. For important data, stop writers, take a PostgreSQL backup and verify restoration into a separate database before upgrading. The populated disposable regression, `test_upgrade_populated_0002_preserves_state_and_protocol`, verifies historical values and constraints before any important database is considered. The 0003 migration remains unchanged. Databases already on 0003 apply only 0004. Its new nullable fields leave old revisions UNKNOWN. If preservation checks fail, stop and recover from the verified backup in a separate database. Do not downgrade or reset the original database.
+
+## Final technical and field gates
+
+| Gate | Technical review evidence | Field status |
+| --- | --- | --- |
+| Mapping | 121 frozen UUIDs and logical IDs, private UUID for an unmodeled object | PARTIAL. Owner inventory and categories pending |
+| Source and rights | Private audit provenance and explicit source timestamps | BLOCKED. Field content, disclosure scope and verification evidence pending |
+| E2E three types | PostgreSQL, Admin API, private WS and panel with synthetic fixtures | BLOCKED for actual observations |
+| Freshness and recovery | Existing M1 cases plus private two-tab invalidation and authoritative reconnect | PARTIAL. Field cadence and clock uncertainty pending |
+| Evidence and independent review | Exact candidate, disposable upgrade report, Chrome traces and CI in Draft PR #25 | PENDING independent acceptance |
+
+`M3_TECHNICAL_MERGE_READY` depends on successful F1/F2/F3 regression, exact-candidate evidence and private/public isolation. `M3_FULL_DOD_ACCEPTANCE_READY` also requires actual source-to-UI evidence, inventory confirmation and independently reviewed rights. Provide a representative modeled device and exhibit with their Catalog identities, any missing inventory items to add, one actual observation per state type with timestamp/timezone and evidence, intended manual update cadence, and the allowed audience for each record or attachment. Issues #2 and #3 remain open. Issues #20 and #22 remain separate.

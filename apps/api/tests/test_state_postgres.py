@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import os
 import platform
@@ -7,6 +8,7 @@ import statistics
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from datetime import UTC, datetime, timedelta
 from io import StringIO
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -15,7 +17,7 @@ import pytest
 import uvicorn
 from alembic.config import Config
 from fastapi.testclient import TestClient
-from sqlalchemy import func, insert, inspect, select, text, update
+from sqlalchemy import MetaData, Table, func, insert, inspect, select, text, update
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 from test_catalog_postgres import isolated_catalog_database
@@ -30,7 +32,7 @@ from app.main import create_app
 from app.modules.catalog.seed import OBJECT_IDS, ROOM_ID, seed_demo
 from app.modules.realtime.client_rules import sequence_action
 from app.modules.realtime.dispatcher import Broker, Dispatcher, claim, finish
-from app.modules.state.read import replay, snapshot
+from app.modules.state.read import replay, snapshot, snapshot_v2
 from app.modules.state.service import StateConflict, StateUnavailable, change_state
 
 pytestmark = pytest.mark.postgres
@@ -90,9 +92,171 @@ def test_upgrade_0001_to_0002_preserves_catalog():
             assert connection.scalar(select(func.count()).select_from(CurrentState)) == 0
             assert (
                 connection.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0003_admin_manual"
+                == "0004_admin_provenance"
             )
             assert inspect(connection).get_unique_constraints("outbox")
+
+
+def test_upgrade_populated_0002_preserves_state_and_protocol():
+    with isolated_catalog_database(migrate=False) as (database, _):
+        with database.engine.begin() as connection:
+            config = Config(str(Path(__file__).resolve().parents[1] / "alembic.ini"))
+            config.attributes["connection"] = connection
+            command.upgrade(config, "0002_state_realtime")
+            with Session(bind=connection) as db:
+                seed_demo(db)
+                db.flush()
+
+            names = (
+                "rooms",
+                "objects",
+                "current_states",
+                "state_history",
+                "room_state_cursors",
+                "outbox",
+            )
+            metadata = MetaData()
+            tables = {name: Table(name, metadata, autoload_with=connection) for name in names}
+            now = datetime.now(UTC)
+            sequence = 0
+            for state_type, target, values in (
+                (
+                    "equipment_status",
+                    OBJECT_IDS[0],
+                    [{"status": "available"}, {"status": "offline"}],
+                ),
+                ("exhibit_info", OBJECT_IDS[1], [{"title": "Fixture", "text": "Synthetic"}]),
+                ("room_schedule", ROOM_ID, [{"status": "free", "activity": "Fixture"}]),
+            ):
+                state_id = uuid4()
+                target_kind = "room" if target == ROOM_ID else "object"
+                identity = dict(
+                    id=state_id,
+                    room_id=ROOM_ID,
+                    state_type=state_type,
+                    target_room_id=target if target_kind == "room" else None,
+                    object_id=target if target_kind == "object" else None,
+                )
+                for version, value in enumerate(values, 1):
+                    sequence += 1
+                    stamp = now + timedelta(seconds=sequence)
+                    observation = dict(
+                        version=version,
+                        value=value,
+                        source_kind="synthetic",
+                        source_observed_at=stamp,
+                        committed_at=stamp,
+                    )
+                    if version == 1:
+                        connection.execute(
+                            tables["current_states"].insert().values(**identity, **observation)
+                        )
+                    else:
+                        connection.execute(
+                            tables["current_states"]
+                            .update()
+                            .where(tables["current_states"].c.id == state_id)
+                            .values(**observation)
+                        )
+                    connection.execute(
+                        tables["state_history"]
+                        .insert()
+                        .values(id=uuid4(), state_id=state_id, **observation)
+                    )
+                    payload = dict(
+                        observation,
+                        id=str(state_id),
+                        room_id=str(ROOM_ID),
+                        target_kind=target_kind,
+                        target_id=str(target),
+                        state_type=state_type,
+                        source_observed_at=stamp.isoformat(),
+                        committed_at=stamp.isoformat(),
+                    )
+                    connection.execute(
+                        tables["outbox"]
+                        .insert()
+                        .values(
+                            message_id=uuid4(),
+                            room_id=ROOM_ID,
+                            sequence=sequence,
+                            payload={"state": payload},
+                            committed_at=stamp,
+                            published_at=stamp if sequence <= 2 else None,
+                        )
+                    )
+            connection.execute(
+                tables["room_state_cursors"].insert().values(room_id=ROOM_ID, sequence=sequence)
+            )
+
+        def capture(connection):
+            inspector = inspect(connection)
+            return {
+                name: {
+                    "rows": [
+                        dict(row)
+                        for row in connection.execute(
+                            select(tables[name]).order_by(*tables[name].primary_key.columns)
+                        ).mappings()
+                    ],
+                    "primary_key": inspector.get_pk_constraint(name),
+                    "foreign_keys": inspector.get_foreign_keys(name),
+                    "legacy_checks": [
+                        item
+                        for item in inspector.get_check_constraints(name)
+                        if not item["name"].endswith("_audience")
+                    ],
+                }
+                for name in names
+            }
+
+        def summarize(capture):
+            return {
+                name: {
+                    "rows": len(table["rows"]),
+                    "sha256": hashlib.sha256(
+                        json.dumps(table, sort_keys=True, default=str).encode()
+                    ).hexdigest(),
+                }
+                for name, table in capture.items()
+            }
+
+        with database.engine.begin() as connection:
+            config.attributes["connection"] = connection
+            baseline = capture(connection)
+            report = {"0002_state_realtime": summarize(baseline)}
+            for revision in ("0003_admin_manual", "head"):
+                command.upgrade(config, revision)
+                actual = capture(connection)
+                assert actual == baseline
+                current = connection.scalar(text("SELECT version_num FROM alembic_version"))
+                report[current] = summarize(actual)
+                for name in ("current_states", "outbox"):
+                    assert connection.execute(
+                        text(f"SELECT DISTINCT audience FROM {name}")
+                    ).scalars().all() == ["public"]
+            command.check(config)
+
+        with Session(database.engine) as db, db.begin():
+            change_state(
+                db,
+                room_id=ROOM_ID,
+                target_kind="object",
+                target_id=OBJECT_IDS[0],
+                state_type="equipment_status",
+                value={"status": "maintenance"},
+                expected_version=0,
+                source_observed_at=now,
+                audience="admin",
+            )
+        assert len(snapshot(database.engine, ROOM_ID)["states"]) == 3
+        frames = snapshot_v2(database.engine, ROOM_ID)
+        assert frames[-1]["type"] == "snapshot.end"
+        assert frames[-1]["sequence"] == sequence
+        assert "maintenance" not in json.dumps(frames)
+    report_path = Path(__file__).resolve().parents[3] / ".local/m3-migration-report.json"
+    report_path.parent.mkdir(exist_ok=True)
+    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
 
 def test_atomic_versions_stale_duplicate_and_rollback(state_database):
