@@ -144,7 +144,8 @@ try {
         if (type === "equipment_status") await form.getByLabel("Trạng thái").selectOption("maintenance");
         if (type === "exhibit_info") await form.getByLabel("Tiêu đề").fill("Synthetic exhibit revision");
         if (type === "room_schedule") await form.getByLabel("Hoạt động").fill("Synthetic schedule activity");
-        const observed = new Date(Date.now() - 1000).toISOString().slice(0, 19);
+        // Chromium normalizes a zero-second datetime-local value to minute precision.
+        const observed = new Date(Date.now() - 1000).toISOString().slice(0, 19).replace(/:00$/, "");
         await form.locator("input[type=datetime-local]").fill(observed);
         await form.getByLabel("Nguồn dữ liệu").selectOption("SYNTHETIC_TEST");
         const accepted = page.waitForResponse(response => response.url().endsWith("/api/v1/admin/p507/state") && response.request().method() === "PUT" && response.ok());
