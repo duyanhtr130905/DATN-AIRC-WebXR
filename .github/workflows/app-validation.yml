@@ -98,6 +98,8 @@ jobs:
             .local/m1-b-postgres.xml
             .local/m1-b-metrics.json
             .local/m1-c-browser/
+            .local/m3-browser/report.json
+            .local/m3-browser/panel-*.png
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
