@@ -87,4 +87,5 @@ class Object(CatalogFields, Base):
 
 
 # Register the additional M1-B tables in the same Modular Monolith metadata.
+from app.database import admin_models as admin_models  # noqa: E402
 from app.database import state_models as state_models  # noqa: E402

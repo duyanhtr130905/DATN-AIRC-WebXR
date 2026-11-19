@@ -14,7 +14,7 @@ from app.database.state_models import Outbox
 
 @dataclass(eq=False)
 class Subscription:
-    room_id: UUID
+    room_id: UUID | tuple[UUID, str]
     queue: asyncio.Queue = field(default_factory=lambda: asyncio.Queue(maxsize=8))
     overflow: bool = False
     coalesce: bool = False
@@ -70,7 +70,11 @@ def claim(engine, owner: UUID, lease_seconds=5) -> list[dict]:
             row.lease_owner = owner
             row.lease_until = now + timedelta(seconds=lease_seconds)
             messages.append(
-                {"message_id": row.message_id, "room_id": row.room_id, "attempts": row.attempts}
+                {
+                    "message_id": row.message_id,
+                    "room_id": (row.room_id, "admin") if row.audience == "admin" else row.room_id,
+                    "attempts": row.attempts,
+                }
             )
         return messages
 

@@ -102,3 +102,7 @@ Tham khảo14/11/2026: [PostgreSQL constraints](https://www.postgresql.org/docs/
 M1-A dependency additions (kiểm14/11/2026): Mako1.4.3 release22/09/2026/Python>=3.10/MIT, MarkupSafe3.0.4 release02/10/2026/Python>=3.9/BSD3; dependency transitive bắt buộc của Alembic, pin hashlock và cài thành công trên LinuxCI. [Mako metadata](https://pypi.org/pypi/mako/json), [MarkupSafe metadata](https://pypi.org/pypi/MarkupSafe/3.0.4/json). Các package baseline giữ nguyên.
 
 Làm rõ bounded delivery: retry hữu hạn và lease có thể dẫn tới xử lý trùng; “at-least-once” ở đây mô tả **processing attempts**, không bảo đảm notify thành công cho mọi event. Event exhausted có thể chưa notify thành công lần nào; outbox vẫn giữ dấu vết, client cần resync snapshot. Chính sách/rearm operator chưa triển khai hoặc phê duyệt production, không tự xóa hay retry vô hạn.
+
+## M3 private manual data supplement
+
+Forward-only revision 0003_admin_manual adds named accounts, server-side sessions, a private Catalog overlay and narrow audit refs. Revision 0004_admin_provenance adds nullable provenance and source context to private audit revisions. Existing missing provenance reads as UNKNOWN. Observation rows and events remain in the M1 State/History/Outbox tables with a separate Admin audience. See the [M3 runbook and architecture](m3/P507-M3-INTEGRATION.md).

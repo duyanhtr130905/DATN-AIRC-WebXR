@@ -32,6 +32,7 @@ class RoomStateCursor(Base):
 
 class CurrentState(Base):
     __tablename__ = "current_states"
+    audience: Mapped[str] = mapped_column(String(8), nullable=False, server_default="public")
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     room_id: Mapped[UUID] = mapped_column(
         ForeignKey("rooms.id", ondelete="RESTRICT"), nullable=False
@@ -48,8 +49,9 @@ class CurrentState(Base):
         ForeignKeyConstraint(
             ["object_id", "room_id"], ["objects.id", "objects.room_id"], ondelete="RESTRICT"
         ),
-        UniqueConstraint("target_room_id", "state_type", name="uq_state_room_type"),
-        UniqueConstraint("object_id", "state_type", name="uq_state_object_type"),
+        CheckConstraint("audience IN ('public','admin')", name="ck_current_states_audience"),
+        UniqueConstraint("target_room_id", "state_type", "audience", name="uq_state_room_type"),
+        UniqueConstraint("object_id", "state_type", "audience", name="uq_state_object_type"),
         CheckConstraint("version >= 1", name="ck_state_version"),
         CheckConstraint(
             "source_kind IN ('synthetic','unknown','real_verified')", name="ck_state_source"
@@ -71,6 +73,7 @@ class CurrentState(Base):
 
 class StateHistory(Base):
     __tablename__ = "state_history"
+    source_note: Mapped[str | None] = mapped_column(String(256))
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     state_id: Mapped[UUID] = mapped_column(
         ForeignKey("current_states.id", ondelete="RESTRICT"), nullable=False
@@ -95,6 +98,7 @@ class StateHistory(Base):
 
 class Outbox(Base):
     __tablename__ = "outbox"
+    audience: Mapped[str] = mapped_column(String(8), nullable=False, server_default="public")
     message_id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     room_id: Mapped[UUID] = mapped_column(
         ForeignKey("rooms.id", ondelete="RESTRICT"), nullable=False
@@ -114,7 +118,8 @@ class Outbox(Base):
     lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     exhausted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
     __table_args__ = (
-        UniqueConstraint("room_id", "sequence", name="uq_outbox_room_sequence"),
+        CheckConstraint("audience IN ('public','admin')", name="ck_outbox_audience"),
+        UniqueConstraint("room_id", "sequence", "audience", name="uq_outbox_room_sequence"),
         CheckConstraint(
             "sequence >= 1 AND attempts >= 0 AND attempts <= 5", name="ck_outbox_counters"
         ),

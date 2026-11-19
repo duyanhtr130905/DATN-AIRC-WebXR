@@ -1,3 +1,14 @@
+# CURRENT BRANCH STATUS — P507 M3 review candidate, 2026-11-19
+
+Owner approved [M3 manual-first Admin](m3/P507-ADMIN-DECISION.md) for this same Draft PR. Publication still requires separate confirmation.
+
+Main at task start: `b509e5b377ed713e5a462d2cc0790a42424dbb79`. Branch `feat/m3-p507-digital-twin-integration` carries the owner-authorized technical integration for independent review. The M3 candidate and documentation are branch changes.
+
+M0/M1/M2 DONE in approved scope. M3 `execution_status=IN_REVIEW`, `dependency_status=BLOCKED` by Issues #2/#3. Overall `M3_PARTIAL / DATA_RIGHTS_BLOCKED`. Read the [M3 integration runbook and acceptance matrix](m3/P507-M3-INTEGRATION.md) and [source matrix](m3/P507-DATA-SOURCE-MATRIX.md). The Draft PR and check runs identify the exact candidate SHA. Technical closure targets per-revision provenance, the populated 0002 upgrade and authenticated cross-tab Catalog invalidation in Draft PR #25. Full DoD still requires real observations and independently confirmed evidence and rights. M4–M7 remain planned. #20 remains deferred and #22 remains an independent operational item.
+
+---
+
+## AS-OF M2 closeout on main
 # CURRENT PROJECT STATUS — M2 functional prototype accepted, 2026-11-19
 
 **Source of truth:** [Roadmap 2.0](ROADMAP.md) APPROVED. Main merge baseline `0b727a06aef0773063dd4427a066054a3a87cd7d` after [PR #24](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/24) was independently reviewed at exact head `b0a4e0f6f8d48053a470cbf5f20f9f44e5bc7d45` and **MERGED**. A subsequent docs-only post-acceptance commit may advance main; always verify live GitHub SHA. [Final M2 7-DoD matrix](3d-production/P507-M2-FINAL-ACCEPTANCE.md) is authoritative over historical PENDING/Rerun notes.
