@@ -1,3 +1,4 @@
+import { isLoopback } from "../p507-m5/local.ts";
 import { diagnostic } from "../features/live/diagnostics.ts";
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { CatalogError, readObjects, readRooms } from "../api/catalog.ts";
@@ -92,7 +93,7 @@ export default function LiveApp() {
     <header><a href="/" className="brand">AIRC <span>KHÔNG GIAN SỐ</span></a><span className="stage">M1-C · SYNTHETIC VERTICAL SLICE</span></header>
     <main><div className="intro"><div><p className="eyebrow">CATALOG / TRẠNG THÁI / KHÔNG GIAN</p><h1>Khám phá một không gian mô phỏng.</h1></div><p>Scene + Information Panel<br />Chưa có dữ liệu khảo sát thực tế.</p></div>
     <p className="notice">SYNTHETIC / DEMO — DỮ LIỆU MÔ PHỎNG, KHÔNG PHẢI PHÒNG 507</p>
-    <section className="room-bar"><label>Phòng synthetic <select aria-label="Phòng synthetic" value={roomId} onChange={e => setRoomId(e.target.value)} disabled={!rooms.length}>{rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label><button onClick={() => refresh(v => v + 1)}>Tải lại Catalog & kết nối</button>{import.meta.env.DEV && <a href="/?mode=p507">Mở Digital Twin P507</a>}<a href="/?mode=offline">Mở DEMO offline riêng</a></section>
+    <section className="room-bar"><label>Phòng synthetic <select aria-label="Phòng synthetic" value={roomId} onChange={e => setRoomId(e.target.value)} disabled={!rooms.length}>{rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label><button onClick={() => refresh(v => v + 1)}>Tải lại Catalog & kết nối</button>{import.meta.env.DEV && <a href="/?mode=p507">Mở Digital Twin P507</a>}{import.meta.env.DEV && isLoopback(location.hostname) && <a href="/?mode=p507-visit">Tham quan P507 · Web 3D / XR</a>}<a href="/?mode=offline">Mở DEMO offline riêng</a></section>
     <p role="status" data-testid="catalog-status">{phase === "loading" ? "Đang tải danh sách phòng…" : phase === "objects_loading" ? "Đang tải đối tượng…" : phase === "no_rooms" ? "Chưa có phòng synthetic; cần explicit seed." : phase === "no_objects" ? "Phòng chưa có đối tượng synthetic." : phase === "ready" ? `${scoped?.objects.length ?? 0} đối tượng synthetic từ API` : "Không tải được Catalog."}</p>
     {failure && <p role="alert">{failure}</p>}
     <p className="connection-status" role="status" data-testid="realtime" data-status={live?.status ?? "connecting"}>{scoped ? labels[live?.status ?? "connecting"] : "Chưa có subscription"} {live && `· sequence ${live.sequence}`}</p>

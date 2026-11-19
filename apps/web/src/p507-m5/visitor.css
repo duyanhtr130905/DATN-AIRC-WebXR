@@ -1,0 +1,12 @@
+.p507-visitor nav, .visitor-walk { margin-bottom: 1rem; }
+.p507-visitor nav a + a { margin-left: 1rem; }
+.visitor-xr { margin-bottom: 1rem; padding: 1rem; background: #fff; border: 1px solid #c8d4cb; border-radius: 8px; }
+.visitor-xr p { margin: .5rem 0; }
+.visitor-xr div { display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin: .3rem 1rem .3rem 0; }
+.p507-visitor button { min-height: 44px; padding: .5rem .75rem; border: 1px solid #607e70; border-radius: 5px; background: #f5faf6; color: #1e3631; }
+.p507-visitor button:disabled { opacity: .55; cursor: default; }
+.p507-visitor aside label { display: grid; gap: .5rem; }
+.visitor-asset { padding: 1.2rem; }
+.visitor-walk { margin-top: 1rem; }
+.visitor-walk button { margin: .25rem .5rem .25rem 0; }
+.visitor-scene canvas:focus-visible { outline: 3px solid #a44d19; outline-offset: -4px; }

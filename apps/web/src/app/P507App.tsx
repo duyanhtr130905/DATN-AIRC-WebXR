@@ -106,7 +106,7 @@ export default function P507App() {
     const schedule = states.find(state => state.target_kind === "room" && state.target_id === roomId && state.state_type === "room_schedule");
     const stale = scoped?.status !== "connected";
     return <main>
-        <h1>Digital Twin P507</h1>
+        <h1>Digital Twin P507</h1><a href="/?mode=p507-visit">Mở chế độ tham quan Web 3D / XR</a>
         <p className="notice">PROVISIONAL / SYNTHETIC · R4 · Quyền dữ liệu AIRC chưa xác nhận</p>
         <p role="status" data-testid="realtime" data-status={scoped?.status ?? (backendError ? "error" : "connecting")}>
             {backendError ? "UNAVAILABLE — backend hoặc mapping không khả dụng" : scoped?.status ?? "Đang kết nối"}
