@@ -1,3 +1,9 @@
+# Final M2 closure candidate (2026-11-19)
+
+Draft PR #24 is based on main 5b971f591585124424e8393118b0911eb7c11110 after PR #21/#23. M2 IN_PROGRESS pending independent acceptance and owner decision. See [M2 final acceptance matrix](3d-production/P507-M2-FINAL-ACCEPTANCE.md). Exact candidate HEAD and evidence are recorded on PR #24.
+
+## AS-OF trước lần hợp nhất cuối PR #24
+
 # Independent review status — M2 Issue #22 (18/11/2026)
 
 **Main:** `5b971f591585124424e8393118b0911eb7c11110` after [PR #23 MERGED](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/23) (docs-only, exact-head 12/12 CI SUCCESS). PR #21 MERGED P507/owner-private archive; Issue #19 CLOSED.

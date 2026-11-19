@@ -121,6 +121,8 @@ class SecurityTests(unittest.TestCase):
         for name in ('p507-e0-e1.yml','p507-tv-diagnostic.yml'):
             s=(ci.ROOT/'.github/workflows'/name).read_text()
             self.assertNotIn('pull_request_target',s)
+            self.assertNotIn('--download',s)
+            self.assertIn('NOT_RUN_PRIVILEGED_REQUIRED',s)
             priv=s.split('  vault-'+('frozen-asset-browser' if name.startswith('p507-e0') else 'original-version-diagnostic')+':')[1]
             self.assertIn("github.ref == 'refs/heads/main'",priv)
             self.assertIn('environment: p507-vault-ci',priv)
@@ -132,7 +134,7 @@ class SecurityTests(unittest.TestCase):
             self.assertNotIn('--download',priv)
             self.assertNotIn('GITHUB_WORKSPACE',priv)
             self.assertNotIn('runner.temp',priv)
-            self.assertNotIn('secrets.',s.split('  vault-access-readiness:')[0])
+            self.assertNotIn('secrets.',s.split('  asset-validation-status:')[0])
 
 
 if __name__=='__main__':unittest.main()

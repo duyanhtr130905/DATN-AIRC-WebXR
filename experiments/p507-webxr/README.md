@@ -1,6 +1,6 @@
 # Issue22 — current secure CI status (18/11/2026)
 
-[App CI security/setup and functional report](../../docs/3d-production/P507-ISSUE22-SECURE-CI.md). Explicit --restore-vault-ci is installation-token-only and trusted-main-only, no legacy artifact/generated fallback; --restore-vault remains unchanged owner-only local restore. App/secret/environment setup NOT authorized/performed, actual App proof BLOCKED / SECURITY_APPROVAL_REQUIRED. PR jobs have no App secrets, retain legacy compatibility checks while original artifact exists; green legacy/skip does not certify post-expiry App access.
+[App CI security/setup and functional report](../../docs/3d-production/P507-ISSUE22-SECURE-CI.md). Explicit --restore-vault-ci is installation-token-only and trusted-main-only, no legacy artifact/generated fallback; --restore-vault remains unchanged owner-only local restore. App/secret/environment setup NOT authorized/performed, actual App proof BLOCKED / SECURITY_APPROVAL_REQUIRED. PR CI runs without App secrets and records NOT_RUN_PRIVILEGED_REQUIRED for actual asset checks.
 
 Responsive rendering emulation: `node experiments/p507-webxr/browser-responsive.mjs` after verified bundle prep; not phone/touch locomotion acceptance. Original desktop15groups remain `browser.mjs`. Current setup/run commands below remain owner-only; do not pass owner PAT to CI path.
 
@@ -21,7 +21,7 @@ Owner-approved M2 [Issue #19](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/
 Requirements: existing authenticated `gh`, Python 3, Node 22.12–22.x, npm and installed Chrome. Run at `D:\Code\DATN` in PowerShell:
 
 ```powershell
-python experiments/p507-webxr/prepare_asset.py --download
+python experiments/p507-webxr/prepare_asset.py --restore-vault
 python experiments/p507-webxr/validate_asset.py --prepare
 python experiments/p507-webxr/verify_export_reference.py
 npm ci --ignore-scripts --no-fund --prefix apps/web
