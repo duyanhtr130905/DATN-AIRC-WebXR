@@ -115,17 +115,31 @@ try {
     await update("exhibit_info", target, 1, { title: "Synthetic exhibit B", text: "Revised fixture" }, panel, /exhibit B/);
     await panel.screenshot({ path: resolve(output, "panel-after.png") });
 
-    await page.evaluate(() => {
+    const gapAt = await page.evaluate(() => {
         const probe = window.__AIRC_TEST__;
         probe.inject(probe.lastDelta);
         probe.inject({ ...probe.lastDelta, sequence: probe.lastDelta.sequence - 1 });
+        const since = performance.now();
         probe.inject({ ...probe.lastDelta, sequence: probe.lastDelta.sequence + 2 });
+        return since;
     });
-    await page.waitForFunction(() => window.__AIRC_TEST__.events.some(event => event.status === "resync_required"));
-    await connected.waitFor();
-    await page.evaluate(() => window.__AIRC_TEST__.disconnect());
-    await page.waitForFunction(() => window.__AIRC_TEST__.events.some(event => event.status === "stale"));
-    await connected.waitFor();
+
+    async function waitForRecovery(since, phase) {
+        await page.waitForFunction(({ since, phase }) => {
+            const events = window.__AIRC_TEST__.events.filter(event => event.kind === "connection");
+            const transition = events.findIndex(event => event.at >= since && event.status === phase);
+            return transition >= 0 && events.slice(transition + 1).some(event => event.status === "connected");
+        }, { since, phase });
+        await connected.waitFor();
+    }
+
+    await waitForRecovery(gapAt, "resync_required");
+    const disconnectedAt = await page.evaluate(() => {
+        const since = performance.now();
+        window.__AIRC_TEST__.disconnect();
+        return since;
+    });
+    await waitForRecovery(disconnectedAt, "stale");
     assert.match(await panel.innerText(), /exhibit B/);
     assert.match(await realtime.innerText(), /connected/);
     await page.getByRole("button", { name: "Tải lại P507" }).click();
