@@ -96,16 +96,24 @@ try {
         if (type === "room_schedule") await form.getByLabel("Hoạt động").fill("Synthetic schedule activity");
         const observed = new Date(Date.now() - 1000).toISOString().slice(0, 19);
         await form.locator("input[type=datetime-local]").fill(observed);
+        const accepted = page.waitForResponse(response => response.url().endsWith("/api/v1/admin/p507/state") && response.request().method() === "PUT" && response.ok());
         const start_ms = Date.now();
         await form.getByRole("button", { name: "Lưu quan sát" }).click();
         const container = type === "room_schedule" ? page.getByTestId("admin-schedule") : panel;
         const state = container.locator(`[data-state-type="${type}"][data-version="1"]`);
         await state.waitFor();
         const applied_ms = Date.now();
+        const persisted = await (await accepted).json();
+        assert.equal(persisted.sequence, index + 1);
+        assert.equal(persisted.state.state_type, type);
         assert.match(await state.innerText(), /qa_operator/);
         const frame = frames.find(frame => frame.sequence === index + 1);
         assert.ok(frame, "Authoritative room invalidation must reach Chrome");
-        report.samples.push({ type, start_ms, applied_ms, ...frame });
+        report.samples.push({
+            ...frame, state_type: type, version: persisted.state.version,
+            target_id: persisted.state.target_id, observed_at: persisted.state.source_observed_at,
+            db_recorded_at: persisted.state.committed_at, start_ms, applied_ms,
+        });
     }
     const publicFrames = await page.evaluate(() => {
         window.publicProbe.close();
@@ -118,6 +126,7 @@ try {
     assert.deepEqual(publicStates.data, []);
     assert.doesNotMatch(await (await fetch(origin + "/api/v1/objects/" + target)).text(), /Private synthetic test label/);
     await panel.screenshot({ path: resolve(out, "panel-after.png") });
+    await page.getByTestId("admin-schedule").locator("[data-state-type=room_schedule]").screenshot({ path: resolve(out, "panel-schedule.png") });
     await page.getByRole("button", { name: "Đăng xuất" }).click();
     await page.getByRole("heading", { name: "Đăng nhập quản trị P507" }).waitFor();
     assert.equal(await page.evaluate(async () => (await fetch("/api/v1/admin/p507")).status), 401);
