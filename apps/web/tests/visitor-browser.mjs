@@ -146,13 +146,15 @@ try {
     await stop(api);
     api = startApi();
     await ready(apiOrigin + "/api/ready");
-    await context.unroute(pattern);
-    const duplicate = page.waitForResponse(async response => {
+    // Either tab can win the shared network lock. Observe both before restoring the route.
+    const duplicate = context.waitForEvent("response", async response => {
         if (!response.url().endsWith("/events") || !response.ok()) return false;
-        const receipts = (await response.json()).receipts;
+        const { receipts } = await response.json();
+        if (!receipts.every(row => row.status === "duplicate")) return false;
         retryIds = receipts.map(row => row.id);
-        return receipts.every(row => row.status === "duplicate");
+        return true;
     });
+    await context.unroute(pattern);
     await button(page, "Thử đồng bộ lại").click();
     await duplicate;
     await waitQueue(page, 0);
