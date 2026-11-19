@@ -39,7 +39,7 @@ Lệnh M5 không cờ kiểm fallback không cần asset. `--require-r4` xác mi
 
 ### Raycast Admin Windows
 
-PR #28 ghi nhận lỗi gián đoạn của bài test Chrome Admin với R4 gốc. Chạy lại trên baseline fetched với PostgreSQL dùng một lần, Chrome 158.0.8127.36 và M3_REQUIRE_FROZEN=1 đã chọn đúng P507-CHAIR-C-08 (0ed3ab16-44a0-5c39-9421-d3cecda9ae3c). Lượt này chưa xác định nguyên nhân lỗi cũ. Giữ điều tra ở PARTIAL; visitor raycast và Admin DOM fallback có phạm vi bằng chứng riêng. [Bàn giao PR #28](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/28)
+PR #28 ghi nhận lỗi gián đoạn của bài test Chrome Admin với R4 gốc. Baseline fetched đã PASS trong lượt chạy riêng. Lỗi lặp lại ở HEAD 1066025 khi Chrome chạy song song với kiểm R4. Probe với M5_ADMIN_RAY_PROBE=1 ghi năm lần click đúng phần tử CANVAS khi WebGL có 0 draw calls và canvas còn ở kích thước mặc định. Sau loạt draw đầu (218 lệnh trong lần đo), kích thước và tâm canvas thay đổi. Một click ở tâm canvas đã vẽ chọn đúng P507-CHAIR-C-08 (0ed3ab16-44a0-5c39-9421-d3cecda9ae3c). Bản sửa đồng bộ test theo WebGL draw đầu tiên, đo lại canvas và kiểm đúng UUID. Admin runtime, asset và ánh xạ không đổi. Chỉ chạy phép đo này với M3_REQUIRE_FROZEN=1, PostgreSQL dùng một lần và R4 đã kiểm hash. CI M3 vẫn dùng đường fallback. [Bàn giao PR #28](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/28) · [Draft PR #31](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/31)
 
 Tham chiếu runtime cho user activation, reference space và visibility. [W3C WebXR Device API](https://www.w3.org/TR/webxr/)
 
