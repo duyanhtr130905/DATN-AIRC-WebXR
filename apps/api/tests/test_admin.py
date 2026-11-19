@@ -2,6 +2,7 @@ import json
 import os
 import secrets
 import subprocess
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 
@@ -301,22 +302,42 @@ def test_admin_real_chrome(live_server):
         check=False,
     )
     assert process.returncode == 0, process.stdout[-1600:] + process.stderr[-2300:]
-    report = json.loads((ROOT / ".local/m3-admin-browser/report.json").read_bytes())
+    report_path = ROOT / ".local/m3-admin-browser/report.json"
+    report = json.loads(report_path.read_bytes())
     assert report["status"] == "PASS"
     with Session(database.engine) as db:
         for table in (CurrentState, StateHistory):
             assert db.scalar(select(func.count()).select_from(table)) == 3
-        assert (
-            db.scalar(
-                select(func.count())
-                .select_from(Outbox)
-                .where(
-                    Outbox.audience == "admin",
-                    Outbox.payload["state_id"].astext.is_not(None),
-                )
+        query = (
+            select(Outbox)
+            .where(
+                Outbox.room_id == ROOM_ID,
+                Outbox.audience == "admin",
+                Outbox.payload["state_id"].astext.is_not(None),
             )
-            == 3
+            .order_by(Outbox.sequence)
         )
+        # The cursor fallback may deliver a hint before the dispatcher records its receipt.
+        deadline = time.monotonic() + 5
+        while True:
+            rows = db.scalars(query).all()
+            if len(rows) == 3 and all(row.published_at is not None for row in rows):
+                break
+            assert time.monotonic() < deadline, "Missing Admin outbox publication record"
+            db.expire_all()
+            time.sleep(0.05)
+        assert len(report["samples"]) == len(rows)
+        for sample, row in zip(report["samples"], rows, strict=True):
+            assert sample["sequence"] == row.sequence
+            assert sample["state_id"] == row.payload["state_id"]
+            assert sample["version"] == row.payload["version"]
+            assert row.published_at >= row.committed_at
+            sample["message_id"] = str(row.message_id)
+            sample["outbox_published_at"] = row.published_at.isoformat()
+        report["postgres_version"] = db.scalar(select(func.version()))
+    report["clock_alignment"] = "UNMEASURED"
+    report["evidence_scope"] = "SYNTHETIC_TEST"
+    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
 
 def test_private_state_concurrency_and_transaction_rollback(state_database):

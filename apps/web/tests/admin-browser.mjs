@@ -38,10 +38,13 @@ try {
     const page = await context.newPage();
     page.setDefaultTimeout(20000);
     const frames = [];
-    page.on("websocket", socket => {
+    const second = await context.newPage();
+    second.on("websocket", socket => {
         if (socket.url().endsWith("/ws/v1/admin/p507")) socket.on("framereceived", ({ payload }) => {
             const message = JSON.parse(payload);
-            if (message.type === "admin.invalidate") frames.push({ ...message, received_ms: Date.now() });
+            if (message.type === "admin.invalidate") frames.push({
+                ...message, received_ms: Date.now(), received_monotonic_ms: performance.now(),
+            });
         });
     });
     await page.goto(origin + "/?mode=admin");
@@ -75,7 +78,6 @@ try {
         report.mesh = await picker.inputValue();
         assert.ok(Object.values(mapping.objects).includes(report.mesh));
     } else await page.getByRole("alert").filter({ hasText: "asset R4" }).waitFor();
-    const second = await context.newPage();
     second.setDefaultTimeout(20000);
     await second.route('**/*.glb', route => route.abort());
     await second.goto(origin + "/?mode=admin");
@@ -150,12 +152,16 @@ try {
         await form.getByLabel("Nguồn dữ liệu").selectOption("SYNTHETIC_TEST");
         const accepted = page.waitForResponse(response => response.url().endsWith("/api/v1/admin/p507/state") && response.request().method() === "PUT" && response.ok());
         const start_ms = Date.now();
+        const start_monotonic_ms = performance.now();
         await form.getByRole("button", { name: "Lưu quan sát" }).click();
-        const container = type === "room_schedule" ? page.getByTestId("admin-schedule") : panel;
+        // Observe the second tab so the writer's REST refresh cannot satisfy the check.
+        const container = type === "room_schedule" ? second.getByTestId("admin-schedule") : secondPanel;
         const state = container.locator(`[data-state-type="${type}"][data-version="1"]`);
         await state.waitFor();
         const applied_ms = Date.now();
+        const applied_monotonic_ms = performance.now();
         const persisted = await (await accepted).json();
+        const acknowledged_ms = Date.now();
         assert.ok(persisted.sequence > 4);
         assert.equal(persisted.state.state_type, type);
         assert.match(await state.innerText(), /qa_operator/);
@@ -165,7 +171,8 @@ try {
         report.samples.push({
             ...frame, state_type: type, version: persisted.state.version,
             target_id: persisted.state.target_id, observed_at: persisted.state.source_observed_at,
-            db_recorded_at: persisted.state.committed_at, start_ms, applied_ms,
+            state_id: persisted.state.id, db_recorded_at: persisted.state.committed_at,
+            start_ms, start_monotonic_ms, acknowledged_ms, applied_ms, applied_monotonic_ms,
         });
     }
     const publicFrames = await page.evaluate(() => {
