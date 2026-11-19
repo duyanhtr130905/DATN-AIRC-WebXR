@@ -1,6 +1,6 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { Object3D } from "three";
 import { readObjects, readRooms } from "../api/catalog.ts";
 import { ErrorBoundary } from "../components/ErrorBoundary.tsx";
@@ -34,15 +34,21 @@ export function bindCatalog(rows: CatalogObject[]) {
 }
 
 function Controls() {
-    const { camera, gl } = useThree();
+    const { camera, gl, invalidate } = useThree();
     useEffect(() => {
         const controls = new OrbitControls(camera, gl.domElement);
         controls.target.set(3.45, 1.2, -4.65);
         controls.minDistance = 1;
         controls.maxDistance = 14;
+        const requestFrame = () => invalidate();
+        controls.addEventListener("change", requestFrame);
         controls.update();
-        return () => controls.dispose();
-    }, [camera, gl]);
+        invalidate();
+        return () => {
+            controls.removeEventListener("change", requestFrame);
+            controls.dispose();
+        };
+    }, [camera, gl, invalidate]);
     return null;
 }
 
@@ -75,6 +81,13 @@ export default function P507App() {
     const [objects, setObjects] = useState<Map<string, CatalogObject>>();
     const [replica, setReplica] = useState<Replica>();
     const [selected, select] = useState("");
+    const pickMesh = useCallback((event: { object: Object3D; stopPropagation(): void }) => {
+        const id = logicalId(event.object, known);
+        if (id) {
+            event.stopPropagation();
+            select(id);
+        }
+    }, []);
     useEffect(() => {
         const controller = new AbortController();
         loadFrozenP507(controller.signal).then(({ gltf }) => {
@@ -121,14 +134,11 @@ export default function P507App() {
             <section className="scene" aria-label="Cảnh P507">
                 {assetError ? <p role="alert">{assetError}</p> : scene ?
                     <ErrorBoundary key={revision}>
-                        <Canvas camera={{ position: [1.25, 1.65, -7.415], fov: 48 }} fallback={<p role="alert">WebGL không khả dụng</p>}>
+                        <Canvas frameloop="demand" camera={{ position: [1.25, 1.65, -7.415], fov: 48 }} fallback={<p role="alert">WebGL không khả dụng</p>}>
                             <ambientLight intensity={0.75} />
                             <directionalLight position={[2, 8, -2]} intensity={2} />
                             <Controls />
-                            <primitive object={scene} onClick={(event: { object: Object3D; stopPropagation(): void }) => {
-                                const id = logicalId(event.object, known);
-                                if (id && known.has(id)) { event.stopPropagation(); select(id); }
-                            }} />
+                            <primitive object={scene} onClick={pickMesh} />
                         </Canvas>
                     </ErrorBoundary> : <p role="status">Đang kiểm tra asset R4…</p>}
             </section>

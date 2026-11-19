@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.database.connection import Database
+from app.modules.p507 import ROOM_ID as P507_ROOM_ID
 from app.modules.state.service import change_state
 
 
@@ -32,6 +33,8 @@ def main():
         "--diagnostics", action="store_true", help="Bounded synthetic test timing only"
     )
     args = parser.parse_args()
+    if args.room_id == P507_ROOM_ID:
+        parser.error("P507 requires the dedicated synthetic observation adapter")
     settings = Settings()
     if settings.database_url is None:
         parser.error("DATABASE_URL required")

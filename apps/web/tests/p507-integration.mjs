@@ -66,6 +66,10 @@ try {
         assert.match(await panel.innerText(), new RegExp(mapping.objects[picked]));
         report.frozenMeshSelection = picked;
     }
+    for (const id of ids) {
+        await picker.selectOption(id);
+        assert.match(await panel.innerText(), new RegExp(mapping.objects[id]));
+    }
     const [other, target] = [ids.at(0), ids.at(-1)];
     await picker.selectOption(target);
     assert.match(await panel.innerText(), new RegExp(mapping.objects[target]));
@@ -124,8 +128,14 @@ try {
     await connected.waitFor();
     assert.match(await panel.innerText(), /exhibit B/);
     assert.match(await realtime.innerText(), /connected/);
-    assert.deepEqual(errors, []);
+    await page.getByRole("button", { name: "Tải lại P507" }).click();
+    await connected.waitFor();
+    assert.match(await panel.innerText(), /exhibit B/);
     report.recovery = await page.evaluate(() => window.__AIRC_TEST__.events.filter(event => event.kind === "connection"));
+    await page.goto(origin + "/?mode=offline");
+    assert.equal(await page.getByTestId("realtime").count(), 0);
+    assert.deepEqual(errors, []);
+
     report.mapping = { placed: 121, matched: ids.length, unmatched: 0, duplicate: 0, revision: mapping.revision };
     report.status = "PASS";
 } finally {

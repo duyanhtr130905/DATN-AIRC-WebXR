@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 from sqlalchemy import func, select
@@ -9,7 +10,7 @@ from sqlalchemy.orm import Session
 from test_catalog_postgres import isolated_catalog_database
 from test_state_postgres import live_server as live_server
 
-from app.database.models import Object
+from app.database.models import Object, Room
 from app.database.state_models import CurrentState, Outbox, StateHistory
 from app.modules.p507 import (
     REVISION,
@@ -17,6 +18,7 @@ from app.modules.p507 import (
     ROOT,
     evidence,
     ingest,
+    object_id,
     parse_observation,
     validate_mapping,
 )
@@ -87,11 +89,61 @@ def test_p507_transactions_and_conflicts(state_database):
             validate_mapping(session)
 
 
+@pytest.mark.postgres
+def test_wrong_room_uuid_conflict_and_concurrent_cas(state_database):
+    database, _ = state_database
+    _, ids = evidence()
+    logical = ids[0]
+    with Session(database.engine) as session, session.begin():
+        room = Room(code="OTHER", name="Other room", source_kind="synthetic")
+        session.add(room)
+        session.flush()
+        with session.begin_nested() as nested:
+            session.add(
+                Object(
+                    id=object_id(logical),
+                    room_id=room.id,
+                    name="Conflict",
+                    type="fixture",
+                    source_kind="synthetic",
+                    external_reference=logical,
+                )
+            )
+            session.flush()
+            with pytest.raises(ValueError, match="mapping conflict"):
+                validate_mapping(session, seed=True)
+            nested.rollback()
+        validate_mapping(session, seed=True)
+
+    def update(second):
+        raw = json.dumps(
+            {
+                "state_type": "equipment_status",
+                "logical_id": logical,
+                "observed_at": f"2026-11-19T12:00:0{second}Z",
+                "expected_version": 0,
+                "value": {"status": "available"},
+            }
+        )
+        try:
+            with Session(database.engine) as session, session.begin():
+                return ingest(session, parse_observation(raw.encode()), authorization=REVISION)[
+                    "state"
+                ]["version"]
+        except StateConflict:
+            return 0
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert sorted(pool.map(update, (1, 2))) == [0, 1]
+    with Session(database.engine) as session:
+        for model in (CurrentState, StateHistory, Outbox):
+            assert session.scalar(select(func.count()).select_from(model)) == 1
+
+
 def test_committed_browser_mapping_is_exact():
     lock, ids = evidence()
     path = ROOT / "apps/web/src/app/p507-mapping.json"
     mapping = json.loads(path.read_bytes())
-    from app.modules.p507 import object_id
 
     assert mapping == {
         "room_id": str(ROOM_ID),
