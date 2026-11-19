@@ -179,7 +179,7 @@ function AdminWorkspace({ account, signedOut }: { account: Login; signedOut(): v
             <label>Tìm kiếm<input value={search} onChange={event => setSearch(event.target.value)} /></label>
             <Filter label="Nhóm" choices={snapshot.objects.map(row => row.group_name)} value={group} apply={setGroup} />
             <Filter label="Loại" choices={snapshot.objects.map(row => row.kind)} value={kind} apply={setKind} />
-            <label>Lọc trạng thái danh mục<select value={statusFilter} onChange={event => setStatusFilter(event.target.value)}>
+            <label>Lọc trạng thái danh mục<select aria-label="Lọc trạng thái danh mục" value={statusFilter} onChange={event => setStatusFilter(event.target.value)}>
                 <option value="active">Đang hiển thị</option><option value="archived">Đã lưu trữ</option>
                 <option>available</option><option>maintenance</option><option>offline</option>
             </select></label>
