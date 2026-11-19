@@ -28,6 +28,9 @@ def test_orm_ddl_has_catalog_constraints():
         "admin_sessions",
         "admin_catalog",
         "admin_audit",
+        "visitor_sessions",
+        "visitor_events",
+        "visitor_start_attempts",
     }
     for model in (Room, Object):
         sql = str(CreateTable(model.__table__).compile(dialect=postgresql.dialect()))

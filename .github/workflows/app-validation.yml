@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: ${{ github.head_ref == 'feat/m4-visitor-sessions-reporting' && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
@@ -67,6 +68,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: ${{ github.head_ref == 'feat/m4-visitor-sessions-reporting' && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.13'
@@ -87,6 +89,7 @@ jobs:
       - run: python -m pytest -v -m postgres --junitxml=../../.local/m1-b-postgres.xml
         working-directory: apps/api
         env:
+          CHROME_BIN: /usr/bin/google-chrome
           AIRC_ALLOW_TEST_DATABASES: '1'
           TEST_DATABASE_URL: postgresql+psycopg://airc_ci:ci-only-ephemeral@127.0.0.1:5432/airc_foundation_test
       - name: Upload PostgreSQL migration and Catalog test results
@@ -103,6 +106,8 @@ jobs:
             .local/m3-migration-report.json
             .local/m3-admin-browser/report.json
             .local/m3-admin-browser/panel-*.png
+            .local/m4-visitor-evidence/
+            .local/m4-visitor-browser/
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error

@@ -10,6 +10,11 @@ from sqlalchemy.orm import Session
 from app.core.config import Settings
 from app.database.admin_models import AdminAccount
 from app.database.connection import Database
+from app.database.visitor_guard import (
+    LOCAL_VISITOR_DATABASE,
+    database_identity,
+    verified_local_server,
+)
 from app.modules.admin_auth import USERNAME, hash_password
 
 
@@ -28,7 +33,11 @@ def main():
         name != args.confirm_database
         or url.host not in {"localhost", "127.0.0.1"}
         or url.query
-        or not (name == "airc_foundation" or name.startswith("airc_test_catalog_"))
+        or not (
+            name == "airc_foundation"
+            or name.startswith("airc_test_catalog_")
+            or (name == LOCAL_VISITOR_DATABASE and settings.visitor_synthetic_enabled)
+        )
     ):
         parser.error("Confirmed loopback project database required")
     import sys
@@ -43,6 +52,10 @@ def main():
         with Session(database.engine) as db, db.begin():
             if db.scalar(text("SELECT current_database()")) != name:
                 raise RuntimeError("Database identity mismatch")
+            if name == LOCAL_VISITOR_DATABASE:
+                actual, host = database_identity(db)
+                if not verified_local_server(url, actual, host):
+                    raise RuntimeError("M4 Admin provisioning requires local PostgreSQL")
             db.execute(text("SELECT pg_advisory_xact_lock(817405508)"))
             if db.scalar(select(AdminAccount.id).where(AdminAccount.username == username)):
                 parser.error("Account already exists")

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import VisitorReports from "./VisitorReports.tsx";
 import { P507Scene } from "./P507App.tsx";
 import mapping from "./p507-mapping.json";
 import { observationAge } from "../features/live/observationAge.ts";
@@ -163,6 +164,7 @@ function AdminWorkspace({ account, signedOut }: { account: Login; signedOut(): v
         if (row) select(row.id);
     }
     return <main className="admin">
+        <VisitorReports csrf={account.csrf} />
         <h1>Quản trị P507</h1>
         <p>{account.username} · Danh mục và quan sát riêng tư</p>
         <p role="status" data-testid="admin-sync">{sync}</p>

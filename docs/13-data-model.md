@@ -106,3 +106,9 @@ Làm rõ bounded delivery: retry hữu hạn và lease có thể dẫn tới x�
 ## M3 private manual data supplement
 
 Forward-only revision 0003_admin_manual adds named accounts, server-side sessions, a private Catalog overlay and narrow audit refs. Revision 0004_admin_provenance adds nullable provenance and source context to private audit revisions. Existing missing provenance reads as UNKNOWN. Observation rows and events remain in the M1 State/History/Outbox tables with a separate Admin audience. See the [M3 runbook and architecture](m3/P507-M3-INTEGRATION.md).
+
+## M4 — Visitor storage synthetic/local
+
+Revision `0005_visitor_sessions` adds `visitor_sessions` and `visitor_events` as a separate storage boundary. Sessions have server UUID, SHA-256 proof digest, absolute proof expiry, schema version 1, synthetic source, synthetic_local scope, synthetic_opt_in_v1 marker, start/last committed event/end timestamps and event count. Events use a UUID PK, session FK with cascade for explicit synthetic cleanup, version, event type, allowlisted room/object scope, occurred and received timestamps, and unique per-session receipt ordinal. The session row lock shares the transaction with ordinal allocation and event inserts. The (session_id, occurred_at, id) index supports deterministic view recovery. See the [M4 runbook](m4/VISITOR-SESSIONS.md).
+
+Revision `0006_visitor_start_attempts` records idempotent synthetic start attempts separately. The attempt key, temporary proof digest and expiry allow a lost start response to be retried. Commit clears the pending digest and links the created session, writes its first event and expires the previous proof in one transaction. A deliberate visit deletion removes the session and its events, clears the attempt link, and leaves the consumed operation marker to prevent replay. Ordinary ending preserves the session and events for reporting.
