@@ -96,3 +96,29 @@ Check the database name, connection scope, current Alembic revision, write activ
 | Evidence and independent review | Exact candidate `a7acadc9`, review [#5971384295](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25#pullrequestreview-5971384295), [CI](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/actions/runs/44477280736), [PR #25 MERGED](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25) | TECHNICAL ACCEPTED; AIRC FIELD EVIDENCE PENDING |
 
 `M3_TECHNICAL_MERGE_READY` depends on successful F1/F2/F3 regression, exact-candidate evidence and private/public isolation. `M3_FULL_DOD_ACCEPTANCE_READY` also requires actual source-to-UI evidence, inventory confirmation and independently reviewed rights. Provide a representative modeled device and exhibit with their Catalog identities, any missing inventory items to add, one actual observation per state type with timestamp/timezone and evidence, intended manual update cadence, and the allowed audience for each record or attachment. Issues #2 and #3 remain open. Issues #20 and #22 remain separate.
+
+## Field reconciliation and timing worksheet
+
+Fill this worksheet in the approved private evidence store. Keep the empty template in Git. Record the survey revision, date, operator, scope, approved audience, R4 evidence reference, Catalog snapshot time, and build SHA. Use the protected P507 Catalog snapshot and the frozen manifest as separate inputs to the reconciliation.
+
+| Field item reference | Group, quantity and location | Logical ID | Catalog UUID and room UUID | R4 placement | Physical match outcome | Evidence and permissions reference |
+|---|---|---|---|---|---|---|
+| | | | | | | |
+
+1. Reconcile all 121 placed IDs against the protected Catalog and approved R4 mapping. Mark overlaps, grouped representations, decoration, missing/unconfirmed objects, and wrong rooms explicitly. Count confirmed physical objects separately from meshes. Check for missing or duplicate identifiers and UUIDs.
+2. Account for both UNPLACED IDs from the frozen manifest without assigning mesh IDs. For missing small items use the protected Catalog workflow once the owner confirms the observations. Preserve existing IDs and record INFO_ONLY or NOT_MODELED where applicable. Keep the owner-provided canonical inventory and its revision reference with the worksheet.
+3. Resolve #2 using the required minimum of 20 confirmed real objects and its additional survey, inventory revision and rights criteria. Identify a representative equipment item and exhibit with their actual classifications.
+
+Collect one observation for each row below after verifying authority to use it. Enter it privately under the named Admin account and retain the revision/history and an independent observer tab's applied panel evidence.
+
+| State type | Target | Value, source and operator | Source change and human observation times (offset-aware) | Cadence and rights reference | Trace reference |
+|---|---|---|---|---|---|
+| room_schedule | P507 room UUID | | | | |
+| equipment_status | Equipment UUID | | | | |
+| exhibit_info | Exhibit UUID | | | | |
+
+For each trial, record observation time, entry initiation, API acknowledgement, DB mutation time, outbox message UUID and sequence, publication record, WebSocket receipt, and observer-tab UI application of the matching state UUID and revision. Record browser, DB, machine/network, build and fixture or field scope. Store the unredacted material only in its authorized location.
+
+Measure human observation-to-entry and system commit-to-UI separately. Capture the source change timestamp independently of human observation when available. An observed source time alone cannot establish that a physical change occurred at that time. Bound transaction commit between DB mutation and API acknowledgement only with a defensible clock alignment. Record clock offsets and uncertainties for each clock pair near the run, retain monotonic intervals within each process, and flag malformed, future, reversed or uncalibrated cross-clock samples as uncertain. Evaluate MT1-04 with the approved workload and uncertainty-inclusive source-change-to-UI intervals. A missing endpoint or an interval spanning the threshold leaves the result inconclusive.
+
+The synthetic Admin browser regression records Playwright receipt and DOM detection on an observer tab and matches each sample to a disposable PostgreSQL Outbox row by private room sequence, state UUID and revision. The report stores the outbox message UUID and publication bookkeeping timestamp. A sequence hint can arrive before publication bookkeeping via the committed-cursor fallback. Playwright records its own detection times, including automation overhead. This report labels alignment UNMEASURED and supplies raw observations for diagnostics.
