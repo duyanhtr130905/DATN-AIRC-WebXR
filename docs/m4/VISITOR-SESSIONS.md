@@ -37,6 +37,6 @@ Trình tạo oracle độc lập ở `apps/api/tests/visitor_oracle.py` sinh 1.0
 
 ## Điều kiện nghiệm thu
 
-- Nghiệm thu kỹ thuật M4 qua review độc lập đúng HEAD Draft PR. Kiểm tra toàn bộ DoD và bằng chứng tại PR.
+- Nghiệm thu kỹ thuật M4 qua review độc lập đúng HEAD Draft PR. Kiểm tra toàn bộ DoD, exact HEAD và bằng chứng tại [Draft PR #28](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/28).
 - Chủ dự án và người có thẩm quyền phê duyệt phạm vi thu thập, identity/consent, retention/xóa và quyền xem, xuất hoặc công bố trước khi bật ghi dữ liệu khách thật. Tài liệu này quy định cách thử với dữ liệu mô phỏng.
 - M3 #2/#3 tiếp tục theo dõi riêng theo roadmap. Nghiệm thu MT1–MT3, gồm protocol và phiên người thật, theo M6.
