@@ -40,7 +40,8 @@ class VisitorEvent(Base):
     __tablename__ = "visitor_events"
     __table_args__ = (
         CheckConstraint(
-            "schema_version = 1 AND room_id = 'demo-room-foundation' AND ordinal BETWEEN 1 AND 500 "
+            "schema_version = 1 AND room_id = 'demo-room-foundation' "
+            "AND (ordinal BETWEEN 1 AND 500 OR (ordinal = 501 AND event_type = 'session_end')) "
             "AND ((event_type IN ('session_start', 'room_enter', 'session_end')"
             " AND object_id IS NULL) "
             "OR (event_type IN ('object_select', 'info_open', 'info_close')"

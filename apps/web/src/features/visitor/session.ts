@@ -12,7 +12,7 @@ export type VisitEvent = {
 };
 export type View = {
     id: string; room_id: typeof ROOM; scope: "synthetic_local";
-    selected_id: ObjectId | null; info_open: boolean; ended: boolean;
+    selected_id: ObjectId | null; info_open: boolean; ended: boolean; remaining_events?: number;
 };
 export type LocalSession = { view: View; queue: VisitEvent[]; clock: number; clearing: boolean; proofLost?: boolean };
 export type PendingStart = { id: string; previousId: string | null; prepared: boolean };
@@ -22,6 +22,15 @@ const kinds = ["room_enter", "object_select", "info_open", "info_close", "sessio
 const objectId = (value: unknown): value is ObjectId =>
     value === "demo-object-cube" || value === "demo-object-column";
 
+export function readRemaining(input: { remaining_events?: unknown }): number | undefined {
+    const remaining = input.remaining_events;
+    if (remaining === undefined) return undefined; // Previously stored views and older API responses.
+    if (typeof remaining !== "number" || !Number.isSafeInteger(remaining) || remaining < 0) {
+        throw new Error("Invalid remaining event count");
+    }
+    return remaining;
+}
+
 export function readView(input: unknown): View {
     const value = input as Partial<View> | null;
     if (!value || typeof value.id !== "string" || !uuid.test(value.id) ||
@@ -30,6 +39,7 @@ export function readView(input: unknown): View {
         typeof value.info_open !== "boolean" || typeof value.ended !== "boolean") {
         throw new Error("Invalid synthetic session");
     }
+    readRemaining(value);
     return value as View;
 }
 
@@ -71,10 +81,17 @@ export function applyEvent(view: View, item: VisitEvent): View {
     return { ...view, selected_id: item.object_id, info_open: item.event_type !== "info_close" };
 }
 
+export function hasInteractionCapacity({ view, queue }: LocalSession): boolean {
+    // An unacknowledged interaction may already be committed. Count it until its receipt arrives.
+    return (view.remaining_events ?? Infinity) > queue.filter(item => item.event_type !== "session_end").length;
+}
+
 export function enqueue(session: LocalSession, kind: Kind, object: string | null, now: number,
     id: string): LocalSession {
     if (session.clearing || session.proofLost || session.view.ended) return session;
-    if (session.queue.length >= QUEUE_LIMIT) throw new Error("Queue is full");
+    if (kind !== "session_end" && !hasInteractionCapacity(session)) throw new Error("Session is full");
+    const limit = kind === "session_end" ? QUEUE_LIMIT : QUEUE_LIMIT - 1;
+    if (session.queue.length >= limit) throw new Error("Queue is full");
     if (object !== null && !objectId(object)) throw new Error("Unknown synthetic object");
     const clock = Math.max(now, session.clock + 1);
     const event: VisitEvent = {

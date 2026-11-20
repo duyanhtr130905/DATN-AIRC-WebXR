@@ -2,17 +2,18 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { readHealth, readReadiness } from "../api/client.ts";
 import { ErrorBoundary } from "../components/ErrorBoundary.tsx";
 import { loadDemo, selectedObject } from "../features/catalog/demo.ts";
-import { settled } from "../features/visitor/session.ts";
+import { hasInteractionCapacity, settled } from "../features/visitor/session.ts";
 import { useVisitor } from "../features/visitor/useVisitor.ts";
 const DemoScene = lazy(() => import("../scene/DemoScene.tsx"));
 const scene = loadDemo();
 export default function OfflineDemo() {
   const [untrackedId, setUntrackedId] = useState<string | null>(null);
   const visitor = useVisitor();
-  const tracked = visitor.session && !visitor.session.clearing;
+  const tracked = visitor.session?.clearing ? null : visitor.session;
   const sessionId = visitor.session?.view.id ?? null;
-  const recording = tracked && !visitor.pending && !visitor.session?.proofLost &&
-    !visitor.suspended && !visitor.session?.view.ended;
+  const openVisit = tracked && !visitor.pending && !tracked.proofLost &&
+    !visitor.suspended && !tracked.view.ended ? tracked : null;
+  const recording = openVisit && hasInteractionCapacity(openVisit);
   const selectedId = recording ? visitor.session?.view.selected_id ?? null : untrackedId;
   const showDetails = !recording || visitor.session?.view.info_open;
   function select(id: string | null) {
@@ -49,10 +50,10 @@ export default function OfflineDemo() {
         {visitor.pending && <p role="status">Chờ xác nhận bắt đầu lượt tham quan</p>}
         {visitor.session && <>
           <p role="status" data-testid="visitor-session">
-            {visitor.session.clearing ? "Chờ xác nhận xóa trên máy chủ" : visitor.suspended ? "Máy chủ đã tắt ghi phiên" : visitor.session.proofLost ? "Mã phiên hết hiệu lực" : visitor.session.view.ended ? (visitor.session.queue.length ? "Chờ xác nhận kết thúc" : "Đã kết thúc") : "Đang ghi phiên mô phỏng"}
+            {visitor.session.clearing ? "Chờ xác nhận xóa trên máy chủ" : visitor.suspended ? "Máy chủ đã tắt ghi phiên" : visitor.session.proofLost ? "Mã phiên hết hiệu lực" : visitor.session.view.ended ? (visitor.session.queue.length ? "Chờ xác nhận kết thúc" : "Đã kết thúc") : hasInteractionCapacity(visitor.session) ? "Đang ghi phiên mô phỏng" : "Đã đạt giới hạn ghi tương tác. Bạn có thể tiếp tục xem cảnh hoặc kết thúc phiên."}
             {" · "}{visitor.session.queue.length} sự kiện chờ
           </p>
-          {recording && sessionId && <button onClick={() => visitor.actions?.record(sessionId, "session_end")}>Kết thúc phiên</button>}
+          {openVisit && sessionId && <button onClick={() => visitor.actions?.record(sessionId, "session_end")}>Kết thúc phiên</button>}
           {!visitor.pending && !visitor.session.clearing && sessionId && <button onClick={() => { setUntrackedId(null); visitor.actions?.clear(sessionId); }}>Dừng ghi và xóa phiên</button>}
           {!visitor.pending && <button onClick={() => visitor.actions?.retry()}>Thử đồng bộ lại</button>}
         </>}

@@ -9,12 +9,14 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
+from threading import Barrier
 from uuid import UUID, uuid4
 
 import pytest
 from alembic.config import Config
 from fastapi.testclient import TestClient
 from sqlalchemy import JSON, MetaData, func, inspect, select, text, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from test_catalog_postgres import API_ROOT, isolated_catalog_database
 from visitor_oracle import expected_visits
@@ -33,7 +35,7 @@ from app.modules.visitor import COOKIE, INTENT_COOKIE, PATH, ROOM, digest
 pytestmark = pytest.mark.postgres
 ORIGIN = "http://127.0.0.1:5173"
 REPORT = "/api/v1/admin/visitor-reports"
-HEAD = "0006_visitor_start_attempts"
+HEAD = "0007_visitor_terminal_capacity"
 ROOT = API_ROOT.parents[1]
 
 
@@ -410,6 +412,155 @@ def test_concurrent_same_session_and_event_collision_across_sessions(local_datab
         assert counts(database) == (2, 4)
 
 
+def test_capacity_reserves_one_terminal_event(local_database):
+    database, url = local_database
+    with client_for(url) as client, client_for(url) as restarted:
+        path = opt_in(client)
+        at = datetime.now(UTC)
+        interactions = [event(time=at) for _ in range(498)]
+        for offset in range(0, len(interactions), 16):
+            assert send(client, path, *interactions[offset:offset + 16]).status_code == 200
+        assert counts(database) == (1, 499)
+        last, excess = event(time=at), event(time=at)
+        end = event("session_end", time=at + timedelta(milliseconds=10))
+        assert send(client, path, last, excess).status_code == 413
+        assert counts(database) == (1, 499)
+        for item, ordinal in ((last, 500), (end, 501)):
+            response = send(client, path, item)
+            assert response.status_code == 200, response.text
+            receipt = response.json()["receipts"][0]
+            assert (receipt["status"], receipt["ordinal"]) == ("accepted", ordinal)
+
+        restarted.cookies.set(COOKIE, client.cookies[COOKIE], domain="127.0.0.1", path=PATH)
+        result = send(restarted, path, end, last)
+        assert result.json()["remaining_events"] == 0
+        assert [row["status"] for row in result.json()["receipts"]] == ["duplicate", "duplicate"]
+        assert send(restarted, path, excess).status_code == 413
+        assert send(restarted, path, event("session_end", time=at)).status_code == 409
+        assert send(restarted, path, {**end, "occurred_at": at.isoformat()}).status_code == 409
+        assert restarted.get(path).json()["ended"]
+
+        with Session(database.engine) as db:
+            session = db.scalar(select(VisitorSession))
+            assert session.event_count == 501
+            assert session.ended_at == datetime.fromisoformat(end["occurred_at"])
+            rows = db.scalars(select(VisitorEvent).order_by(VisitorEvent.ordinal)).all()
+            assert [row.ordinal for row in rows] == list(range(1, 502))
+            assert [str(row.id) for row in rows[1:]] == [
+                item["id"] for item in [*interactions, last, end]
+            ]
+            assert sum(row.event_type == "session_end" for row in rows) == 1
+        csrf = login(client, login_password(database))
+        payload = client.get(REPORT + f"/export?format=json&{dates()}", headers=csrf).json()
+        csv_text = client.get(REPORT + f"/export?format=csv&{dates()}", headers=csrf).text
+        assert payload["session_count"] == 1
+        assert payload["sessions"][0]["event_count"] == payload["event_count"] == 501
+        csv_rows = list(csv.DictReader(io.StringIO(csv_text)))
+        assert [(row["event_id"], str(row["ordinal"])) for row in payload["events"]] == [
+            (row["event_id"], row["ordinal"]) for row in csv_rows
+        ] == [(str(row.id), str(row.ordinal)) for row in rows]
+
+
+def test_capacity_terminal_batch_rollback_and_concurrent_end(local_database):
+    database, url = local_database
+    with client_for(url) as client, client_for(url) as other:
+        path = opt_in(client)
+        other.cookies.set(COOKIE, client.cookies[COOKIE], domain="127.0.0.1", path=PATH)
+        at = datetime.now(UTC)
+        interactions = [event(time=at) for _ in range(499)]
+        for offset in range(0, len(interactions), 16):
+            assert send(client, path, *interactions[offset:offset + 16]).status_code == 200
+        assert counts(database) == (1, 500)
+        ending, competing = (event("session_end", time=at) for _ in range(2))
+        assert send(client, path, ending, event(time=at)).status_code == 413
+        assert counts(database) == (1, 500)
+        assert not client.get(path).json()["ended"]
+        rendezvous = Barrier(2, timeout=10)
+
+        def finish(browser, item):
+            rendezvous.wait()
+            return send(browser, path, item)
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            tasks = [
+                executor.submit(finish, client, ending),
+                executor.submit(finish, other, competing),
+            ]
+            responses = [task.result() for task in tasks]
+        assert sorted(result.status_code for result in responses) == [200, 409]
+        index = next(i for i, result in enumerate(responses) if result.status_code == 200)
+        winner = (ending, competing)[index]
+        receipt = responses[index].json()["receipts"][0]
+        assert (receipt["id"], receipt["ordinal"], receipt["status"]) == (
+            winner["id"], 501, "accepted"
+        )
+        duplicate = send(other, path, winner).json()["receipts"][0]
+        assert duplicate == {**receipt, "status": "duplicate"}
+        assert counts(database) == (1, 501)
+
+
+def test_migration_capacity_preserves_populated_0006_and_allows_legacy_close():
+    with (
+        isolated_catalog_database(migrate=False) as (database, url),
+        isolated_catalog_database(migrate=False) as (restore, _),
+    ):
+        config = Config(str(API_ROOT / "alembic.ini"))
+        old = "0006_visitor_start_attempts"
+        tables = [VisitorSession.__table__, VisitorEvent.__table__, VisitorStartAttempt.__table__]
+        with database.engine.begin() as connection:
+            config.attributes["connection"] = connection
+            command.upgrade(config, old)
+        with client_for(url) as client:
+            path = opt_in(client)
+            at = datetime.now(UTC)
+            interactions = [event(time=at) for _ in range(499)]
+            for offset in range(0, len(interactions), 16):
+                assert send(client, path, *interactions[offset:offset + 16]).status_code == 200
+            end = event("session_end", time=at)
+            with database.engine.connect() as connection:
+                backup = [
+                    [dict(row) for row in connection.execute(select(table)).mappings()]
+                    for table in tables
+                ]
+            with restore.engine.begin() as connection:
+                config.attributes["connection"] = connection
+                command.upgrade(config, old)
+                for table, rows in zip(tables, backup, strict=True):
+                    connection.execute(table.insert(), rows)
+
+            with database.engine.connect() as connection:
+                transaction = connection.begin()
+                config.attributes["connection"] = connection
+                command.upgrade(config, HEAD)
+                assert "501" in inspect(connection).get_check_constraints("visitor_events")[0][
+                    "sqltext"
+                ]
+                transaction.rollback()
+                assert connection.scalar(text("SELECT version_num FROM alembic_version")) == old
+                assert "501" not in inspect(connection).get_check_constraints("visitor_events")[0][
+                    "sqltext"
+                ]
+            for target in (database, restore):
+                with target.engine.begin() as connection:
+                    config.attributes["connection"] = connection
+                    command.upgrade(config, HEAD)
+                    command.check(config)
+                    for table, rows in zip(tables, backup, strict=True):
+                        actual = connection.execute(select(table)).mappings()
+                        assert sorted(map(repr, map(dict, actual))) == sorted(map(repr, rows))
+                    with pytest.raises(IntegrityError), connection.begin_nested():
+                        connection.execute(
+                            VisitorEvent.__table__.insert().values(
+                                {**backup[1][0], "id": uuid4(), "ordinal": 501}
+                            )
+                        )
+                    with pytest.raises(RuntimeError, match="Forward-only"):
+                        command.downgrade(config, old)
+            assert send(client, path, end).json()["receipts"][0]["ordinal"] == 501
+            assert counts(database) == (1, 501)
+            assert counts(restore) == (1, 500)
+
+
 def test_start_retry_rollback_rotation_and_consumed_intent_after_delete(
     local_database, monkeypatch
 ):
@@ -680,7 +831,7 @@ def test_oracle_reconciles_50_sessions_1000_ids_database_report_and_exports(
         == {r["event_id"] for r in csv_rows}
         == {r["event_id"] for r in exported["events"]}
     )
-    evidence = ROOT / ".local/m4-visitor-evidence"
+    evidence = Path(os.environ.get("M4_ORACLE_OUT", ROOT / ".local/m4-visitor-evidence"))
     evidence.mkdir(parents=True, exist_ok=True)
     summary = {
         "status": "PASS",
@@ -731,7 +882,7 @@ def test_chrome_fixture_uses_real_api_and_postgres(local_database):
     )
     assert result.returncode == 0, (result.stdout + result.stderr)[-4000:]
     assert counts(database) == (2, 12)
-    out = ROOT / ".local/m4-visitor-browser"
+    out = Path(os.environ.get("M4_BROWSER_OUT", ROOT / ".local/m4-visitor-browser"))
     exported = json.loads((out / "rotation-export.json").read_text(encoding="utf-8"))
     with (out / "rotation-export.csv").open(encoding="utf-8", newline="") as stream:
         csv_rows = list(csv.DictReader(stream))

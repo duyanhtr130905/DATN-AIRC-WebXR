@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { test } from "node:test";
-import { acknowledged, applyEvent, enqueue, KEY, QUEUE_LIMIT, readLocal, ROOM, type LocalSession } from "../src/features/visitor/session.ts";
+import { acknowledged, applyEvent, enqueue, hasInteractionCapacity, KEY, QUEUE_LIMIT, readLocal, readView, ROOM, type LocalSession } from "../src/features/visitor/session.ts";
 
 const empty = (): LocalSession => ({
     view: { id: randomUUID(), room_id: ROOM, scope: "synthetic_local", selected_id: null, info_open: false, ended: false },
@@ -30,14 +30,28 @@ test("only complete matching receipts clear queued IDs", () => {
 
 test("queue cap and ended or withdrawn sessions do not record new items", () => {
     const start = empty();
-    const full = Array.from({ length: QUEUE_LIMIT }).reduce<LocalSession>(
+    const full = Array.from({ length: QUEUE_LIMIT - 1 }).reduce<LocalSession>(
         (session) => enqueue(session, "room_enter", null, 100, randomUUID()), start,
     );
     assert.throws(() => enqueue(full, "room_enter", null, 100, randomUUID()));
+    assert.equal(enqueue(full, "session_end", null, 100, randomUUID()).queue.length, QUEUE_LIMIT);
     const end = enqueue(start, "session_end", null, 100, randomUUID());
     assert.equal(enqueue(end, "room_enter", null, 100, randomUUID()), end);
     const revoked = { ...start, clearing: true };
     assert.equal(enqueue(revoked, "room_enter", null, 100, randomUUID()), revoked);
     assert.throws(() => readLocal({ getItem: () => "malformed" }));
     assert.throws(() => readLocal({ getItem: () => { throw new Error("denied"); } }));
+});
+
+test("the last interaction can be queued once and the terminal event has a separate slot", () => {
+    const start = empty();
+    start.view.remaining_events = 1;
+    const interaction = enqueue(start, "object_select", "demo-object-cube", 100, randomUUID());
+    assert.equal(hasInteractionCapacity(interaction), false);
+    assert.throws(() => enqueue(interaction, "info_close", "demo-object-cube", 101, randomUUID()));
+    const end = enqueue(interaction, "session_end", null, 102, randomUUID());
+    assert.deepEqual(end.queue.map(item => item.event_type), ["object_select", "session_end"]);
+    const stored = readLocal({ getItem: () => JSON.stringify(end) });
+    assert.deepEqual(stored, end);
+    assert.throws(() => readView({ ...start.view, remaining_events: -1 }));
 });

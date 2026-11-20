@@ -12,6 +12,8 @@
 
 ## Thiết kế phục hồi và quyền truy cập
 
+- Revision `0007_visitor_terminal_capacity` dành ordinal 501 cho một `session_end` khi phiên đã đủ 500 hàng, gồm `session_start`. Phiên kết thúc sớm vẫn dùng ordinal kế tiếp. Khi không còn slot thường, client hiển thị giới hạn, cho duyệt cảnh và giữ nút kết thúc. Hàng đợi mới dành một trong 128 chỗ cho sự kiện kết thúc. Gửi lại cùng ID nhận receipt cũ, còn tương tác vượt trần nhận 413 nguyên batch. Dữ liệu chưa ACK được giữ khi lỗi. Xem [phương án cho dữ liệu thật và threat model](../closure/VISITOR-POLICY.md).
+
 - Cookie host-only theo đường dẫn API visitor, HttpOnly, SameSite Strict, Secure khi chạy HTTPS. Máy chủ tạo ID phiên và 256 bit ngẫu nhiên cho chứng minh, chỉ giữ SHA-256. Tuổi thọ tuyệt đối 8 giờ phục vụ kiểm thử, độc lập với thời gian giữ dữ liệu. Cookie và ID phiên đều phải khớp. Xóa phiên thu hồi chứng minh. Cookie bị sao chép vẫn có thể phát lại trước thời điểm hết hạn hoặc thu hồi.
 - Kiểm tra loopback peer, Host và scheme tường minh theo Admin origin, Origin trên mọi thao tác ghi, Fetch Metadata khi có, header riêng trên API phiên và từ chối header chuyển tiếp. Origin/CORS và CSRF của Admin kiểm soát xuất báo cáo. HttpOnly giảm nguy cơ đọc mã qua JavaScript. Mã tùy ý chạy trong cùng origin vẫn có thể thực hiện thao tác trong phiên, nên dùng origin local dành riêng và chỉ chạy mã tin cậy.
 - Hàng đợi theo origin và chỉ lưu sau opt-in. Web Locks tuần tự hóa cập nhật qua tab và cho một luồng đồng bộ hoạt động tại một thời điểm. Mỗi event được gán UUID trước khi gửi, tối đa 128 event chờ, gửi 16 mỗi lần, timeout 3,5 giây và tối đa 3 lần retry tự động sau lần thử đầu. Tải lại, kết nối lại và nút thử lại có thể kích hoạt một lượt mới. Mất phản hồi sau commit giữ nguyên ID khi gửi lại. Nếu máy chủ từ chối batch, giao diện giữ hàng đợi và báo lỗi.
@@ -32,6 +34,8 @@ git diff --check
 ```
 
 Bộ PostgreSQL yêu cầu `TEST_DATABASE_URL` trỏ vào `airc_foundation_test` trên loopback, `AIRC_ALLOW_TEST_DATABASES=1` và Chrome thật qua `CHROME_BIN`. Test migration nâng DB populated 0004, khôi phục bản sao logic vào DB riêng, so sánh dữ liệu M1–M3, thử rollback transaction và downgrade. Test Chrome chạy API thật, Vite và PostgreSQL, giữ bằng chứng tại `.local/m4-visitor-browser/`. CI tải thư mục và JUnit dưới artifact PostgreSQL của workflow application foundation.
+
+Trước khi chạy 0007 trên database đã sử dụng, kiểm backup theo môi trường vận hành và thử restore vào database riêng. Bài 0007 trên disposable PG tạo phiên open đủ 500 ở revision 0006, thực hiện backup theo hàng và restore sang database độc lập, so sánh session/event/start attempts, thử rollback DDL và downgrade bị từ chối. Sau upgrade thử đóng phiên cũ bằng ordinal 501. Để đối chiếu nguyên trạng giữa các lần chạy, đặt `M4_BROWSER_OUT` và `M4_ORACLE_OUT` theo từng lượt.
 
 Trình tạo oracle độc lập ở `apps/api/tests/visitor_oracle.py` sinh 1.000 UUID trước khi ghi. Bài test gán chúng vào 50 phiên riêng, gửi ngược thứ tự, phát lại và thử thay đổi nội dung. Đối chiếu DB, báo cáo, CSV và JSON. Artifact `.local/m4-visitor-evidence/` chứa manifest/binding, dữ liệu DB đã lọc, hai export và đối chiếu kèm SHA/môi trường. Snapshot tính thêm đúng một `session_start` do máy chủ sinh cho mỗi phiên. Chạy trên dịch vụ disposable và kiểm DSN trước mọi thử nghiệm sự cố.
 

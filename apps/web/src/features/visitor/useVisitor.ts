@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-    acknowledged, applyEvent, BATCH_SIZE, enqueue, KEY, PATH, PENDING_KEY, readLocal, readPending, readView, settled,
+    acknowledged, applyEvent, BATCH_SIZE, enqueue, KEY, PATH, PENDING_KEY, readLocal, readPending,
+    readRemaining, readView, settled,
     type Kind, type LocalSession, type PendingStart,
 } from "./session.ts";
 
@@ -107,10 +108,15 @@ export function useVisitor() {
                 const sourceId = local.view.id;
                 const result = await request(sessionPath(local) + "/events", signal, "POST", { events: sent });
                 const ids = acknowledged(sent, result);
+                const remaining = readRemaining(result as { remaining_events?: unknown });
                 await locked(() => {
                     const current = read();
                     if (current?.view.id === sourceId && !current.clearing) {
-                        save({ ...current, queue: current.queue.filter(item => !ids.has(item.id)) });
+                        save({
+                            ...current,
+                            view: { ...current.view, remaining_events: remaining },
+                            queue: current.queue.filter(item => !ids.has(item.id)),
+                        });
                     }
                 });
             }

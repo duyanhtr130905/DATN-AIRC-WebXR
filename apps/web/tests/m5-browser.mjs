@@ -10,7 +10,7 @@ import { chromium } from "playwright";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 const web = resolve(root, "apps/web");
-const out = resolve(root, ".local/p507-m5");
+const out = resolve(root, process.env.M5_BROWSER_OUT || ".local/p507-m5");
 const origin = "http://127.0.0.1:5195";
 const url = origin + "/?mode=p507-visit&evidence=1";
 const requireR4 = process.argv.includes("--require-r4");
@@ -199,7 +199,13 @@ try {
             assert.deepEqual(await page.evaluate(() => window.capability.requests),
                 [{ mode: "immersive-vr", userActive: true }]);
             assert.deepEqual(requests, []);
-            return { picked, boundary, requests: 1 };
+            await page.evaluate(() => window.__P507_M5__.startTiming("web", 1000));
+            await page.waitForFunction(() => window.__P507_M5__.timing?.status === "complete");
+            const timing = await page.evaluate(() => window.__P507_M5__.timing);
+            assert(timing.framebuffer.every(size => size > 0));
+            assert(timing.intervalsMs.length > 0 && timing.intervalsMs.every(interval => interval > 0));
+            assert(timing.intervalsMs.reduce((sum, interval) => sum + interval, 0) >= 1000);
+            return { picked, boundary, requests: 1, timing };
         });
         await scenario("Corrupt GLB / wrong identity / retry", "Modified frozen bytes rejected before rendering or mapping; exact original succeeds on retry", async () => {
             await open(context, { missing: true });
@@ -227,8 +233,11 @@ try {
             await event("selectend");
             assert.equal(await selection(), "P507-CHAIR-A-01");
             await page.screenshot({ path: resolve(out, "iwer-vr-selection.png") });
+            await page.evaluate(() => window.__P507_M5__.startTiming("vr", 180000));
+            await page.waitForFunction(() => window.__P507_M5__.timing?.intervalsMs.length > 0);
             await page.evaluate(() => window.iwer.device.updateVisibilityState("visible-blurred"));
             await event("visibility:visible-blurred");
+            assert.equal(await page.evaluate(() => window.__P507_M5__.timing.status), "interrupted");
             await page.evaluate(() => window.iwer.device.updateVisibilityState("visible"));
             await event("visibility:visible");
             await page.evaluate(() => { window.iwer.device.controllers.right.connected = false; });

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
@@ -8,7 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
 
 const root = process.cwd();
-const out = resolve(root, ".local/m4-visitor-browser");
+const out = resolve(root, process.env.M4_BROWSER_OUT || ".local/m4-visitor-browser");
 const children = new Set();
 const steps = [];
 const storageKey = "airc.synthetic.visitor.v1";
@@ -68,7 +69,7 @@ const path = origin + "/?mode=offline";
 const active = page => page.getByTestId("visitor-session");
 const button = (page, name) => page.getByRole("button", { name, exact: true });
 const stored = page => page.evaluate(key => JSON.parse(localStorage.getItem(key)), storageKey);
-const has = async (page, text) => (await active(page).textContent({ timeout: 500 })).includes(text);
+const waitStatus = (page, text) => active(page).filter({ hasText: text }).waitFor();
 const waitQueue = async (page, count) => waitFor(
     async () => (await stored(page))?.queue.length === count, `Expected ${count} queued events`,
 );
@@ -191,14 +192,14 @@ try {
         button(tab, "Kết thúc phiên").evaluateAll(nodes => nodes[0]?.click())));
     await waitQueue(page, 1);
     assert.equal((await stored(page)).queue[0].event_type, "session_end");
-    await waitFor(() => has(page, "Chờ xác nhận kết thúc"), "Pending end not shown");
+    await waitStatus(page, "Chờ xác nhận kết thúc");
     assert.equal((await stored(page)).view.id, original);
     assert.equal(await button(page, newVisit).count(), 0);
     assert.equal(await button(other, newVisit).count(), 0);
     await context.setOffline(false);
     await button(page, newVisit).waitFor();
     await button(other, newVisit).waitFor();
-    assert.ok(await has(page, "Đã kết thúc"));
+    await waitStatus(page, "Đã kết thúc");
     await waitQueue(page, 0);
     steps.push("simultaneous offline end yields one final event and waits for ACK before rotation");
 
@@ -309,14 +310,14 @@ try {
     const blockedId = (await stored(withdrawPage)).queue[0].id;
     await withdrawal.clearCookies({ name: "airc_visitor" });
     await withdrawal.setOffline(false);
-    await waitFor(() => has(withdrawPage, "Mã phiên hết hiệu lực"), "Proof loss not shown");
+    await waitStatus(withdrawPage, "Mã phiên hết hiệu lực");
     await withdrawPage.reload();
-    await waitFor(() => has(withdrawPage, "Mã phiên hết hiệu lực"), "Proof loss not restored");
+    await waitStatus(withdrawPage, "Mã phiên hết hiệu lực");
     assert.equal((await stored(withdrawPage)).queue[0].id, blockedId);
     assert.equal(await button(withdrawPage, newVisit).count(), 0);
     await withdrawal.addCookies([fixtureProof]);
     await button(withdrawPage, "Thử đồng bộ lại").click();
-    await waitFor(() => has(withdrawPage, "Đang ghi phiên mô phỏng"), "Proof recovery did not resume");
+    await waitStatus(withdrawPage, "Đang ghi phiên mô phỏng");
     await waitQueue(withdrawPage, 0);
     steps.push("a missing proof preserves unacknowledged IDs across reload and blocks rotation");
 
@@ -332,6 +333,37 @@ try {
     await withdrawal.close();
     steps.push("offline withdrawal deletes only its own fixture, preserving both normally ended visits");
 
+    const capped = await browser.newContext();
+    const cappedPage = await capped.newPage();
+    await cappedPage.goto(path);
+    await button(cappedPage, "Đồng ý ghi phiên mô phỏng").click();
+    await active(cappedPage).waitFor();
+    await waitQueue(cappedPage, 0);
+    const cappedVisit = (await stored(cappedPage)).view;
+    assert.equal(cappedVisit.remaining_events, 498);
+    const capEvents = Array.from({ length: cappedVisit.remaining_events }, () => ({
+        id: randomUUID(), schema_version: 1, event_type: "room_enter",
+        room_id: cappedVisit.room_id, object_id: null, occurred_at: new Date().toISOString(),
+    }));
+    const capPath = origin + "/api/v1/visitor/sessions/" + cappedVisit.id;
+    const capHeaders = { origin, "X-AIRC-Visitor": "1" };
+    for (let i = 0; i < capEvents.length; i += 32) {
+        const result = await capped.request.post(capPath + "/events", {
+            headers: capHeaders, data: { events: capEvents.slice(i, i + 32) },
+        });
+        assert.equal(result.status(), 200);
+    }
+    await cappedPage.reload();
+    await waitStatus(cappedPage, "Đã đạt giới hạn ghi tương tác");
+    await cappedPage.getByRole("button", { name: /Khối mẫu A/ }).click();
+    await cappedPage.getByRole("button", { name: /Khối mẫu A/ }).and(cappedPage.locator("[aria-pressed=true]")).waitFor();
+    assert.equal((await stored(cappedPage)).queue.length, 0);
+    await button(cappedPage, "Kết thúc phiên").click();
+    await button(cappedPage, newVisit).waitFor();
+    assert.equal((await capped.request.get(capPath, { headers: capHeaders })).status(), 200);
+    assert.equal((await capped.request.delete(capPath, { headers: capHeaders })).status(), 200);
+    await capped.close();
+    steps.push("a 500-event session reloads at capacity, remains browsable and closes with an acknowledged terminal event");
 
     await writeFile(resolve(out, "report.json"), JSON.stringify({
         status: "PASS", chrome: browser.version(), node: process.version,
