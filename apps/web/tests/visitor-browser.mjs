@@ -496,26 +496,30 @@ try {
     assert.equal((await capped.request.delete(capPath, { headers: capHeaders })).status(), 200);
     steps.push("a 500-event session reloads at capacity, remains browsable, closes and rejects an ordinary event at 501");
 
-    await cappedPage.reload();
-    await button(cappedPage, "Đồng ý ghi phiên mô phỏng").click();
-    await waitQueue(cappedPage, 0);
-    const overflow = await stored(cappedPage);
+    await capped.close();
+    const overflowContext = await browser.newContext();
+    const overflowPage = await overflowContext.newPage();
+    activePage = overflowPage;
+    await overflowPage.goto(path);
+    await button(overflowPage, "Đồng ý ghi phiên mô phỏng").click();
+    await waitQueue(overflowPage, 0);
+    const overflow = await stored(overflowPage);
     const overflowPath = origin + "/api/v1/visitor/sessions/" + overflow.view.id;
     const fill = capEvents.slice(0, -1).map(event => ({
         ...event, id: randomUUID(), occurred_at: new Date().toISOString(),
     }));
     for (let i = 0; i < fill.length; i += 32) {
-        assert.equal((await capped.request.post(overflowPath + "/events", {
+        assert.equal((await overflowContext.request.post(overflowPath + "/events", {
             headers: capHeaders, data: { events: fill.slice(i, i + 32) },
         })).status(), 200);
     }
     const readOverflow = async () => {
-        const response = await capped.request.get(overflowPath, { headers: capHeaders });
+        const response = await overflowContext.request.get(overflowPath, { headers: capHeaders });
         assert.equal(response.status(), 200);
         return response.json();
     };
     assert.equal((await readOverflow()).remaining_events, 1);
-    const overflowCdp = await capped.newCDPSession(cappedPage);
+    const overflowCdp = await overflowContext.newCDPSession(overflowPage);
     const setOverflowOffline = offline => overflowCdp.send("Network.overrideNetworkState", {
         offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1,
     });
@@ -525,21 +529,21 @@ try {
     overflow.queue = [0, 1].map(i => ({
         ...fill[0], id: randomUUID(), occurred_at: new Date(overflow.clock - 1 + i).toISOString(),
     }));
-    await cappedPage.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+    await overflowPage.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
         key: storageKey, value: overflow,
     });
-    await cappedPage.reload();
-    await waitStatus(cappedPage, "Chưa xác minh được số lượt tương tác còn lại");
-    await button(cappedPage, "Kết thúc phiên").click();
-    await waitQueue(cappedPage, 3);
-    const overflowEnd = await stored(cappedPage);
-    const rejectedBatch = cappedPage.waitForResponse(response =>
+    await overflowPage.reload();
+    await waitStatus(overflowPage, "Chưa xác minh được số lượt tương tác còn lại");
+    await button(overflowPage, "Kết thúc phiên").click();
+    await waitQueue(overflowPage, 3);
+    const overflowEnd = await stored(overflowPage);
+    const rejectedBatch = overflowPage.waitForResponse(response =>
         response.url() === overflowPath + "/events" && response.status() === 413);
     await setOverflowOffline(false);
     assert.deepEqual((await rejectedBatch).request().postDataJSON().events, overflowEnd.queue);
-    await cappedPage.getByText("Máy chủ từ chối lô sự kiện (413).", { exact: false }).waitFor();
-    assert.deepEqual(await stored(cappedPage), overflowEnd);
-    assert.equal(await button(cappedPage, newVisit).count(), 0);
+    await overflowPage.getByText("Máy chủ từ chối lô sự kiện (413).", { exact: false }).waitFor();
+    assert.deepEqual(await stored(overflowPage), overflowEnd);
+    assert.equal(await button(overflowPage, newVisit).count(), 0);
     const overflowAfter = await readOverflow();
     assert.equal(overflowAfter.remaining_events, 1);
     assert.equal(overflowAfter.ended, false);
@@ -547,8 +551,8 @@ try {
         code_sha: process.env.M4_TEST_SHA, rejected_status: 413, queue: overflowEnd.queue,
         remaining_events_after: overflowAfter.remaining_events, ended_on_server: overflowAfter.ended,
     }, null, 2));
-    assert.equal((await capped.request.delete(overflowPath, { headers: capHeaders })).status(), 200);
-    await capped.close();
+    assert.equal((await overflowContext.request.delete(overflowPath, { headers: capHeaders })).status(), 200);
+    await overflowContext.close();
     steps.push("legacy excess batch atomically rolls back with 413 and retains every ID including the terminal");
 
     for (const format of ["json", "csv"]) {
