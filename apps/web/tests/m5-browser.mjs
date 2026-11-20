@@ -261,7 +261,8 @@ try {
             await status("ended");
             const evidence = await page.evaluate(() => ({
                 events: window.__P507_M5__.events, frames: window.__P507_M5__.frames,
-                renderer: window.__P507_M5__.renderer, calls: window.iwer.logs, listeners: window.iwer.listeners(),
+                renderer: window.__P507_M5__.renderer, timing: window.__P507_M5__.timing,
+                calls: window.iwer.logs, listeners: window.iwer.listeners(),
             }));
             assert(evidence.calls.every(call => call.userActive));
             assert.equal(evidence.events.filter(event => event === "select:P507-CHAIR-A-01").length, 1);

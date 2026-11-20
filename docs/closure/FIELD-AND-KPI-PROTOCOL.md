@@ -59,6 +59,13 @@ inventory_revision,room_id,field_item_ref,sanitized_name,quantity,category,locat
 | `equipment_status` | Room và object UUID | Trạng thái theo schema Admin, phạm vi sử dụng | Người phụ trách thiết bị, quan sát trực tiếp/nguồn được duyệt, trigger và nhịp xác minh. |
 | `exhibit_info` | Room và object UUID | Mô tả đã lọc theo mục đích được duyệt | Người quản lý hiện vật, revision nội dung, thời điểm thay đổi, quy trình correction. |
 
+Mẫu nhập vào form Admin theo contract hiện hành:
+
+- `room_schedule` · room UUID `____`, `activity` `____` (1–160 ký tự), `status` chọn `free / occupied / closed`. Giữ khung giờ và nguồn lịch trong phiếu đối chứng.
+- `equipment_status` · object UUID `____`, `status` chọn `available / maintenance / offline`.
+- `exhibit_info` · object UUID `____`, `title` `____` (1–160 ký tự), `text` `____` (tối đa 800).
+- Mỗi form điền `observed_at` và múi giờ tại máy nhập, `source_note`, provenance theo nguồn được phép và `expected_version` từ bản đang chỉnh. Khi conflict, đọc version mới rồi ghi correction theo quy trình có audit. Chờ source và quyền trước mọi nhập liệu thật.
+
 Mỗi dòng cần `source_ref, source_observed_at+offset, observer_role, operator, capture_cadence, correction_owner, rights_ref, committed_at, version, event_id, rendered_at+offset`. Actor và source note lấy từ Admin audit. Không điền timestamps giả hoặc ghi hash/tên nhạy cảm vào PR. Mẫu phê duyệt quyền gồm asset/record IDs và revision, người phê duyệt & vai trò, ngày hiệu lực/hết hạn, điều kiện che dữ liệu, thu hồi và tham chiếu quyết định. Điền quyết định độc lập cho **Admin private**, **demo giảng viên/hội đồng**, **luận văn** và **website/GitHub**. Quyền khảo sát, ý định của chủ dự án và quyền công bố của AIRC cần bằng chứng riêng.
 
 Chạy thử bằng dữ liệu synthetic với đúng ba loại qua Admin. Chạy lại với nguồn thật sau khi được phê duyệt. Đo clock offsets trước/sau giữa nguồn, API và browser, ghi uncertainty. Đánh dấu `t0` là lần thay đổi được ghi ở nguồn, `t1` lúc operator bắt đầu nhập, `t2` lúc API commit, `t3` lúc WS giao đúng event/version và `t4` là frame UI áp dụng đúng value/ID/version ở Admin preview. Đối chiếu bằng audit, network timeline và frame/UI trace cùng event/version. Lưu `t4−t0` đã hiệu chỉnh và tách `t1−t0`, `t2−t1`, `t4−t2`. Copy event cùng giá trị cũ, sai scope, correction, reconnect, mất sample và lỗi đồng hồ đều cần ghi expected/actual. Lưu cả mẫu fail. Thiếu clock alignment hoặc t0 thì ghi mẫu không đủ evidence. Giữ public và private tách biệt.

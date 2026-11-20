@@ -74,6 +74,7 @@ const waitQueue = async (page, count) => waitFor(
     async () => (await stored(page))?.queue.length === count, `Expected ${count} queued events`,
 );
 let browser;
+let activePage;
 
 try {
     let api = startApi();
@@ -88,6 +89,7 @@ try {
     });
     const context = await browser.newContext({ acceptDownloads: true });
     const page = await context.newPage();
+    activePage = page;
     const requests = [];
     const trackRequests = request => {
         if (request.url().includes("/api/v1/visitor/sessions") && request.method() === "POST") {
@@ -163,10 +165,25 @@ try {
     const lastObject = queued.at(-1).object_id;
     const lastName = lastObject === "demo-object-cube" ? /Khối mẫu A/ : /Khối mẫu B/;
     assert.equal(await page.getByRole("button", { name: lastName }).getAttribute("aria-pressed"), "true");
+    const closeAck = context.waitForEvent("response", async response => {
+        if (!response.url().endsWith("/events") || !response.ok()) return false;
+        const sent = response.request().postDataJSON()?.events ?? [];
+        const close = sent.find(item => item.event_type === "info_close");
+        if (!close) return false;
+        const { receipts } = await response.json();
+        return receipts.some(row => row.id === close.id &&
+            ["accepted", "duplicate"].includes(row.status));
+    });
     await button(page, "Ẩn thông tin").click();
+    await closeAck;
     await button(page, "Mở thông tin").waitFor();
     await waitQueue(page, 0);
+    const resumed = page.waitForResponse(response => response.url().endsWith("/sessions/" + original) &&
+        response.request().method() === "GET");
     await page.reload();
+    const resumedView = await resumed;
+    assert.equal(resumedView.status(), 200);
+    assert.equal((await resumedView.json()).info_open, false);
     await button(page, "Mở thông tin").waitFor();
     assert.equal((await stored(page)).view.id, original);
     await button(page, "Mở thông tin").click();
@@ -335,6 +352,7 @@ try {
 
     const capped = await browser.newContext();
     const cappedPage = await capped.newPage();
+    activePage = cappedPage;
     await cappedPage.goto(path);
     await button(cappedPage, "Đồng ý ghi phiên mô phỏng").click();
     await active(cappedPage).waitFor();
@@ -360,7 +378,9 @@ try {
     assert.equal((await stored(cappedPage)).queue.length, 0);
     await button(cappedPage, "Kết thúc phiên").click();
     await button(cappedPage, newVisit).waitFor();
-    assert.equal((await capped.request.get(capPath, { headers: capHeaders })).status(), 200);
+    const cappedAfter = await capped.request.get(capPath, { headers: capHeaders });
+    assert.equal(cappedAfter.status(), 200);
+    assert.equal((await cappedAfter.json()).ended, true);
     assert.equal((await capped.request.delete(capPath, { headers: capHeaders })).status(), 200);
     await capped.close();
     steps.push("a 500-event session reloads at capacity, remains browsable and closes with an acknowledged terminal event");
@@ -369,6 +389,14 @@ try {
         status: "PASS", chrome: browser.version(), node: process.version,
         code_sha: process.env.M4_TEST_SHA, steps,
     }, null, 2));
+} catch (error) {
+    const state = activePage ? await stored(activePage).catch(() => null) : null;
+    await mkdir(out, { recursive: true });
+    await writeFile(resolve(out, "report.json"), JSON.stringify({
+        status: "FAIL", code_sha: process.env.M4_TEST_SHA, steps,
+        failure: String(error), state,
+    }, null, 2));
+    throw error;
 } finally {
     if (browser) await browser.close();
     await Promise.all([...children].map(stop));

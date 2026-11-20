@@ -44,7 +44,10 @@ try {
     page.setDefaultTimeout(12000);
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
-    await page.goto(origin + "/?mode=p507");
+    if (!assetExpected) {
+        await page.route("**/p507-e1-assets/asset-manifest.json", route => route.fulfill({ status: 404 }));
+    }
+    await page.goto(origin + "/?mode=p507", { waitUntil: "domcontentloaded" });
     const realtime = page.getByTestId("realtime");
     const connected = page.locator('[data-testid="realtime"][data-status="connected"]');
     await connected.waitFor();

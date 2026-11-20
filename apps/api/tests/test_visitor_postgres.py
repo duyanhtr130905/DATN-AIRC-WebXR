@@ -451,11 +451,13 @@ def test_capacity_reserves_one_terminal_event(local_database):
             ]
             assert sum(row.event_type == "session_end" for row in rows) == 1
         csrf = login(client, login_password(database))
-        payload = client.get(REPORT + f"/export?format=json&{dates()}", headers=csrf).json()
-        csv_text = client.get(REPORT + f"/export?format=csv&{dates()}", headers=csrf).text
+        json_out = client.post(REPORT + f"/export?format=json&{dates()}", headers=csrf)
+        csv_out = client.post(REPORT + f"/export?format=csv&{dates()}", headers=csrf)
+        assert json_out.status_code == csv_out.status_code == 200
+        payload = json_out.json()
         assert payload["session_count"] == 1
         assert payload["sessions"][0]["event_count"] == payload["event_count"] == 501
-        csv_rows = list(csv.DictReader(io.StringIO(csv_text)))
+        csv_rows = list(csv.DictReader(io.StringIO(csv_out.text)))
         assert [(row["event_id"], str(row["ordinal"])) for row in payload["events"]] == [
             (row["event_id"], row["ordinal"]) for row in csv_rows
         ] == [(str(row.id), str(row.ordinal)) for row in rows]
@@ -495,7 +497,11 @@ def test_capacity_terminal_batch_rollback_and_concurrent_end(local_database):
             winner["id"], 501, "accepted"
         )
         duplicate = send(other, path, winner).json()["receipts"][0]
-        assert duplicate == {**receipt, "status": "duplicate"}
+        assert duplicate["status"] == "duplicate"
+        assert (duplicate["id"], duplicate["ordinal"]) == (receipt["id"], receipt["ordinal"])
+        assert datetime.fromisoformat(duplicate["received_at"]) == datetime.fromisoformat(
+            receipt["received_at"]
+        )
         assert counts(database) == (1, 501)
 
 
