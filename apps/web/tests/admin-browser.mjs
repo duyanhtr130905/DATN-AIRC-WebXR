@@ -68,7 +68,10 @@ try {
             events: () => events.slice(),
         };
     });
-    await page.goto(origin + "/?mode=admin");
+    if (!report.frozen) {
+        await context.route("**/p507-e1-assets/asset-manifest.json", route => route.fulfill({ status: 404 }));
+    }
+    await page.goto(origin + "/?mode=admin", { waitUntil: "domcontentloaded" });
     await page.getByLabel("Tên đăng nhập").fill("qa_operator");
     await page.getByLabel("Mật khẩu", { exact: true }).fill("invalid-test-" + crypto.randomUUID());
     await page.getByRole("button", { name: "Đăng nhập" }).click();

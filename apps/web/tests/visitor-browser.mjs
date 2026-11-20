@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
@@ -8,7 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
 
 const root = process.cwd();
-const out = resolve(root, ".local/m4-visitor-browser");
+const out = resolve(root, process.env.M4_BROWSER_OUT || ".local/m4-visitor-browser");
 const children = new Set();
 const steps = [];
 const storageKey = "airc.synthetic.visitor.v1";
@@ -68,11 +69,12 @@ const path = origin + "/?mode=offline";
 const active = page => page.getByTestId("visitor-session");
 const button = (page, name) => page.getByRole("button", { name, exact: true });
 const stored = page => page.evaluate(key => JSON.parse(localStorage.getItem(key)), storageKey);
-const has = async (page, text) => (await active(page).textContent({ timeout: 500 })).includes(text);
+const waitStatus = (page, text) => active(page).filter({ hasText: text }).waitFor();
 const waitQueue = async (page, count) => waitFor(
     async () => (await stored(page))?.queue.length === count, `Expected ${count} queued events`,
 );
 let browser;
+let activePage;
 
 try {
     let api = startApi();
@@ -87,6 +89,7 @@ try {
     });
     const context = await browser.newContext({ acceptDownloads: true });
     const page = await context.newPage();
+    activePage = page;
     const requests = [];
     const trackRequests = request => {
         if (request.url().includes("/api/v1/visitor/sessions") && request.method() === "POST") {
@@ -162,10 +165,25 @@ try {
     const lastObject = queued.at(-1).object_id;
     const lastName = lastObject === "demo-object-cube" ? /Khối mẫu A/ : /Khối mẫu B/;
     assert.equal(await page.getByRole("button", { name: lastName }).getAttribute("aria-pressed"), "true");
+    const closeAck = context.waitForEvent("response", async response => {
+        if (!response.url().endsWith("/events") || !response.ok()) return false;
+        const sent = response.request().postDataJSON()?.events ?? [];
+        const close = sent.find(item => item.event_type === "info_close");
+        if (!close) return false;
+        const { receipts } = await response.json();
+        return receipts.some(row => row.id === close.id &&
+            ["accepted", "duplicate"].includes(row.status));
+    });
     await button(page, "Ẩn thông tin").click();
+    await closeAck;
     await button(page, "Mở thông tin").waitFor();
     await waitQueue(page, 0);
     await page.reload();
+    const resumedView = await context.request.get(origin + "/api/v1/visitor/sessions/" + original, {
+        headers: { origin, "X-AIRC-Visitor": "1" },
+    });
+    assert.equal(resumedView.status(), 200);
+    assert.equal((await resumedView.json()).info_open, false);
     await button(page, "Mở thông tin").waitFor();
     assert.equal((await stored(page)).view.id, original);
     await button(page, "Mở thông tin").click();
@@ -191,14 +209,14 @@ try {
         button(tab, "Kết thúc phiên").evaluateAll(nodes => nodes[0]?.click())));
     await waitQueue(page, 1);
     assert.equal((await stored(page)).queue[0].event_type, "session_end");
-    await waitFor(() => has(page, "Chờ xác nhận kết thúc"), "Pending end not shown");
+    await waitStatus(page, "Chờ xác nhận kết thúc");
     assert.equal((await stored(page)).view.id, original);
     assert.equal(await button(page, newVisit).count(), 0);
     assert.equal(await button(other, newVisit).count(), 0);
     await context.setOffline(false);
     await button(page, newVisit).waitFor();
     await button(other, newVisit).waitFor();
-    assert.ok(await has(page, "Đã kết thúc"));
+    await waitStatus(page, "Đã kết thúc");
     await waitQueue(page, 0);
     steps.push("simultaneous offline end yields one final event and waits for ACK before rotation");
 
@@ -309,14 +327,14 @@ try {
     const blockedId = (await stored(withdrawPage)).queue[0].id;
     await withdrawal.clearCookies({ name: "airc_visitor" });
     await withdrawal.setOffline(false);
-    await waitFor(() => has(withdrawPage, "Mã phiên hết hiệu lực"), "Proof loss not shown");
+    await waitStatus(withdrawPage, "Mã phiên hết hiệu lực");
     await withdrawPage.reload();
-    await waitFor(() => has(withdrawPage, "Mã phiên hết hiệu lực"), "Proof loss not restored");
+    await waitStatus(withdrawPage, "Mã phiên hết hiệu lực");
     assert.equal((await stored(withdrawPage)).queue[0].id, blockedId);
     assert.equal(await button(withdrawPage, newVisit).count(), 0);
     await withdrawal.addCookies([fixtureProof]);
     await button(withdrawPage, "Thử đồng bộ lại").click();
-    await waitFor(() => has(withdrawPage, "Đang ghi phiên mô phỏng"), "Proof recovery did not resume");
+    await waitStatus(withdrawPage, "Đang ghi phiên mô phỏng");
     await waitQueue(withdrawPage, 0);
     steps.push("a missing proof preserves unacknowledged IDs across reload and blocks rotation");
 
@@ -333,10 +351,228 @@ try {
     steps.push("offline withdrawal deletes only its own fixture, preserving both normally ended visits");
 
 
+    // CDP keeps the local Vite shell reachable during reload while Chrome
+    // reports offline. The route below also cuts all visitor API traffic.
+    const legacy = await browser.newContext();
+    let terminalCommitted = false;
+    let releaseTerminal = false;
+    let blockVisitor = false;
+    const receipts = [];
+    await legacy.route("**/api/v1/visitor/**", async route => {
+        if (blockVisitor) return route.abort("internetdisconnected");
+        if (!route.request().url().endsWith("/events")) return route.continue();
+        const { events } = route.request().postDataJSON();
+        if (events.some(event => event.event_type === "session_end") && terminalCommitted && !releaseTerminal) {
+            return route.abort("connectionfailed");
+        }
+        const response = await route.fetch({ maxRetries: 0 });
+        const { receipts: batch } = await response.json();
+        assert.equal(response.status(), 200);
+        assert.deepEqual(batch.map(row => row.id), events.map(event => event.id));
+        receipts.push(batch);
+        if (events.some(event => event.event_type === "session_end") && !terminalCommitted) {
+            terminalCommitted = true;
+            return route.abort("connectionfailed");
+        }
+        await route.fulfill({ response });
+    });
+    const legacyPage = await legacy.newPage();
+    activePage = legacyPage;
+    await legacyPage.goto(path);
+    await button(legacyPage, "Đồng ý ghi phiên mô phỏng").click();
+    await active(legacyPage).waitFor();
+    await waitQueue(legacyPage, 0);
+    const fixture = await stored(legacyPage);
+    delete fixture.view.remaining_events;
+    const legacyTime = Date.now();
+    fixture.clock = legacyTime + 127;
+    fixture.queue = Array.from({ length: 128 }, (_, i) => ({
+        id: "32000000-0000-4000-8000-" + String(i).padStart(12, "0"),
+        schema_version: 1,
+        event_type: "object_select",
+        room_id: fixture.view.room_id,
+        object_id: "demo-object-cube",
+        occurred_at: new Date(legacyTime + i).toISOString(),
+    }));
+    fixture.view.selected_id = "demo-object-cube";
+    fixture.view.info_open = true;
+    const legacyTab = await legacy.newPage();
+    await legacyTab.goto(path);
+    await active(legacyTab).waitFor();
+    const cdp = await Promise.all([legacyPage, legacyTab].map(tab => legacy.newCDPSession(tab)));
+    const setVisitorOffline = async offline => {
+        blockVisitor = offline;
+        await Promise.all(cdp.map(connection => connection.send("Network.overrideNetworkState", {
+            offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1,
+        })));
+    };
+    await setVisitorOffline(true);
+    await legacyPage.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+        key: storageKey, value: fixture,
+    });
+    await legacyPage.reload();
+    await waitStatus(legacyPage, "Hàng đợi trên trình duyệt đã đầy");
+    assert.equal(await legacyPage.evaluate(() => navigator.onLine), false);
+    assert.deepEqual(await stored(legacyPage), fixture);
+    await legacyPage.getByRole("button", { name: /Khối mẫu A/ }).click();
+    assert.deepEqual(await stored(legacyPage), fixture);
+    await Promise.all([legacyPage, legacyTab].map(tab =>
+        button(tab, "Kết thúc phiên").evaluateAll(nodes => nodes[0]?.click())));
+    await waitQueue(legacyPage, 129);
+    await waitStatus(legacyPage, "Chờ xác nhận kết thúc");
+    const withEnd = await stored(legacyPage);
+    const terminal = withEnd.queue.at(-1);
+    assert.deepEqual(withEnd.queue.slice(0, -1), fixture.queue);
+    assert.equal(terminal.event_type, "session_end");
+    assert.ok(Date.parse(terminal.occurred_at) > fixture.clock);
+    await legacyPage.reload();
+    await waitStatus(legacyPage, "Chờ xác nhận kết thúc");
+    assert.equal(await legacyPage.evaluate(() => navigator.onLine), false);
+    assert.deepEqual(await stored(legacyPage), withEnd);
+    await legacyPage.getByRole("button", { name: /Khối mẫu B/ }).click();
+    assert.deepEqual(await stored(legacyPage), withEnd);
+    assert.equal(await button(legacyPage, "Kết thúc phiên").count(), 0);
+    assert.equal(await button(legacyPage, newVisit).count(), 0);
+    await legacyTab.close();
+    cdp.pop();
+    await setVisitorOffline(false);
+    await waitFor(() => terminalCommitted, "All nine batches must send on reconnect without manual retry");
+    assert.deepEqual((await stored(legacyPage)).queue, [terminal]);
+    assert.equal(await button(legacyPage, newVisit).count(), 0);
+    releaseTerminal = true;
+    await button(legacyPage, "Thử đồng bộ lại").click();
+    await waitQueue(legacyPage, 0);
+    await button(legacyPage, newVisit).waitFor();
+    assert.equal((await stored(legacyPage)).view.id, fixture.view.id);
+    const terminalReceipts = receipts.flat().filter(row => row.id === terminal.id);
+    assert.deepEqual(terminalReceipts.map(row => [row.status, row.ordinal]), [
+        ["accepted", 131], ["duplicate", 131],
+    ]);
+    assert.equal(Date.parse(terminalReceipts[0].received_at), Date.parse(terminalReceipts[1].received_at));
+    const firstReceipts = receipts.flat().filter(row => row.status === "accepted");
+    assert.deepEqual(firstReceipts.slice(-129).map(row => row.id), withEnd.queue.map(event => event.id));
+    await writeFile(resolve(out, "legacy-128-browser.json"), JSON.stringify({
+        code_sha: process.env.M4_TEST_SHA, session_id: fixture.view.id,
+        original: fixture, persisted_after_offline_reload: withEnd, receipts: receipts.slice(1),
+    }, null, 2));
+    await legacy.close();
+    steps.push("legacy 128 offline reload plus two-tab end, ninth batch, lost terminal ACK and duplicate retry");
+
+    const capped = await browser.newContext();
+    const cappedPage = await capped.newPage();
+    activePage = cappedPage;
+    await cappedPage.goto(path);
+    await button(cappedPage, "Đồng ý ghi phiên mô phỏng").click();
+    await active(cappedPage).waitFor();
+    await waitQueue(cappedPage, 0);
+    const cappedVisit = (await stored(cappedPage)).view;
+    assert.equal(cappedVisit.remaining_events, 498);
+    const capEvents = Array.from({ length: cappedVisit.remaining_events }, () => ({
+        id: randomUUID(), schema_version: 1, event_type: "room_enter",
+        room_id: cappedVisit.room_id, object_id: null, occurred_at: new Date().toISOString(),
+    }));
+    const capPath = origin + "/api/v1/visitor/sessions/" + cappedVisit.id;
+    const capHeaders = { origin, "X-AIRC-Visitor": "1" };
+    for (let i = 0; i < capEvents.length; i += 32) {
+        const result = await capped.request.post(capPath + "/events", {
+            headers: capHeaders, data: { events: capEvents.slice(i, i + 32) },
+        });
+        assert.equal(result.status(), 200);
+    }
+    await cappedPage.reload();
+    await waitStatus(cappedPage, "Đã đạt giới hạn ghi tương tác");
+    await cappedPage.getByRole("button", { name: /Khối mẫu A/ }).click();
+    await cappedPage.getByRole("button", { name: /Khối mẫu A/ }).and(cappedPage.locator("[aria-pressed=true]")).waitFor();
+    assert.equal((await stored(cappedPage)).queue.length, 0);
+    await button(cappedPage, "Kết thúc phiên").click();
+    await button(cappedPage, newVisit).waitFor();
+    const cappedAfter = await capped.request.get(capPath, { headers: capHeaders });
+    assert.equal(cappedAfter.status(), 200);
+    assert.equal((await cappedAfter.json()).ended, true);
+    const rejected = await capped.request.post(capPath + "/events", {
+        headers: capHeaders, data: { events: [{ ...capEvents[0], id: randomUUID() }] },
+    });
+    assert.equal(rejected.status(), 413);
+    assert.equal((await capped.request.delete(capPath, { headers: capHeaders })).status(), 200);
+    steps.push("a 500-event session reloads at capacity, remains browsable, closes and rejects an ordinary event at 501");
+
+    await capped.close();
+    const overflowContext = await browser.newContext();
+    const overflowPage = await overflowContext.newPage();
+    activePage = overflowPage;
+    await overflowPage.goto(path);
+    await button(overflowPage, "Đồng ý ghi phiên mô phỏng").click();
+    await waitQueue(overflowPage, 0);
+    const overflow = await stored(overflowPage);
+    const overflowPath = origin + "/api/v1/visitor/sessions/" + overflow.view.id;
+    const fill = capEvents.slice(0, -1).map(event => ({
+        ...event, id: randomUUID(), occurred_at: new Date().toISOString(),
+    }));
+    for (let i = 0; i < fill.length; i += 32) {
+        assert.equal((await overflowContext.request.post(overflowPath + "/events", {
+            headers: capHeaders, data: { events: fill.slice(i, i + 32) },
+        })).status(), 200);
+    }
+    const readOverflow = async () => {
+        const response = await overflowContext.request.get(overflowPath, { headers: capHeaders });
+        assert.equal(response.status(), 200);
+        return response.json();
+    };
+    assert.equal((await readOverflow()).remaining_events, 1);
+    const overflowCdp = await overflowContext.newCDPSession(overflowPage);
+    const setOverflowOffline = offline => overflowCdp.send("Network.overrideNetworkState", {
+        offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1,
+    });
+    await setOverflowOffline(true);
+    delete overflow.view.remaining_events;
+    overflow.clock = Date.now() + 1;
+    overflow.queue = [0, 1].map(i => ({
+        ...fill[0], id: randomUUID(), occurred_at: new Date(overflow.clock - 1 + i).toISOString(),
+    }));
+    await overflowPage.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+        key: storageKey, value: overflow,
+    });
+    await overflowPage.reload();
+    await waitStatus(overflowPage, "Chưa xác minh được số lượt tương tác còn lại");
+    await button(overflowPage, "Kết thúc phiên").click();
+    await waitQueue(overflowPage, 3);
+    const overflowEnd = await stored(overflowPage);
+    const rejectedBatch = overflowPage.waitForResponse(response =>
+        response.url() === overflowPath + "/events" && response.status() === 413);
+    await setOverflowOffline(false);
+    assert.deepEqual((await rejectedBatch).request().postDataJSON().events, overflowEnd.queue);
+    await overflowPage.getByText("Máy chủ từ chối lô sự kiện (413).", { exact: false }).waitFor();
+    assert.deepEqual(await stored(overflowPage), overflowEnd);
+    assert.equal(await button(overflowPage, newVisit).count(), 0);
+    const overflowAfter = await readOverflow();
+    assert.equal(overflowAfter.remaining_events, 1);
+    assert.equal(overflowAfter.ended, false);
+    await writeFile(resolve(out, "legacy-over-capacity.json"), JSON.stringify({
+        code_sha: process.env.M4_TEST_SHA, rejected_status: 413, queue: overflowEnd.queue,
+        remaining_events_after: overflowAfter.remaining_events, ended_on_server: overflowAfter.ended,
+    }, null, 2));
+    assert.equal((await overflowContext.request.delete(overflowPath, { headers: capHeaders })).status(), 200);
+    await overflowContext.close();
+    steps.push("legacy excess batch atomically rolls back with 413 and retains every ID including the terminal");
+
+    for (const format of ["json", "csv"]) {
+        const pendingDownload = admin.waitForEvent("download");
+        await button(admin, "Xuất " + format.toUpperCase()).click();
+        const download = await pendingDownload;
+        await writeFile(resolve(out, "legacy-export." + format), await readFile(await download.path()));
+    }
     await writeFile(resolve(out, "report.json"), JSON.stringify({
         status: "PASS", chrome: browser.version(), node: process.version,
         code_sha: process.env.M4_TEST_SHA, steps,
     }, null, 2));
+} catch (error) {
+    const state = activePage ? await stored(activePage).catch(() => null) : null;
+    await mkdir(out, { recursive: true });
+    await writeFile(resolve(out, "report.json"), JSON.stringify({
+        status: "FAIL", code_sha: process.env.M4_TEST_SHA, steps,
+        failure: String(error), state,
+    }, null, 2));
+    throw error;
 } finally {
     if (browser) await browser.close();
     await Promise.all([...children].map(stop));

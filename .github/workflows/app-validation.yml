@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ (github.head_ref == 'feat/m4-visitor-sessions-reporting' || github.head_ref == 'feat/m5-webxr-ar-vr-integration') && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ (github.head_ref == 'feat/m4-visitor-sessions-reporting' || github.head_ref == 'feat/m5-webxr-ar-vr-integration' || github.head_ref == 'feat/post-m5-m0-m5-gap-closure') && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ (github.head_ref == 'feat/m4-visitor-sessions-reporting' || github.head_ref == 'feat/m5-webxr-ar-vr-integration') && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ (github.head_ref == 'feat/m4-visitor-sessions-reporting' || github.head_ref == 'feat/m5-webxr-ar-vr-integration' || github.head_ref == 'feat/post-m5-m0-m5-gap-closure') && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.13'
