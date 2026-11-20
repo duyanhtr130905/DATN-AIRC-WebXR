@@ -178,10 +178,10 @@ try {
     await closeAck;
     await button(page, "Mở thông tin").waitFor();
     await waitQueue(page, 0);
-    const resumed = page.waitForResponse(response => response.url().endsWith("/sessions/" + original) &&
-        response.request().method() === "GET");
     await page.reload();
-    const resumedView = await resumed;
+    const resumedView = await context.request.get(origin + "/api/v1/visitor/sessions/" + original, {
+        headers: { origin, "X-AIRC-Visitor": "1" },
+    });
     assert.equal(resumedView.status(), 200);
     assert.equal((await resumedView.json()).info_open, false);
     await button(page, "Mở thông tin").waitFor();
@@ -350,6 +350,114 @@ try {
     await withdrawal.close();
     steps.push("offline withdrawal deletes only its own fixture, preserving both normally ended visits");
 
+
+    // CDP keeps the local Vite shell reachable during reload while Chrome
+    // reports offline. The route below also cuts all visitor API traffic.
+    const legacy = await browser.newContext();
+    let terminalCommitted = false;
+    let releaseTerminal = false;
+    let blockVisitor = false;
+    const receipts = [];
+    await legacy.route("**/api/v1/visitor/**", async route => {
+        if (blockVisitor) return route.abort("internetdisconnected");
+        if (!route.request().url().endsWith("/events")) return route.continue();
+        const { events } = route.request().postDataJSON();
+        if (events.some(event => event.event_type === "session_end") && terminalCommitted && !releaseTerminal) {
+            return route.abort("connectionfailed");
+        }
+        const response = await route.fetch({ maxRetries: 0 });
+        const { receipts: batch } = await response.json();
+        assert.equal(response.status(), 200);
+        assert.deepEqual(batch.map(row => row.id), events.map(event => event.id));
+        receipts.push(batch);
+        if (events.some(event => event.event_type === "session_end") && !terminalCommitted) {
+            terminalCommitted = true;
+            return route.abort("connectionfailed");
+        }
+        await route.fulfill({ response });
+    });
+    const legacyPage = await legacy.newPage();
+    activePage = legacyPage;
+    await legacyPage.goto(path);
+    await button(legacyPage, "Đồng ý ghi phiên mô phỏng").click();
+    await active(legacyPage).waitFor();
+    await waitQueue(legacyPage, 0);
+    const fixture = await stored(legacyPage);
+    delete fixture.view.remaining_events;
+    const legacyTime = Date.now();
+    fixture.clock = legacyTime + 127;
+    fixture.queue = Array.from({ length: 128 }, (_, i) => ({
+        id: "32000000-0000-4000-8000-" + String(i).padStart(12, "0"),
+        schema_version: 1,
+        event_type: "object_select",
+        room_id: fixture.view.room_id,
+        object_id: "demo-object-cube",
+        occurred_at: new Date(legacyTime + i).toISOString(),
+    }));
+    fixture.view.selected_id = "demo-object-cube";
+    fixture.view.info_open = true;
+    const legacyTab = await legacy.newPage();
+    await legacyTab.goto(path);
+    await active(legacyTab).waitFor();
+    const cdp = await Promise.all([legacyPage, legacyTab].map(tab => legacy.newCDPSession(tab)));
+    const setVisitorOffline = async offline => {
+        blockVisitor = offline;
+        await Promise.all(cdp.map(connection => connection.send("Network.overrideNetworkState", {
+            offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1,
+        })));
+    };
+    await setVisitorOffline(true);
+    await legacyPage.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+        key: storageKey, value: fixture,
+    });
+    await legacyPage.reload();
+    await waitStatus(legacyPage, "Hàng đợi trên trình duyệt đã đầy");
+    assert.equal(await legacyPage.evaluate(() => navigator.onLine), false);
+    assert.deepEqual(await stored(legacyPage), fixture);
+    await legacyPage.getByRole("button", { name: /Khối mẫu A/ }).click();
+    assert.deepEqual(await stored(legacyPage), fixture);
+    await Promise.all([legacyPage, legacyTab].map(tab =>
+        button(tab, "Kết thúc phiên").evaluateAll(nodes => nodes[0]?.click())));
+    await waitQueue(legacyPage, 129);
+    await waitStatus(legacyPage, "Chờ xác nhận kết thúc");
+    const withEnd = await stored(legacyPage);
+    const terminal = withEnd.queue.at(-1);
+    assert.deepEqual(withEnd.queue.slice(0, -1), fixture.queue);
+    assert.equal(terminal.event_type, "session_end");
+    assert.ok(Date.parse(terminal.occurred_at) > fixture.clock);
+    await legacyPage.reload();
+    await waitStatus(legacyPage, "Chờ xác nhận kết thúc");
+    assert.equal(await legacyPage.evaluate(() => navigator.onLine), false);
+    assert.deepEqual(await stored(legacyPage), withEnd);
+    await legacyPage.getByRole("button", { name: /Khối mẫu B/ }).click();
+    assert.deepEqual(await stored(legacyPage), withEnd);
+    assert.equal(await button(legacyPage, "Kết thúc phiên").count(), 0);
+    assert.equal(await button(legacyPage, newVisit).count(), 0);
+    await legacyTab.close();
+    cdp.pop();
+    await setVisitorOffline(false);
+    await waitFor(() => terminalCommitted, "All nine batches must send on reconnect without manual retry");
+    assert.deepEqual((await stored(legacyPage)).queue, [terminal]);
+    assert.equal(await button(legacyPage, newVisit).count(), 0);
+    releaseTerminal = true;
+    await button(legacyPage, "Thử đồng bộ lại").click();
+    await waitQueue(legacyPage, 0);
+    await button(legacyPage, newVisit).waitFor();
+    assert.equal((await stored(legacyPage)).view.id, fixture.view.id);
+    const terminalReceipts = receipts.flat().filter(row => row.id === terminal.id);
+    assert.deepEqual(terminalReceipts.map(row => [row.status, row.ordinal]), [
+        ["accepted", 131], ["duplicate", 131],
+    ]);
+    assert.equal(Date.parse(terminalReceipts[0].received_at), Date.parse(terminalReceipts[1].received_at));
+    const firstReceipts = receipts.flat().filter(row => row.status === "accepted");
+    assert.deepEqual(firstReceipts.slice(-129).map(row => row.id), withEnd.queue.map(event => event.id));
+    await writeFile(resolve(out, "legacy-128-browser.json"), JSON.stringify({
+        code_sha: process.env.M4_TEST_SHA, session_id: fixture.view.id,
+        original: fixture, persisted_after_offline_reload: withEnd, receipts: receipts.slice(1),
+    }, null, 2));
+    await legacy.close();
+    steps.push("legacy 128 offline reload plus two-tab end, ninth batch, lost terminal ACK and duplicate retry");
+
     const capped = await browser.newContext();
     const cappedPage = await capped.newPage();
     activePage = cappedPage;
@@ -381,10 +489,74 @@ try {
     const cappedAfter = await capped.request.get(capPath, { headers: capHeaders });
     assert.equal(cappedAfter.status(), 200);
     assert.equal((await cappedAfter.json()).ended, true);
+    const rejected = await capped.request.post(capPath + "/events", {
+        headers: capHeaders, data: { events: [{ ...capEvents[0], id: randomUUID() }] },
+    });
+    assert.equal(rejected.status(), 413);
     assert.equal((await capped.request.delete(capPath, { headers: capHeaders })).status(), 200);
-    await capped.close();
-    steps.push("a 500-event session reloads at capacity, remains browsable and closes with an acknowledged terminal event");
+    steps.push("a 500-event session reloads at capacity, remains browsable, closes and rejects an ordinary event at 501");
 
+    await cappedPage.reload();
+    await button(cappedPage, "Đồng ý ghi phiên mô phỏng").click();
+    await waitQueue(cappedPage, 0);
+    const overflow = await stored(cappedPage);
+    const overflowPath = origin + "/api/v1/visitor/sessions/" + overflow.view.id;
+    const fill = capEvents.slice(0, -1).map(event => ({
+        ...event, id: randomUUID(), occurred_at: new Date().toISOString(),
+    }));
+    for (let i = 0; i < fill.length; i += 32) {
+        assert.equal((await capped.request.post(overflowPath + "/events", {
+            headers: capHeaders, data: { events: fill.slice(i, i + 32) },
+        })).status(), 200);
+    }
+    const readOverflow = async () => {
+        const response = await capped.request.get(overflowPath, { headers: capHeaders });
+        assert.equal(response.status(), 200);
+        return response.json();
+    };
+    assert.equal((await readOverflow()).remaining_events, 1);
+    const overflowCdp = await capped.newCDPSession(cappedPage);
+    const setOverflowOffline = offline => overflowCdp.send("Network.overrideNetworkState", {
+        offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1,
+    });
+    await setOverflowOffline(true);
+    delete overflow.view.remaining_events;
+    overflow.clock = Date.now() + 1;
+    overflow.queue = [0, 1].map(i => ({
+        ...fill[0], id: randomUUID(), occurred_at: new Date(overflow.clock - 1 + i).toISOString(),
+    }));
+    await cappedPage.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+        key: storageKey, value: overflow,
+    });
+    await cappedPage.reload();
+    await waitStatus(cappedPage, "Chưa xác minh được số lượt tương tác còn lại");
+    await button(cappedPage, "Kết thúc phiên").click();
+    await waitQueue(cappedPage, 3);
+    const overflowEnd = await stored(cappedPage);
+    const rejectedBatch = cappedPage.waitForResponse(response =>
+        response.url() === overflowPath + "/events" && response.status() === 413);
+    await setOverflowOffline(false);
+    assert.deepEqual((await rejectedBatch).request().postDataJSON().events, overflowEnd.queue);
+    await cappedPage.getByText("Máy chủ từ chối lô sự kiện (413).", { exact: false }).waitFor();
+    assert.deepEqual(await stored(cappedPage), overflowEnd);
+    assert.equal(await button(cappedPage, newVisit).count(), 0);
+    const overflowAfter = await readOverflow();
+    assert.equal(overflowAfter.remaining_events, 1);
+    assert.equal(overflowAfter.ended, false);
+    await writeFile(resolve(out, "legacy-over-capacity.json"), JSON.stringify({
+        code_sha: process.env.M4_TEST_SHA, rejected_status: 413, queue: overflowEnd.queue,
+        remaining_events_after: overflowAfter.remaining_events, ended_on_server: overflowAfter.ended,
+    }, null, 2));
+    assert.equal((await capped.request.delete(overflowPath, { headers: capHeaders })).status(), 200);
+    await capped.close();
+    steps.push("legacy excess batch atomically rolls back with 413 and retains every ID including the terminal");
+
+    for (const format of ["json", "csv"]) {
+        const pendingDownload = admin.waitForEvent("download");
+        await button(admin, "Xuất " + format.toUpperCase()).click();
+        const download = await pendingDownload;
+        await writeFile(resolve(out, "legacy-export." + format), await readFile(await download.path()));
+    }
     await writeFile(resolve(out, "report.json"), JSON.stringify({
         status: "PASS", chrome: browser.version(), node: process.version,
         code_sha: process.env.M4_TEST_SHA, steps,

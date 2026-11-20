@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-    acknowledged, applyEvent, BATCH_SIZE, enqueue, KEY, PATH, PENDING_KEY, readLocal, readPending,
+    acknowledged, applyEvent, BATCH_SIZE, enqueue, hasInteractionCapacity, KEY, MAX_SYNC_BATCHES, PATH, PENDING_KEY, readLocal, readPending,
     readRemaining, readView, settled,
     type Kind, type LocalSession, type PendingStart,
 } from "./session.ts";
@@ -101,7 +101,7 @@ export function useVisitor() {
                 return;
             }
             // A bounded pass re-reads before every send so withdrawal in another tab stops the queue.
-            for (let pass = 0; pass < 8; pass++) {
+            for (let pass = 0; pass < MAX_SYNC_BATCHES; pass++) {
                 local = read();
                 if (!local || local.clearing || !local.queue.length) break;
                 const sent = local.queue.slice(0, BATCH_SIZE);
@@ -129,6 +129,9 @@ export function useVisitor() {
                     save({ ...current, proofLost: false, view: current.queue.reduce(applyEvent, remote) });
                 }
             });
+            blocked = false;
+            setSuspended(false);
+            setAvailable(true);
             setMessage("");
         }
 
@@ -148,9 +151,11 @@ export function useVisitor() {
                     await locked(() => {
                         const current = read();
                         if (!current || current.view.id !== currentId || readStart()) return;
-                        save(current.queue.length ? { ...current, proofLost: true } : null);
+                        save({ ...current, proofLost: true });
                     }).catch(storageFailure);
                     setMessage("Mã phiên hết hiệu lực. Sự kiện chưa xác nhận vẫn được giữ. Bạn có thể dừng và xóa dữ liệu cục bộ.");
+                } else if (error instanceof VisitorError && error.status === 413) {
+                    setMessage("Máy chủ từ chối lô sự kiện (413). Các sự kiện chưa xác nhận vẫn được giữ. Hãy kiểm tra giới hạn phiên trước khi thử lại.");
                 } else if (error instanceof VisitorError && error.status < 500) {
                     if (error.status === 403 || error.status === 404) {
                         blocked = true;
@@ -247,9 +252,15 @@ export function useVisitor() {
                     const current = read();
                     if (blocked || readStart() || current?.view.id !== sessionId ||
                         current.clearing || current.proofLost || current.view.ended) return;
+                    if (kind !== "session_end" && !hasInteractionCapacity(current)) {
+                        setSession(current);
+                        return;
+                    }
                     save(enqueue(current, kind, object ?? null, Date.now(), crypto.randomUUID()));
                 }).then(recover).catch(() => {
-                    if (!signal.aborted) setMessage("Không thể lưu thao tác. Kiểm tra hàng đợi trước khi tiếp tục.");
+                    if (!signal.aborted) setMessage(kind === "session_end"
+                        ? "Không thể lưu yêu cầu kết thúc phiên trên trình duyệt. Hãy thử lại."
+                        : "Không thể lưu thao tác trên trình duyệt. Hãy thử lại.");
                 });
             },
             clear(sessionId) {

@@ -3,7 +3,9 @@ export const PATH = "/api/v1/visitor";
 export const KEY = "airc.synthetic.visitor.v1";
 export const PENDING_KEY = KEY + ".start";
 export const QUEUE_LIMIT = 128;
+const LEGACY_TERMINAL_LIMIT = QUEUE_LIMIT + 1;
 export const BATCH_SIZE = 16;
+export const MAX_SYNC_BATCHES = Math.ceil(LEGACY_TERMINAL_LIMIT / BATCH_SIZE);
 type ObjectId = "demo-object-cube" | "demo-object-column";
 export type Kind = "room_enter" | "object_select" | "info_open" | "info_close" | "session_end";
 export type VisitEvent = {
@@ -25,7 +27,7 @@ const objectId = (value: unknown): value is ObjectId =>
 export function readRemaining(input: { remaining_events?: unknown }): number | undefined {
     const remaining = input.remaining_events;
     if (remaining === undefined) return undefined; // Previously stored views and older API responses.
-    if (typeof remaining !== "number" || !Number.isSafeInteger(remaining) || remaining < 0) {
+    if (typeof remaining !== "number" || !Number.isSafeInteger(remaining) || remaining < 0 || remaining > 500) {
         throw new Error("Invalid remaining event count");
     }
     return remaining;
@@ -64,13 +66,21 @@ export function readLocal(storage: Pick<Storage, "getItem">): LocalSession | nul
     const value = JSON.parse(raw) as LocalSession;
     readView(value.view);
     if ((value.proofLost !== undefined && typeof value.proofLost !== "boolean") || !Number.isSafeInteger(value.clock) || typeof value.clearing !== "boolean" ||
-        !Array.isArray(value.queue) || value.queue.length > QUEUE_LIMIT ||
+        !Array.isArray(value.queue) || value.queue.length > LEGACY_TERMINAL_LIMIT ||
         value.queue.some(item => !uuid.test(item.id) || item.schema_version !== 1 ||
             item.room_id !== ROOM || !kinds.includes(item.event_type) ||
             !Number.isFinite(Date.parse(item.occurred_at)) ||
             (["room_enter", "session_end"].includes(item.event_type)
                 ? item.object_id !== null : !objectId(item.object_id)))) {
         throw new Error("Invalid queue");
+    }
+    // Older clients could fill all 128 slots with interactions. The only
+    // valid overflow is one final terminal event with an optimistic ended view.
+    const terminalIndex = value.queue.findIndex(item => item.event_type === "session_end");
+    if (terminalIndex !== -1
+        ? terminalIndex !== value.queue.length - 1 || !value.view.ended
+        : value.queue.length > QUEUE_LIMIT) {
+        throw new Error("Invalid terminal event in queue");
     }
     return value;
 }
@@ -81,18 +91,29 @@ export function applyEvent(view: View, item: VisitEvent): View {
     return { ...view, selected_id: item.object_id, info_open: item.event_type !== "info_close" };
 }
 
-export function hasInteractionCapacity({ view, queue }: LocalSession): boolean {
-    // An unacknowledged interaction may already be committed. Count it until its receipt arrives.
-    return (view.remaining_events ?? Infinity) > queue.filter(item => item.event_type !== "session_end").length;
+export function interactionCapacity({ view, queue }: LocalSession) {
+    if (queue.length >= QUEUE_LIMIT - 1) return "local-full";
+    if (view.remaining_events === undefined) return "server-unknown";
+    // Count unacknowledged interactions conservatively until their receipts arrive.
+    return view.remaining_events > queue.length ? "available" : "server-full";
+}
+
+export function hasInteractionCapacity(session: LocalSession): boolean {
+    return !session.view.ended && !session.clearing && !session.proofLost &&
+        interactionCapacity(session) === "available";
 }
 
 export function enqueue(session: LocalSession, kind: Kind, object: string | null, now: number,
     id: string): LocalSession {
     if (session.clearing || session.proofLost || session.view.ended) return session;
     if (kind !== "session_end" && !hasInteractionCapacity(session)) throw new Error("Session is full");
-    const limit = kind === "session_end" ? QUEUE_LIMIT : QUEUE_LIMIT - 1;
-    if (session.queue.length >= limit) throw new Error("Queue is full");
+    if (kind === "session_end" && session.queue.length >= LEGACY_TERMINAL_LIMIT) {
+        throw new Error("Queue is full");
+    }
     if (object !== null && !objectId(object)) throw new Error("Unknown synthetic object");
+    if ((kind === "room_enter" || kind === "session_end") !== (object === null)) {
+        throw new Error("Invalid synthetic object for event");
+    }
     const clock = Math.max(now, session.clock + 1);
     const event: VisitEvent = {
         id, schema_version: 1, event_type: kind, room_id: ROOM, object_id: object,

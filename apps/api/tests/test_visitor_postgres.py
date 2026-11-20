@@ -887,11 +887,17 @@ def test_chrome_fixture_uses_real_api_and_postgres(local_database):
         timeout=120,
     )
     assert result.returncode == 0, (result.stdout + result.stderr)[-4000:]
-    assert counts(database) == (2, 12)
+    assert counts(database) == (3, 143)
     out = Path(os.environ.get("M4_BROWSER_OUT", ROOT / ".local/m4-visitor-browser"))
     exported = json.loads((out / "rotation-export.json").read_text(encoding="utf-8"))
     with (out / "rotation-export.csv").open(encoding="utf-8", newline="") as stream:
         csv_rows = list(csv.DictReader(stream))
+
+    legacy = json.loads((out / "legacy-128-browser.json").read_text(encoding="utf-8"))
+    assert legacy["code_sha"] == sha
+    legacy_export = json.loads((out / "legacy-export.json").read_text(encoding="utf-8"))
+    with (out / "legacy-export.csv").open(encoding="utf-8", newline="") as stream:
+        legacy_csv = list(csv.DictReader(stream))
 
     with Session(database.engine) as db:
         sessions = db.scalars(select(VisitorSession).order_by(VisitorSession.started_at)).all()
@@ -911,6 +917,12 @@ def test_chrome_fixture_uses_real_api_and_postgres(local_database):
             )
             for e in events
         ]
+        legacy_session = next(s for s in sessions if str(s.id) == legacy["session_id"])
+        assert legacy_session.ended_at is not None
+        assert legacy_session.event_count == 131  # Start, bootstrap room_enter, 128 legacy, end.
+        legacy_rows = [row for row in event_rows if row["session_id"] == legacy["session_id"]]
+        sessions = [s for s in sessions if s.id != legacy_session.id]
+        event_rows = [row for row in event_rows if row["session_id"] != legacy["session_id"]]
         assert all(s.ended_at is not None for s in sessions)
         assert sessions[0].token_expires_at < sessions[1].started_at
         assert sessions[0].token_digest != sessions[1].token_digest
@@ -961,6 +973,53 @@ def test_chrome_fixture_uses_real_api_and_postgres(local_database):
                 counts=[7, 5],
                 db_csv_json_ids_match=True,
                 events=event_rows,
+            ),
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    queued = legacy["persisted_after_offline_reload"]["queue"]
+    assert "remaining_events" not in legacy["original"]["view"]
+    assert legacy["original"]["queue"] == queued[:-1]
+    assert len(queued) == 129
+    assert [row["ordinal"] for row in legacy_rows] == list(range(1, 132))
+    assert [row["event_type"] for row in legacy_rows[:2]] == ["session_start", "room_enter"]
+    assert [row["event_type"] for row in legacy_rows].count("session_end") == 1
+    for row, item in zip(legacy_rows[2:], queued, strict=True):
+        assert row["event_id"] == item["id"]
+        assert row["event_type"] == item["event_type"]
+        assert row["room_id"] == item["room_id"]
+        assert row["object_id"] == item["object_id"]
+        assert datetime.fromisoformat(row["occurred_at"]) == datetime.fromisoformat(
+            item["occurred_at"]
+        )
+    terminal_receipts = [
+        receipt
+        for batch in legacy["receipts"]
+        for receipt in batch
+        if receipt["id"] == queued[-1]["id"]
+    ]
+    assert [(row["status"], row["ordinal"]) for row in terminal_receipts] == [
+        ("accepted", 131), ("duplicate", 131),
+    ]
+    received_at = datetime.fromisoformat(legacy_rows[-1]["received_at"])
+    receipt_times = {datetime.fromisoformat(row["received_at"]) for row in terminal_receipts}
+    assert receipt_times == {received_at}
+    expected = {canonical(row) for row in event_rows + legacy_rows}
+    assert len(expected) == 143
+    for export in (legacy_csv, legacy_export["events"]):
+        assert len(export) == len(expected) and {canonical(row) for row in export} == expected
+    assert [row["event_count"] for row in legacy_export["sessions"]] == [7, 5, 131]
+    (out / "legacy-128-database.json").write_text(
+        json.dumps(
+            dict(
+                status="PASS",
+                code_sha=sha,
+                sessions=3,
+                counts=[7, 5, 131],
+                db_csv_json_match=True,
+                events=legacy_rows,
             ),
             indent=2,
         ),
