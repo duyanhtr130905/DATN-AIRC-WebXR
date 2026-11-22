@@ -239,9 +239,3 @@ Owner approved technical implementation of the P507 M3 slice in one branch and o
 M3 manual-first Admin được chủ dự án duyệt 2026-11-19 trong PR #25. Xem [quyết định](m3/P507-ADMIN-DECISION.md). M3 IN_REVIEW / PARTIAL **(AS-OF trước merge)**, quyền công bố chưa xác nhận. Nghiệm thu phân biệt sẵn sàng merge kỹ thuật với đạt đầy đủ DoD, theo [ma trận ứng viên M3](m3/P507-M3-INTEGRATION.md#final-technical-and-field-gates).
 
 **Quyết định cập nhật:** a7acadc9 đã được [review](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25#pullrequestreview-5971384295) và [merge PR #25](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/25) tại `ba5139d34de1454029d9b71958123f2d5aec1375`; M3 giữ IN_PROGRESS/BLOCKED thực địa. Chỉ chủ dự án/người có thẩm quyền mới xác nhận các bản ghi AIRC và phạm vi công bố; merge kỹ thuật không đóng #2/#3.
-
----
-
-## CẬP NHẬT 22/11/2026 — Handoff hiện hành
-
-**[Hồ sơ bàn giao 22/11](closure/CURRENT-HANDOFF-2026-11-22.md)** là điểm vào mới nhất, cần ưu tiên khi mở chat mới. [Issue #33](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/33): chủ dự án yêu cầu thay đổi bố trí 3 cụm bàn P507, lối đi, khung poster, kệ/đồ, đồng hồ và trạng thái ghế, **prompt mới chưa gửi Codex / chưa có code**; cần 7 xác nhận. [Issue #20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20) được mở lại ở mức yêu cầu, không sửa frozen R4. [PR #32](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/32) vẫn DRAFT tại `f96df72d`, reviewer đã xác minh sửa lỗi legacy offline M4 và CI nhưng **chưa có ZIP R4/IWER Windows exact-HEAD để nghiệm thu merge**. [Issue #30](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/30) còn OPEN; các quyền AIRC, hardware XR, vault CI, M6 KPI vẫn BLOCKED. Các đoạn cũ trong tài liệu là AS-OF và phải đọc theo ngày ghi, không dùng để kết luận hiện tại.
