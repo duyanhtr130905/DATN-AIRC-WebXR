@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { XR } from "@react-three/xr";
+import { XR, useXR } from "@react-three/xr";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Group, type WebGLRenderer } from "three";
 import { ErrorBoundary } from "../components/ErrorBoundary.tsx";
@@ -10,6 +10,7 @@ import { Desktop, type DeskAction } from "./Desktop.tsx";
 import { Immersive, provenance, type Detail } from "./Immersive.tsx";
 import { disposeRoom, rendererInfo } from "./runtime.ts";
 import { modes, useP507Session } from "./session.ts";
+import { interruptTiming, sampleTiming, startTiming, type TimingCapture, type TimingMode } from "./timing.ts";
 import "./visitor.css";
 
 const ids = new Set(reference.records.map(record => record.id));
@@ -33,7 +34,14 @@ const statusLabels = {
     "context-lost": "Mất ngữ cảnh WebGL. Bạn vẫn có thể dùng danh sách đối tượng.",
 };
 type Asset = Awaited<ReturnType<typeof loadFrozenP507>>;
-type Evidence = { record(event: string): void; renderer?: string; frames: Record<string, number[]>; events: string[] };
+type Evidence = {
+    record(event: string): void;
+    startTiming(mode: TimingMode, durationMs?: number): void;
+    renderer?: string;
+    frames: Record<string, number[]>;
+    events: string[];
+    timing?: TimingCapture;
+};
 declare global { interface Window { __P507_M5__?: Evidence } }
 
 function useEvidence() {
@@ -41,7 +49,11 @@ function useEvidence() {
     useEffect(() => {
         if (new URLSearchParams(location.search).get("evidence") !== "1") return;
         const events: string[] = [];
-        const report: Evidence = { events, frames: {}, record(event) { if (events.length < 800) events.push(event); } };
+        const report: Evidence = {
+            events, frames: {},
+            record(event) { if (events.length < 800) events.push(event); },
+            startTiming(mode, durationMs) { report.timing = startTiming(mode, durationMs); },
+        };
         evidence.current = report;
         window.__P507_M5__ = report;
         return () => {
@@ -54,13 +66,55 @@ function useEvidence() {
 
 function FrameEvidence() {
     const gl = useThree(state => state.gl);
+    const activeSession = useXR(state => state.session);
     const previous = useRef<{ mode: string; timestamp: number }>(undefined);
+    useEffect(() => {
+        if (!activeSession) return;
+        const interrupt = () => interruptTiming(window.__P507_M5__?.timing);
+        const handleVisibility = () => {
+            if (activeSession.visibilityState !== "visible") interrupt();
+        };
+        activeSession.addEventListener("visibilitychange", handleVisibility);
+        activeSession.addEventListener("end", interrupt);
+        return () => {
+            activeSession.removeEventListener("visibilitychange", handleVisibility);
+            activeSession.removeEventListener("end", interrupt);
+        };
+    }, [activeSession]);
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.hidden && !gl.xr.getSession()) interruptTiming(window.__P507_M5__?.timing);
+        };
+        const handleLoss = () => interruptTiming(window.__P507_M5__?.timing);
+        document.addEventListener("visibilitychange", handleVisibility);
+        gl.domElement.addEventListener("webglcontextlost", handleLoss);
+        return () => {
+            interruptTiming(window.__P507_M5__?.timing);
+            document.removeEventListener("visibilitychange", handleVisibility);
+            gl.domElement.removeEventListener("webglcontextlost", handleLoss);
+        };
+    }, [gl]);
     useFrame((state, _, frame) => {
         const report = window.__P507_M5__;
-        if (!report || document.hidden) return;
-        report.renderer ??= rendererInfo(gl);
+        if (!report) return;
         const session = gl.xr.getSession();
         const mode = frame ? (session?.environmentBlendMode === "opaque" ? "vr" : "ar") : "web";
+        const visible = session ? session.visibilityState === "visible" : !document.hidden;
+        const timing = report.timing;
+        if (timing) {
+            if (timing.status === "waiting" && visible && mode === timing.mode) {
+                const layer = session?.renderState.baseLayer;
+                timing.framebuffer = layer ? [layer.framebufferWidth, layer.framebufferHeight] :
+                    [gl.domElement.width, gl.domElement.height];
+                timing.nominalHz = (session as (XRSession & { frameRate?: number }) | null)?.frameRate;
+            }
+            sampleTiming(timing, mode, visible, performance.now());
+        }
+        if (!visible) {
+            previous.current = undefined;
+            return;
+        }
+        report.renderer ??= rendererInfo(gl);
         const timestamp = frame?.predictedDisplayTime ?? state.clock.elapsedTime * 1000;
         const samples = report.frames[mode] ??= [];
         const last = previous.current;
@@ -190,7 +244,7 @@ export default function Visitor() {
                                 pick={select} blocked={setBlocked} controls={run} />
                             <Immersive nav={nav} ids={ids} model={asset.gltf.scene} mount={mount} detail={detail} ar={xr.requested === "immersive-ar"}
                                 pick={select} exit={xr.exit} record={record} />
-                            <FrameEvidence />
+                            {new URLSearchParams(location.search).get("evidence") === "1" && <FrameEvidence />}
                         </XR>
                     </Canvas></ErrorBoundary> : <p role="status">Đang kiểm tra R4…</p>}
             </section>

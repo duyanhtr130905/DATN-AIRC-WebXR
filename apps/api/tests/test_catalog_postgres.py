@@ -105,12 +105,12 @@ def test_migration_empty_database_head_repeat_and_model_drift(catalog_database):
         assert connection.scalar(select(func.count()).select_from(Room)) == 0
         assert connection.scalar(select(func.count()).select_from(Object)) == 0
         command.current(config)
-        assert "0006_visitor_start_attempts" in output.getvalue()
+        assert "0007_visitor_terminal_capacity" in output.getvalue()
         command.upgrade(config, "head")
         command.check(config)
         assert (
             connection.scalar(text("SELECT version_num FROM alembic_version"))
-            == "0006_visitor_start_attempts"
+            == "0007_visitor_terminal_capacity"
         )
         inspector = inspect(connection)
         assert inspector.get_foreign_keys("objects")[0]["options"]["ondelete"] == "RESTRICT"
@@ -402,7 +402,7 @@ def test_actual_cli_migration_and_seed_on_new_database():
             )
             assert result.returncode == 0, f"Alembic CLI {action[0]} failed; see isolated test"
             if action == ["current"]:
-                assert "0006_visitor_start_attempts (head)" in result.stdout
+                assert "0007_visitor_terminal_capacity (head)" in result.stdout
         for _ in range(2):
             result = subprocess.run(
                 [

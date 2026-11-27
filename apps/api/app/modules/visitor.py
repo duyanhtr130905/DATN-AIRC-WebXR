@@ -185,6 +185,11 @@ def new_event(session: VisitorSession, *, now: datetime, **fields) -> VisitorEve
     )
 
 
+def remaining_events(session: VisitorSession) -> int:
+    # Ordinal 501 is available only to the terminal event of an otherwise full session.
+    return max(0, MAX_EVENTS - session.event_count)
+
+
 def view(db: Session, session: VisitorSession):
     latest = db.scalars(
         select(VisitorEvent)
@@ -202,6 +207,7 @@ def view(db: Session, session: VisitorSession):
         "selected_id": latest.object_id if latest else None,
         "info_open": latest is not None and latest.event_type in {"object_select", "info_open"},
         "ended": session.ended_at is not None,
+        "remaining_events": remaining_events(session),
     }
 
 
@@ -400,7 +406,7 @@ def ingest(
                 item.event_type == "session_end" or item.occurred_at > pending_end
             ):
                 raise HTTPException(409)
-            if session.event_count >= MAX_EVENTS:
+            if item.event_type != "session_end" and session.event_count >= MAX_EVENTS:
                 raise HTTPException(413)
             if item.event_type == "session_end":
                 pending_end = item.occurred_at
@@ -428,4 +434,4 @@ def ingest(
         session.last_seen_at = now
         session.ended_at = pending_end
     # The function-scoped transaction exits (and commits) before response transmission.
-    return {"receipts": receipts}
+    return {"receipts": receipts, "remaining_events": remaining_events(session)}
