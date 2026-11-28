@@ -204,6 +204,170 @@ try {
             await page.close();
             return { fixture: "Placement at validated approach/stand anchors. Chair UI, state, mesh and camera exercised in actual R5.", chairs: result };
         });
+        if (!onlyVR) await row("Real WASD walk from spawn to hardest chairs, real raycast pick, cycle, and collision negative", async () => {
+            const plan = JSON.parse(execFileSync(process.env.API_PYTHON || "python", [
+                "-c", "import json, sys; sys.path.insert(0, 'experiments/p507-r5'); from layout import build_layout; from layout_checks import check_routes; print(json.dumps(check_routes(build_layout())))",
+            ], { cwd: root, encoding: "utf8" }));
+            const page = await context.newPage();
+            await page.goto(origin + base);
+            await waitLoaded(page, hash);
+            await page.waitForFunction(() => window.__P507_M5__?.webPose);
+            const camera = page.locator("canvas").first();
+            await camera.focus();
+            const point = ([x, y]) => [x, -y];
+
+            // Helper: turn camera toward target (x, z) using real keyboard ArrowLeft/ArrowRight and walk with KeyW.
+            const walkPath = async rawWaypoints => {
+                await camera.focus();
+                const waypoints = [];
+                for (let i = 0; i < rawWaypoints.length; i++) {
+                    if (i === 0 || i === rawWaypoints.length - 1) {
+                        waypoints.push(rawWaypoints[i]);
+                    } else {
+                        const a = waypoints[waypoints.length - 1], b = rawWaypoints[i], c = rawWaypoints[i + 1];
+                        const turn = Math.abs((b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0])) > 1e-4;
+                        const span = Math.hypot(b[0] - a[0], b[1] - a[1]);
+                        if (turn || span >= 0.25) waypoints.push(b);
+                    }
+                }
+                const nextFrame = () => page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+                const alignTo = async (tx, tz) => {
+                    await nextFrame();
+                    const pose = await page.evaluate(() => window.__P507_M5__.webPose);
+                    const dx = tx - pose.x, dz = tz - pose.z;
+                    const dist = Math.hypot(dx, dz);
+                    if (dist <= 0.01) return { dist, pose };
+                    const targetYaw = Math.atan2(-dx, -dz);
+                    const diff = Math.atan2(Math.sin(targetYaw - pose.yaw), Math.cos(targetYaw - pose.yaw));
+                    if (Math.abs(diff) > 0.05) {
+                        const key = diff > 0 ? "ArrowLeft" : "ArrowRight";
+                        const steps = Math.max(1, Math.min(32, Math.round(Math.abs(diff) / 0.055)));
+                        for (let s = 0; s < steps; s++) await page.keyboard.press(key);
+                        await nextFrame();
+                    }
+                    return { dist, pose };
+                };
+                for (let wi = 0; wi < waypoints.length; wi++) {
+                    const [tx, tz] = waypoints[wi];
+                    const isFinal = wi === waypoints.length - 1;
+                    const stopDist = isFinal ? 0.03 : 0.085;
+                    let { dist } = await alignTo(tx, tz);
+                    if (dist <= stopDist) continue;
+                    let prevDist = dist;
+                    await page.keyboard.down("KeyW");
+                    try {
+                        for (let guard = 0; guard < 450; guard++) {
+                            await new Promise(done => setTimeout(done, 100));
+                            const pose = await page.evaluate(() => window.__P507_M5__.webPose);
+                            const dx = tx - pose.x, dz = tz - pose.z;
+                            dist = Math.hypot(dx, dz);
+                            if (dist <= stopDist || (isFinal && dist <= 0.14) || (!isFinal && dist < 0.16 && dist > prevDist + 0.002)) break;
+                            prevDist = dist;
+                            const targetYaw = Math.atan2(-dx, -dz);
+                            const diff = Math.atan2(Math.sin(targetYaw - pose.yaw), Math.cos(targetYaw - pose.yaw));
+                            if (Math.abs(diff) > 0.06 || (dist < 0.25 && Math.abs(diff) > 0.05)) {
+                                await page.keyboard.up("KeyW");
+                                await alignTo(tx, tz);
+                                prevDist = dist;
+                                await page.keyboard.down("KeyW");
+                            }
+                        }
+                    } finally {
+                        await page.keyboard.up("KeyW");
+                    }
+                    if (isFinal) {
+                        for (let step = 0; step < 6; step++) {
+                            await camera.focus();
+                            const { dist: d, pose: before } = await alignTo(tx, tz);
+                            if (d <= 0.03) break;
+                            await page.getByRole("button", { name: "Tiến", exact: true }).click();
+                            await nextFrame();
+                            const after = await page.evaluate(() => window.__P507_M5__.webPose);
+                            if (Math.hypot(after.x - before.x, after.z - before.z) < 0.01) {
+                                await camera.focus();
+                                for (let s = 0; s < 12; s++) await page.keyboard.press("ArrowLeft");
+                                await nextFrame();
+                                await page.getByRole("button", { name: "Tiến", exact: true }).click();
+                                await nextFrame();
+                                const retry = await page.evaluate(() => window.__P507_M5__.webPose);
+                                if (Math.hypot(retry.x - before.x, retry.z - before.z) < 0.01) {
+                                    await camera.focus();
+                                    for (let s = 0; s < 24; s++) await page.keyboard.press("ArrowRight");
+                                    await nextFrame();
+                                    await page.getByRole("button", { name: "Tiến", exact: true }).click();
+                                }
+                            }
+                        }
+                        await nextFrame();
+                        await camera.focus();
+                    }
+                    const finalPose = await page.evaluate(() => window.__P507_M5__.webPose);
+                    assert.ok(Math.hypot(tx - finalPose.x, tz - finalPose.z) <= (isFinal ? 0.10 : 0.18),
+                        `Failed to reach waypoint ${JSON.stringify([tx, tz])} from ${JSON.stringify(finalPose)}`);
+                }
+            };
+
+            const aimAtWorld = async (wx, wy, wz) => {
+                const pose = await page.evaluate(() => window.__P507_M5__.webPose);
+                const dx = wx - pose.x, dz = wz - pose.z;
+                const targetYaw = Math.atan2(-dx, -dz);
+                const diff = Math.atan2(Math.sin(targetYaw - pose.yaw), Math.cos(targetYaw - pose.yaw));
+                const box = await camera.boundingBox();
+                const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+                // Drag horizontally so camera faces chair horizontally, and pitch down slightly toward seat/back
+                const horzDist = Math.hypot(dx, dz);
+                const targetPitch = Math.atan2(wy - pose.eye, horzDist);
+                const dragDx = -diff / 0.004;
+                const dragDy = -targetPitch / 0.004;
+                await page.mouse.move(cx, cy);
+                await page.mouse.down();
+                await page.mouse.move(cx + dragDx, cy + dragDy, { steps: 6 });
+                await page.mouse.up();
+            };
+
+            const hardestIds = ["P507-CHAIR-A-07", "P507-CHAIR-B-11", "P507-CHAIR-B-06", "P507-CHAIR-B-09", "P507-CHAIR-C-01"];
+            const chairActions = page.getByTestId("chair-actions");
+            const verified = [];
+            for (const id of hardestIds) {
+                await page.getByRole("button", { name: "Về điểm bắt đầu", exact: true }).click();
+                await camera.focus();
+                const chair = manifest.layout.chairs.find(c => c.id === id);
+                assert.ok(chair, id);
+                const route = plan.routes.stored[id].map(point);
+                await walkPath(route);
+                const b = await bound(page, id);
+                await aimAtWorld(b.center[0], (b.min[1] + b.max[1]) * 0.55, b.center[2]);
+                await page.keyboard.press("Enter");
+                await page.getByTestId("visitor-detail").getByRole("heading", { name: id }).waitFor();
+
+                // Negative: cannot pull if standing inside sweep? Here we are at approach outside sweep, so pull succeeds
+                await chairActions.getByRole("button", { name: "Kéo ghế ra" }).click();
+                await page.waitForFunction(cid => window.__P507_M5__?.snapshotR5?.().chairs[cid]?.state === "pulled-out", id);
+                const pullToStand = plan.routes["individual-pull"][id];
+                if (pullToStand && pullToStand.length > 0) await walkPath(pullToStand.map(point));
+                await chairActions.getByRole("button", { name: "Ngồi xuống" }).click();
+                await page.waitForFunction(cid => window.__P507_M5__?.snapshotR5?.().chairs[cid]?.state === "occupied", id);
+                await chairActions.getByRole("button", { name: "Đứng dậy" }).click();
+                await page.waitForFunction(cid => window.__P507_M5__?.snapshotR5?.().chairs[cid]?.state === "pulled-out", id);
+                if (pullToStand && pullToStand.length > 0) await walkPath([...pullToStand].reverse().map(point));
+                await chairActions.getByRole("button", { name: "Cất ghế" }).click();
+                await page.waitForFunction(cid => window.__P507_M5__?.snapshotR5?.().chairs[cid]?.state === "stored", id);
+                verified.push(id);
+            }
+
+            // Negative wall collision check using real KeyS backward from spawn toward west wall
+            await page.getByRole("button", { name: "Về điểm bắt đầu", exact: true }).click();
+            await camera.focus();
+            await page.keyboard.down("KeyS");
+            try {
+                await page.getByTestId("collision").waitFor({ timeout: 30000 });
+            } finally {
+                await page.keyboard.up("KeyS");
+            }
+            const blockedText = await page.getByTestId("collision").textContent();
+            await page.close();
+            return { walkedFromSpawnWithRealInputAndRaycast: verified, collisionStop: blockedText };
+        });
         if (!onlyVR) await row("Real keyboard capsule traverses both fully occupied R5 aisles in both directions", async () => {
             const plan = JSON.parse(execFileSync(process.env.API_PYTHON || "python", ["experiments/p507-r5/layout_checks.py"],
                 { cwd: root, encoding: "utf8" }));

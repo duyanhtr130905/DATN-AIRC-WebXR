@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { XR, useXR } from "@react-three/xr";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box3, Group, Vector3, type WebGLRenderer } from "three";
+import { ACESFilmicToneMapping, Box3, Group, PCFSoftShadowMap, Vector3, type WebGLRenderer } from "three";
 import { ErrorBoundary } from "../components/ErrorBoundary.tsx";
 import { Navigation, logicalId, type Point } from "../p507-e1/core.ts";
 import { loadFrozenP507 } from "../p507-e1/load.ts";
@@ -131,6 +131,20 @@ function FrameEvidence() {
         const last = previous.current;
         if (last?.mode === mode && samples.length < 360 && timestamp > last.timestamp) samples.push(timestamp - last.timestamp);
         previous.current = { mode, timestamp };
+    });
+    return null;
+}
+
+function ShadowSync({ chairRoom }: { chairRoom?: ChairRoom }) {
+    const gl = useThree(state => state.gl);
+    const moving = chairRoom?.moving;
+    const seatId = chairRoom?.seat?.id;
+    useEffect(() => {
+        gl.shadowMap.autoUpdate = false;
+        gl.shadowMap.needsUpdate = true;
+    }, [gl, moving, seatId]);
+    useFrame(() => {
+        if (chairRoom?.moving) gl.shadowMap.needsUpdate = true;
     });
     return null;
 }
@@ -308,11 +322,28 @@ export default function Visitor() {
                     <p role="alert" data-testid="asset-status" data-result={error}>{revision} không khả dụng. {isR5 ? "Có thể mở lại R4 bằng liên kết phía trên." : "Bạn có thể tiếp tục bằng danh sách."}</p>
                     <button onClick={() => retry(step => step + 1)}>Thử tải {revision} lại</button>
                 </div> : asset && nav && ids && xr.store ?
-                    <ErrorBoundary><Canvas gl={{ alpha: true }} dpr={[1, 1.5]} camera={{ fov: 78, near: 0.04, far: 60 }}
+                    <ErrorBoundary><Canvas shadows={isR5 ? { type: PCFSoftShadowMap } : false}
+                        gl={isR5 ? { alpha: true, antialias: true, toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.05 } : { alpha: true }}
+                        dpr={[1, 1.5]} camera={{ fov: 78, near: 0.04, far: 60 }}
                         fallback={<p role="alert">WebGL không khả dụng. Hãy dùng danh sách đối tượng.</p>}>
                         <XR store={xr.store}>
-                            <ambientLight intensity={0.75} />
-                            <directionalLight position={[2, 8, -2]} intensity={2} />
+                            {isR5 ? <>
+                                <hemisphereLight args={[0xf5f8ff, 0xede6da, 1.35]} />
+                                <directionalLight
+                                    position={[(footprint?.[0] ?? 7.26) + 3.0, 5.0, -(footprint?.[1] ?? 10.76) * 0.48]}
+                                    intensity={1.65} color={0xfff6e8} castShadow
+                                    shadow-mapSize={[1024, 1024]} shadow-bias={-0.0001} shadow-normalBias={0.03}
+                                    shadow-camera-left={-8} shadow-camera-right={8}
+                                    shadow-camera-top={8} shadow-camera-bottom={-8}
+                                    shadow-camera-near={0.5} shadow-camera-far={24}
+                                />
+                                <directionalLight position={[-2.5, 1.1, -(footprint?.[1] ?? 10.76) * 0.25]} intensity={0.68} color={0xf3f6ff} />
+                                <directionalLight position={[(footprint?.[0] ?? 7.26) * 0.5, 1.2, -(footprint?.[1] ?? 10.76) - 2.0]} intensity={0.48} color={0xfff9f0} />
+                                <ShadowSync chairRoom={chairRoom} />
+                            </> : <>
+                                <ambientLight intensity={0.75} />
+                                <directionalLight position={[2, 8, -2]} intensity={2} />
+                            </>}
                             <group ref={mount}><primitive object={asset.gltf.scene} /></group>
                             <RendererLifecycle attach={attach} contextLost={lost} contextRestored={xr.restoredContext} />
                             {chairRoom && <ChairFrames model={asset.gltf.scene} room={chairRoom} />}

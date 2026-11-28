@@ -1,14 +1,18 @@
 import {
     ACESFilmicToneMapping, Box3, Color, DirectionalLight, Group, HemisphereLight, Matrix4,
-    Material, Mesh, Object3D, PerspectiveCamera, Scene, Texture, Vector3, WebGLRenderer,
+    Material, Mesh, Object3D, PCFSoftShadowMap, PerspectiveCamera, Scene, Texture, Vector3, WebGLRenderer,
 } from "three";
 import { loadFrozenP507 } from "./p507-e1/load";
-import { loadR5 as loadR5P507 } from "./p507-r5/load";
+import { ChairRoom } from "./p507-r5/chairs";
+import { bindChairMeshes, loadR5 as loadR5P507 } from "./p507-r5/load";
 import { disposeRoom } from "./p507-m5/runtime";
 
 type Revision = "r4" | "r5";
 type Dimensions = { width_x: number; length_y: number; height_z: number };
-type CameraPose = { position: Vector3; target: Vector3; fov: number; cutaway?: boolean; closedDoor?: boolean };
+type CameraPose = {
+    position: Vector3; target: Vector3; fov: number;
+    cutaway?: boolean; closedDoor?: boolean; pullChairs?: boolean;
+};
 type Timing = { intervalsMs: number[]; fps: number; p50Ms: number; p95Ms: number; durationMs: number };
 declare global {
     interface Window {
@@ -27,8 +31,15 @@ const picker = document.querySelector<HTMLSelectElement>("#camera")!;
 
 function buildPoses(model: Group, { width_x: w, length_y: l, height_z: h }: Dimensions) {
     const poses: Record<string, CameraPose> = {};
-    const add = (name: string, position: number[], target: number[], fov: number, cutaway = false) => {
-        poses[name] = { position: new Vector3().fromArray(position), target: new Vector3().fromArray(target), fov, cutaway };
+    const add = (
+        name: string, position: number[], target: number[], fov: number,
+        { cutaway = false, closedDoor = false, pullChairs = false } = {},
+    ) => {
+        poses[name] = {
+            position: new Vector3().fromArray(position),
+            target: new Vector3().fromArray(target),
+            fov, cutaway, closedDoor, pullChairs,
+        };
     };
     const center = (selector: RegExp) => {
         const bounds = new Box3();
@@ -39,26 +50,81 @@ function buildPoses(model: Group, { width_x: w, length_y: l, height_z: h }: Dime
         if (bounds.isEmpty()) throw new Error("Thiếu nhóm đối tượng " + selector.source);
         return bounds.getCenter(new Vector3());
     };
-    add("Mặt bằng", [w / 2, Math.max(w, l) * 1.21, -l / 2], [w / 2, 0, -l / 2 - .001], 55, true);
-    add("Ba cụm bàn", [w + 3, h + 6, -l * .58], [w / 2, .5, -l / 2], 55, true);
+    const boxOf = (selector: RegExp) => {
+        const bounds = new Box3();
+        model.traverse(node => {
+            const id = node.userData.survey_instance_id;
+            if (typeof id === "string" && selector.test(id)) bounds.expandByObject(node);
+        });
+        if (bounds.isEmpty()) throw new Error("Thiếu nhóm đối tượng " + selector.source);
+        return bounds;
+    };
+
+    // 1. Mặt bằng top-down
+    add("Mặt bằng", [w / 2, Math.max(w, l) * 1.18, -l / 2], [w / 2, 0, -l / 2 - .001], 55, { cutaway: true });
+    add("Ba cụm bàn", [w + 2.8, h + 5.6, -l * .58], [w / 2, .5, -l / 2], 55, { cutaway: true });
+
+    // 2-3. Toàn cảnh từ cửa & từ cuối phòng
+    const door = center(/^P507-DOOR-LEAF-/);
+    add("Toàn cảnh từ cửa", [0.85, 1.65, door.z], [w * 0.62, 1.15, -l * 0.36], 82);
+    add("Toàn cảnh từ cuối phòng", [w * 0.55, 1.75, -0.55], [w * 0.42, 1.25, -l * 0.65], 82);
+
+    // 4-6. Cụm A, B, C
     for (const cluster of ["A", "B", "C"]) {
         const at = center(new RegExp(`^P507-DESK-${cluster}`));
-        add(`Cụm ${cluster}`, [at.x, h + 3.8, at.z - .01], at.toArray(), 51, true);
+        add(`Cụm ${cluster}`, [at.x, h + 3.4, at.z - .01], at.toArray(), 52, { cutaway: true });
     }
+
+    // 7. Máy tính và máy in cận cảnh (trên cụm A; R4 vẫn giữ góc cận cụm A tương ứng)
+    const deskA = boxOf(/^P507-DESK-A/);
+    add("Máy tính và máy in", [deskA.max.x - 0.35, 1.55, (deskA.min.z + deskA.max.z) / 2 - 1.35],
+        [deskA.max.x - 0.85, 1.05, (deskA.min.z + deskA.max.z) / 2], 62);
+
+    // 8. Hoa lan và bộ trà
+    add("Hoa lan và bộ trà", [(deskA.min.x + deskA.max.x) / 2 - 0.15, 1.48, (deskA.min.z + deskA.max.z) / 2 - 1.25],
+        [(deskA.min.x + deskA.max.x) / 2 + 0.15, 1.02, (deskA.min.z + deskA.max.z) / 2], 60);
+
+    // 9. Góc TV, đồng hồ và poster
     const tv = center(/^P507-TV-LARGE$/);
-    add("TV và tủ trưng bày", [2.65, 1.65, tv.z + 1.8], tv.toArray(), 78);
+    add("TV, đồng hồ và poster", [2.55, 1.68, tv.z + 2.05], [tv.x + 0.45, 1.75, -l + 0.1], 78);
+
+    // 10. Kệ bốn tầng và bốn bình nước
     const shelf = center(/^P507-UTILITY-SHELF$/);
-    add("Kệ đồ", [2.55, shelf.y + .25, shelf.z], shelf.toArray(), 65);
+    add("Kệ bốn tầng và bình nước", [3.05, shelf.y + .42, shelf.z], [shelf.x, shelf.y + .28, shelf.z], 68);
+
+    // 11. Toàn bộ khu tiện ích
     const utility = center(/^P507-(CABINET-FILES|FRIDGE|UTILITY-SHELF|WASTE-BIN|SHOE-RACK|WHITEBOARD)$/);
-    add("Khu tiện ích", [Math.min(w * .57, 4.8), 2.0, utility.z], [.3, 1.15, utility.z], 94);
-    add("Cửa sổ và poster", [1.15, 1.7, -l * .48], [w - .05, 1.9, -l * .59], 81);
-    add("Tường khung ảnh", [w * .63, 1.65, 2.55 - l], [w * .63, 2.1, .08 - l], 72);
-    add("Tường logo", [w / 2, 1.65, -3.6], [w / 2, 1.9, -.08], 70);
-    add("Trần", [w / 2, 1.65, -l / 2], [w / 2, h, -l / 2 - .001], 132);
-    const door = center(/^P507-DOOR-LEAF-/);
+    add("Khu tiện ích", [Math.min(w * .62, 4.8), 1.85, utility.z], [.3, 1.15, utility.z], 92);
+
+    // 12. Cửa, bảng trắng và kệ giày
+    const shoe = center(/^P507-SHOE-RACK$/);
+    add("Cửa, bảng trắng và kệ giày", [3.0, 1.65, (shoe.z + door.z) / 2], [0.25, 1.25, (shoe.z + door.z) / 2], 78);
+
+    // 13. Cửa sổ và rèm
+    add("Cửa sổ và rèm", [1.35, 1.68, -l * .48], [w - .05, 1.88, -l * .58], 80);
+
+    // 14. Tường logo và tường khung ảnh
+    add("Tường khung ảnh", [w * .62, 1.75, 2.75 - l], [w * .62, 2.20, .08 - l], 74);
+    add("Tường logo", [w / 2, 1.65, -3.4], [w / 2, 1.9, -.08], 72);
+
+    // 15. Trần và ánh sáng
+    add("Trần và ánh sáng", [w / 2, 1.40, -l * 0.65], [w / 2, h, -l * 0.40], 116);
+
+    // 16-17. Lối A-B và Lối B-C khi ghế kéo ra
+    const deskB = boxOf(/^P507-DESK-B0[1-4]$/);
+    const deskC = boxOf(/^P507-DESK-C0[1-4]$/);
+    const abZ = (deskA.max.z + deskB.min.z) / 2;
+    const bcZ = (deskB.max.z + deskC.min.z) / 2;
+    add("Lối A-B ghế kéo ra", [1.10, 1.55, abZ], [w - 0.6, 0.85, abZ], 74, { pullChairs: true });
+    add("Lối B-C ghế kéo ra", [1.10, 1.55, bcZ], [w - 0.6, 0.85, bcZ], 74, { pullChairs: true });
+
+    // 18. Góc nhìn khi ngồi (tại ghế A-01 nhìn về cụm A/tủ)
+    const a01 = center(/^P507-CHAIR-A-01$/);
+    add("Góc nhìn khi ngồi", [a01.x, 1.20, a01.z + 0.25], [a01.x + 0.4, 1.15, a01.z - 2.2], 76, { pullChairs: true });
+
+    // 19. Cửa mở / đóng
     add("Cửa mở ra ngoài", [-2.5, 1.65, door.z], [.1, 1.34, door.z], 78);
-    add("Cửa đóng", [-2.5, 1.65, door.z], [.1, 1.34, door.z], 78);
-    poses["Cửa đóng"].closedDoor = true;
+    add("Cửa đóng", [-2.5, 1.65, door.z], [.1, 1.34, door.z], 78, { closedDoor: true });
     return poses;
 }
 
@@ -108,22 +174,54 @@ async function run(revision: Revision) {
     renderer.transmissionResolutionScale = .5;
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     renderer.toneMapping = ACESFilmicToneMapping;
+    renderer.toneMappingExposure = revision === "r5" ? 1.05 : 1.0;
+    renderer.shadowMap.enabled = revision === "r5";
+    renderer.shadowMap.type = PCFSoftShadowMap;
+    renderer.shadowMap.autoUpdate = false;
     const scene = new Scene();
     scene.background = new Color("#d9dedc");
     const dimensions = asset.manifest.virtual_dimensions;
-    const daylight = new DirectionalLight(0xfff4e3, 2);
-    daylight.position.set(dimensions.width_x - .35, dimensions.height_z - .4, -dimensions.length_y * .55);
-    daylight.target.position.set(dimensions.width_x * .3, 0, -dimensions.length_y * .55);
-    scene.add(new HemisphereLight(0xe6efff, 0xc9bfa9, 1.25), daylight, daylight.target, model);
+    const daylight = new DirectionalLight(0xfff6e8, revision === "r5" ? 1.65 : 2);
+    daylight.position.set(dimensions.width_x + (revision === "r5" ? 3.0 : -0.35), dimensions.height_z + (revision === "r5" ? 1.5 : -0.4), -dimensions.length_y * .48);
+    daylight.target.position.set(dimensions.width_x * .25, 0, -dimensions.length_y * .52);
+    if (revision === "r5") {
+        daylight.castShadow = true;
+        daylight.shadow.mapSize.set(1024, 1024);
+        daylight.shadow.bias = -0.0001;
+        daylight.shadow.normalBias = 0.03;
+        daylight.shadow.camera.left = -8;
+        daylight.shadow.camera.right = 8;
+        daylight.shadow.camera.top = 8;
+        daylight.shadow.camera.bottom = -8;
+        daylight.shadow.camera.near = 0.5;
+        daylight.shadow.camera.far = 24;
+    }
+    scene.add(
+        new HemisphereLight(revision === "r5" ? 0xf5f8ff : 0xe6efff, revision === "r5" ? 0xede6da : 0xc9bfa9, revision === "r5" ? 1.35 : 1.25),
+        daylight, daylight.target, model,
+    );
+    if (revision === "r5") {
+        const fillWest = new DirectionalLight(0xf3f6ff, 0.68);
+        fillWest.position.set(-2.5, 1.1, -dimensions.length_y * 0.25);
+        fillWest.target.position.set(dimensions.width_x * 0.65, 2.5, -dimensions.length_y * 0.68);
+        const fillSouth = new DirectionalLight(0xfff9f0, 0.48);
+        fillSouth.position.set(dimensions.width_x * 0.5, 1.2, -dimensions.length_y - 2.0);
+        fillSouth.target.position.set(dimensions.width_x * 0.5, 1.8, 0);
+        scene.add(fillWest, fillWest.target, fillSouth, fillSouth.target);
+    }
 
     const poses = buildPoses(model, dimensions);
     const doors = collectDoorRoots(model);
+    const chairRoom = "revision" in asset && asset.revision === "R5"
+        ? new ChairRoom(asset.manifest.layout, asset.manifest.starting_pose.feet_survey)
+        : undefined;
+    const syncChairs = chairRoom ? bindChairMeshes(model, chairRoom) : undefined;
     const cutaway: Object3D[] = [];
     const materials = new Set<Material>(), textures = new Set<Texture>();
     let meshes = 0, triangles = 0;
     model.traverse(node => {
         if (/^P507_(ARCH_(CEILING|WALL_EAST|EAST_|WINDOW_|ROLLER_|BLIND_)|CEILING)/.test(node.name)
-            || /^(P507-(LIGHT|FAN|AC|PROJECTOR|CAMERA|WINDOW|BLIND)-)/.test(String(node.userData.survey_instance_id))) {
+            || /^(P507-(LIGHT|FAN|AC|PROJECTOR|CAMERA|WINDOW|BLIND)-|P507-POSTER-0[45]$)/.test(String(node.userData.survey_instance_id))) {
             cutaway.push(node);
         }
         if (!(node instanceof Mesh)) return;
@@ -157,6 +255,14 @@ async function run(revision: Revision) {
         for (const { node, open, closed } of doors) {
             (pose.closedDoor ? closed : open).decompose(node.position, node.quaternion, node.scale);
         }
+        if (chairRoom && syncChairs) {
+            for (const entry of chairRoom.entries.values()) {
+                entry.state = pose.pullChairs ? "pulled-out" : "stored";
+                entry.offset = pose.pullChairs ? 1 : 0;
+            }
+            syncChairs();
+        }
+        renderer.shadowMap.needsUpdate = revision === "r5";
         camera.position.copy(pose.position);
         camera.fov = pose.fov;
         camera.lookAt(pose.target);

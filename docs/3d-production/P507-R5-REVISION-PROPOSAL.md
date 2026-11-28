@@ -1,33 +1,58 @@
-# P507 R5 — phương án bố trí và tương tác ghế
+# P507 R5 — phương án bố trí gọn, nâng hình ảnh và tương tác ghế
 
 **R5 PROPOSAL / PROVISIONAL / SYNTHETIC / VIRTUAL ADAPTATION**
 **OWNER_VISUAL_APPROVAL=PENDING** · **PHOTO_REFERENCE_UNAVAILABLE** tại thư mục ảnh cục bộ được chỉ định.
 
-Phạm vi đã được chủ dự án giao ngày 27/11/2026, theo Issues [#33](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/33) và [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20). R5 là ứng viên riêng cho P507. Nghiệm thu hình ảnh, khảo sát thực địa, quyền AIRC và các chỉ tiêu trên thiết bị vật lý vẫn cần bằng chứng riêng.
+Phạm vi R5 được chủ dự án giao ngày 27/11/2026 theo Issues [#33](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/33) và [#20](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/issues/20), và được điều chỉnh ngày 28/11/2026 để **thu gọn phòng về kích thước gần R4**, giữ toàn bộ nội thất/tương tác 34 ghế, đồng thời nâng chất lượng ánh sáng, vật liệu và chi tiết trong cùng lượt bàn giao trên nhánh `feat/p507-r5-fidelity-circulation-chair-interaction` ([Draft PR #34](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/34)). Mọi dữ liệu tại đây vẫn ở mức đề xuất synthetic; nghiệm thu hình ảnh của chủ dự án, khảo sát thực địa, quyền AIRC và hiệu năng thiết bị vật lý chưa được chứng nhận.
 
-## Nguồn và phiên bản
+## Nguồn, kích thước và các mốc nền
 
-| Nguồn | Kích thước X × Y × Z | Phạm vi |
+| Nguồn / Ứng viên | Kích thước X × Y × Z | Ghi chú |
 | --- | --- | --- |
-| Khảo sát P507 | 6,00 × 8,10 × 3,50 m | USER_REPORTED |
-| Frozen R4 | 6,90 × 9,315 × 3,50 m | OWNER_APPROVED_VIRTUAL_ADAPTATION |
-| R5 | Tham số trong [layout.py](../../experiments/p507-r5/layout.py) | R5 PROPOSAL |
+| Khảo sát P507 | 6,00 × 8,10 × 3,50 m | `USER_REPORTED` |
+| Frozen R4 | 6,90 × 9,315 × 3,50 m | `OWNER_APPROVED_VIRTUAL_ADAPTATION` (bảo toàn nguyên bản) |
+| R5 cũ (`80b5d6f`, đã thay thế) | 8,63 × 15,55 × 3,50 m | Bị chủ dự án bác kích thước vì phòng quá rộng; chỉ giữ làm mốc đối chiếu lịch sử |
+| **R5 compact hiện hành** | **7,26 × 10,76 × 3,50 m** | **Ứng viên R5 PROPOSAL đã chọn (78,12 m²; giảm 41,79% diện tích so với R5 cũ, gần R4 nhất đạt toàn bộ ràng buộc)** |
 
-Base `bd2d0baf4a593e73dfe1c6e8d8a5e74fd45ae3be` là merge commit sau khi [PR #32](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/32) được nghiệm thu kỹ thuật độc lập ở head `f96df72d50c3f05796a6bc528f0f0ef77abbf892`. Báo cáo R4 gốc tiếp tục là hồ sơ riêng. [Runbook R4](../../experiments/p507-webxr/README.md)
+Base `bd2d0baf4a593e73dfe1c6e8d8a5e74fd45ae3be` là merge commit sau khi [PR #32](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/32) được nghiệm thu kỹ thuật độc lập ở head `f96df72d50c3f05796a6bc528f0f0ef77abbf892`. Báo cáo R4 gốc và archive R4 không thay đổi. [Runbook R4](../../experiments/p507-webxr/README.md)
 
-D0 trên base này khớp SHA-256 archive R4, 28 member gồm 20 PNG và 6 file khóa. E0 thật, E1 15/15, R4 IWER/Chrome 9/9, fallback 2/2, web unit 56/56, API unit 75/75. Bộ PostgreSQL Windows lần đầu 88/89 vì thiếu cờ build diagnostics. Chạy lại M1-C bị ảnh hưởng và hai bài Admin/P507 trên frozen R4 với cờ đúng được 3/3. Đây là kết quả của hai lượt chạy. Chi tiết nằm trong `.local/p507-r5/d0-bd2d0ba/`.
+## Hợp đồng kỹ thuật và tối ưu hình học compact
 
-## Hợp đồng kỹ thuật
+- Survey dùng XYZ theo mét, gốc tại góc tường logo và tường cửa (`+X` sang Đông, `+Y` lên Bắc, `+Z` lên trần). Chuyển sang glTF/Three tại ranh giới dữ liệu theo `(x, z, -y)`.
+- **Khắc phục nguyên nhân phòng quá rộng ở R5 cũ (`8,63 × 15,55 m`):** R5 cũ đẩy ghế cất vào sâu thêm `0,16 m` và kéo hàng chính ra tới `0,98 m` (tổng hành trình `1,14 m`), làm hai hàng đối diện rút `2,28 m` và buộc phải kéo dài phòng để bù lối `0,90 m`. Bản R5 compact tối ưu lại khoảng dịch thực sự theo kích thước chân bàn/chân ghế và đầu gối người ngồi tổng hợp:
+  - `STORED_FROM_DESK = 0,05 m` từ mép bàn;
+  - `PULLED_FROM_DESK = 0,295 m` (hành trình kéo `0,245 m`);
+  - `STAND_BEHIND_CHAIR = 0,585 m` sau điểm neo ghế kéo ra, kết hợp `approach_alternatives` bên hông `(±0,56 m, -0,15/+0,20 m)` cho hai hàng ngoài (dãy Bắc cụm A và dãy Nam cụm C) khi khoảng lưng sát tường/thiết bị hẹp.
+- **Bảo toàn toàn bộ 150 logical ID bố trí và 2 hồ sơ UNPLACED:** 121 logical ID đặt từ R4 (17 bàn, 34 ghế cụm A/B/C, cửa hai cánh, 4 cửa sổ + 4 rèm, tủ hồ sơ, tủ lạnh, kệ bốn tầng `2,25 × 0,47 × 2,175 m`, thùng rác, kệ giày, bảng trắng, TV lớn, TV nhỏ, tường logo, khung ảnh, thiết bị trần) + **29 logical ID mới của R5** (6 máy tính, 1 máy in bắc cầu qua `A03–A06`, hoa lan, bộ trà, 5 poster, 1 đồng hồ, máy pha cà phê và đồ sinh hoạt trên 4 tầng kệ, 4 bình nước đáy). Hai hồ sơ `P507-CHAIR-C-09` và `P507-CHAIR-C-10` giữ `UNPLACED`.
+- **Phân bổ lại thiết bị dọc tường theo kích thước `7,26 × 10,76 m`:** TV lớn dịch `dx = +0,45 m` và nâng đáy `+0,04 m` lên `1,82 m`; cụm khung ảnh dịch `dx = +0,55 m`; dãy tiện ích tường Tây phân bố tuần tự `CABINET-FILES (0,35–1,35)` → `FRIDGE (1,65–2,25)` → `UTILITY-SHELF (2,50–4,75)` → `WASTE-BIN (5,20–5,52)` → `SHOE-RACK (5,82–7,12)` / `WHITEBOARD (5,72–7,17)` sát vùng mở cửa; 4 cửa sổ tường Đông phân bố lại theo chiều dài mới và 2 poster kẹp giữa cửa sổ 4–3 và 3–2 (`y` tường Đông).
+- **Capsule và collider giữ nguyên:** lối đi dùng capsule bán kính `0,30 m`, cao `1,80 m`, mục tiêu thông thủy lối A–B và B–C tối thiểu `0,90 m` khi cả hai hàng kéo ra và có 34 collider người ngồi tổng hợp. Không giảm collider hay dùng teleport để vượt kiểm thử.
+- **Tách biệt DEV và R4:** R5 chạy riêng ở Vite DEV loopback (`?mode=p507-visit&revision=r5` và `/p507-r5-review.html?revision=r5`). Mặc định visitor, Admin và Catalog tiếp tục đọc R4. Mọi vật liệu tạo mới dùng màu/texture procedural trung tính.
 
-- Survey dùng XYZ theo mét, gốc ở góc tường logo và tường cửa. Chuyển sang glTF/Three tại ranh giới dữ liệu theo `(x,z,-y)`.
-- GLB và manifest riêng cho R5 được kiểm tra độc lập theo byte và SHA-256. Hai hồ sơ `P507-CHAIR-C-09` và `P507-CHAIR-C-10` vẫn UNPLACED. Kiểm từng ID trên hình học xuất từ Blender.
-- Bố trí, bàn ghế, thiết bị và collider R5 dùng riêng trong điều kiện Vite DEV loopback. Mặc định truy cập visitor dùng R4. Admin và Catalog tiếp tục đọc dữ liệu và định danh R4.
-- Lối đi dùng capsule bán kính 0,30 m và cao 1,80 m. Ghế dùng hình học theo trạng thái `stored`, `pulled-out` và `occupied`. Dữ liệu occupancy thử nghiệm là synthetic và local.
-- Các bề mặt do mô hình tạo dùng vật liệu trung tính. Không đưa ảnh tham chiếu, tài liệu nội bộ, quan sát người thật hoặc hình ảnh có quyền hạn chế vào Git, GLB, log hay ảnh bàn giao.
+## Nâng cấp ánh sáng, vật liệu và chi tiết hình học
+
+Các nâng cấp thực hiện trực tiếp trong [generate_blender.py](../../experiments/p507-r5/generate_blender.py), [prop_meshes.py](../../experiments/p507-r5/prop_meshes.py), [Visitor.tsx](../../apps/web/src/p507-m5/Visitor.tsx) và [p507-r5-review.ts](../../apps/web/src/p507-r5-review.ts), không thêm dependency ngoài hay tải texture ngoài:
+
+- **Ánh sáng & bóng đổ (R5-only):** `ACESFilmicToneMapping` (`toneMappingExposure = 1.05`), `PCFSoftShadowMap` (`1024×1024`, manual `needsUpdate` và `ShadowSync` khi ghế di chuyển), nguồn sáng daylight chính từ phía cửa sổ Đông (`intensity = 1.65`, `0xfff6e8`) kết hợp `HemisphereLight` (`1.35`, trần/nền sáng tự nhiên tránh trần xám phẳng) và 2 fill light mềm từ phía Tây (`0.68`) và Nam (`0.48`). Bổ sung lớp gradient bóng tiếp xúc (`P507_R5_CONTACT_SHADOW`) dưới 34 ghế và các khối bàn/tủ/thiết bị sàn.
+- **Vật liệu PBR & texture procedural:** sửa triệt để Z-fighting sàn R4 bằng texture gạch procedural 4×4 `512×512` pack sẵn trong GLB (`P507_SELF_GENERATED_NEUTRAL_TILE`, ron gạch và 2 ô điểm xám nhẹ mỗi chu kỳ `2,40 m`), tranh poster modernist procedural `128×192` (`P507_SELF_GENERATED_POSTER_ART`), kính cửa sổ/tủ hồ sơ/mặt đồng hồ dùng `BLEND` alpha hợp lý, bình nước xanh bán trong suốt (`alpha = 0,56`), bình thủy tinh máy cà phê (`alpha = 0,36`) có lớp cà phê bên trong, tinh chỉnh roughness/metallic cho nhựa ghế xanh than, thép sơn bàn, satin chrome và gỗ khung ảnh.
+- **Hình học và chi tiết prop:** bo cạnh (`bevel`) cho khung máy tính/máy in/đồ nội thất, màn hình máy tính thêm đế oval, cần đứng, viền màn, đèn standby phát sáng nhẹ, bàn phím chi tiết phím và chuột có con lăn; máy in có khay nạp, nắp scanner và tờ giấy in; chậu lan có lá thon và cánh/nhị hai sắc; đồng hồ treo tường có kim giờ/phút và kính che; thanh song cửa sổ tường Đông thêm chi tiết uốn đầu thanh.
+
+## So sánh phương án kích thước đã kiểm chứng
+
+Đo trực tiếp bằng bộ giải hình học [layout_checks.py](../../experiments/p507-r5/layout_checks.py) (`capsule r = 0,30 m, h = 1,80 m`, `stored = 0,05 m`, `pulled = 0,295 m`, `stand = 0,585 m` cho các phương án compact):
+
+| Phương án | Kích thước X × Y × Z (m) | Lối cất A–B / B–C | Lối kéo/ngồi A–B / B–C | Trạng thái / Kết quả kiểm |
+| --- | --- | --- | --- | --- |
+| R4 frozen | 6,90 × 9,315 × 3,50 | — | 0,20 / 0,15 m | Không đạt lối đi 0,90 m khi kéo ghế |
+| R5 cũ (`80b5d6f`, bác bỏ) | 8,63 × 15,55 × 3,50 | 3,22 / 3,22 m | 0,94 / 0,94 m | Đạt lối đi nhưng phòng quá dài/rộng, mất tỷ lệ |
+| Compact thử `too-small` | 7,15 × 9,75 × 3,50 | 0,887 / 0,892 m | 0,397 / 0,402 m | FAIL: 59 cấu hình không tiếp cận được; không mở tuyến occupied |
+| Compact thử `tight-x` | 7,20 × 10,65 × 3,50 | 1,337 / 1,342 m | 0,847 / 0,852 m | FAIL: lối occupied < 0,90 m; 8 cấu hình không tiếp cận được |
+| Compact thử `borderline` | 7,25 × 10,75 × 3,50 | 1,387 / 1,392 m | 0,897 / 0,902 m | FAIL: A–B đạt 0,897 m (< 0,90 m); 4 cấu hình bị chặn |
+| **Compact chọn (`R5` mới)** | **7,26 × 10,76 × 3,50** | **1,392 / 1,397 m** | **0,902 / 0,907 m** | **PASS: 0 unreachable, 0 component errors; stored=36, pulled=36, occupied=2, mixed=36, end-occupied=30, individual-pull=34** |
+| Compact dư lề `margin` | 7,30 × 10,80 × 3,50 | 1,412 / 1,417 m | 0,922 / 0,927 m | PASS hình học, nhưng lớn hơn phương án `7,26 × 10,76 m` |
 
 ## Mở demo sau khi chuẩn bị asset
 
-Từ `D:\Code\DATN`, chuẩn bị R4 bằng quy trình owner-local, sau đó stage đúng bundle R5 đã có lock.
+Từ `D:\Code\DATN`, chuẩn bị R4 bằng quy trình owner-local, sau đó stage đúng bundle R5 đã khóa trong [asset-lock.json](../../experiments/p507-r5/asset-lock.json):
 
 ```powershell
 Set-Location D:\Code\DATN
@@ -40,56 +65,36 @@ npm run dev -- --port 5173 --strictPort
 
 - [Visitor R5](http://127.0.0.1:5173/?mode=p507-visit&revision=r5) · [Visitor R4](http://127.0.0.1:5173/?mode=p507-visit)
 - [Ảnh đối chiếu R5](http://127.0.0.1:5173/p507-r5-review.html?revision=r5) · [Ảnh đối chiếu R4](http://127.0.0.1:5173/p507-r5-review.html?revision=r4)
-- Dùng các nút thao tác theo trạng thái ghế. Tiếp cận ghế trước khi ngồi, chọn ghế, kéo ra, ngồi, đứng và cất. AR dùng mô hình tabletop, chỉ cho thao tác ghế phù hợp với chế độ đó.
 
-Nếu cổng bận, chọn một cổng loopback trống và đổi URL tương ứng. Nếu asset thiếu hoặc sai hash, kiểm lại đúng bản export, chạy xác minh rồi tải lại trang. Bộ test ảnh đối chiếu chạy trên Chrome và lưu PNG cùng camera, hash GLB, kích thước, thời gian tải và raw frame intervals tại `.local/p507-r5/review-*/`.
+Các bộ kiểm thử và sinh bằng chứng Chrome (chạy tuần tự, chỉ 1 Vite server mỗi lượt):
 
 ```powershell
 Set-Location D:\Code\DATN
 node apps/web/tests/r5-review.mjs
+node apps/web/tests/r5-browser.mjs
+node .local/p507-r5/demo-video-mobile.mjs
 ```
 
-## Các góc cần chủ dự án duyệt
-
-- Mặt bằng và các cụm A/B/C, đúng hướng bàn và hoán đổi trạng thái ghế.
-- Sáu workstation và máy in, hoa lan và bộ trà, poster và đồng hồ.
-- Kệ bốn tầng, bốn bình nước đáy, thứ tự đồ dọc tường tiện ích và lối vào.
-- Cửa hai cánh, cửa sổ và song, các cụm trang trí, vật liệu và ánh sáng.
-- Lối A–B và B–C khi hai hàng ghế được kéo ra, các điểm tiếp cận sâu trong phòng và thao tác ngồi/đứng.
-
-Khi xem ảnh so sánh, dùng thông số camera trong report. Vị trí camera bám theo hai kích thước phòng và các điểm neo của từng revision. Chrome SwiftShader và IWER là bằng chứng kỹ thuật; AR Galaxy A17, VR HMD, Web3D 30 FPS và VR 72 FPS vẫn cần thiết bị và protocol được duyệt.
+- `P507_R5_PROPOSAL.glb`: `17,423,320` bytes, SHA-256 `0fab4225ea5b965798a4c345b5f78f0ca80e6da70be7bcf6f254119c62663c92` (`473,947` vertices / `281,664` triangles theo Khronos glTF Validator, `0` errors / `0` warnings).
+- `asset-manifest.json`: `755,783` bytes, SHA-256 `290af961c496b7d100b607ffcc2c6a5f44729b5fbac6ca67b82c54815700b7fa`.
+- Bộ ảnh `r5-review.mjs` chụp **22 ảnh R5** (Mặt bằng, Ba cụm bàn, Toàn cảnh từ cửa, Toàn cảnh từ cuối phòng, Cụm A/B/C, Máy tính & máy in, Hoa lan & bộ trà, TV/đồng hồ/poster, Kệ bốn tầng & bình nước, Khu tiện ích, Cửa/bảng trắng/kệ giày, Cửa sổ & rèm, Tường khung ảnh, Tường logo, Trần & ánh sáng, Lối A–B ghế kéo ra, Lối B–C ghế kéo ra, Góc nhìn khi ngồi, Cửa mở/đóng, Mobile 390×844) kèm `contact-sheet.png` đối chiếu 3 cột: **Frozen R4 (6,90 × 9,315) | R5 cũ `80b5d6f` (8,63 × 15,55) | R5 compact mới (7,26 × 10,76)**.
+- Bộ E2E `r5-browser.mjs` giữ nguyên kiểm thử cũ (34/34 chu kỳ ghế, IWER VR/AR, fallback, hai chiều lối đi khi occupied) và bổ sung: đi bộ WASD thật từ spawn/cửa tới 5 ghế khó nhất (`A-07`, `B-11`, `B-06`, `B-09`, `C-01`), xoay ngắm chọn bằng `Enter` raycast thật, kéo-ngồi-đứng-cất từng ghế, và kiểm tra va chạm âm tính (`ROOM_BOUNDARY_OUTSIDE_UNSURVEYED`).
+- Script `.local/p507-r5/demo-video-mobile.mjs` kiểm chạm mobile `390×844` và ghi video demo trung tính `p507-r5-compact-demo.mp4` chỉ trong viewport Chrome (không quay desktop/thông tin cá nhân).
+- Số đo FPS Chrome SwiftShader/IWER **không** thay cho KPI phần cứng (Web3D 30 FPS / VR 72 FPS / Galaxy A17 / HMD thật). Số liệu exact-HEAD cuối cùng của bộ compact và so sánh trước/sau nằm trong report đính kèm Draft PR #34.
 
 ## Đối chiếu yêu cầu và bằng chứng
 
-| Yêu cầu | Triển khai | Bằng chứng để kiểm tra |
+| Yêu cầu | Triển khai | Bằng chứng kiểm chứng |
 | --- | --- | --- |
-| Q1/Q7 · Kích thước, thứ tự cụm, pose và cửa | `layout.py`, `generate_blender.py` | Manifest, map ID, các góc mặt bằng/cửa, bảng phương án kích thước |
-| Q2 · Thiết bị, hoa, trà | `props.py`, `prop_meshes.py` | Kiểm support/bounds, ảnh cụm A/B/C |
-| Q3 · Poster và đồng hồ | `props.py`, `verify_props.py` | Khoảng tường giữa cửa sổ, vị trí quanh TV và cạnh bảng, ảnh TV/cửa sổ |
-| Q4/Q5 · Khu tiện ích | `layout.py`, `props.py`, `prop_meshes.py` | Bốn mặt đỡ, thứ tự tủ, ảnh kệ và khu tiện ích |
-| Q6 · Toàn bộ ghế | `layout_checks.py`, `apps/web/src/p507-r5/chairs.ts` | Swept-volume, swept-capsule, state, kiểm thử trình duyệt |
-| Nâng hình ảnh · Đối chiếu R4/R5 | `generate_blender.py`, `p507-r5-review.html` | Contact sheet, neutral camera metadata, raw frame timing |
-| WebXR và hồi quy | `apps/web/src/p507-m5/` và các bài kiểm thử | Chrome/IWER, R4 9 kịch bản, E0/E1, CI trên SHA ứng viên |
+| Kích thước gọn gần R4 & 150 ID + 2 UNPLACED | `layout.py`, `props.py` | `test_layout.py`, `test_props.py`, `layout_checks.py`, bảng kích thước |
+| Thiết bị, hoa, trà, poster, đồng hồ, tiện ích, TV `1,82 m` | `props.py`, `prop_meshes.py` | `verify_export.py`, `verify_props.py`, ảnh `r5-07`..`r5-12` |
+| Ánh sáng, PBR, bóng tiếp xúc, sửa Z-fighting sàn | `generate_blender.py`, `Visitor.tsx`, `p507-r5-review.ts` | 22 ảnh `r5-review.mjs` + `contact-sheet.png` 3 cột |
+| Tương tác 34 ghế + đi bộ WASD thật + raycast `Enter` + WebXR IWER | `apps/web/src/p507-r5/chairs.ts`, `Visitor.tsx` | `p507-r5-chairs.test.ts`, `r5-browser.mjs`, `p507-r5-compact-demo.mp4` |
+| Tạo lại asset bằng Blender 4.5.9 LTS | `generate_blender.py`, `asset-lock.json` | `verify_export.py --verify`, `validate_glb.mjs` (0 errors / 0 warnings) |
 
-## Bố trí đang kiểm chứng
+## Tạo lại ứng viên để kiểm tra
 
-| Phương án | Kích thước X × Y × Z (m) | Kết quả kiểm hình học |
-| --- | --- | --- |
-| R4 frozen | 6,90 × 9,315 × 3,50 | Lối A–B/B–C còn 0,20/0,15 m theo mô hình kéo ghế R4 |
-| R5 thử nhỏ hơn | 8,55 × 14,915 × 3,50 | Thiếu lối tiếp cận ở nhiều cấu hình và phát hiện va chạm thành phần tại B06 |
-| R5 thu hẹp tiếp | 8,60 × 15,49 × 3,50 | Thiếu điểm kéo ghế hợp lệ ở B-09/B-10 sát tường phía Đông |
-| R5 ứng viên | 8,63 × 15,55 × 3,50 | Phương án nhỏ nhất đã thử thỏa bộ kiểm tra hiện có |
-| R5 thử rộng hơn | 8,68 × 15,605 × 3,50 | Qua kiểm hình học ghế, tăng thêm 0,05 m X và 0,055 m Y |
-
-Hai lối ứng viên đều 3,22 m khi ghế cất và 0,94 m khi cả hai hàng kéo ra, kể cả khi thêm 34 envelope người ngồi synthetic. Các hàng chính kéo 0,98 m so với pose tham chiếu, hai cặp ghế ở đầu dãy kéo 0,66 m. Phương án dùng vùng đứng phía trước ghế để tránh lưng ghế trong chuyển tiếp. Hành trình ghế dài và tỷ lệ phòng tăng đáng kể, cần xem trong demo. Đây là kích thước virtual và là kết quả của các phương án đã kiểm bằng bộ giải hiện tại.
-
-TV lớn và giá treo tăng cao 0,04 m, từ đáy TV 1,78 m lên 1,82 m, để capsule cao 1,80 m tiếp cận tủ trưng bày. Hướng chéo và kích thước TV được giữ. Chạy lại `python experiments/p507-r5/layout_checks.py` để xem bề rộng từng trạng thái, các điểm biên và số tuyến đã tìm được.
-
-Blender 4.5.9 xuất lại được mô hình và manifest từ nguồn đã xác minh. Hai lượt xuất Windows cùng kích thước GLB và JSON chunk, nhưng có khác biệt byte ở UV và index. Demo dùng đúng bản ứng viên ghim trong lock. Với bản xuất mới, giữ bundle đang ghim, chạy kiểm hình học, Khronos, kiểm thử trình duyệt và review trước khi cập nhật lock.
-
-### Tạo lại ứng viên để kiểm tra
-
-Chạy Blender 4.5.9 LTS, với R4 editable master đã xác minh từ archive ghim và thư mục đích mới. Công cụ đọc dữ liệu R4, xuất `.blend`, GLB và manifest R5 vào thư mục ignore.
+Chạy Blender 4.5.9 LTS với R4 editable master đã xác minh từ archive ghim và thư mục đích mới trong `.local/p507-r5/`:
 
 ```powershell
 Set-Location D:\Code\DATN
@@ -100,9 +105,3 @@ python experiments/p507-r5/verify_export.py $r5Export --record
 node experiments/p507-r5/validate_glb.mjs $r5Export
 python experiments/p507-r5/verify_export.py $r5Export --verify
 ```
-
-`validate_glb.mjs` dùng gói `gltf-validator` đã ghim trong thư mục công cụ cục bộ theo quy trình G1/G2. Mỗi report giữ cùng thư mục với bản model tương ứng. Dùng `--prepare` cho bản khớp lock.
-
-Ảnh Chrome ở giai đoạn kiểm tra phát hiện cụm khung ảnh cũ chồng với phụ kiện TV và ba vật trưng bày chưa đi theo tủ thấp. Ứng viên dịch cụm khung ảnh nguyên khối thêm 0,75 m dọc X, dịch các vật trưng bày theo tủ và dịch giá treo cùng TV. Kiểm tra độc lập xác minh hình chiếu các khung, mặt đỡ tủ và giao giữa giá treo với thân TV.
-
-Khi tab bị ẩn, thao tác kéo/cất đang chạy dở quay về trạng thái ổn định. Trạng thái đã ngồi được giữ khi tab hiện lại. Tải lại, reset và kết thúc XR xử lý trạng thái ghế theo vòng đời của viewer. Fixture hành lang dùng 34 collider người ngồi tổng hợp; trong ảnh chỉ hiển thị mô hình ghế.

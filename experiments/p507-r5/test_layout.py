@@ -80,9 +80,11 @@ class P507LayoutTest(unittest.TestCase):
                "bottom_z": .44, "top_z": .50, "cluster": "A"}
         invalid["static_interaction_colliders"].append(bad)
         self.assertIn((chair["id"], "seat", "bad", None), swept_components(invalid))
-        bad["polygon"] = [[x,9.6],[x+.1,9.6],[x+.1,10.2],[x,10.2]]
-        invalid["static_walk_colliders"].append(bad)
         states = {c["id"]: "occupied" for c in invalid["chairs"]}
+        ab = aisle_widths(invalid, states)["A-B"]
+        y_mid = (ab["north_edge"]["y_m"] + ab["south_edge"]["y_m"]) / 2
+        bad["polygon"] = [[x, y_mid - .3], [x + .1, y_mid - .3], [x + .1, y_mid + .3], [x, y_mid + .3]]
+        invalid["static_walk_colliders"].append(bad)
         widths = aisle_widths(invalid, states)
         self.assertLess(widths["A-B"]["width_m"], AISLE_TARGET)
 

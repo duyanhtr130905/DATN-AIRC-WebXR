@@ -80,6 +80,192 @@ def read_base(frozen):
     }
 
 
+def make_procedural_tile_image():
+    """Generate a 512x512 4x4 metric floor tile image (no Z-fighting accent tiles)."""
+    import random
+
+    name = "P507_SELF_GENERATED_NEUTRAL_TILE"
+    existing = bpy.data.images.get(name)
+    if existing:
+        bpy.data.images.remove(existing)
+    size = 512
+    tile = size // 4
+    img = bpy.data.images.new(name, width=size, height=size, alpha=True)
+    rng = random.Random(5075)
+    accents = {(1, 0), (2, 2)}
+    tile_tones = {}
+    for ty in range(4):
+        for tx in range(4):
+            if (tx, ty) in accents:
+                tile_tones[(tx, ty)] = (0.74, 0.75, 0.74)
+            else:
+                delta = rng.uniform(-0.012, 0.012)
+                tile_tones[(tx, ty)] = (0.85 + delta, 0.855 + delta, 0.83 + delta)
+    pixels = []
+    for y in range(size):
+        ty, ly = divmod(y, tile)
+        for x in range(size):
+            tx, lx = divmod(x, tile)
+            grout = lx < 2 or ly < 2
+            speck = rng.uniform(-0.009, 0.009)
+            base = (0.54, 0.55, 0.53) if grout else tile_tones[(tx, ty)]
+            pixels.extend((
+                max(0.0, min(1.0, base[0] + speck)),
+                max(0.0, min(1.0, base[1] + speck)),
+                max(0.0, min(1.0, base[2] + speck)),
+                1.0,
+            ))
+    img.pixels.foreach_set(pixels)
+    img.pack()
+    return img
+
+
+def make_contact_shadow_image():
+    """Generate a 64x64 soft rounded-box contact shadow alpha texture."""
+    import math
+
+    name = "P507_SELF_GENERATED_CONTACT_SHADOW"
+    existing = bpy.data.images.get(name)
+    if existing:
+        bpy.data.images.remove(existing)
+    size = 64
+    img = bpy.data.images.new(name, width=size, height=size, alpha=True)
+    pixels = []
+    for y in range(size):
+        v = abs((y + 0.5) / size * 2.0 - 1.0)
+        for x in range(size):
+            u = abs((x + 0.5) / size * 2.0 - 1.0)
+            # Soft rounded rectangle falloff
+            dx = max(0.0, u - 0.38) / 0.62
+            dy = max(0.0, v - 0.38) / 0.62
+            d = min(1.0, math.hypot(dx, dy))
+            alpha = 0.34 * (1.0 - d * d * (3.0 - 2.0 * d))
+            pixels.extend((0.03, 0.035, 0.045, max(0.0, alpha)))
+    img.pixels.foreach_set(pixels)
+    img.pack()
+    return img
+
+
+def contact_shadow_material():
+    name = "P507_R5_CONTACT_SHADOW"
+    mat = bpy.data.materials.get(name)
+    if mat:
+        return mat
+    mat = bpy.data.materials.new(name)
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    bsdf.inputs["Base Color"].default_value = (0.03, 0.035, 0.045, 1.0)
+    bsdf.inputs["Roughness"].default_value = 1.0
+    spec_key = "Specular IOR Level" if "Specular IOR Level" in bsdf.inputs else "Specular"
+    if spec_key in bsdf.inputs:
+        bsdf.inputs[spec_key].default_value = 0.0
+    tex = mat.node_tree.nodes.new("ShaderNodeTexImage")
+    tex.image = make_contact_shadow_image()
+    tex.extension = "EXTEND"
+    mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+    mat.node_tree.links.new(tex.outputs["Alpha"], bsdf.inputs["Alpha"])
+    if hasattr(mat, "surface_render_method"):
+        mat.surface_render_method = "BLENDED"
+    if hasattr(mat, "blend_method"):
+        mat.blend_method = "BLEND"
+    return mat
+
+
+def add_shadow_quad(name, center_xyz, size_xy, mat, col, ident=None):
+    import bmesh
+
+    mesh = bpy.data.meshes.new(name)
+    bm = bmesh.new()
+    hw, hd = size_xy[0] / 2.0, size_xy[1] / 2.0
+    v1 = bm.verts.new((-hw, -hd, 0.0))
+    v2 = bm.verts.new((hw, -hd, 0.0))
+    v3 = bm.verts.new((hw, hd, 0.0))
+    v4 = bm.verts.new((-hw, hd, 0.0))
+    bm.faces.new((v1, v2, v3, v4))
+    bm.to_mesh(mesh)
+    bm.free()
+    uv = mesh.uv_layers.new(name="UVMap")
+    for idx, co in enumerate(((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))):
+        uv.data[idx].uv = co
+    mesh.materials.append(mat)
+    obj = bpy.data.objects.new(name, mesh)
+    obj.location = center_xyz
+    col.objects.link(obj)
+    if ident:
+        obj["survey_instance_id"] = ident
+    return obj
+
+
+def upgrade_r5_materials():
+    """Refine PBR roughness, metallic, glass, polymer, and procedural textures for R5."""
+    def tune(mat_name, rgb=None, roughness=None, metal=None, alpha=None, emission=None, spec=None, blend=None):
+        mat = bpy.data.materials.get(mat_name)
+        if not mat or not mat.use_nodes:
+            return
+        bsdf = mat.node_tree.nodes.get("Principled BSDF")
+        if not bsdf:
+            return
+        if rgb is not None:
+            bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
+            mat.diffuse_color = (*rgb, 1.0)
+        if roughness is not None:
+            bsdf.inputs["Roughness"].default_value = roughness
+        if metal is not None:
+            bsdf.inputs["Metallic"].default_value = metal
+        if alpha is not None:
+            bsdf.inputs["Alpha"].default_value = alpha
+        if emission is not None:
+            if rgb is not None and "Emission Color" in bsdf.inputs:
+                bsdf.inputs["Emission Color"].default_value = (*rgb, 1.0)
+            if "Emission Strength" in bsdf.inputs:
+                bsdf.inputs["Emission Strength"].default_value = emission
+        if spec is not None:
+            sk = "Specular IOR Level" if "Specular IOR Level" in bsdf.inputs else "Specular"
+            if sk in bsdf.inputs:
+                bsdf.inputs[sk].default_value = spec
+        if blend is not None:
+            if hasattr(mat, "surface_render_method"):
+                mat.surface_render_method = "BLENDED" if blend == "BLEND" else "DITHERED"
+            if hasattr(mat, "blend_method"):
+                mat.blend_method = blend
+
+    tune("P507_PBR_CHARCOAL_SEAT", (0.036, 0.068, 0.118), roughness=0.46, metal=0.04, spec=0.45)
+    tune("P507_PBR_SATIN_CHROME", (0.68, 0.71, 0.74), roughness=0.24, metal=0.88)
+    tune("P507_PBR_GRAY_PAINTED_TABLE_STEEL", (0.58, 0.61, 0.64), roughness=0.38, metal=0.45)
+    tune("P507_PBR_LAMINATE_WHITE", (0.91, 0.91, 0.88), roughness=0.36, spec=0.42)
+    tune("P507_PBR_CREAM_PAINT", roughness=0.86, spec=0.25)
+    tune("P507_PBR_CEILING", (0.90, 0.90, 0.88), roughness=0.86)
+    tune("P507_PBR_LED_PANEL", (0.98, 0.99, 1.00), roughness=0.45, emission=1.85)
+    tune("P507_PBR_OFFWHITE_ENAMEL", (0.88, 0.89, 0.88), roughness=0.36, metal=0.22)
+    tune("P507_PBR_WINDOW_PLACEHOLDER", (0.72, 0.85, 0.92), roughness=0.07, metal=0.10, alpha=0.22, blend="BLEND")
+    tune("P507_PBR_FILE_CABINET_CLEAR_GLASS", (0.82, 0.91, 0.94), roughness=0.08, metal=0.02, alpha=0.20, blend="BLEND")
+    tune("P507_PBR_DOOR_FROSTED_GLASS", (0.74, 0.80, 0.82), roughness=0.42, metal=0.02, alpha=0.55, blend="BLEND")
+    tune("P507_PBR_ROLLER_BLIND", (0.81, 0.79, 0.74), roughness=0.84)
+    tune("P507_PBR_TRANSLUCENT_BLUE_PET", (0.24, 0.66, 0.86), roughness=0.12, alpha=0.56, blend="BLEND")
+    tune("P507_PBR_TV_OFF_SCREEN", (0.015, 0.020, 0.028), roughness=0.14, metal=0.05, spec=0.48)
+    tune("P507_PBR_CABINET_WARMWHITE", (0.89, 0.87, 0.81), roughness=0.48)
+    tune("P507_PBR_NEUTRAL_WOOD_FRAME", (0.36, 0.22, 0.11), roughness=0.44)
+    tune("P507_PBR_NEUTRAL_MAT_PAPER", (0.93, 0.92, 0.89), roughness=0.86)
+    tune("P507_PBR_FAKE_COLOR_FIELD_01", (0.28, 0.48, 0.54), roughness=0.72)
+    tune("P507_PBR_FAKE_COLOR_FIELD_02", (0.56, 0.36, 0.30), roughness=0.72)
+    tune("P507_PBR_FAKE_COLOR_FIELD_03", (0.34, 0.50, 0.38), roughness=0.72)
+    tune("P507_PBR_UTILITY_GRAY_STEEL", (0.46, 0.49, 0.51), roughness=0.44, metal=0.40)
+    tune("P507_PBR_BRUSHED_FRIDGE_STEEL", (0.56, 0.57, 0.55), roughness=0.32, metal=0.55)
+    tune("P507_PBR_SHELF_BLUE_ENAMEL", (0.04, 0.24, 0.48), roughness=0.36, metal=0.25)
+
+    # Replace floor tile texture with 4x4 multi-tile procedural pattern (no Z-fighting overlay).
+    tile_mat = bpy.data.materials.get("P507_PBR_PROCEDURAL_TILE_060M")
+    if tile_mat and tile_mat.use_nodes:
+        bsdf = tile_mat.node_tree.nodes.get("Principled BSDF")
+        if bsdf:
+            bsdf.inputs["Roughness"].default_value = 0.28
+        tile_img = make_procedural_tile_image()
+        for node in tile_mat.node_tree.nodes:
+            if node.type == "TEX_IMAGE":
+                node.image = tile_img
+                node.extension = "REPEAT"
+
+
 def replace_architecture(design, architecture, lookdev):
     for col in (architecture, lookdev):
         for obj in list(col.objects):
@@ -99,8 +285,20 @@ def replace_architecture(design, architecture, lookdev):
     mats = {name: bpy.data.materials[key] for name, key in aliases.items()}
     room_shell(design, architecture, mats)
     width, length = (design["room"][key] for key in ("width_x", "length_y"))
-    bpy.data.objects["P507_ARCH_FLOOR"]["layout_revision"] = "R5"
-    bpy.data.objects["P507_ARCH_FLOOR"]["virtual_adaptation"] = True
+    floor = bpy.data.objects["P507_ARCH_FLOOR"]
+    floor["layout_revision"] = "R5"
+    floor["virtual_adaptation"] = True
+    # Scale UV so the 4x4 procedural image spans 4 x 0.60 m = 2.40 m cleanly.
+    uv = floor.data.uv_layers.active
+    if uv:
+        for face in floor.data.polygons:
+            if face.normal.z > 0.8:
+                for loop_idx in face.loop_indices:
+                    vertex = floor.data.vertices[floor.data.loops[loop_idx].vertex_index]
+                    uv.data[loop_idx].uv = (
+                        vertex.co.x / 2.40,
+                        vertex.co.y / 2.40,
+                    )
     for window in design["openings"]["windows"]:
         y0, y1 = window["from_y"], window["to_y"]
         z0, z1 = window["sill_z"], window["top_z"]
@@ -126,18 +324,6 @@ def replace_architecture(design, architecture, lookdev):
                     architecture,
                 )
                 joint["survey_instance_id"] = window["id"]
-    slate = material("P507_R5_NEUTRAL_SLATE_TILE", (0.42, 0.43, 0.41), 0.47)
-    dark_tiles = ((1, 3), (5, 6), (9, 5), (12, 9), (5, 14), (9, 18), (3, 21))
-    for ix, iy in dark_tiles:
-        x, y = (ix + 0.5) * 0.6, (iy + 0.5) * 0.6
-        if x + 0.3 < width and y + 0.3 < length:
-            cube(
-                "P507_R5_SLATE_ACCENT_TILE",
-                (x, y, 0.00015),
-                (0.578, 0.578, 0.0003),
-                slate,
-                architecture,
-            )
     grids = [
         obj
         for obj in architecture.objects
@@ -170,6 +356,7 @@ def move_frozen_meshes(collections, old_proxies, new_proxies, design, shelf_leve
     old = {record["id"]: record for record in old_proxies}
     new = {record["id"]: record for record in new_proxies}
     bound_preserved = set()
+    chair_obj = None
     for col in collections:
         for obj in list(col.objects):
             ident = obj.get("survey_instance_id")
@@ -181,14 +368,67 @@ def move_frozen_meshes(collections, old_proxies, new_proxies, design, shelf_leve
                 expected, baseline = new[ident], old[ident]
                 obj.location += proxy_center(expected) - proxy_center(baseline)
                 bound_preserved.add(ident)
+                if ident.startswith("P507-CHAIR-") and chair_obj is None:
+                    chair_obj = obj
             elif obj.name == "P507_HERO_NORTH_SKIRTING":
+                obj.location.x = design["room"]["width_x"] / 2
                 obj.location.y += design["room"]["length_y"] - 9.315
+                obj.scale.x = design["room"]["width_x"] / 6.9
             else:
                 raise ValueError(f"Unexpected untagged frozen mesh {obj.name}")
     shelf = next(
         record for record in design["objects"] if record["id"] == "P507-UTILITY-SHELF"
     )
     shelf_mesh(shelf, shelf_levels, collections[0])
+
+    # Add lightweight baked-gradient contact shadows under floor furniture and chairs.
+    shadow_mat = contact_shadow_material()
+    if chair_obj is not None:
+        add_shadow_quad(
+            "P507_CHAIR_CONTACT_SHADOW",
+            (0.0, -0.02, 0.0015),
+            (0.42, 0.42),
+            shadow_mat,
+            collections[0],
+        ).parent = None
+        # Add to every chair instance (stays inside chair's visual envelope and moves with it)
+        for chair_item in design["chairs"]["instances"]:
+            if chair_item["status"] != "PLACED_PROVISIONAL":
+                continue
+            cx, cy = chair_item["center"][:2]
+            q = add_shadow_quad(
+                chair_item["id"].replace("-", "_") + "_SHADOW",
+                (cx, cy, 0.0015),
+                (0.42, 0.42),
+                shadow_mat,
+                collections[0],
+                ident=chair_item["id"],
+            )
+            q.rotation_euler.z = __import__("math").radians(chair_item["orientation_deg"])
+        for obj in list(collections[0].objects):
+            if obj.name == "P507_CHAIR_CONTACT_SHADOW":
+                bpy.data.objects.remove(obj, do_unlink=True)
+
+    shadow_kinds = {
+        "table_standard", "table_small", "cabinet", "file_cabinet",
+        "fridge", "storage_shelf", "waste_bin", "shoe_rack", "water_dispenser",
+    }
+    for proxy in new_proxies:
+        if proxy.get("kind") not in shadow_kinds:
+            continue
+        xs = [pt[0] for pt in proxy["polygon"]]
+        ys = [pt[1] for pt in proxy["polygon"]]
+        cx, cy = (min(xs) + max(xs)) / 2.0, (min(ys) + max(ys)) / 2.0
+        sx = max(0.10, (max(xs) - min(xs)) - 0.02)
+        sy = max(0.10, (max(ys) - min(ys)) - 0.02)
+        add_shadow_quad(
+            proxy["id"].replace("-", "_") + "_CONTACT_SHADOW",
+            (cx, cy, 0.0012),
+            (sx, sy),
+            shadow_mat,
+            collections[0],
+            ident=proxy["id"],
+        )
     return bound_preserved
 
 
@@ -435,6 +675,7 @@ def build():
     equipment = collection("30_EQUIPMENT")
     ceiling = collection("40_CEILING")
     decor = collection("50_DECOR")
+    upgrade_r5_materials()
     replace_architecture(design, arch, collection("80_LOOKDEV_CAMERAS"))
     move_frozen_meshes(
         (furniture, equipment, ceiling),

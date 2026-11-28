@@ -94,7 +94,7 @@ try {
             await page.setViewportSize({ width: 390, height: 844 });
             const pose = await page.evaluate(() => {
                 const preview = window.__P507_R5_REVIEW__;
-                preview.aim("Cửa sổ và poster");
+                preview.aim("Cửa sổ và rèm");
                 return preview.snapshot();
             });
             const file = `${revision}-mobile-390.png`;
@@ -105,41 +105,82 @@ try {
             await context.close();
         }
     }
-    const gallery = await browser.newPage({ viewport: { width: 1200, height: 900 } });
-    const pairs = await Promise.all(report.revisions.r4.shots.map(async ({ pose, file }, index) => ({
-        name: pose.active + (file.includes("mobile") ? " · Mobile" : ""),
-        images: await Promise.all([file, report.revisions.r5.shots[index].file].map(async image =>
-            "data:image/png;base64," + (await readFile(resolve(out, image))).toString("base64"))),
-    })));
+    const oldEvidence = resolve(root, ".local/p507-r5/P507-R5-80b5d6f5e496-evidence");
+    const oldMapping = {
+        "Mặt bằng": "neutral-review/r5-01.png",
+        "Ba cụm bàn": "neutral-review/r5-02.png",
+        "Cụm A": "neutral-review/r5-03.png",
+        "Cụm B": "neutral-review/r5-04.png",
+        "Cụm C": "neutral-review/r5-05.png",
+        "TV, đồng hồ và poster": "neutral-review/r5-06.png",
+        "Kệ bốn tầng và bình nước": "neutral-review/r5-07.png",
+        "Khu tiện ích": "neutral-review/r5-08.png",
+        "Cửa sổ và rèm": "neutral-review/r5-09.png",
+        "Tường khung ảnh": "neutral-review/r5-10.png",
+        "Tường logo": "neutral-review/r5-11.png",
+        "Trần và ánh sáng": "neutral-review/r5-12.png",
+        "Lối A-B ghế kéo ra": "runtime/r5-aisle-A-B.png",
+        "Lối B-C ghế kéo ra": "runtime/r5-aisle-B-C.png",
+        "Cửa mở ra ngoài": "neutral-review/r5-13.png",
+        "Cửa đóng": "neutral-review/r5-14.png",
+        "Cửa sổ và rèm · Mobile": "neutral-review/r5-mobile-390.png",
+    };
+    const gallery = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const pairs = await Promise.all(report.revisions.r4.shots.map(async ({ pose, file }, index) => {
+        const label = pose.active + (file.includes("mobile") ? " · Mobile" : "");
+        const oldRel = oldMapping[label];
+        const oldPath = oldRel ? resolve(oldEvidence, oldRel) : null;
+        const oldSrc = oldPath && existsSync(oldPath)
+            ? "data:image/png;base64," + (await readFile(oldPath)).toString("base64")
+            : null;
+        const [r4Src, r5Src] = await Promise.all([file, report.revisions.r5.shots[index].file].map(async image =>
+            "data:image/png;base64," + (await readFile(resolve(out, image))).toString("base64")));
+        return { name: label, images: [r4Src, oldSrc, r5Src] };
+    }));
     await gallery.setContent(`
-        <meta charset="utf-8"><title>P507 R4 / R5</title>
+        <meta charset="utf-8"><title>P507 R4 / R5 cũ / R5 compact</title>
         <style>
-            body { margin: 32px; background: #17222a; color: #f3f6f6; font: 16px system-ui; }
-            section { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-            h2 { grid-column: span 2; margin: 0; font-size: 19px; }
-            figure { margin: 0; padding: 8px; background: #2b3740; }
-            img { width: 100%; height: 290px; object-fit: contain; display: block; }
-            figcaption { padding: 6px 0 2px; }
+            body { margin: 24px; background: #17222a; color: #f3f6f6; font: 15px system-ui; }
+            section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+            h2 { grid-column: span 3; margin: 0; font-size: 18px; }
+            figure { margin: 0; padding: 8px; background: #2b3740; display: flex; flex-direction: column; }
+            img { width: 100%; height: 240px; object-fit: contain; display: block; }
+            .absent { height: 240px; display: grid; place-items: center; color: #9fb0bd; border: 1px dashed #4a5a66; font-size: 13px; text-align: center; padding: 8px; }
+            figcaption { padding: 6px 0 2px; font-size: 13px; }
         </style>
-        <h1>P507 · R4 frozen / R5 proposal</h1>
+        <h1>P507 · Đối chiếu Frozen R4 (6,90×9,315) / R5 cũ 80b5d6f (8,63×15,55) / R5 compact mới (7,26×10,76)</h1>
         <main></main>`);
     await gallery.evaluate(async rows => {
+        const captions = [
+            "Frozen R4 (6,90 × 9,315 × 3,50 m)",
+            "R5 cũ 80b5d6f (8,63 × 15,55 × 3,50 m)",
+            "R5 compact mới (7,26 × 10,76 × 3,50 m)",
+        ];
         const target = document.querySelector("main");
         for (const row of rows) {
             const section = document.createElement("section");
             const heading = document.createElement("h2");
             heading.textContent = row.name;
             section.append(heading);
-            await Promise.all(row.images.map(async (src, index) => {
+            const figures = await Promise.all(row.images.map(async (src, index) => {
                 const figure = document.createElement("figure");
-                const image = new Image();
-                image.src = src;
+                if (src) {
+                    const image = new Image();
+                    image.src = src;
+                    figure.append(image);
+                    await image.decode();
+                } else {
+                    const placeholder = document.createElement("div");
+                    placeholder.className = "absent";
+                    placeholder.textContent = "Không có góc chụp tương ứng trong snapshot R5 cũ (80b5d6f)";
+                    figure.append(placeholder);
+                }
                 const caption = document.createElement("figcaption");
-                caption.textContent = index === 0 ? "Frozen R4" : "R5 PROPOSAL / PROVISIONAL / SYNTHETIC / VIRTUAL ADAPTATION";
-                figure.append(image, caption);
-                section.append(figure);
-                await image.decode();
+                caption.textContent = captions[index];
+                figure.append(caption);
+                return figure;
             }));
+            section.append(...figures);
             target.append(section);
         }
     }, pairs);

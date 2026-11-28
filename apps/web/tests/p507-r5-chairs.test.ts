@@ -94,3 +94,49 @@ test("all 34 proposal chairs can complete the four-action cycle at verified cand
         assert.deepEqual(room.pose(record.id), record.stored, record.id + " restored pose");
     }
 });
+
+test("negative collisions reject walls, desks, chairs, synthetic occupants, and tunneling", () => {
+    const checkout = fileURLToPath(new URL("../../..", import.meta.url));
+    const result = spawnSync(process.execPath ? (process.env.API_PYTHON ?? "python") : "python", ["-c",
+        'import sys,json;sys.path.insert(0,"experiments/p507-r5");from layout import build_layout;print(json.dumps(build_layout()))',
+    ], { cwd: checkout, encoding: "utf8" });
+    assert.equal(result.status, 0, result.error?.message ?? result.stderr);
+    const candidate = JSON.parse(result.stdout) as Layout & { spawn: [number, number, number] };
+    const room = new ChairRoom(candidate, candidate.spawn);
+
+    // Wall boundary collision
+    assert.equal(room.move(point([0.5, 0.5]), [-1, 0]).reason, "ROOM_BOUNDARY_OUTSIDE_UNSURVEYED");
+    // Desk collision
+    const deskA01 = candidate.static_walk_colliders.find(c => c.id === "P507-DESK-A01")!;
+    const deskCenter: [number, number] = [
+        (deskA01.polygon[0][0] + deskA01.polygon[2][0]) / 2,
+        -(deskA01.polygon[0][1] + deskA01.polygon[2][1]) / 2,
+    ];
+    assert.equal(room.blocked(deskCenter, deskCenter), "P507-DESK-A01");
+    // Anti-tunneling across a desk in one large jump
+    const a01 = candidate.chairs.find(c => c.id === "P507-CHAIR-A-01")!;
+    const southSide = point([a01.pulled[0], a01.pulled[1] - 0.6]);
+    const northSide = point([a01.pulled[0], a01.pulled[1] + 2.2]);
+    assert.ok(room.move(southSide, [northSide[0] - southSide[0], northSide[1] - southSide[1]]).reason);
+
+    // Chair and synthetic occupant negative collision: same spot 0.62 m from desk is clear when stored, blocked when pulled/occupied
+    const b01 = candidate.chairs.find(c => c.id === "P507-CHAIR-B-01")!;
+    const behindPulled = point([b01.pulled[0], b01.pulled[1] - 0.325]);
+    assert.equal(room.blocked(behindPulled, behindPulled), null);
+    const approach = [b01.approach!, ...(b01.approach_alternatives ?? [])].find(p => !room.blocked(point(p), point(p)))!;
+    assert.equal(room.action(b01.id, "sit", web(b01.stand)), "Thao tác không khả dụng");
+    assert.equal(room.action(b01.id, "store", web(approach)), "Thao tác không khả dụng");
+    assert.equal(room.action(b01.id, "pull", web(approach)), null);
+    frames(room);
+    assert.equal(room.blocked(behindPulled, behindPulled), b01.id);
+    // Sit too far from stand is rejected
+    assert.equal(room.action(b01.id, "sit", web(candidate.spawn)), "Hãy tới điểm tiếp cận phía trước ghế");
+    assert.equal(room.action(b01.id, "sit", web(b01.stand)), null);
+    // Pulling another chair while seated is rejected
+    assert.equal(room.action(a01.id, "pull", web(a01.approach!)), "Hãy đứng dậy trước");
+    // Synthetic occupant blocks space behind chair
+    assert.equal(room.blocked(behindPulled, behindPulled), b01.id);
+    assert.equal(room.action(b01.id, "stand", web(b01.seat_eye)), null);
+    room.reset();
+    assert.equal(room.state(b01.id), "stored");
+});

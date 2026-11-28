@@ -158,6 +158,31 @@ export async function loadR5(signal?: AbortSignal) {
     check(manifest.model_sha256 === hash && manifest.model_bytes === bytes.byteLength, "R5 GLB manifest identity mismatch");
     validateEmbeddedGlb(bytes);
     const gltf = await new GLTFLoader().parseAsync(bytes, directory);
+    gltf.scene.traverse(node => {
+        if (!(node instanceof Mesh)) return;
+        const mats = Array.isArray(node.material) ? node.material : [node.material];
+        const isShadowQuad = mats.some(m => m?.name?.includes("CONTACT_SHADOW"));
+        const isShell = /^P507_ARCH_(FLOOR|WALL_)/.test(node.name);
+        if (isShadowQuad) {
+            node.castShadow = false;
+            node.receiveShadow = false;
+            node.renderOrder = 1;
+            for (const m of mats) {
+                if (m) {
+                    m.depthWrite = false;
+                    m.polygonOffset = true;
+                    m.polygonOffsetFactor = -2;
+                }
+            }
+        } else if (isShell) {
+            node.castShadow = false;
+            node.receiveShadow = true;
+        } else {
+            const isGlass = mats.some(m => m?.transparent || /GLASS|CARAFE|PET|CLOCK_LENS/.test(m?.name ?? ""));
+            node.castShadow = !isGlass;
+            node.receiveShadow = true;
+        }
+    });
     const geometry = validateActualScene(gltf.scene, manifest, ids);
     return { revision: "R5" as const, gltf, manifest, geometry, hash, ids };
 }

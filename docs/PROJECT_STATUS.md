@@ -1,4 +1,10 @@
-# Trạng thái nhánh tổng rà soát M0–M5 — 20/11/2026
+# Trạng thái ứng viên R5 Compact & Visual Polish — 28/11/2026
+
+**IN_REVIEW trên `feat/p507-r5-fidelity-circulation-chair-interaction` ([Draft PR #34](https://github.com/duyanhtr130905/DATN-AIRC-WebXR/pull/34)).** Base `main` là `bd2d0baf4a593e73dfe1c6e8d8a5e74fd45ae3be` (sau PR #32). Ngày 28/11/2026 chủ dự án bác phương án kích thước R5 cũ (`8,63 × 15,55 × 3,50 m`, snapshot lịch sử `80b5d6f5e4967842dc435d96ee15996a78ad8cb7` được bảo toàn riêng trong `.local/p507-r5/`). Ứng viên R5 compact mới sử dụng kích thước `7,26 × 10,76 × 3,50 m` (tối ưu hành trình ghế `stored = 0,05 m`, `pulled = 0,295 m`, `stand = 0,585 m`, đạt lối đi occupied `A–B = 0,902 m`, `B–C = 0,907 m` với capsule `0,30 × 1,80 m`, giữ đủ 17 bàn / 34 ghế / 150 ID bố trí + 2 UNPLACED), nâng cấp ánh sáng/shadow/PBR/silhouette, mở rộng E2E WASD + raycast `Enter` + IWER, và cung cấp 22 góc ảnh đối chiếu + contact sheet 3 cột + video demo Chrome trung tính (`OWNER_VISUAL_APPROVAL=PENDING`, `PHOTO_REFERENCE_UNAVAILABLE`). Exact-HEAD verification, asset hashes (`P507_R5_PROPOSAL.glb` SHA-256 `0fab4225ea5b965798a4c345b5f78f0ca80e6da70be7bcf6f254119c62663c92`) và kết quả chạy thực tế gắn trong Draft PR #34; **chưa merge PR #34**, bảo toàn nguyên bản R4. Trạng thái milestone M0/M1/M2 (R4 functional prototype) giữ DONE theo phạm vi đã duyệt; M3–M5 giữ gate thực địa/quyền/thiết bị `#1–#5/#20/#22`; M6/M7 PLANNED. Xem [đặc tả và kiểm chứng R5](3d-production/P507-R5-REVISION-PROPOSAL.md).
+
+---
+
+## AS-OF nhánh tổng rà soát M0–M5 — 20/11/2026
 
 **IN_REVIEW trên `feat/post-m5-m0-m5-gap-closure`.** Base main đã fetch `735eebc0925a851e04f9bd1821c94bca46930597`. [Ma trận G0–G12](closure/M0-M5-GAP-MATRIX.md) ghi lỗi M4 tại ngưỡng 500 được xử lý bằng ordinal kết thúc riêng và migration 0007, chờ theo trạng thái trong Chrome M4, cùng raw frame timing cho người vận hành M5. Bằng chứng exact HEAD và CI nằm trên Draft PR. M0/M1/M2 giữ DONE theo phạm vi đã duyệt. M3 nguồn/quyền, M4 policy thật, M5 thiết bị, #20 R4 fidelity và #22 privileged restore vẫn có gate riêng. M6/M7 PLANNED. Trạng thái này mô tả ứng viên trên nhánh.
 

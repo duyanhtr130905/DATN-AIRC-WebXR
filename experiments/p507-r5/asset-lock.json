@@ -3,12 +3,12 @@
   "revision": "R5",
   "files": {
     "P507_R5_PROPOSAL.glb": {
-      "bytes": 16229404,
-      "sha256": "a8cf0c86747fc4877868f3c5a3b285f895b27d62e5f0318321ed2fb93407cf7e"
+      "bytes": 17423320,
+      "sha256": "0fab4225ea5b965798a4c345b5f78f0ca80e6da70be7bcf6f254119c62663c92"
     },
     "asset-manifest.json": {
-      "bytes": 755813,
-      "sha256": "ed969e1e56f824cf1bc937537fbaa1ed4918275e08c9a0a2f02677f261f1e927"
+      "bytes": 755783,
+      "sha256": "290af961c496b7d100b607ffcc2c6a5f44729b5fbac6ca67b82c54815700b7fa"
     }
   }
 }

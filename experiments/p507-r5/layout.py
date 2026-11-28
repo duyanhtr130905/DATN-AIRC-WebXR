@@ -12,13 +12,16 @@ sys.path.insert(0, str(R4))
 from geometry import occupancy
 
 R5_LABEL = "R5 PROPOSAL / PROVISIONAL / SYNTHETIC / VIRTUAL ADAPTATION"
-DIMENSIONS = (8.63, 15.55, 3.50)
-CLUSTER_SHIFTS = {"A": (0, 5.80), "B": (0.80, 3.40), "C": (0.20, 0.95)}
+DIMENSIONS = (7.26, 10.76, 3.50)
+CLUSTER_SHIFTS = {"A": (-0.15, 1.387), "B": (0.12, 0.955), "C": (-0.25, 0.468)}
 PLAYER_RADIUS = 0.30
 PLAYER_HEIGHT = 1.80
 AISLE_TARGET = 0.90
 SHELF_SURFACES = (0.0525, 0.77, 1.47, 2.175)
 HISTORICAL_UNPLACED = {"P507-CHAIR-C-09", "P507-CHAIR-C-10"}
+STORED_FROM_DESK = 0.05
+PULLED_FROM_DESK = 0.295
+STAND_BEHIND_CHAIR = 0.585
 
 # Component boxes enclose the neutral chair parts authored in chair_module().
 CHAIR_COMPONENTS = [
@@ -74,15 +77,14 @@ def design_inventory():
     data["virtual_experience"].pop("horizontal_expansion_factor", None)
     data["virtual_experience"].update(design_freeze="PROPOSAL", scope="R5_LOCAL_DEV_ONLY")
     data.update(label=R5_LABEL, layout_revision=5)
-    shelf_y = 7.81
     utility = {
-        "P507-CABINET-FILES": (6.01, 7.01),
-        "P507-FRIDGE": (7.16, 7.76),
-        "P507-UTILITY-SHELF": (shelf_y, shelf_y + 2.25),
-        "P507-WASTE-BIN": (10.16, 10.48),
-        "P507-SHOE-RACK": (10.58, 11.88),
-        "P507-WHITEBOARD": (10.395, 11.845),
-        "P507-TV-SMALL": (8.31, 9.11),
+        "P507-CABINET-FILES": (0.35, 1.35),
+        "P507-FRIDGE": (1.65, 2.25),
+        "P507-UTILITY-SHELF": (2.50, 4.75),
+        "P507-WASTE-BIN": (5.20, 5.52),
+        "P507-SHOE-RACK": (5.82, 7.12),
+        "P507-WHITEBOARD": (5.72, 7.17),
+        "P507-TV-SMALL": (3.00, 3.80),
     }
     for item in data["objects"]:
         cluster = item.get("cluster")
@@ -91,14 +93,16 @@ def design_inventory():
         if item.get("support_id") == "P507-CABINET-LOW":
             item["rect"] = shift_rect(item["rect"], 0, dy_room)
         if item["id"] == "P507-TV-LARGE-MOUNT":
-            item["rect"] = shift_rect(item["rect"], .55, dy_room)
+            item["rect"] = shift_rect(item["rect"], .45, dy_room)
             item["bottom_z"] += .04
         if item["id"] in utility:
-            item["rect"][1], item["rect"][3] = [y + dy_room - 5.60 for y in utility[item["id"]]]
+            item["rect"][1], item["rect"][3] = utility[item["id"]]
         if item["id"] == "P507-UTILITY-SHELF":
             item["height"] = SHELF_SURFACES[-1]
         if item["id"] == "P507-TV-SMALL":
             item["bottom_z"] = SHELF_SURFACES[-1]
+        if item.get("wall_mount") == "south":
+            item["rect"] = shift_rect(item["rect"], dx_room / 2, 0)
     shift_door(data["openings"]["door"], dy_room)
     data["handoff"]["starting_feet_survey"] = shift_point(
         data["handoff"]["starting_feet_survey"], 0, dy_room
@@ -112,7 +116,7 @@ def design_inventory():
         window["proxy_rect"] = shift_rect(window["proxy_rect"], dx_room, dy)
         window["blind"]["rect"] = shift_rect(window["blind"]["rect"], dx_room, dy)
     for key, item in data["hero"].items():
-        dx = .55 if key == "tv" else 0
+        dx = .45 if key == "tv" else 0
         item["center"] = shift_point(item["center"], dx, dy_room)
         if key == "tv":
             item["center"][2] += .04
@@ -123,7 +127,7 @@ def design_inventory():
         if "occupancy_rect" in item:
             item["occupancy_rect"] = shift_rect(item["occupancy_rect"], dx, dy_room)
     for frame in data["photo_wall"]["frames"]:
-        frame["center"] = shift_point(frame["center"], .75, dy_room)
+        frame["center"] = shift_point(frame["center"], .55, dy_room)
     for item in data["ceiling"]["instances"]:
         x, y, _ = item["center"]
         item["center"] = shift_point(
@@ -166,22 +170,23 @@ def chair_spec(item, desks):
     x, y = shift_point(item["center"], *CLUSTER_SHIFTS[item["cluster"]])
     angle = item["orientation_deg"]
     y += {"P507-CHAIR-B-11": .06, "P507-CHAIR-B-12": -.06}.get(item["id"], 0)
-    origin = [x, y, 0]
     desk_id = desk_binding((x, y), angle, desks)
-    stored = local_to_room([0, .16, 0], origin, angle)
-    pull_from_r4 = .66 if angle in (90, 270) else .98
-    pulled = local_to_room([0, -pull_from_r4, 0], origin, angle)
+    desk = next(d for d in desks if d["id"] == desk_id)
+    x0, y0, x1, y1 = desk["rect"]
+    edge = {0: [x, y0, 0], 180: [x, y1, 0], 90: [x1, y, 0], 270: [x0, y, 0]}[angle]
+    stored = local_to_room([0, -STORED_FROM_DESK, 0], edge, angle)
+    pulled = local_to_room([0, -PULLED_FROM_DESK, 0], edge, angle)
     outer_row = (item["cluster"], angle) in (("C", 0), ("A", 180))
-    pull_from = [0, -.59, 0]
+    stand_offset = [0, -STAND_BEHIND_CHAIR, 0]
     return {
         "id": item["id"], "desk_id": desk_id, "cluster": item["cluster"],
         "orientation_deg": angle, "stored": stored, "pulled": pulled,
         "seat_eye": local_to_room([0, .05, 1.20], pulled, angle),
-        "stand": local_to_room([0, .545, 0], pulled, angle),
-        "approach": local_to_room(pull_from, pulled, angle),
+        "stand": local_to_room(stand_offset, pulled, angle),
+        "approach": local_to_room(stand_offset, pulled, angle),
         "approach_alternatives": [
-            local_to_room([x, y, 0], pulled, angle)
-            for x in (-.55, .55) for y in (0, .55)
+            local_to_room([dx, dy, 0], pulled, angle)
+            for dx in (-.56, .56) for dy in (-.15, .20)
         ] if outer_row else [],
         "components": copy.deepcopy(CHAIR_COMPONENTS),
         "occupied_components": copy.deepcopy(OCCUPIED_COMPONENTS),
