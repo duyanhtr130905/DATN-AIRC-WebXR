@@ -88,6 +88,11 @@ def design_inventory():
         cluster = item.get("cluster")
         if cluster in CLUSTER_SHIFTS:
             item["rect"] = shift_rect(item["rect"], *CLUSTER_SHIFTS[cluster])
+        if item.get("support_id") == "P507-CABINET-LOW":
+            item["rect"] = shift_rect(item["rect"], 0, dy_room)
+        if item["id"] == "P507-TV-LARGE-MOUNT":
+            item["rect"] = shift_rect(item["rect"], .55, dy_room)
+            item["bottom_z"] += .04
         if item["id"] in utility:
             item["rect"][1], item["rect"][3] = [y + dy_room - 5.60 for y in utility[item["id"]]]
         if item["id"] == "P507-UTILITY-SHELF":
@@ -232,12 +237,7 @@ def build_layout():
             item["center"] = chair["stored"][:2]
             chairs.append(chair)
     proxies = occupancy(design)
-    # The R4 TV mount helper uses a constant X; carry it with the TV in R5.
-    for proxy in proxies:
-        if proxy["id"] == "P507-TV-LARGE-MOUNT":
-            proxy["polygon"] = [shift_point(point, .55, 0) for point in proxy["polygon"]]
-            proxy["bottom_z"] += .04
-            proxy["top_z"] += .04
+
     static = [proxy for proxy in proxies if proxy.get("kind") != "chair"]
     desk_ids = {desk["id"] for desk in desks}
     return {

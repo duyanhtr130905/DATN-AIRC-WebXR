@@ -102,3 +102,7 @@ python experiments/p507-r5/verify_export.py $r5Export --verify
 ```
 
 `validate_glb.mjs` dùng gói `gltf-validator` đã ghim trong thư mục công cụ cục bộ theo quy trình G1/G2. Mỗi report giữ cùng thư mục với bản model tương ứng. Dùng `--prepare` cho bản khớp lock.
+
+Ảnh Chrome ở giai đoạn kiểm tra phát hiện cụm khung ảnh cũ chồng với phụ kiện TV và ba vật trưng bày chưa đi theo tủ thấp. Ứng viên dịch cụm khung ảnh nguyên khối thêm 0,75 m dọc X, dịch các vật trưng bày theo tủ và dịch giá treo cùng TV. Kiểm tra độc lập xác minh hình chiếu các khung, mặt đỡ tủ và giao giữa giá treo với thân TV.
+
+Khi tab bị ẩn, thao tác kéo/cất đang chạy dở quay về trạng thái ổn định. Trạng thái đã ngồi được giữ khi tab hiện lại. Tải lại, reset và kết thúc XR xử lý trạng thái ghế theo vòng đời của viewer. Fixture hành lang dùng 34 collider người ngồi tổng hợp; trong ảnh chỉ hiển thị mô hình ghế.

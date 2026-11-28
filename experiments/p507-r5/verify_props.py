@@ -117,6 +117,14 @@ def verify_props(manifest):
                 and south["to_y"] < bounds[ident][1] < bounds[ident][4] < north["from_y"],
                 f"Window poster blocks an opening: {ident}")
     cabinet = bounds["P507-CABINET-LOW"]
+    cabinet_top = [cabinet[i] for i in (0, 1, 3, 4)]
+    for ident, item in placed.items():
+        if item["survey_transform"].get("support_id") == "P507-CABINET-LOW":
+            require(within(cabinet_top, bounds[ident]) and near(cabinet[5], bounds[ident][2]),
+                    f"Display item is unsupported: {ident}")
+    mount = bounds["P507-TV-LARGE-MOUNT"]
+    require(overlaps(mount, tv) and near(mount[4], manifest["virtual_dimensions"]["length_y"] - .05),
+            "Large TV mount does not connect the wall and television")
     require(cabinet[0] < (clock[0] + clock[3]) / 2 < cabinet[3] and cabinet[5] < clock[2],
             "Clock not above low display cabinet")
     for ident in [*poster_ids[:2], "P507-CLOCK-01"]:

@@ -221,7 +221,9 @@ export default function Visitor() {
     const details = useMemo(() => new Map<string, Detail>(asset?.manifest.instances
         .filter(row => ids?.has(row.id)).map(row => [row.id, {
             id: row.id,
-            kind: asset.manifest.collision_proxies.find(proxy => proxy.id === row.id)?.kind ?? "UNKNOWN",
+            kind: "logical_type" in row && typeof row.logical_type === "string"
+                ? row.logical_type
+                : asset.manifest.collision_proxies.find(proxy => proxy.id === row.id)?.kind ?? "UNKNOWN",
             status: row.status,
             source: String(row.survey_transform.source_kind ?? "UNKNOWN"),
             position: String(row.survey_transform.position_source ?? "UNKNOWN"),

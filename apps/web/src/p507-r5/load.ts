@@ -136,6 +136,13 @@ function validateActualScene(root: Object3D, manifest: R5Manifest, ids: Set<stri
         if (item.status === "UNPLACED") continue;
         const actual = matched.get(item.id);
         check(actual && !actual.isEmpty(), "R5 missing mesh geometry for " + item.id);
+        const authored = item.authored_bounds_survey;
+        check(finite(authored, 6), "Invalid R5 authored bounds: " + item.id);
+        const [x0, y0, z0, x1, y1, z1] = authored;
+        const expected = [x0, z0, -y1, x1, z1, -y0];
+        const world = [...actual.min.toArray(), ...actual.max.toArray()];
+        check(world.every((value, index) => Math.abs(value - expected[index]) <= .003),
+            "R5 GLTFLoader bounds mismatch: " + item.id);
     }
     return { placedIDs: matched.size, vertexSamples };
 }
