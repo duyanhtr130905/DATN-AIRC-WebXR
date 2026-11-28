@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "revision": "R5",
+  "files": {
+    "P507_R5_PROPOSAL.glb": {
+      "bytes": 16229400,
+      "sha256": "41e839d30c9631b27cfd5a875bfbb9a3ea11ac628bb696b0095219c601f48f4c"
+    },
+    "asset-manifest.json": {
+      "bytes": 754908,
+      "sha256": "928b78a67ce4e2e9f20115d162d45fbbaff2d3a6ca7644afa90fafa0ce0ba472"
+    }
+  }
+}
