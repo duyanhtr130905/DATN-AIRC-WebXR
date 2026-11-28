@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đối chiếu mô hình P507</title>
+  <style>
+    body { margin: 0; background: #24282c; color: white; font: 15px system-ui, sans-serif; }
+    header { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; padding: .75rem; }
+    a { color: #bde2ff; }
+    canvas { display: block; width: 100%; height: calc(100dvh - 5.5rem); }
+    #status { margin: 0 .75rem .5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>P507</strong>
+    <a href="?revision=r4">R4 frozen</a>
+    <a href="?revision=r5">R5 proposal</a>
+    <label>Góc xem <select id="camera" disabled></select></label>
+  </header>
+  <p id="status" role="status">Đang kiểm tra mô hình</p>
+  <canvas id="scene" aria-label="Mô hình 3D P507"></canvas>
+  <script type="module" src="/src/p507-r5-review.ts"></script>
+</body>
+</html>
