@@ -2,8 +2,21 @@ import { XROrigin, useXR } from "@react-three/xr";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { BufferAttribute, BufferGeometry, CanvasTexture, Group, Line, LineBasicMaterial, Matrix4, Mesh, Quaternion, Raycaster, SRGBColorSpace, Vector3 } from "three";
-import { displacement, Navigation, SPAWN, type Point } from "../p507-e1/core.ts";
+import { displacement, type Navigation, SPAWN, type Point } from "../p507-e1/core.ts";
+import { labels, type ChairRoom } from "../p507-r5/chairs.ts";
 import { intersectLogical, previewHit, tabletopCutaway, thumbstick, visibleRoomHit } from "./runtime.ts";
+
+declare global {
+    interface Window {
+        __P507_R5_VR_TEST__?: {
+            place(point: Point): void;
+            valid(point: Point): boolean;
+            tracker(): { world: number[]; reference: number[]; originYaw: number };
+            toReference(world: number[]): number[];
+            actionTarget(index: number): number[];
+        };
+    }
+}
 
 type Preview = "waiting" | "surface" | "unavailable" | "placed";
 export const provenance = "R4 · PROVISIONAL / USER_REPORTED · quyền đang chờ";
@@ -18,8 +31,9 @@ function makePanel() {
     return { canvas, texture };
 }
 
-export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, record }: {
-    nav: Navigation; ids: Set<string>; model: Group; mount: RefObject<Group | null>;
+export function Immersive({ nav, chairRoom, footprint, ids, model, mount, detail, ar, pick, exit, record }: {
+    nav: Pick<Navigation, "blocked" | "move">; chairRoom?: ChairRoom; footprint?: Point;
+    ids: Set<string>; model: Group; mount: RefObject<Group | null>;
     detail?: Detail; ar: boolean; pick(id: string | null): void; exit(): void;
     record(event: string): void;
 }) {
@@ -57,6 +71,9 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
             record("ar:" + value);
         }
     }
+    const [chairMessage, setChairMessage] = useState("");
+    const selectedId = useRef<string>(undefined);
+    selectedId.current = detail?.id;
     const exitRef = useRef(exit);
     exitRef.current = exit;
 
@@ -67,10 +84,13 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         const selectedPanel = panel.current!;
         target.current = null;
         anchor.current = null;
-        lastSafe.current = [...SPAWN];
+        const spawn = chairRoom?.spawn ?? SPAWN;
+        lastSafe.current = [...spawn];
+        setChairMessage("");
         collision.current = null;
         navBlock.current = null;
-        view.position.set(ar ? 0 : SPAWN[0], 0, ar ? 0 : SPAWN[1]);
+        view.position.set(ar ? 0 : spawn[0], 0, ar ? 0 : spawn[1]);
+        view.quaternion.identity();
         group.visible = !ar;
         group.position.set(0, 0, 0);
         group.scale.setScalar(ar ? 0.08 : 1);
@@ -80,12 +100,41 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         const restoreShell = ar ? tabletopCutaway(model, ids) : undefined;
         let cancelled = false;
 
+        const vrTest = import.meta.env.DEV && chairRoom && !ar && location.pathname === "/tests/r5-walk.html";
+        if (vrTest) {
+            const toReference = (position: Vector3) => view.worldToLocal(position).toArray();
+            window.__P507_R5_VR_TEST__ = {
+                valid: point => !nav.blocked(point, point),
+                place(point) {
+                    if (chairRoom.seat || nav.blocked(point, point)) throw new Error("Invalid VR fixture placement");
+                    const offset = scratch.current.head.clone().applyQuaternion(view.quaternion);
+                    view.position.set(point[0] - offset.x, 0, point[1] - offset.z);
+                    view.updateMatrixWorld(true);
+                    lastSafe.current = [...point];
+                    collision.current = null;
+                    setStationary(false);
+                },
+                tracker() {
+                    const position = scratch.current.head.clone();
+                    return {
+                        world: view.localToWorld(position.clone()).toArray(),
+                        reference: position.toArray(),
+                        originYaw: view.rotation.y,
+                    };
+                },
+                toReference: position => toReference(new Vector3().fromArray(position)),
+                actionTarget: index => toReference(selectedPanel.localToWorld(
+                    new Vector3(-.315 + .319 * index, -.11, 0),
+                )),
+            };
+        }
         const inputChanged = () => {
             setInputs(session.inputSources.length);
             record("inputs:" + session.inputSources.length);
         };
         const visible = () => {
             target.current = null;
+            if (session.visibilityState !== "visible") chairRoom?.interrupt();
             record("visibility:" + session.visibilityState);
         };
         const select = (event: XRInputSourceEvent) => {
@@ -104,10 +153,44 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
                 exitRef.current();
                 return;
             }
+            if (chairRoom && ui?.uv && ui.uv.y < 0.24 && selectedId.current) {
+                const id = selectedId.current;
+                const actions = chairRoom.actions(id, ar ? "ar" : "vr");
+                const action = actions[Math.floor(ui.uv.x / 0.34)];
+                if (!action || (!ar && collision.current)) return;
+                const viewer = event.frame.getViewerPose(reference);
+                if (!viewer && !ar) return;
+                const localHead = viewer
+                    ? new Vector3().setFromMatrixPosition(new Matrix4().fromArray(viewer.transform.matrix))
+                    : new Vector3();
+                const worldHead = localHead.clone().applyMatrix4(view.matrixWorld);
+                const message = chairRoom.action(id, action, { mode: ar ? "ar" : "vr", position: [worldHead.x, worldHead.z] });
+                setChairMessage(message ?? labels[action]);
+                record("chair:" + action + ":" + id + (message ? ":blocked" : ""));
+                if (!message && (action === "sit" || action === "stand") && viewer) {
+                    const chair = chairRoom.entries.get(id)!.chair;
+                    const targetPose = action === "sit" ? chair.seat_eye : chair.stand;
+                    if (action === "sit") {
+                        const look = new Vector3(0, 0, -1)
+                            .applyQuaternion(new Quaternion().setFromRotationMatrix(new Matrix4().fromArray(viewer.transform.matrix)));
+                        const headYaw = Math.atan2(-look.x, -look.z);
+                        view.rotation.set(0, chair.orientation_deg * Math.PI / 180 - headYaw, 0);
+                    }
+                    const offset = localHead.applyQuaternion(view.quaternion);
+                    view.position.set(targetPose[0] - offset.x, action === "sit" ? targetPose[2] - offset.y : 0,
+                        -targetPose[1] - offset.z);
+                    lastSafe.current = [targetPose[0], -targetPose[1]];
+                    collision.current = null;
+                    setStationary(false);
+                    view.updateMatrixWorld();
+                }
+                return;
+            }
             if (ar && previewState.current !== "placed") {
                 if (!target.current || previewState.current !== "surface") return;
                 anchor.current = target.current.clone();
-                group.position.copy(anchor.current).add(new Vector3(-0.08 * 3.45, 0, 0.08 * 4.6575));
+                const [width, length] = footprint ?? [6.9, 9.315];
+                group.position.copy(anchor.current).add(new Vector3(-0.04 * width, 0, 0.04 * length));
                 group.visible = true;
                 group.updateMatrixWorld(true);
                 updatePreview("placed");
@@ -141,10 +224,12 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         }
         return () => {
             cancelled = true;
+            if (vrTest) delete window.__P507_R5_VR_TEST__;
             hitSource.current?.cancel();
             restoreShell?.();
             hitSource.current = null;
             target.current = null;
+            chairRoom?.reset();
             session.removeEventListener("select", select);
             session.removeEventListener("selectend", released);
             session.removeEventListener("inputsourceschange", inputChanged);
@@ -155,12 +240,14 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
             group.updateMatrixWorld(true);
         };
         // A fresh effect owns the listeners and hit-test source for each session.
-    }, [session, ar, gl, ids, model, mount, pick, record]);
+    }, [session, ar, chairRoom, footprint, gl, ids, model, mount, pick, record]);
 
+    const chairState = detail && chairRoom?.state(detail.id);
+    const chairMoving = chairRoom?.moving;
     useEffect(() => {
         const ctx = label.canvas.getContext("2d")!;
         const lines = detail ? [detail.id, detail.kind + " · " + detail.status,
-            "Nguồn " + detail.source] : [
+            chairState ? chairMessage || chairState : "Nguồn " + detail.source] : [
             ar ? "P507 · Mô hình để bàn có mặt cắt" : "P507 · Tham quan VR",
             ar ? (preview === "unavailable" ? "Hit test không khả dụng" :
                 preview === "placed" ? "Chạm để chọn đối tượng" :
@@ -178,14 +265,23 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         ctx.fillText(lines[2], 32, 180, 950);
         ctx.fillStyle = "#e5cdf0";
         ctx.font = "28px sans-serif";
-        ctx.fillText(provenance, 32, 230, 950);
+        ctx.fillText(chairRoom ? "R5 PROPOSAL / PROVISIONAL / SYNTHETIC / VIRTUAL ADAPTATION" : provenance, 32, 230, 950);
+        if (chairState && detail && chairRoom && !chairMoving) {
+            chairRoom.actions(detail.id, ar ? "ar" : "vr").forEach((action, index) => {
+                ctx.fillStyle = "#d8ebdf";
+                ctx.fillRect(index * 348, 244, 335, 76);
+                ctx.fillStyle = "#172f29";
+                ctx.font = "bold 31px sans-serif";
+                ctx.fillText(labels[action], index * 348 + 18, 294, 295);
+            });
+        }
         ctx.fillStyle = "#f1e2c5";
         ctx.fillRect(707, 244, 317, 76);
         ctx.fillStyle = "#172f29";
         ctx.font = "bold 33px sans-serif";
         ctx.fillText("Thoát XR", 766, 294);
         label.texture.needsUpdate = true;
-    }, [detail, ar, preview, stationary, inputs, label]);
+    }, [detail, ar, preview, stationary, inputs, label, chairRoom, chairState, chairMoving, chairMessage]);
     useEffect(() => () => {
         label.texture.dispose();
         beam.geometry.dispose();
@@ -209,22 +305,28 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         head.setFromMatrixPosition(matrix.fromArray(pose.transform.matrix));
         headQuaternion.setFromRotationMatrix(matrix);
         if (!ar) {
-            const actual: Point = [view.position.x + head.x, view.position.z + head.z];
-            const path = nav.blocked(lastSafe.current, actual);
+            view.updateMatrixWorld();
+            world.copy(head).applyMatrix4(view.matrixWorld);
+            const actual: Point = [world.x, world.z];
+            const path = chairRoom?.seat
+                ? Math.hypot(actual[0] - lastSafe.current[0], actual[1] - lastSafe.current[1]) > .36
+                    ? "R5_SEATED_BOUNDARY" : null
+                : nav.blocked(lastSafe.current, actual);
             if (collision.current !== path) {
                 collision.current = path;
                 setStationary(Boolean(path));
                 record("physical-boundary:" + (path ?? "clear"));
             }
             group.visible = !path;
-            if (!path) {
+            if (!path && !chairRoom?.seat) {
                 const [forward, strafe] = thumbstick(session);
-                direction.set(0, 0, -1).applyQuaternion(headQuaternion);
+                direction.set(0, 0, -1).applyQuaternion(headQuaternion).applyQuaternion(view.quaternion);
                 const yaw = Math.atan2(-direction.x, -direction.z);
                 const next = nav.move(actual, displacement(forward, strafe, yaw, dt));
-                if (view.position.x !== next.position[0] - head.x || view.position.z !== next.position[1] - head.z) {
-                    view.position.x = next.position[0] - head.x;
-                    view.position.z = next.position[1] - head.z;
+                const offset = world.copy(head).applyQuaternion(view.quaternion);
+                if (view.position.x !== next.position[0] - offset.x || view.position.z !== next.position[1] - offset.z) {
+                    view.position.x = next.position[0] - offset.x;
+                    view.position.z = next.position[1] - offset.z;
                 }
                 lastSafe.current = next.position;
                 if (navBlock.current !== next.reason) {
@@ -247,7 +349,7 @@ export function Immersive({ nav, ids, model, mount, detail, ar, pick, exit, reco
         }
         view.updateMatrixWorld();
         ui.position.set(0, 0.27, -1.35).applyQuaternion(headQuaternion).add(head).applyMatrix4(view.matrixWorld);
-        ui.quaternion.copy(headQuaternion);
+        ui.quaternion.copy(view.quaternion).multiply(headQuaternion);
         ui.updateMatrixWorld();
         const sources = Array.from(session.inputSources);
         const source = sources.find(input => input.targetRayMode === "tracked-pointer" && input.handedness === "right") ??

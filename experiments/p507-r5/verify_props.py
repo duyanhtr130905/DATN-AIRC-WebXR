@@ -119,6 +119,15 @@ def verify_props(manifest):
     cabinet = bounds["P507-CABINET-LOW"]
     require(cabinet[0] < (clock[0] + clock[3]) / 2 < cabinet[3] and cabinet[5] < clock[2],
             "Clock not above low display cabinet")
+    for ident in [*poster_ids[:2], "P507-CLOCK-01"]:
+        for frame, frame_bounds in bounds.items():
+            if frame.startswith("P507-FRAME-"):
+                shared_projection = all(
+                    min(bounds[ident][axis + 3], frame_bounds[axis + 3])
+                    - max(bounds[ident][axis], frame_bounds[axis]) > EPSILON
+                    for axis in (0, 2)
+                )
+                require(not shared_projection, f"TV wall fixtures overlap in elevation: {ident} / {frame}")
     for a, b in combinations([*poster_ids, "P507-CLOCK-01", "P507-TV-LARGE"], 2):
         require(not overlaps(bounds[a], bounds[b]), f"Wall assets overlap: {a} / {b}")
     return {"counts": counts, "workstations": dict(stations), "shelf_tiers": shelf_props}

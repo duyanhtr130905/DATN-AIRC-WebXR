@@ -118,7 +118,7 @@ def design_inventory():
         if "occupancy_rect" in item:
             item["occupancy_rect"] = shift_rect(item["occupancy_rect"], dx, dy_room)
     for frame in data["photo_wall"]["frames"]:
-        frame["center"] = shift_point(frame["center"], 0, dy_room)
+        frame["center"] = shift_point(frame["center"], .75, dy_room)
     for item in data["ceiling"]["instances"]:
         x, y, _ = item["center"]
         item["center"] = shift_point(

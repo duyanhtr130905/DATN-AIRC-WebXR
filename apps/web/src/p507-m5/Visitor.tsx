@@ -1,11 +1,13 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { XR, useXR } from "@react-three/xr";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Group, type WebGLRenderer } from "three";
+import { Box3, Group, Vector3, type WebGLRenderer } from "three";
 import { ErrorBoundary } from "../components/ErrorBoundary.tsx";
-import { Navigation } from "../p507-e1/core.ts";
+import { Navigation, logicalId, type Point } from "../p507-e1/core.ts";
 import { loadFrozenP507 } from "../p507-e1/load.ts";
 import { reference } from "../p507-e1/scene-contract.ts";
+import { ChairRoom, labels, type Action } from "../p507-r5/chairs.ts";
+import { bindChairMeshes, loadR5 } from "../p507-r5/load.ts";
 import { Desktop, type DeskAction } from "./Desktop.tsx";
 import { Immersive, provenance, type Detail } from "./Immersive.tsx";
 import { disposeRoom, rendererInfo } from "./runtime.ts";
@@ -13,7 +15,8 @@ import { modes, useP507Session } from "./session.ts";
 import { interruptTiming, sampleTiming, startTiming, type TimingCapture, type TimingMode } from "./timing.ts";
 import "./visitor.css";
 
-const ids = new Set(reference.records.map(record => record.id));
+const frozenIds = new Set(reference.records.map(record => record.id));
+const r5Label = "R5 PROPOSAL / PROVISIONAL / SYNTHETIC / VIRTUAL ADAPTATION";
 const controls: [DeskAction, string][] = [
     ["forward", "Tiến"], ["back", "Lùi"], ["left", "Sang trái"], ["right", "Sang phải"],
     ["turn-left", "Xoay trái"], ["turn-right", "Xoay phải"], ["reset", "Về điểm bắt đầu"],
@@ -33,7 +36,8 @@ const statusLabels = {
     failed: "Lỗi runtime XR. Bạn có thể thử lại hoặc dùng Web 3D.",
     "context-lost": "Mất ngữ cảnh WebGL. Bạn vẫn có thể dùng danh sách đối tượng.",
 };
-type Asset = Awaited<ReturnType<typeof loadFrozenP507>>;
+type Asset = (Awaited<ReturnType<typeof loadFrozenP507>> & { revision: "R4" }) |
+    Awaited<ReturnType<typeof loadR5>>;
 type Evidence = {
     record(event: string): void;
     startTiming(mode: TimingMode, durationMs?: number): void;
@@ -41,6 +45,9 @@ type Evidence = {
     frames: Record<string, number[]>;
     events: string[];
     timing?: TimingCapture;
+    webPose?: { x: number; z: number; yaw: number; eye: number };
+    r5Bounds?(id: string): { min: number[]; max: number[]; center: number[] } | undefined;
+    snapshotR5?(): { chairs: Record<string, unknown>; moving?: string; seated?: string };
 };
 declare global { interface Window { __P507_M5__?: Evidence } }
 
@@ -98,6 +105,10 @@ function FrameEvidence() {
         const report = window.__P507_M5__;
         if (!report) return;
         const session = gl.xr.getSession();
+        if (!session && report.snapshotR5) {
+            const { position, rotation } = state.camera;
+            report.webPose = { x: position.x, z: position.z, yaw: rotation.y, eye: position.y };
+        }
         const mode = frame ? (session?.environmentBlendMode === "opaque" ? "vr" : "ar") : "web";
         const visible = session ? session.visibilityState === "visible" : !document.hidden;
         const timing = report.timing;
@@ -121,6 +132,30 @@ function FrameEvidence() {
         if (last?.mode === mode && samples.length < 360 && timestamp > last.timestamp) samples.push(timestamp - last.timestamp);
         previous.current = { mode, timestamp };
     });
+    return null;
+}
+
+function ChairFrames({ model, room }: { model: Group; room: ChairRoom }) {
+    const syncMesh = useMemo(() => bindChairMeshes(model, room), [model, room]);
+    useEffect(() => {
+        const evidence = window.__P507_M5__;
+        if (!evidence) return;
+        const known = new Set(room.chairIDs);
+        evidence.r5Bounds = id => {
+            if (!known.has(id)) return undefined;
+            const bounds = new Box3();
+            model.updateWorldMatrix(true, true);
+            model.traverse(node => {
+                if (node.userData.survey_instance_id !== id || logicalId(node.parent, known)) return;
+                bounds.union(new Box3().setFromObject(node, true));
+            });
+            return bounds.isEmpty() ? undefined : {
+                min: bounds.min.toArray(), max: bounds.max.toArray(), center: bounds.getCenter(new Vector3()).toArray(),
+            };
+        };
+        return () => { delete evidence.r5Bounds; };
+    }, [model, room]);
+    useFrame((_, dt) => { room.tick(dt); syncMesh(); });
     return null;
 }
 
@@ -156,14 +191,19 @@ function assetFailure(error: unknown) {
 }
 
 export default function Visitor() {
+    const isR5 = useMemo(() => new URLSearchParams(location.search).get("revision") === "r5", []);
+    const revision = isR5 ? "R5" : "R4";
     const [asset, setAsset] = useState<Asset>();
     const [error, setError] = useState("");
     const [attempt, retry] = useState(0);
     const [selected, select] = useState<string | null>(null);
     const [blocked, setBlocked] = useState<string | null>(null);
     const [ready, setReady] = useState(false);
+    const [chairMessage, setChairMessage] = useState("");
+    const [, chairUpdate] = useState(0);
     const run = useRef<((action: DeskAction) => void) | null>(null);
     const mount = useRef<Group>(null);
+    const chairCommand = useRef<((id: string, action: Action) => string | null) | null>(null);
     const clearSelection = useCallback(() => select(null), []);
     const xr = useP507Session(clearSelection);
     const attach = useCallback((renderer: WebGLRenderer | undefined) => {
@@ -171,15 +211,21 @@ export default function Visitor() {
         setReady(Boolean(renderer));
     }, [xr.renderer]);
     const record = useEvidence();
-    const nav = useMemo(() => asset && new Navigation(asset.manifest), [asset]);
+    const chairRoom = useMemo(() => asset?.revision === "R5"
+        ? new ChairRoom(asset.manifest.layout, asset.manifest.starting_pose.feet_survey, () => chairUpdate(n => n + 1))
+        : undefined, [asset]);
+    const nav = useMemo(() => chairRoom ?? (asset && new Navigation(asset.manifest)), [asset, chairRoom]);
+    const footprint = useMemo<Point | undefined>(() => asset?.revision === "R5"
+        ? [asset.manifest.virtual_dimensions.width_x, asset.manifest.virtual_dimensions.length_y] : undefined, [asset]);
+    const ids = asset?.revision === "R5" ? asset.ids : isR5 ? undefined : frozenIds;
     const details = useMemo(() => new Map<string, Detail>(asset?.manifest.instances
-        .filter(row => ids.has(row.id)).map(row => [row.id, {
+        .filter(row => ids?.has(row.id)).map(row => [row.id, {
             id: row.id,
             kind: asset.manifest.collision_proxies.find(proxy => proxy.id === row.id)?.kind ?? "UNKNOWN",
             status: row.status,
             source: String(row.survey_transform.source_kind ?? "UNKNOWN"),
             position: String(row.survey_transform.position_source ?? "UNKNOWN"),
-        }])), [asset]);
+        }])), [asset, ids]);
     const detail = selected ? details.get(selected) : undefined;
 
     useEffect(() => {
@@ -188,7 +234,8 @@ export default function Visitor() {
         setError("");
         setAsset(undefined);
         const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(30000)]);
-        loadFrozenP507(signal).then(loaded => {
+        const pending = isR5 ? loadR5(signal) : loadFrozenP507(signal).then(loaded => ({ ...loaded, revision: "R4" as const }));
+        pending.then(loaded => {
             room = loaded.gltf.scene;
             if (signal.aborted) {
                 disposeRoom(room);
@@ -202,22 +249,49 @@ export default function Visitor() {
             controller.abort();
             if (room) disposeRoom(room);
         };
-    }, [attempt]);
+    }, [attempt, isR5]);
+
+    useEffect(() => {
+        if (!chairRoom) return;
+        const handleVisibility = () => {
+            if (document.hidden) chairRoom.interrupt();
+        };
+        const hide = () => chairRoom.reset();
+        document.addEventListener("visibilitychange", handleVisibility);
+        window.addEventListener("pagehide", hide);
+        const evidence = window.__P507_M5__;
+        if (evidence) evidence.snapshotR5 = () => ({
+            moving: chairRoom.moving, seated: chairRoom.seat?.id,
+            chairs: Object.fromEntries([...chairRoom.chairIDs].map(id => [id, { pose: chairRoom.pose(id), state: chairRoom.state(id) }])),
+        });
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibility);
+            window.removeEventListener("pagehide", hide);
+            if (evidence) delete evidence.snapshotR5;
+        };
+    }, [chairRoom]);
+    useEffect(() => { setChairMessage(""); }, [selected]);
     useEffect(() => { record("session:" + xr.status + ":" + (xr.requested ?? "none")); }, [record, xr.status, xr.requested]);
 
     const disabled = !ready || xr.contextLost || xr.status === "requesting" || Boolean(xr.active);
+    const chairState = selected ? chairRoom?.state(selected) : undefined;
+    const dimensions = footprint ? `${footprint[0]} × ${footprint[1]} × 3,50` : "6,90 × 9,315 × 3,50";
+    const lost = () => { chairRoom?.reset(); xr.lostContext(); };
     return <main className="p507-visitor">
         <nav aria-label="Ứng dụng">
             <a href="/">Không gian số AIRC</a>
             <a href="/?mode=p507">Digital Twin P507</a>
+            {isR5 ? <a href="/?mode=p507-visit">Trở về R4</a> :
+                <a href="/?mode=p507-visit&revision=r5">Xem đề xuất R5</a>}
         </nav>
         <h1>Tham quan P507</h1>
-        <p className="notice">{provenance}. Mô hình ảo 6,90 × 9,315 × 3,50 m. Dữ liệu tại đây chỉ dùng để xem thử.</p>
+        <p className="notice">{isR5 ? r5Label : provenance}.
+            {(!isR5 || footprint) && <> Mô hình ảo {dimensions} m.</>} Dữ liệu tại đây chỉ dùng để xem thử.</p>
         <section className="visitor-xr" aria-label="Chế độ WebXR">
             <h2>Trải nghiệm WebXR</h2>
-            <p>AR là mô hình thu nhỏ để bàn có mặt cắt, không căn chỉnh 1:1 với phòng thật. VR dùng tuyến và vật cản ảo của R4.</p>
+            <p>AR là mô hình thu nhỏ để bàn có mặt cắt, không căn chỉnh 1:1 với phòng thật. VR dùng tuyến và vật cản ảo của {revision}.</p>
             {modes.map((mode, index) => <div key={mode} data-testid={"support-" + mode} data-support={xr.support[index]}>
-                <button disabled={disabled || xr.support[index] !== "supported"} onClick={() => xr.enter(mode)}>
+                <button disabled={disabled || Boolean(chairRoom?.seat || chairRoom?.moving) || xr.support[index] !== "supported"} onClick={() => xr.enter(mode)}>
                     {mode === "immersive-vr" ? "Vào VR" : "Vào AR"}
                 </button>
                 <span>{supportLabels[xr.support[index]]}</span>
@@ -229,38 +303,51 @@ export default function Visitor() {
         <div className="workspace">
             <section className="scene visitor-scene" aria-label="Web 3D P507">
                 {error ? <div className="visitor-asset">
-                    <p role="alert" data-testid="asset-status" data-result={error}>R4 không khả dụng. Bạn có thể tiếp tục bằng danh sách.</p>
-                    <button onClick={() => retry(step => step + 1)}>Thử tải R4 lại</button>
-                </div> : asset && nav && xr.store ?
+                    <p role="alert" data-testid="asset-status" data-result={error}>{revision} không khả dụng. {isR5 ? "Có thể mở lại R4 bằng liên kết phía trên." : "Bạn có thể tiếp tục bằng danh sách."}</p>
+                    <button onClick={() => retry(step => step + 1)}>Thử tải {revision} lại</button>
+                </div> : asset && nav && ids && xr.store ?
                     <ErrorBoundary><Canvas gl={{ alpha: true }} dpr={[1, 1.5]} camera={{ fov: 78, near: 0.04, far: 60 }}
                         fallback={<p role="alert">WebGL không khả dụng. Hãy dùng danh sách đối tượng.</p>}>
                         <XR store={xr.store}>
                             <ambientLight intensity={0.75} />
                             <directionalLight position={[2, 8, -2]} intensity={2} />
                             <group ref={mount}><primitive object={asset.gltf.scene} /></group>
-                            <RendererLifecycle attach={attach} contextLost={xr.lostContext} contextRestored={xr.restoredContext} />
-                            <Desktop room={asset.gltf.scene} ids={ids} nav={nav}
+                            <RendererLifecycle attach={attach} contextLost={lost} contextRestored={xr.restoredContext} />
+                            {chairRoom && <ChairFrames model={asset.gltf.scene} room={chairRoom} />}
+                            <Desktop room={asset.gltf.scene} ids={ids} nav={nav} chairRoom={chairRoom} chairCommand={chairCommand}
                                 enabled={!xr.active && !xr.contextLost && xr.status !== "requesting"}
                                 pick={select} blocked={setBlocked} controls={run} />
-                            <Immersive nav={nav} ids={ids} model={asset.gltf.scene} mount={mount} detail={detail} ar={xr.requested === "immersive-ar"}
+                            <Immersive nav={nav} chairRoom={chairRoom} footprint={footprint} ids={ids} model={asset.gltf.scene} mount={mount} detail={detail} ar={xr.requested === "immersive-ar"}
                                 pick={select} exit={xr.exit} record={record} />
                             {new URLSearchParams(location.search).get("evidence") === "1" && <FrameEvidence />}
                         </XR>
-                    </Canvas></ErrorBoundary> : <p role="status">Đang kiểm tra R4…</p>}
+                    </Canvas></ErrorBoundary> : <p role="status">Đang kiểm tra {revision}…</p>}
             </section>
             <aside aria-label="Thông tin P507">
-                {asset && <p data-testid="asset-status" data-result="E0_SCENE_PASS" data-sha={asset.hash}>R4 đã kiểm tra · 121 ID bố trí · 2 hồ sơ chưa bố trí</p>}
+                {asset && <p data-testid="asset-status" data-result="E0_SCENE_PASS" data-sha={asset.hash}>{revision} đã kiểm tra · {asset.geometry.placedIDs} ID bố trí · 2 hồ sơ chưa bố trí</p>}
                 <label>Đối tượng P507
                     <select value={selected ?? ""} onChange={event => select(event.target.value || null)}>
                         <option value="">Chọn một đối tượng</option>
-                        {[...ids].map(id => <option key={id} value={id}>{id}</option>)}
+                        {[...(ids ?? [])].map(id => <option key={id} value={id}>{id}</option>)}
                     </select>
                 </label>
                 <section className="details" aria-live="polite" data-testid="visitor-detail">
                     <h2>{selected ?? "Thông tin đối tượng"}</h2>
                     {detail ? <dl><dt>Loại</dt><dd>{detail.kind}</dd><dt>Trạng thái mô hình</dt><dd>{detail.status}</dd>
                         <dt>Nguồn</dt><dd>{detail.source}</dd><dt>Vị trí</dt><dd>{detail.position}</dd></dl> :
-                        selected && <p>Chi tiết nguồn chưa khả dụng. ID lấy từ chỉ mục R4.</p>}
+                        selected && <p>Chi tiết nguồn chưa khả dụng. ID lấy từ chỉ mục {revision}.</p>}
+                    {chairRoom && selected && chairState && <div className="chair-actions" data-testid="chair-actions"
+                        data-state={chairState} data-moving={chairRoom.moving === selected}>
+                        <p>Ghế mô phỏng · {chairRoom.moving === selected ? "Đang di chuyển" :
+                            { stored: "Đã cất", "pulled-out": "Đã kéo ra", occupied: "Đang ngồi" }[chairState]}</p>
+                        {chairRoom.actions(selected, "web").map(action => <button key={action}
+                            disabled={disabled || Boolean(chairRoom.moving)} onClick={() => {
+                                const result = chairCommand.current?.(selected, action);
+                                setChairMessage(result ?? "");
+                                record("chair:" + action + ":" + selected + (result ? ":blocked" : ""));
+                            }}>{labels[action]}</button>)}
+                        {chairMessage && <p role="status">{chairMessage}</p>}
+                    </div>}
                 </section>
             </aside>
         </div>

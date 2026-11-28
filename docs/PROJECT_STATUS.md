@@ -316,3 +316,7 @@ Hành động tiếp tục, cần đối chiếu live trước mỗi phiên:
 1. Nếu chủ dự án chỉ hỏi tiến độ, kiểm tra và báo cáo ngay theo AGENTS, không cần phê duyệt task triển khai. Phân biệt đã merge, đang review, đề xuất chờ duyệt và chưa triển khai; nêu rõ lệch docs-vs-GitHub và task tiếp theo đã duyệt nếu có bằng chứng.
 2. Với snapshot PR #12 còn IN REVIEW: ChatGPT/chủ dự án nghiệm thu lại tài liệu và quyết định merge. Lệnh dừng sau bàn giao áp dụng cho lần thực hiện task tài liệu, không ngăn phiên sau đọc/báo cáo hoặc làm task mới đã được duyệt. Không tự merge.
 3. Khi chủ dự án duyệt task sau, ghi người/ngày/tham chiếu, phạm vi/DoD và cập nhật status; chỉ triển khai đúng quyền đó. Sau mỗi PR đã nghiệm thu, cập nhật evidence, merge nếu có, blocker và bước tiếp. Merge PR tài liệu không đồng nghĩa roadmap được duyệt hoặc được phép bắt đầu M2/M3; review AI không thay phê duyệt của chủ dự án/giảng viên.
+
+## P507 R5 · 28/11/2026
+
+Chủ dự án giao thực hiện phương án P507 R5 theo #33/#20 ngày 27/11/2026, sau khi PR #32 được nghiệm thu độc lập và merge vào `main` tại `bd2d0baf4a593e73dfe1c6e8d8a5e74fd45ae3be`. Phạm vi thuộc M2 và M5, gồm mô hình virtual synthetic, bố trí, tương tác ghế và WebXR trên DEV loopback. Nghiệm thu độc lập và duyệt hình của chủ dự án đang chờ. [Đặc tả kỹ thuật và bằng chứng R5](3d-production/P507-R5-REVISION-PROPOSAL.md)
